@@ -1,57 +1,25 @@
 'use strict';
 
-const generateCode=require('./code.js');
-
-class CodeOutput {
-	constructor(generateCodeFn) {
-		let $code;
-		const getHtmlDataUri=(html)=>'data:text/html;charset=utf-8,'+encodeURIComponent(html);
-		const writeControls=()=>{
-			return $("<div>").append(
-				$("<a download='source.html'><button type='button'>Save source code</button></a>").click(function(){
-					// yes I want a button, but download attr is only available for links
-					$(this).attr('href',getHtmlDataUri($code.text()));
-				})
-			).append(
-				" "
-			).append(
-				$("<button type='button'>Run in new window</button>").click(function(){
-					window.open(getHtmlDataUri($code.text()),"generatedCode");
-				})
-			).append(
-				" these buttons don't work in Internet Explorer, copy-paste the code manually"
-			)
-		};
-		const $output=$("<div class='code-output'>").append(writeControls()).append(
-			$("<pre>").append($code=$("<code>").text(generateCodeFn()))
-		);
-		if (window.hljs) {
-			hljs.highlightBlock($code[0]);
-		} else {
-			//$output.append("<p>"+i18n('message.hljs')+"</p>"); // TODO i18n
-		}
-		$output.append(writeControls());
-
-		const delay=200;
-		let timeoutId=null;
-		const update=()=>{
-			clearTimeout(timeoutId);
-			timeoutId=setTimeout(()=>{
-				$code.text(generateCodeFn());
-				if (window.hljs) hljs.highlightBlock($code[0]);
-			},delay);
-		};
-
-		// public props:
-		this.$output=$output;
-		this.update=update;
-	}
+let idCounter=0;
+function generateId() {
+	return 'webaudio-starter-id-'+(idCounter++);
 }
+
+const i18n=require('./i18n.js')('en');
+const Options=require('./options.js');
+const generateCode=require('./code.js');
+const CodeOutput=require('./code-output');
+const OptionsOutput=require('./options-output');
 
 $(function(){
 	$('.webaudio-starter').each(function(){
 		const $container=$(this);
-		const codeOutput=new CodeOutput(generateCode);
-		$container.empty().append(codeOutput.$output);
+		const options=new Options();
+		const codeOutput=new CodeOutput(()=>generateCode(options.fix(),i18n));
+		options.updateCallback=codeOutput.update;
+		const optionsOutput=new OptionsOutput(options,generateId,i18n);
+		$container.empty()
+			.append(optionsOutput.$output)
+			.append(codeOutput.$output);
 	})
 });
