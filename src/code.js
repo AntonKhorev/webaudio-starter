@@ -54,19 +54,50 @@ class Filter {
 			return '';
 		}
 	}
-	get htmlName()      { return 'my.'+this.type+this.nSuffix; }
-	get optionsName()   { return 'options.filters.'+this.type; }
-	get jsNodeName()    { return toCamelCase(this.type+this.nSuffix+'.node'); }
-	get jsElementName() { return toCamelCase(this.type+this.nSuffix+'.element'); }
-	getJsLines(prevJsNodeName) {
-		return new Lines(
-			"var "+this.jsNodeName+"=ctx."+this.ctxCreateMethodName+"();",
-			prevJsNodeName+".connect("+this.jsNodeName+")",
-			"var "+this.jsElementName+"=document.getElementById('"+this.htmlName+"');",
-			this.jsElementName+".oninput="+this.jsElementName+".onchange=function(){",
-			"	"+this.jsNodeName+"."+this.nodePropertyName+".value=this.value;",
-			"};"
+	get nodeJsName() {
+		return toCamelCase(this.type+this.nSuffix+'.node');
+	}
+	getPropertyOptionName(propertyName) {
+		return 'options.filters.'+this.type+'.properties.'+propertyName;
+	}
+	getPropertyInputHtmlName(propertyName) {
+		return 'my.'+this.type+this.nSuffix+'.'+propertyName;
+	}
+	getPropertyInputJsName(propertyName) {
+		return toCamelCase(this.type+this.nSuffix+'.'+propertyName+'.input');
+	}
+	getJsLines(prevNodeJsName) {
+		const lines=new Lines;
+		lines.a(
+			"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
+			prevNodeJsName+".connect("+this.nodeJsName+")"
 		);
+		this.nodeProperties.forEach(property=>{
+			const inputJsName=this.getPropertyInputJsName(property.name);
+			const inputHtmlName=this.getPropertyInputHtmlName(property.name);
+			lines.a(
+				"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
+				inputJsName+".oninput="+inputJsName+".onchange=function(){",
+				"	"+this.nodeJsName+"."+property.name+".value=this.value;",
+				"};"
+			);
+		});
+		return lines;
+	}
+	getHtmlLines(i18n) {
+		const lines=new Lines;
+		this.nodeProperties.forEach(property=>{
+			const inputHtmlName=this.getPropertyInputHtmlName(property.name);
+			lines.a(
+				"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property.name))+"</label>"
+			);
+			if (property.type=='range') {
+				lines.a(
+					"<input id='"+inputHtmlName+"' type='range' value='"+property.value+"' min='"+property.min+"' max='"+property.max+"'"+(property.step!='1'?" step='"+property.step+"'":"")+" />"
+				);
+			}
+		});
+		return lines.wrap("<div>","</div>");
 	}
 }
 
@@ -74,34 +105,48 @@ const filterClasses={
 	gain: class extends Filter {
 		get type()                { return 'gain'; }
 		get ctxCreateMethodName() { return 'createGain'; }
-		get nodePropertyName()    { return 'gain'; }
-		getHtmlLines(i18n) {
-			return (new Lines(
-				"<label for='"+this.htmlName+"'>"+i18n(this.optionsName)+"</label>",
-				"<input id='"+this.htmlName+"' type='range' value='1' min='0' max='1' step='0.01' />"
-			)).wrap("<div>","</div>");
+		get nodeProperties() {
+			return [
+				{
+					name:'gain',
+					type:'range',
+					value:'1', min:'0', max:'1', step:'0.01',
+				}
+			];
 		}
 	},
 	panner: class extends Filter {
 		get type()                { return 'panner'; }
 		get ctxCreateMethodName() { return 'createStereoPanner'; }
-		get nodePropertyName()    { return 'pan'; }
-		getHtmlLines(i18n) {
-			return (new Lines(
-				"<label for='"+this.htmlName+"'>"+i18n(this.optionsName)+"</label>",
-				"<input id='"+this.htmlName+"' type='range' value='0' min='-1' max='1' step='0.01' />"
-			)).wrap("<div>","</div>");
+		get nodeProperties() {
+			return [
+				{
+					name:'pan',
+					type:'range',
+					value:'0', min:'-1', max:'1', step:'0.01',
+				}
+			];
 		}
 	},
 	biquad: class extends Filter {
 		get type()                { return 'biquad'; }
 		get ctxCreateMethodName() { return 'createBiquadFilter'; }
-		get nodePropertyName()    { return 'frequency'; }
-		getHtmlLines(i18n) {
-			return (new Lines(
-				"<label for='"+this.htmlName+"'>"+i18n(this.optionsName)+"</label>",
-				"<input id='"+this.htmlName+"' type='range' value='350' min='0' max='22050' />"
-			)).wrap("<div>","</div>");
+		get nodeProperties() {
+			return [
+				{
+					name:'frequency',
+					type:'range',
+					value:'350', min:'0', max:'22050', step:'1',
+				},{
+					name:'detune',
+					type:'range',
+					value:'0', min:'0', max:'100', step:'1',
+				},{
+					name:'Q',
+					type:'range',
+					value:'1', min:'0.0001', max:'1000', step:'0.01',
+				}
+			];
 		}
 	},
 };
@@ -142,13 +187,13 @@ class FilterSequence extends Feature {
 		if (this.filters.length==0) {
 			return lines;
 		}
-		let prevJsNodeName='sourceNode';
+		let prevNodeJsName='sourceNode';
 		this.filters.forEach(filter=>{
-			lines.a(filter.getJsLines(prevJsNodeName));
-			prevJsNodeName=filter.jsNodeName;
+			lines.a(filter.getJsLines(prevNodeJsName));
+			prevNodeJsName=filter.nodeJsName;
 		});
 		lines.a(
-			prevJsNodeName+".connect(ctx.destination);"
+			prevNodeJsName+".connect(ctx.destination);"
 		);
 		return lines;
 	}
