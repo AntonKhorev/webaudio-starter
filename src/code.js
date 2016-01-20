@@ -78,7 +78,7 @@ const filterClasses={
 		getHtmlLines(i18n) {
 			return (new Lines(
 				"<label for='"+this.htmlName+"'>"+i18n(this.optionsName)+"</label>",
-				"<input id='"+this.htmlName+"' type='range' min='0' max='1' step='0.01' value='1' />"
+				"<input id='"+this.htmlName+"' type='range' value='1' min='0' max='1' step='0.01' />"
 			)).wrap("<div>","</div>");
 		}
 	},
@@ -89,10 +89,21 @@ const filterClasses={
 		getHtmlLines(i18n) {
 			return (new Lines(
 				"<label for='"+this.htmlName+"'>"+i18n(this.optionsName)+"</label>",
-				"<input id='"+this.htmlName+"' type='range' min='-1' max='1' step='0.01' value='0' />"
+				"<input id='"+this.htmlName+"' type='range' value='0' min='-1' max='1' step='0.01' />"
 			)).wrap("<div>","</div>");
 		}
-	}
+	},
+	biquad: class extends Filter {
+		get type()                { return 'biquad'; }
+		get ctxCreateMethodName() { return 'createBiquadFilter'; }
+		get nodePropertyName()    { return 'frequency'; }
+		getHtmlLines(i18n) {
+			return (new Lines(
+				"<label for='"+this.htmlName+"'>"+i18n(this.optionsName)+"</label>",
+				"<input id='"+this.htmlName+"' type='range' value='350' min='0' max='22050' />"
+			)).wrap("<div>","</div>");
+		}
+	},
 };
 
 class FilterSequence extends Feature {

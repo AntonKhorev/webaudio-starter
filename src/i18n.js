@@ -7,6 +7,8 @@ const strings={
 	'options.filters.gain.add': "Add Gain",
 	'options.filters.panner': "Stereo Panner",
 	'options.filters.panner.add': "Add Stereo Panner",
+	'options.filters.biquad': "Biquad Filter",
+	'options.filters.biquad.add': "Add Biquad Filter",
 
 	'options-output.drag': "Drag or press up/down while in focus to reorder",
 	'options-output.delete': "Delete",

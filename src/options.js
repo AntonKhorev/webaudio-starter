@@ -10,10 +10,10 @@ class Options extends BaseOptions {
 				'http://mainline.i3s.unice.fr/mooc/drums.mp3',
 				'http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3',
 			]],
-			//['Checkbox','gain'],
 			['Array','filters',[
 				['Void','gain'],
 				['Void','panner'],
+				['Void','biquad'],
 			]],
 		]
 	};
