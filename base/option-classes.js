@@ -157,6 +157,8 @@ Option.Checkbox = class extends Option.BooleanInput {
 
 Option.Select = class extends Option.FactorInput {};
 
+Option.Text = class extends Option.FactorInput {};
+
 Option.Root = class extends Option.Collection {};
 
 Option.Group = class extends Option.Collection {};

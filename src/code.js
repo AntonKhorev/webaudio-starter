@@ -14,9 +14,13 @@ class Feature {
 }
 
 class Audio extends Feature {
+	constructor(source) {
+		super();
+		this.source=source;
+	}
 	getHtmlLines(featureContext,i18n) {
 		return (new Lines(
-			"<audio src='http://mainline.i3s.unice.fr/mooc/drums.mp3' id='my.source' controls loop crossorigin='anonymous'></audio>"
+			"<audio src='"+this.source+"' id='my.source' controls loop crossorigin='anonymous'></audio>" // TODO html escape
 		)).wrap("<div>","</div>");
 	}
 	getJsLines(featureContext,i18n) {
@@ -60,7 +64,7 @@ class Gain extends Feature {
 module.exports=function(options,i18n){
 	const featureContext={};
 	const features=[];
-	features.push(new Audio);
+	features.push(new Audio(options.source));
 	if (options.gain) {
 		features.push(new Gain);
 	}

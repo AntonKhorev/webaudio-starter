@@ -1,6 +1,7 @@
 'use strict';
 
 const strings={
+	'options.source': "Source URL",
 	'options.gain': "Gain",
 };
 

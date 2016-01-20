@@ -31,12 +31,32 @@ class OptionsOutput {
 				return option.$=$("<div>")
 					.append(
 						$("<input type='checkbox' id='"+id+"'>")
-							.prop('checked',option.value)
 							.change(function(){
 								option.value=$(this).prop('checked');
 							})
 					)
 					.append(" <label for='"+id+"'>"+i18n('options.'+option.fullName)+"</label>");
+			}],
+			[Option.Text,(option,write,i18n,generateId)=>{
+				const id=generateId();
+				const listId=generateId();
+				return option.$=$("<div>")
+					.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
+					.append(" ")
+					.append(
+						$("<input type='text' id='"+id+"'list='"+listId+"' />")
+							.val(option.value)
+							.change(function(){
+								option.value=this.value;
+							})
+					)
+					.append(" ")
+					.append(
+						$("<datalist id='"+listId+"'>")
+							.append(
+								option.availableValues.map(availableValue=>$("<option>").text(availableValue))
+							)
+					);
 			}],
 		];
 	}
