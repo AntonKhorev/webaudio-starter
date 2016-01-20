@@ -2,7 +2,14 @@
 
 const strings={
 	'options.source': "Source URL",
-	'options.gain': "Gain",
+	'options.filters': "Filters",
+	'options.filters.gain': "Gain",
+	'options.filters.gain.add': "Add Gain",
+	'options.filters.panner': "Stereo Panner",
+	'options.filters.panner.add': "Add Stereo Panner",
+
+	'options-output.drag': "Drag or press up/down while in focus to reorder",
+	'options-output.delete': "Delete",
 };
 
 module.exports=function(lang){

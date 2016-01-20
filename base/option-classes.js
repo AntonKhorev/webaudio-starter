@@ -149,6 +149,17 @@ Option.Collection = class extends Option.Base {
 
 // concrete classes
 
+Option.Void = class extends Option.Base { // useful as array entry w/o settings
+	export() {
+		return {};
+	}
+	fix() {
+		return {
+			name: this.name,
+		};
+	}
+}
+
 Option.Checkbox = class extends Option.BooleanInput {
 	constructor(name,_,defaultValue,data,fullName,isVisible,updateCallback) {
 		super(name,undefined,!!defaultValue,data,fullName,isVisible,updateCallback);
