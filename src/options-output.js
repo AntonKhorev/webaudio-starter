@@ -28,7 +28,7 @@ class OptionsOutput {
 			}],
 			[Option.Checkbox,(option,write,i18n,generateId)=>{
 				const id=generateId();
-				return option.$=$("<div>")
+				return option.$=$("<div class='option'>")
 					.append(
 						$("<input type='checkbox' id='"+id+"'>")
 							.change(function(){
@@ -40,7 +40,7 @@ class OptionsOutput {
 			[Option.Text,(option,write,i18n,generateId)=>{
 				const id=generateId();
 				const listId=generateId();
-				return option.$=$("<div>")
+				return option.$=$("<div class='option'>")
 					.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
 					.append(" ")
 					.append(
