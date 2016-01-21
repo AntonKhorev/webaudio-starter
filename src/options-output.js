@@ -36,6 +36,7 @@ class OptionsOutput {
 				return option.$=$("<div class='option'>")
 					.append(
 						$("<input type='checkbox' id='"+id+"'>")
+							.prop('checked',option.value)
 							.change(function(){
 								option.value=$(this).prop('checked');
 							})

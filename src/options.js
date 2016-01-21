@@ -10,6 +10,7 @@ class Options extends BaseOptions {
 				'http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3',
 				'http://mainline.i3s.unice.fr/mooc/drums.mp3',
 			]],
+			['Checkbox','crossorigin',true],
 			['Array','filters',[
 				['Void','gain'],
 				['Void','panner'],

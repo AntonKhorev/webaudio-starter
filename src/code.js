@@ -21,13 +21,14 @@ class Feature {
 }
 
 class Audio extends Feature {
-	constructor(source) {
+	constructor(source,crossorigin) {
 		super();
 		this.source=source;
+		this.crossorigin=crossorigin;
 	}
 	getHtmlLines(featureContext,i18n) {
 		return (new Lines(
-			"<audio src='"+this.source+"' id='my.source' controls loop crossorigin='anonymous'></audio>" // TODO html escape
+			"<audio src='"+this.source+"' id='my.source' controls loop"+(this.crossorigin?" crossorigin='anonymous'":"")+"></audio>" // TODO html escape
 		)).wrap("<div>","</div>");
 	}
 	getJsLines(featureContext,i18n) {
@@ -218,7 +219,7 @@ class FilterSequence extends Feature {
 module.exports=function(options,i18n){
 	const featureContext={};
 	const features=[];
-	features.push(new Audio(options.source));
+	features.push(new Audio(options.source,options.crossorigin));
 	features.push(new FilterSequence(options.filters));
 	features.forEach(feature=>{
 		feature.requestFeatureContext(featureContext);

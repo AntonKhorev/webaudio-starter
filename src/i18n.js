@@ -3,6 +3,8 @@
 const strings={
 	'options.source': "Source URL",
 
+	'options.crossorigin': "Add <code>crossorigin='anonymous'</code> to source element",
+
 	'options.filters': "Filters",
 	'options.filters.gain': "Gain",
 	'options.filters.gain.add': "Add Gain",
