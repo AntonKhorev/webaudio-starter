@@ -75,7 +75,7 @@ class Filter {
 			);
 			if (property.type=='range') {
 				lines.a(
-					"<input id='"+inputHtmlName+"' type='range' value='"+property.value+"' min='"+property.min+"' max='"+property.max+"'"+(property.step!='1'?" step='"+property.step+"'":"")+" />"
+					"<input id='"+inputHtmlName+"' type='range' value='"+property.value+"' min='"+property.min+"' max='"+property.max+"'"+(property.step?" step='"+property.step+"'":"")+" />"
 				);
 			} else if (property.type=='select') {
 				lines.a(
@@ -98,10 +98,14 @@ class Filter {
 		this.nodeProperties.forEach(property=>{
 			const inputJsName=this.getPropertyInputJsName(property.name);
 			const inputHtmlName=this.getPropertyInputHtmlName(property.name);
+			let value="this.value";
+			if (property.fn) {
+				value=property.fn(value);
+			}
 			lines.a(
 				"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
 				(property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
-				"	"+this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")+"=this.value;",
+				"	"+this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")+"="+value+";",
 				"};"
 			);
 		});
@@ -148,15 +152,15 @@ const filterClasses={
 				},{
 					name:'frequency',
 					type:'range',
-					value:'350', min:'0', max:'22050', step:'1',
+					value:'350', min:'0', max:'22050',
 				},{
 					name:'detune',
 					type:'range',
-					value:'0', min:'0', max:'100', step:'1',
+					value:'0', min:'0', max:'100',
 				},{
 					name:'Q',
 					type:'range',
-					value:'1', min:'0.0001', max:'1000', step:'0.01',
+					value:'0', min:'-4', max:'4', step:'0.01', fn:x=>`Math.pow(10,${x})`,
 				}
 			];
 		}
