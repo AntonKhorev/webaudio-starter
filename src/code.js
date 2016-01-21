@@ -64,9 +64,9 @@ class Filter {
 	getPropertyInputHtmlName(propertyName) {
 		return 'my.'+this.type+this.nSuffix+'.'+propertyName;
 	}
-	getPropertyInputJsName(propertyName) {
-		return toCamelCase(this.type+this.nSuffix+'.'+propertyName+'.input');
-	}
+	//getPropertyInputJsName(propertyName) {
+	//	return toCamelCase(this.type+this.nSuffix+'.'+propertyName+'.input');
+	//}
 	getHtmlLines(i18n) {
 		const lines=new Lines;
 		this.nodeProperties.forEach(property=>{
@@ -97,15 +97,18 @@ class Filter {
 			prevNodeJsName+".connect("+this.nodeJsName+")"
 		);
 		this.nodeProperties.forEach(property=>{
-			const inputJsName=this.getPropertyInputJsName(property.name);
+			//const inputJsName=this.getPropertyInputJsName(property.name);
 			const inputHtmlName=this.getPropertyInputHtmlName(property.name);
 			let value="this.value";
 			if (property.fn) {
 				value=property.fn(value);
 			}
+			const eventProp=(property.type=='range'?'oninput':'onchange'); //
 			lines.a(
-				"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
-				(property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
+				//"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
+				//(property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
+				"document.getElementById('"+inputHtmlName+"')."+eventProp+"=function(){",
+				//
 				"	"+this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")+"="+value+";",
 				"};"
 			);
