@@ -12,6 +12,7 @@ const strings={
 	'options.filters.panner.properties.pan': "Pan",
 	'options.filters.biquad': "Biquad Filter",
 	'options.filters.biquad.add': "Add Biquad Filter",
+	'options.filters.biquad.properties.type': "Type",
 	'options.filters.biquad.properties.frequency': "Frequency",
 	'options.filters.biquad.properties.detune': "Detune",
 	'options.filters.biquad.properties.Q': "Q",

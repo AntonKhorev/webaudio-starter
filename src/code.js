@@ -66,24 +66,6 @@ class Filter {
 	getPropertyInputJsName(propertyName) {
 		return toCamelCase(this.type+this.nSuffix+'.'+propertyName+'.input');
 	}
-	getJsLines(prevNodeJsName) {
-		const lines=new Lines;
-		lines.a(
-			"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
-			prevNodeJsName+".connect("+this.nodeJsName+")"
-		);
-		this.nodeProperties.forEach(property=>{
-			const inputJsName=this.getPropertyInputJsName(property.name);
-			const inputHtmlName=this.getPropertyInputHtmlName(property.name);
-			lines.a(
-				"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
-				inputJsName+".oninput="+inputJsName+".onchange=function(){",
-				"	"+this.nodeJsName+"."+property.name+".value=this.value;",
-				"};"
-			);
-		});
-		return lines;
-	}
 	getHtmlLines(i18n) {
 		const lines=new Lines;
 		this.nodeProperties.forEach(property=>{
@@ -95,9 +77,35 @@ class Filter {
 				lines.a(
 					"<input id='"+inputHtmlName+"' type='range' value='"+property.value+"' min='"+property.min+"' max='"+property.max+"'"+(property.step!='1'?" step='"+property.step+"'":"")+" />"
 				);
+			} else if (property.type=='select') {
+				lines.a(
+					(
+						new Lines(...property.options.map(option=>"<option>"+option+"</option>"))
+					).wrap(
+						"<select id='"+inputHtmlName+"'>","</select>"
+					)
+				);
 			}
 		});
 		return lines.wrap("<div>","</div>");
+	}
+	getJsLines(prevNodeJsName) {
+		const lines=new Lines;
+		lines.a(
+			"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
+			prevNodeJsName+".connect("+this.nodeJsName+")"
+		);
+		this.nodeProperties.forEach(property=>{
+			const inputJsName=this.getPropertyInputJsName(property.name);
+			const inputHtmlName=this.getPropertyInputHtmlName(property.name);
+			lines.a(
+				"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
+				(property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
+				"	"+this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")+"=this.value;",
+				"};"
+			);
+		});
+		return lines;
 	}
 }
 
@@ -134,6 +142,10 @@ const filterClasses={
 		get nodeProperties() {
 			return [
 				{
+					name:'type',
+					type:'select',
+					options:['lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch','allpass'],
+				},{
 					name:'frequency',
 					type:'range',
 					value:'350', min:'0', max:'22050', step:'1',
