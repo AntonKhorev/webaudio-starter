@@ -21,6 +21,7 @@ const strings={
 	'options.filters.convolver': "Convolver",
 	'options.filters.convolver.add': "Add Convolver",
 	'options.filters.convolver.url': "Impulse responce URL",
+	'options.filters.convolver.properties.reverb': "Reverb (Dry/Wet)",
 
 	'options-output.drag': "Drag or press up/down while in focus to reorder",
 	'options-output.delete': "Delete",

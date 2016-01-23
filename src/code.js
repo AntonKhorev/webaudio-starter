@@ -90,12 +90,29 @@ class Filter {
 		});
 		return lines.wrap("<div>","</div>");
 	}
-	getJsLines(prevNodeJsName) {
+	getJsLines(prevNodeJsNames) {
 		const lines=new Lines;
 		lines.a(
 			"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
-			prevNodeJsName+".connect("+this.nodeJsName+")"
+			...prevNodeJsNames.map(
+				prevNodeJsName=>prevNodeJsName+".connect("+this.nodeJsName+");"
+			)
 		);
+		return lines;
+	}
+	// abstract:
+	// get type()
+	// get ctxCreateMethodName()
+	// get nodeJsNames()
+	// get nodeProperties()
+}
+
+class SinglePathFilter extends Filter {
+	get nodeJsNames() {
+		return [this.nodeJsName];
+	}
+	getJsLines(prevNodeJsNames) {
+		const lines=super.getJsLines(prevNodeJsNames);
 		this.nodeProperties.forEach(property=>{
 			//const inputJsName=this.getPropertyInputJsName(property.name);
 			const inputHtmlName=this.getPropertyInputHtmlName(property.name);
@@ -118,7 +135,7 @@ class Filter {
 }
 
 const filterClasses={
-	gain: class extends Filter {
+	gain: class extends SinglePathFilter {
 		get type()                { return 'gain'; }
 		get ctxCreateMethodName() { return 'createGain'; }
 		get nodeProperties() {
@@ -131,7 +148,7 @@ const filterClasses={
 			];
 		}
 	},
-	panner: class extends Filter {
+	panner: class extends SinglePathFilter {
 		get type()                { return 'panner'; }
 		get ctxCreateMethodName() { return 'createStereoPanner'; }
 		get nodeProperties() {
@@ -144,7 +161,7 @@ const filterClasses={
 			];
 		}
 	},
-	biquad: class extends Filter {
+	biquad: class extends SinglePathFilter {
 		get type()                { return 'biquad'; }
 		get ctxCreateMethodName() { return 'createBiquadFilter'; }
 		get nodeProperties() {
@@ -169,6 +186,46 @@ const filterClasses={
 			];
 		}
 	},
+	convolver: class extends Filter {
+		constructor(n,options) {
+			super(n);
+			this.url=options.url;
+		}
+		get type()                { return 'convolver'; }
+		get ctxCreateMethodName() { return 'createConvolver'; }
+		get nodeProperties() {
+			return [
+				{
+					name:'reverb',
+					type:'range',
+					value:'0', min:'0', max:'1', step:'0.01',
+				}
+			];
+		}
+		get nodeJsNames() {
+			return [this.wetGainNodeJsName,this.dryGainNodeJsName];
+		}
+		get dryGainNodeJsName() {
+			return toCamelCase(this.type+this.nSuffix+'.dry.gain.node');
+		}
+		get wetGainNodeJsName() {
+			return toCamelCase(this.type+this.nSuffix+'.wet.gain.node');
+		}
+		getJsLines(prevNodeJsNames) {
+			const lines=super.getJsLines(prevNodeJsNames);
+			lines.a(
+				"var "+this.wetGainNodeJsName+"=ctx.createGain();",
+				this.wetGainNodeJsName+".gain.value=0;",
+				this.nodeJsName+".connect("+this.wetGainNodeJsName+");",
+				"var "+this.dryGainNodeJsName+"=ctx.createGain();",
+				// this.wetGainNodeJsName+".gain.value=1;", // default
+				...prevNodeJsNames.map(
+					prevNodeJsName=>prevNodeJsName+".connect("+this.dryGainNodeJsName+");"
+				)
+			);
+			return lines;
+		}
+	},
 };
 
 class FilterSequence extends Feature {
@@ -188,9 +245,9 @@ class FilterSequence extends Feature {
 				if (!filterCounts2[entry.type]) {
 					filterCounts2[entry.type]=0;
 				}
-				return new filterClass(filterCounts2[entry.type]++);
+				return new filterClass(filterCounts2[entry.type]++,entry);
 			} else {
-				return new filterClass;
+				return new filterClass(undefined,entry);
 			}
 		});
 	}
@@ -207,13 +264,13 @@ class FilterSequence extends Feature {
 		if (this.filters.length==0) {
 			return lines;
 		}
-		let prevNodeJsName='sourceNode';
+		let prevNodeJsNames=['sourceNode'];
 		this.filters.forEach(filter=>{
-			lines.a(filter.getJsLines(prevNodeJsName));
-			prevNodeJsName=filter.nodeJsName;
+			lines.a(filter.getJsLines(prevNodeJsNames));
+			prevNodeJsNames=filter.nodeJsNames;
 		});
 		lines.a(
-			prevNodeJsName+".connect(ctx.destination);"
+			...prevNodeJsNames.map(prevNodeJsNames=>prevNodeJsNames+".connect(ctx.destination);")
 		);
 		return lines;
 	}
