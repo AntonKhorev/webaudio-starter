@@ -217,16 +217,26 @@ const filterClasses={
 			lines.a(
 				"var "+this.wetGainNodeJsName+"=ctx.createGain();",
 				this.wetGainNodeJsName+".gain.value=0;",
-				this.nodeJsName+".connect("+this.wetGainNodeJsName+");", // TODO connect after loading IR
+				this.nodeJsName+".connect("+this.wetGainNodeJsName+");",
 				"var "+this.dryGainNodeJsName+"=ctx.createGain();",
-				// this.wetGainNodeJsName+".gain.value=1;", // default
 				...prevNodeJsNames.map(
 					prevNodeJsName=>prevNodeJsName+".connect("+this.dryGainNodeJsName+");"
 				),
 				"document.getElementById('"+inputHtmlName+"').oninput=function(){",
 				"	"+this.wetGainNodeJsName+".gain.value=this.value;",
 				"	"+this.dryGainNodeJsName+".gain.value=1-this.value;",
-				"};"
+				"};",
+				"var xhr=new XMLHttpRequest();",
+				"xhr.open('GET','"+this.url+"',true);", // TODO html escape
+				"xhr.responseType='arraybuffer';",
+				"xhr.onload=function(){",
+				"	ctx.decodeAudioData(xhr.response,function(buffer){",
+				"		"+this.nodeJsName+".buffer=buffer;",
+						// TODO remove loading message
+				"	});",
+				"};",
+				// TODO onerror
+				"xhr.send();"
 			);
 			return lines;
 		}
