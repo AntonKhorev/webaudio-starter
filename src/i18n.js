@@ -18,6 +18,9 @@ const strings={
 	'options.filters.biquad.properties.frequency': "Frequency",
 	'options.filters.biquad.properties.detune': "Detune",
 	'options.filters.biquad.properties.Q': "Q",
+	'options.filters.convolver': "Convolver",
+	'options.filters.convolver.add': "Add Convolver",
+	'options.filters.convolver.url': "Impulse responce URL",
 
 	'options-output.drag': "Drag or press up/down while in focus to reorder",
 	'options-output.delete': "Delete",

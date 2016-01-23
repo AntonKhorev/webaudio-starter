@@ -32,7 +32,19 @@ class Options {
 					nScalars++;
 				} else if (Array.isArray(arg)) {
 					if (nArrays==0) {
-						contents=arg;
+						//contents=arg;
+						// same as in makeEntry {
+						contents=arg.map(x=>{
+							if (Array.isArray(x)) {
+								const subName=x[1];
+								let subData;
+								if (typeof data == 'object') subData=data[subName];
+								return simpleMakeEntry(x,fullName+'.',subData); // nested option
+							} else {
+								return x; // available value / value range boundary
+							}
+						});
+						// }
 					} else {
 						throw new Error("too many array arguments");
 					}

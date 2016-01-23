@@ -26,6 +26,11 @@ class OptionsOutput {
 					option.entries.map(writeOption)
 				);
 			}],
+			[Option.Group,(option,writeOption,i18n,generateId)=>{
+				return option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
+					option.entries.map(writeOption)
+				);
+			}],
 			[Option.Void,(option,writeOption,i18n,generateId)=>{
 				return option.$=$("<div class='option'>")
 					//.append("<label>"+i18n('options.'+option.fullName)+"</label>");
