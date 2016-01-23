@@ -213,15 +213,20 @@ const filterClasses={
 		}
 		getJsLines(prevNodeJsNames) {
 			const lines=super.getJsLines(prevNodeJsNames);
+			const inputHtmlName=this.getPropertyInputHtmlName('reverb');
 			lines.a(
 				"var "+this.wetGainNodeJsName+"=ctx.createGain();",
 				this.wetGainNodeJsName+".gain.value=0;",
-				this.nodeJsName+".connect("+this.wetGainNodeJsName+");",
+				this.nodeJsName+".connect("+this.wetGainNodeJsName+");", // TODO connect after loading IR
 				"var "+this.dryGainNodeJsName+"=ctx.createGain();",
 				// this.wetGainNodeJsName+".gain.value=1;", // default
 				...prevNodeJsNames.map(
 					prevNodeJsName=>prevNodeJsName+".connect("+this.dryGainNodeJsName+");"
-				)
+				),
+				"document.getElementById('"+inputHtmlName+"').oninput=function(){",
+				"	"+this.wetGainNodeJsName+".gain.value=this.value;",
+				"	"+this.dryGainNodeJsName+".gain.value=1-this.value;",
+				"};"
 			);
 			return lines;
 		}
