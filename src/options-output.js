@@ -32,8 +32,7 @@ class OptionsOutput {
 				);
 			}],
 			[Option.Void,(option,writeOption,i18n,generateId)=>{
-				return option.$=$("<div class='option'>")
-					//.append("<label>"+i18n('options.'+option.fullName)+"</label>");
+				return option.$=$("<div class='option void'>")
 					.html(i18n('options.'+option.fullName))
 			}],
 			[Option.Checkbox,(option,writeOption,i18n,generateId)=>{

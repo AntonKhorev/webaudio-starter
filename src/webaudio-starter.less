@@ -2,7 +2,10 @@
 	.options-output {
 		margin: 1em 0;
 		.option {
-			margin-left: 15em;
+			margin: .3em 0 .3em 15em;
+			&.void {
+				margin-left: 1em;
+			}
 			label:first-child {
 				margin-left: -15em;
 				display: inline-block;
@@ -15,31 +18,32 @@
 		}
 		.draggable-with-handle {
 			position: relative;
+			margin: .3em 1em;
 			&.ghost {
 				opacity: .4;
 			}
-			[draggable] { // drag handle
+			.option {
+				margin-top: 0;
+				margin-bottom: 0;
+			}
+			[draggable], .delete {
 				position: absolute;
-				top: 0.2em;
-				bottom: 0.2em;
+				top: 0;
+				bottom: 0;
 				width: 1em;
+			}
+			[draggable] { // drag handle
+				left: -1em;
 				cursor: move;
 				// http://www.patternify.com/
 				background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAGUlEQVQYlWNgIAYYGxv/J4SJMog4MFStAwDfUCsJGefs4gAAAABJRU5ErkJggg==) center no-repeat, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAF0lEQVQYlWNgIBZ0dHT8J8SmIhiK1gEAJMkXUFw51ewAAAAASUVORK5CYII=) center;
 			}
 			.delete {
-				position: absolute;
-				top: 0.2em;
-				bottom: 0.2em;
-				width: 1em;
-				right: 0;
+				right: -1em;
 				cursor: default;
 				border: dotted 1px #888;
 				// http://www.patternify.com/
 				background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAJklEQVQYlWNgIBYYGxv/J0ocXQCXRrgETgUETSDaJIJuItp3+AAAbDIUubYyZeYAAAAASUVORK5CYII=) center no-repeat;
-			}
-			.option {
-				margin-left: 2em;
 			}
 		}
 	}
