@@ -1,15 +1,18 @@
 .webaudio-starter {
 	.options-output {
+		@inter-option-margin: .3em;
+		@label-margin: 15em;
+		@drag-control-width: 1em;
 		margin: 1em 0;
 		.option {
-			margin: .3em 0 .3em 15em;
+			margin: @inter-option-margin 0 @inter-option-margin @label-margin;
 			&.void {
 				margin-left: 1em;
 			}
 			label:first-child {
-				margin-left: -15em;
+				margin-left: -@label-margin;
 				display: inline-block;
-				width: 15em;
+				width: @label-margin;
 				text-align: right;
 			}
 			input[type="text"] {
@@ -18,7 +21,7 @@
 		}
 		.draggable-with-handle {
 			position: relative;
-			margin: .3em 1em;
+			margin: @inter-option-margin @drag-control-width;
 			&.ghost {
 				opacity: .4;
 			}
@@ -30,16 +33,16 @@
 				position: absolute;
 				top: 0;
 				bottom: 0;
-				width: 1em;
+				width: @drag-control-width;
 			}
 			[draggable] { // drag handle
-				left: -1em;
+				left: -@drag-control-width;
 				cursor: move;
 				// http://www.patternify.com/
 				background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAGUlEQVQYlWNgIAYYGxv/J4SJMog4MFStAwDfUCsJGefs4gAAAABJRU5ErkJggg==) center no-repeat, url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAF0lEQVQYlWNgIBZ0dHT8J8SmIhiK1gEAJMkXUFw51ewAAAAASUVORK5CYII=) center;
 			}
 			.delete {
-				right: -1em;
+				right: -@drag-control-width;
 				cursor: default;
 				border: dotted 1px #888;
 				// http://www.patternify.com/
