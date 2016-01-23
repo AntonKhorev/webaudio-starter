@@ -9,53 +9,7 @@ class Options {
 		const Option=this.optionClasses;
 		const optionByFullName={};
 		const optionsWithVisibilityAffectedByFullName={};
-		const simpleMakeEntry=(description,fullNamePath,data)=>{
-			const className=description[0];
-			if (Option[className]===undefined) {
-				throw new Error(`invalid option type '${className}'`);
-			}
-			const name=description[1];
-			const fullName=fullNamePath+name;
-			const ctorArgsDescription=description.slice(2);
-			let contents=[];
-			let defaultValue;
-			let nScalars=0;
-			let nArrays=0;
-			for (let i=0;i<ctorArgsDescription.length;i++) {
-				let arg=ctorArgsDescription[i];
-				if (typeof arg == 'string' || typeof arg == 'number' || typeof arg == 'boolean') {
-					if (nScalars==0) {
-						defaultValue=arg;
-					} else {
-						throw new Error("too many scalar arguments");
-					}
-					nScalars++;
-				} else if (Array.isArray(arg)) {
-					if (nArrays==0) {
-						//contents=arg;
-						// same as in makeEntry {
-						contents=arg.map(x=>{
-							if (Array.isArray(x)) {
-								const subName=x[1];
-								let subData;
-								if (typeof data == 'object') subData=data[subName];
-								return simpleMakeEntry(x,fullName+'.',subData); // nested option
-							} else {
-								return x; // available value / value range boundary
-							}
-						});
-						// }
-					} else {
-						throw new Error("too many array arguments");
-					}
-					nArrays++;
-				} else {
-					throw new Error("unknown argument type");
-				}
-			}
-			return new Option[className](name,contents,defaultValue,data,fullName,()=>true,simpleUpdateCallback);
-		};
-		const makeEntry=(description,fullNamePath,data)=>{
+		const makeEntry=(description,fullNamePath,data,isInsideArray)=>{
 			const className=description[0];
 			if (Option[className]===undefined) {
 				throw new Error(`invalid option type '${className}'`);
@@ -80,12 +34,12 @@ class Options {
 					nScalars++;
 				} else if (Array.isArray(arg)) {
 					if (nArrays==0) {
-						if (className=='Array') {
+						if (!isInsideArray && className=='Array') { // TODO test array inside array
 							defaultValueOrConstructors={};
 							arg.forEach(x=>{
 								const type=x[1];
 								contents.push(type);
-								defaultValueOrConstructors[type]=subData=>simpleMakeEntry(x,fullName+'.',subData);
+								defaultValueOrConstructors[type]=subData=>makeEntry(x,fullName+'.',subData,true);
 							});
 						} else {
 							contents=arg.map(x=>{
@@ -93,7 +47,7 @@ class Options {
 									const subName=x[1];
 									let subData;
 									if (typeof data == 'object') subData=data[subName];
-									return makeEntry(x,fullName+'.',subData); // nested option
+									return makeEntry(x,fullName+'.',subData,isInsideArray); // nested option
 								} else {
 									return x; // available value / value range boundary
 								}
@@ -103,7 +57,7 @@ class Options {
 						throw new Error("too many array arguments");
 					}
 					nArrays++;
-				} else if (arg instanceof Object) {
+				} else if (!isInsideArray && (arg instanceof Object)) {
 					if (nObjects==0) {
 						visibilityData=arg;
 					} else {
@@ -114,30 +68,38 @@ class Options {
 					throw new Error("unknown argument type");
 				}
 			}
-			const isVisible=()=>{
-				for (let testName in visibilityData) {
-					const value=optionByFullName[testName].value;
-					if (visibilityData[testName].indexOf(value)<0) {
-						return false;
+			let isVisible,updateCallback;
+			if (isInsideArray) {
+				updateCallback=simpleUpdateCallback;
+				isVisible=()=>true;
+			} else {
+				isVisible=()=>{
+					for (let testName in visibilityData) {
+						const value=optionByFullName[testName].value;
+						if (visibilityData[testName].indexOf(value)<0) {
+							return false;
+						}
 					}
-				}
-				return true;
-			};
-			const updateCallback=()=>{
-				if (optionsWithVisibilityAffectedByFullName[fullName]!==undefined) {
-					optionsWithVisibilityAffectedByFullName[fullName].forEach(option=>{
-						option.updateVisibility();
-					});
-				}
-				if (this.updateCallback) this.updateCallback();
-			};
+					return true;
+				};
+				updateCallback=()=>{
+					if (optionsWithVisibilityAffectedByFullName[fullName]!==undefined) {
+						optionsWithVisibilityAffectedByFullName[fullName].forEach(option=>{
+							option.updateVisibility();
+						});
+					}
+					if (this.updateCallback) this.updateCallback();
+				};
+			}
 			const option=new Option[className](name,contents,defaultValueOrConstructors,data,fullName,isVisible,updateCallback);
-			optionByFullName[fullName]=option;
-			for (let testName in visibilityData) {
-				if (optionsWithVisibilityAffectedByFullName[testName]===undefined) {
-					optionsWithVisibilityAffectedByFullName[testName]=[];
+			if (!isInsideArray) {
+				optionByFullName[fullName]=option;
+				for (let testName in visibilityData) {
+					if (optionsWithVisibilityAffectedByFullName[testName]===undefined) {
+						optionsWithVisibilityAffectedByFullName[testName]=[];
+					}
+					optionsWithVisibilityAffectedByFullName[testName].push(option);
 				}
-				optionsWithVisibilityAffectedByFullName[testName].push(option);
 			}
 			return option;
 		};
@@ -146,7 +108,7 @@ class Options {
 				const subName=description[1];
 				let subData;
 				if (typeof data == 'object') subData=data[subName];
-				return makeEntry(description,'',subData);
+				return makeEntry(description,'',subData,false);
 			}),undefined,data,null,()=>true,simpleUpdateCallback
 		);
 	}
