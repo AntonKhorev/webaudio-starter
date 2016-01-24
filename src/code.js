@@ -236,14 +236,14 @@ const filterClasses={
 				"var xhr=new XMLHttpRequest();",
 				"xhr.open('GET','"+this.url+"');", // TODO html escape
 				"xhr.responseType='arraybuffer';",
-				"xhr.onload=function(ev){",
+				"xhr.onload=function(){",
 				"	if (this.status==200) {", // TODO we are checking status here, but what if <audio>'s status is an error?
 				"		ctx.decodeAudioData(xhr.response,function(buffer){",
 				"			"+this.nodeJsName+".buffer=buffer;",
 				"			document.getElementById('"+messageHtmlName+"').textContent='';",
 				"		});",
 				"	} else {",
-				"		document.getElementById('"+messageHtmlName+"').textContent='"+i18n(this.getPropertyOptionName('buffer')+'.error')+"';",
+				"		this.onerror();",
 				"	}",
 				"};",
 				"xhr.onerror=function(){",
