@@ -71,26 +71,29 @@ class Filter {
 		const lines=new Lines;
 		this.nodeProperties.forEach(property=>{
 			const inputHtmlName=this.getPropertyInputHtmlName(property.name);
-			lines.a(
-				"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property.name))+"</label>"
-			);
 			if (property.type=='range') {
 				lines.a(
+					"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property.name))+"</label>",
 					"<input id='"+inputHtmlName+"' type='range' value='"+property.value+"' min='"+property.min+"' max='"+property.max+"'"+(property.step?" step='"+property.step+"'":"")+" />"
 				);
 			} else if (property.type=='select') {
 				lines.a(
+					"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property.name))+"</label>",
 					(
 						new Lines(...property.options.map(option=>"<option>"+option+"</option>"))
 					).wrap(
 						"<select id='"+inputHtmlName+"'>","</select>"
 					)
 				);
+			} else if (property.type=='xhr') {
+				lines.a(
+					"<span id='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property.name)+'.loading')+"</span>"
+				);
 			}
 		});
 		return lines.wrap("<div>","</div>");
 	}
-	getJsLines(prevNodeJsNames) {
+	getJsLines(i18n,prevNodeJsNames) {
 		const lines=new Lines;
 		lines.a(
 			"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
@@ -111,8 +114,8 @@ class SinglePathFilter extends Filter {
 	get nodeJsNames() {
 		return [this.nodeJsName];
 	}
-	getJsLines(prevNodeJsNames) {
-		const lines=super.getJsLines(prevNodeJsNames);
+	getJsLines(i18n,prevNodeJsNames) {
+		const lines=super.getJsLines(i18n,prevNodeJsNames);
 		this.nodeProperties.forEach(property=>{
 			//const inputJsName=this.getPropertyInputJsName(property.name);
 			const inputHtmlName=this.getPropertyInputHtmlName(property.name);
@@ -199,6 +202,9 @@ const filterClasses={
 					name:'reverb',
 					type:'range',
 					value:'0', min:'0', max:'1', step:'0.01',
+				},{
+					name:'buffer',
+					type:'xhr',
 				}
 			];
 		}
@@ -211,9 +217,10 @@ const filterClasses={
 		get wetGainNodeJsName() {
 			return toCamelCase(this.type+this.nSuffix+'.wet.gain.node');
 		}
-		getJsLines(prevNodeJsNames) {
-			const lines=super.getJsLines(prevNodeJsNames);
+		getJsLines(i18n,prevNodeJsNames) {
+			const lines=super.getJsLines(i18n,prevNodeJsNames);
 			const inputHtmlName=this.getPropertyInputHtmlName('reverb');
+			const messageHtmlName=this.getPropertyInputHtmlName('buffer');
 			lines.a(
 				"var "+this.wetGainNodeJsName+"=ctx.createGain();",
 				this.wetGainNodeJsName+".gain.value=0;",
@@ -227,15 +234,21 @@ const filterClasses={
 				"	"+this.dryGainNodeJsName+".gain.value=1-this.value;",
 				"};",
 				"var xhr=new XMLHttpRequest();",
-				"xhr.open('GET','"+this.url+"',true);", // TODO html escape
+				"xhr.open('GET','"+this.url+"');", // TODO html escape
 				"xhr.responseType='arraybuffer';",
-				"xhr.onload=function(){",
-				"	ctx.decodeAudioData(xhr.response,function(buffer){",
-				"		"+this.nodeJsName+".buffer=buffer;",
-						// TODO remove loading message
-				"	});",
+				"xhr.onload=function(ev){",
+				"	if (this.status==200) {", // TODO we are checking status here, but what if <audio>'s status is an error?
+				"		ctx.decodeAudioData(xhr.response,function(buffer){",
+				"			"+this.nodeJsName+".buffer=buffer;",
+				"			document.getElementById('"+messageHtmlName+"').textContent='';",
+				"		});",
+				"	} else {",
+				"		document.getElementById('"+messageHtmlName+"').textContent='"+i18n(this.getPropertyOptionName('buffer')+'.error')+"';",
+				"	}",
 				"};",
-				// TODO onerror
+				"xhr.onerror=function(){",
+				"	document.getElementById('"+messageHtmlName+"').textContent='"+i18n(this.getPropertyOptionName('buffer')+'.error')+"';",
+				"};",
 				"xhr.send();"
 			);
 			return lines;
@@ -281,7 +294,7 @@ class FilterSequence extends Feature {
 		}
 		let prevNodeJsNames=['sourceNode'];
 		this.filters.forEach(filter=>{
-			lines.a(filter.getJsLines(prevNodeJsNames));
+			lines.a(filter.getJsLines(i18n,prevNodeJsNames));
 			prevNodeJsNames=filter.nodeJsNames;
 		});
 		lines.a(

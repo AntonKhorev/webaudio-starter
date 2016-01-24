@@ -22,6 +22,8 @@ const strings={
 	'options.filters.convolver.add': "Add Convolver",
 	'options.filters.convolver.url': "Impulse responce URL",
 	'options.filters.convolver.properties.reverb': "Reverb (Dry/Wet)",
+	'options.filters.convolver.properties.buffer.loading': "Loading and decoding the impulse response",
+	'options.filters.convolver.properties.buffer.error': "Error while loading the impulse response",
 
 	'options-output.drag': "Drag or press up/down while in focus to reorder",
 	'options-output.delete': "Delete",
