@@ -56,7 +56,7 @@ class OptionsOutput {
 					.append(
 						$("<input type='text' id='"+id+"'list='"+listId+"' />")
 							.val(option.value)
-							.change(function(){
+							.on('input change',function(){
 								option.value=this.value;
 							})
 					)
