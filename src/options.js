@@ -10,7 +10,6 @@ class Options extends BaseOptions {
 				'http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3',
 				'http://mainline.i3s.unice.fr/mooc/drums.mp3',
 			]],
-			['Checkbox','crossorigin',true], // not needed, always set it when audio is used by Web Audio API, don't set otherwise
 			['Array','filters',[
 				['Void','gain'],
 				['Void','panner'],

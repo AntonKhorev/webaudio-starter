@@ -21,14 +21,13 @@ class Feature {
 }
 
 class Audio extends Feature {
-	constructor(source,crossorigin) {
+	constructor(source) {
 		super();
 		this.source=source;
-		this.crossorigin=crossorigin;
 	}
 	getHtmlLines(featureContext,i18n) {
 		return (new Lines(
-			"<audio src='"+this.source+"' id='my.source' controls loop"+(this.crossorigin?" crossorigin='anonymous'":"")+"></audio>" // TODO html escape
+			"<audio src='"+this.source+"' id='my.source' controls loop"+(featureContext.audioContext?" crossorigin='anonymous'":"")+"></audio>" // TODO html escape
 		)).wrap("<div>","</div>");
 	}
 	getJsLines(featureContext,i18n) {
@@ -238,7 +237,7 @@ const filterClasses={
 				"xhr.responseType='arraybuffer';",
 				"xhr.onload=function(){",
 				"	if (this.status==200) {", // TODO we are checking status here, but what if <audio>'s status is an error?
-				"		ctx.decodeAudioData(xhr.response,function(buffer){",
+				"		ctx.decodeAudioData(this.response,function(buffer){",
 				"			"+this.nodeJsName+".buffer=buffer;",
 				"			document.getElementById('"+messageHtmlName+"').textContent='';",
 				"		});",
@@ -307,7 +306,7 @@ class FilterSequence extends Feature {
 module.exports=function(options,i18n){
 	const featureContext={};
 	const features=[];
-	features.push(new Audio(options.source,options.crossorigin));
+	features.push(new Audio(options.source));
 	features.push(new FilterSequence(options.filters));
 	features.forEach(feature=>{
 		feature.requestFeatureContext(featureContext);
