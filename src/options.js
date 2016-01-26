@@ -20,9 +20,10 @@ class Options extends BaseOptions {
 				['Group','biquad',[
 					['LiveInt','frequency',[0,22050],350],
 					['LiveInt','detune',[0,100]],
-					['LiveInt','Q',[-4,4],0], // log Q
+					['LiveFloat','Q',[-4,4],0], // log Q
 				]],
 				['Group','convolver',[
+					['LiveFloat','reverb',[0,1]],
 					['Text','url',[
 						'http://mainline.i3s.unice.fr/mooc/Scala-Milan-Opera-Hall.wav',
 					]],

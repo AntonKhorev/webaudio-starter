@@ -232,16 +232,31 @@ const filterClasses={
 			const messageHtmlName=this.getPropertyInputHtmlName('buffer');
 			lines.a(
 				"var "+this.wetGainNodeJsName+"=ctx.createGain();",
-				this.wetGainNodeJsName+".gain.value=0;",
 				this.nodeJsName+".connect("+this.wetGainNodeJsName+");",
 				"var "+this.dryGainNodeJsName+"=ctx.createGain();",
 				...prevNodeJsNames.map(
 					prevNodeJsName=>prevNodeJsName+".connect("+this.dryGainNodeJsName+");"
-				),
-				"document.getElementById('"+inputHtmlName+"').oninput=function(){",
-				"	"+this.wetGainNodeJsName+".gain.value=this.value;",
-				"	"+this.dryGainNodeJsName+".gain.value=1-this.value;",
-				"};",
+				)
+			);
+			if (this.options.reverb!=1) {
+				lines.a(
+					this.wetGainNodeJsName+".gain.value="+this.options.reverb+";"
+				);
+			}
+			if (this.options.reverb!=0) {
+				lines.a(
+					this.dryGainNodeJsName+".gain.value="+(1-this.options.reverb)+";"
+				);
+			}
+			if (this.options.reverb.input) {
+				lines.a(
+					"document.getElementById('"+inputHtmlName+"').oninput=function(){",
+					"	"+this.wetGainNodeJsName+".gain.value=this.value;",
+					"	"+this.dryGainNodeJsName+".gain.value=1-this.value;",
+					"};"
+				);
+			}
+			lines.a(
 				"var xhr=new XMLHttpRequest();",
 				"xhr.open('GET','"+this.options.url+"');", // TODO html escape
 				"xhr.responseType='arraybuffer';",
