@@ -45,8 +45,9 @@ class Audio extends Feature {
 }
 
 class Filter {
-	constructor(n) {
+	constructor(n,options) {
 		this.n=n;
+		this.options=options;
 	}
 	get nSuffix() {
 		if (this.n!==undefined) {
@@ -70,11 +71,12 @@ class Filter {
 	getHtmlLines(i18n) {
 		const lines=new Lines;
 		this.nodeProperties.forEach(property=>{
+			const option=this.options[property.name];
 			const inputHtmlName=this.getPropertyInputHtmlName(property.name);
-			if (property.type=='range') {
+			if (property.type=='range' && option.input) {
 				lines.a(
 					"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property.name))+"</label>",
-					"<input id='"+inputHtmlName+"' type='range' value='"+property.value+"' min='"+property.min+"' max='"+property.max+"'"+(property.step?" step='"+property.step+"'":"")+" />"
+					"<input id='"+inputHtmlName+"' type='range' value='"+option+"' min='"+option.min+"' max='"+option.max+"'"+(option.step!=1?" step='"+option.step+"'":"")+" />"
 				);
 			} else if (property.type=='select') {
 				lines.a(
@@ -118,21 +120,36 @@ class SinglePathFilter extends Filter {
 	getJsLines(i18n,prevNodeJsNames) {
 		const lines=super.getJsLines(i18n,prevNodeJsNames);
 		this.nodeProperties.forEach(property=>{
-			//const inputJsName=this.getPropertyInputJsName(property.name);
-			const inputHtmlName=this.getPropertyInputHtmlName(property.name);
-			let value="this.value";
-			if (property.fn) {
-				value=property.fn(value);
+			const option=this.options[property.name];
+			const nodePropertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"");
+			if (property.type=='range') {
+				let value=option.value;
+				if (property.fn) {
+					value=property.fn(value);
+				}
+				if (option.value!=option.defaultValue) {
+					lines.a(
+						nodePropertyJsName+"="+value+";"
+					);
+				}
 			}
-			const eventProp=(property.type=='range'?'oninput':'onchange'); //
-			lines.a(
-				//"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
-				//(property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
-				"document.getElementById('"+inputHtmlName+"')."+eventProp+"=function(){",
-				//
-				"	"+this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")+"="+value+";",
-				"};"
-			);
+			if (property.type!='range' || option.input) {
+				//const inputJsName=this.getPropertyInputJsName(property.name);
+				const inputHtmlName=this.getPropertyInputHtmlName(property.name);
+				let value="this.value";
+				if (property.fn) {
+					value=property.fn(value);
+				}
+				const eventProp=(property.type=='range'?'oninput':'onchange'); //
+				lines.a(
+					//"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
+					//(property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
+					"document.getElementById('"+inputHtmlName+"')."+eventProp+"=function(){",
+					//
+					"	"+nodePropertyJsName+"="+value+";",
+					"};"
+				);
+			}
 		});
 		return lines;
 	}
@@ -147,7 +164,6 @@ const filterClasses={
 				{
 					name:'gain',
 					type:'range',
-					value:'1', min:'0', max:'1', step:'0.01',
 				}
 			];
 		}
@@ -160,7 +176,6 @@ const filterClasses={
 				{
 					name:'pan',
 					type:'range',
-					value:'0', min:'-1', max:'1', step:'0.01',
 				}
 			];
 		}
@@ -177,24 +192,18 @@ const filterClasses={
 				},{
 					name:'frequency',
 					type:'range',
-					value:'350', min:'0', max:'22050',
 				},{
 					name:'detune',
 					type:'range',
-					value:'0', min:'0', max:'100',
 				},{
 					name:'Q',
 					type:'range',
-					value:'0', min:'-4', max:'4', step:'0.01', fn:x=>`Math.pow(10,${x})`,
+					fn:x=>`Math.pow(10,${x})`,
 				}
 			];
 		}
 	},
 	convolver: class extends Filter {
-		constructor(n,options) {
-			super(n);
-			this.url=options.url;
-		}
 		get type()                { return 'convolver'; }
 		get ctxCreateMethodName() { return 'createConvolver'; }
 		get nodeProperties() {
@@ -202,7 +211,6 @@ const filterClasses={
 				{
 					name:'reverb',
 					type:'range',
-					value:'0', min:'0', max:'1', step:'0.01',
 				},{
 					name:'buffer',
 					type:'xhr',
@@ -235,7 +243,7 @@ const filterClasses={
 				"	"+this.dryGainNodeJsName+".gain.value=1-this.value;",
 				"};",
 				"var xhr=new XMLHttpRequest();",
-				"xhr.open('GET','"+this.url+"');", // TODO html escape
+				"xhr.open('GET','"+this.options.url+"');", // TODO html escape
 				"xhr.responseType='arraybuffer';",
 				"xhr.onload=function(){",
 				"	if (this.status==200) {", // TODO we are checking status here, but what if <audio>'s status is an error?

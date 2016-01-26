@@ -2,6 +2,8 @@
 
 const Option=Object.create(require('../base/option-classes.js'));
 
+// differs from webgl-starter:
+//	has defaultValue - although it's potentially confusing: user input default vs Web Audio Node property default - they are currently the same
 class FixedLiveNumber {
 	constructor(src,setToDefault) {
 		if (!setToDefault) {
@@ -11,12 +13,13 @@ class FixedLiveNumber {
 			//this.input=Input.createFromString(src.input);
 			this.input=src.input;
 		} else {
-			this.value=src.defaultValue
+			this.value=src.defaultValue;
 			this.min=src.availableMin;
 			this.max=src.availableMax;
 			//this.input=Input.createFromString('constant');
 			this.input=false;
 		}
+		this.defaultValue=src.defaultValue;
 		this.availableMin=src.availableMin;
 		this.availableMax=src.availableMax;
 		this.step=src.step;
