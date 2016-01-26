@@ -34,6 +34,7 @@ class Audio extends Feature {
 		const lines=super.getJsLines(featureContext,i18n);
 		if (featureContext.audioContext) {
 			lines.a(
+				"// "+i18n('options.audio.comment'),
 				"var ctx=new (AudioContext || webkitAudioContext);",
 				"var sourceElement=document.getElementById('my.source');",
 				"var sourceNode=ctx.createMediaElementSource(sourceElement);"
@@ -95,6 +96,7 @@ class Filter {
 	getJsLines(i18n,prevNodeJsNames) {
 		const lines=new Lines;
 		lines.a(
+			"// "+i18n('options.filters.'+this.type+'.comment'),
 			"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
 			...prevNodeJsNames.map(
 				prevNodeJsName=>prevNodeJsName+".connect("+this.nodeJsName+");"
@@ -292,13 +294,14 @@ class FilterSequence extends Feature {
 			return lines;
 		}
 		let prevNodeJsNames=['sourceNode'];
-		this.filters.forEach(filter=>{
-			lines.a(filter.getJsLines(i18n,prevNodeJsNames));
+		lines.interleave(...this.filters.map(filter=>{
+			const lines=filter.getJsLines(i18n,prevNodeJsNames);
 			prevNodeJsNames=filter.nodeJsNames;
-		});
-		lines.a(
+			return lines;
+		}),new Lines(
+			"// "+i18n('options.filters.comment'),
 			...prevNodeJsNames.map(prevNodeJsNames=>prevNodeJsNames+".connect(ctx.destination);")
-		);
+		));
 		return lines;
 	}
 }
@@ -326,7 +329,7 @@ module.exports=function(options,i18n){
 		})(),
 		(()=>{
 			const lines=new Lines;
-			lines.a(...features.map(feature=>feature.getJsLines(featureContext,i18n)));
+			lines.interleave(...features.map(feature=>feature.getJsLines(featureContext,i18n)));
 			return lines.wrapIfNotEmpty("<script>","</script>");
 		})(),
 		"</body>",
