@@ -11,17 +11,29 @@ class Options extends BaseOptions {
 				'http://mainline.i3s.unice.fr/mooc/drums.mp3',
 			]],
 			['Array','filters',[
-				['Void','gain'],
-				['Void','panner'],
-				['Void','biquad'],
+				['Group','gain',[
+					['LiveFloat','gain',[0,10,0,1],1],
+				]],
+				['Group','panner',[
+					['LiveFloat','pan',[-1,1],0],
+				]],
+				['Group','biquad',[
+					['LiveInt','frequency',[0,22050],350],
+					['LiveInt','detune',[0,100]],
+					['LiveInt','Q',[-4,4],0], // log Q
+				]],
 				['Group','convolver',[
 					['Text','url',[
 						'http://mainline.i3s.unice.fr/mooc/Scala-Milan-Opera-Hall.wav',
 					]],
 				]],
+				// TODO Void compressor
 			]],
 		];
-	};
+	}
+	get optionClasses() {
+		return require('./option-classes.js');
+	}
 }
 
 module.exports=Options;
