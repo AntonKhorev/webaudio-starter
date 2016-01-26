@@ -29,7 +29,7 @@ class OptionsOutput extends BaseOptionsOutput {
 				});
 			const id=generateId();
 			const inputCheckboxId=generateId();
-			let $sliderInput,$numberInput,$inputSelect;
+			let $sliderInput,$numberInput,$inputCheckbox;
 			let $rangeMinInput,$rangeMaxInput;
 			return option.$=$("<div class='option'>")
 				.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
@@ -43,28 +43,14 @@ class OptionsOutput extends BaseOptionsOutput {
 					$("<input type='number' required>"),
 					()=>$sliderInput
 				))
-				/*
-				.append(" <label for='"+inputSelectId+"'>"+i18n('ui.inputs')+":</label> ")
 				.append(
-					$inputSelect=$("<select id='"+inputSelectId+"'>").append(
-						option.availableInputTypes.map(availableInputType=>
-							$("<option>").val(availableInputType).html(i18n('ui.inputs.'+availableInputType))
-						)
-					).val(option.input).change(function(){
-						option.input=this.value;
-					})
-				)
-				.append(" ")
-				*/
-				.append(
-					$("<input type='checkbox' id='"+inputCheckboxId+"'>")
+					$inputCheckbox=$("<input type='checkbox' id='"+inputCheckboxId+"'>")
 						.prop('checked',option.input)
 						.change(function(){
 							option.input=$(this).prop('checked');
 						})
 				)
 				.append(" <label for='"+inputCheckboxId+"'>"+i18n('options-output.input')+"</label> ")
-				//
 				.append(
 					option.$range=$("<span class='range'>")
 						.append(i18n('options-output.range')+" ")
@@ -76,7 +62,7 @@ class OptionsOutput extends BaseOptionsOutput {
 				.append(
 					$("<button type='button'>"+i18n('options-output.reset')+"</button>").click(function(){
 						$sliderInput.val(option.defaultValue).change();
-						$inputSelect.val('constant').change();
+						$inputCheckbox.prop('checked',false).change();
 						$rangeMinInput.val(option.availableMin).change();
 						$rangeMaxInput.val(option.availableMax).change();
 					})
