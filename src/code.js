@@ -59,7 +59,7 @@ class Filter {
 		return toCamelCase(this.type+this.nSuffix+'.node');
 	}
 	getPropertyOptionName(propertyName) {
-		return 'options.filters.'+this.type+'.properties.'+propertyName;
+		return 'options.filters.'+this.type+'.'+propertyName;
 	}
 	getPropertyInputHtmlName(propertyName) {
 		return 'my.'+this.type+this.nSuffix+'.'+propertyName;
