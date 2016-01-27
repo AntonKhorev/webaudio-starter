@@ -30,13 +30,22 @@ class AudioDestination extends Feature {
 				lines.a(
 					"// "+i18n('options.destination.compressor.comment'),
 					"var compressorNode=ctx.createDynamicsCompressor();",
-					...prevNodeJsNames.map(prevNodeJsNames=>prevNodeJsNames+".connect(compressorNode);"),
-					"compressorNode.connect(ctx.destination);"
+					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(compressorNode);"),
+					"compressorNode.connect(ctx.destination);",
+					"document.getElementById('my.compressor').onchange=function(){",
+					"	if (this.checked) {",
+					...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".disconnect(ctx.destination);"),
+					...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".connect(compressorNode);"),
+					"	} else {",
+					...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".disconnect(compressorNode);"),
+					...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".connect(ctx.destination);"),
+					"	}",
+					"};"
 				);
 			} else {
 				lines.a(
 					"// "+i18n('options.destination.comment'),
-					...prevNodeJsNames.map(prevNodeJsNames=>prevNodeJsNames+".connect(ctx.destination);")
+					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(ctx.destination);")
 				);
 			}
 		}
