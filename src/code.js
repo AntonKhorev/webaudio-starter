@@ -3,12 +3,14 @@
 const Lines=require('../base/lines.js');
 const Audio=require('./audio.js');
 const FilterSequence=require('./filter-sequence.js');
+const AudioDestination=require('./audio-destination.js');
 
 module.exports=function(options,i18n){
 	const featureContext={};
 	const features=[];
 	features.push(new Audio(options.source));
 	features.push(new FilterSequence(options.filters));
+	features.push(new AudioDestination(options.compressor));
 	features.forEach(feature=>{
 		feature.requestFeatureContext(featureContext);
 	});
@@ -27,7 +29,12 @@ module.exports=function(options,i18n){
 		})(),
 		(()=>{
 			const lines=new Lines;
-			lines.interleave(...features.map(feature=>feature.getJsLines(featureContext,i18n)));
+			let prevNodeJsNames;
+			lines.interleave(...features.map(feature=>{
+				const lines=feature.getJsLines(featureContext,i18n,prevNodeJsNames);
+				prevNodeJsNames=feature.getNodeJsNames(featureContext,prevNodeJsNames);
+				return lines;
+			}));
 			return lines.wrapIfNotEmpty("<script>","</script>");
 		})(),
 		"</body>",

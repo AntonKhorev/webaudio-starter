@@ -5,7 +5,6 @@ const strings={
 	'options.source': "Source URL", // TODO audio.source
 
 	'options.filters': "Filters",
-	'options.filters.comment': "connect last filter node to destination",
 	'options.filters.gain': "Gain",
 	'options.filters.gain.comment': "create gain node",
 	'options.filters.gain.add': "Add Gain",
@@ -36,9 +35,11 @@ const strings={
 	'options.filters.convolver.reverb': "Reverb (Dry/Wet)",
 	'options.filters.convolver.buffer.loading': "Loading and decoding the impulse response",
 	'options.filters.convolver.buffer.error': "Error while loading the impulse response",
-	'options.filters.compressor': "Dynamics Compressor",
-	'options.filters.compressor.comment': "create dynamics compressor node",
-	'options.filters.compressor.add': "Add Dynamics Compressor",
+
+	'options.audio-destination.comment': "connect last filter node to destination",
+	'options.audio-destination.compressor.comment': "create dynamics compressor node and connect it to destination",
+	'options.audio-destination.compressor.enable': "Enable Dynamics Compressor",
+	'options.compressor': "Add Dynamics Compressor before the destination",
 
 	'options-output.drag': "Drag or press up/down while in focus to reorder",
 	'options-output.delete': "Delete",

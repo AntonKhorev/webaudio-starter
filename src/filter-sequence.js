@@ -252,13 +252,6 @@ const filterClasses={
 			return lines;
 		}
 	},
-	compressor: class extends SinglePathFilter {
-		get type()                { return 'compressor'; }
-		get ctxCreateMethodName() { return 'createDynamicsCompressor'; }
-		get nodeProperties() {
-			return [];
-		}
-	},
 };
 
 class FilterSequence extends Feature {
@@ -292,21 +285,24 @@ class FilterSequence extends Feature {
 	getHtmlLines(featureContext,i18n) {
 		return new Lines(...this.filters.map(filter=>filter.getHtmlLines(i18n)));
 	}
-	getJsLines(featureContext,i18n) {
-		const lines=super.getJsLines(featureContext,i18n);
+	getJsLines(featureContext,i18n,prevNodeJsNames) {
+		const lines=super.getJsLines(...arguments);
 		if (this.filters.length==0) {
 			return lines;
 		}
-		let prevNodeJsNames=['sourceNode'];
 		lines.interleave(...this.filters.map(filter=>{
 			const lines=filter.getJsLines(i18n,prevNodeJsNames);
 			prevNodeJsNames=filter.nodeJsNames;
 			return lines;
-		}),new Lines(
-			"// "+i18n('options.filters.comment'),
-			...prevNodeJsNames.map(prevNodeJsNames=>prevNodeJsNames+".connect(ctx.destination);")
-		));
+		}));
 		return lines;
+	}
+	getNodeJsNames(featureContext,prevNodeJsNames) {
+		if (this.filters.length>0) {
+			return this.filters[this.filters.length-1].nodeJsNames;
+		} else {
+			return prevNodeJsNames;
+		}
 	}
 }
 

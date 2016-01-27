@@ -8,8 +8,11 @@ class Feature {
 	getHtmlLines(featureContext,i18n) {
 		return new Lines;
 	}
-	getJsLines(featureContext,i18n) {
+	getJsLines(featureContext,i18n,prevNodeJsNames) {
 		return new Lines;
+	}
+	getNodeJsNames(featureContext,prevNodeJsNames) {
+		return prevNodeJsNames;
 	}
 }
 

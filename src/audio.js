@@ -13,8 +13,8 @@ class Audio extends Feature {
 			"<audio src='"+this.source+"' id='my.source' controls loop"+(featureContext.audioContext?" crossorigin='anonymous'":"")+"></audio>" // TODO html escape
 		)).wrap("<div>","</div>");
 	}
-	getJsLines(featureContext,i18n) {
-		const lines=super.getJsLines(featureContext,i18n);
+	getJsLines(featureContext,i18n,prevNodeJsNames) {
+		const lines=super.getJsLines(...arguments);
 		if (featureContext.audioContext) {
 			lines.a(
 				"// "+i18n('options.audio.comment'),
@@ -24,6 +24,13 @@ class Audio extends Feature {
 			);
 		}
 		return lines;
+	}
+	getNodeJsNames(featureContext,prevNodeJsNames) {
+		if (featureContext.audioContext) {
+			return ["sourceNode"];
+		} else {
+			return prevNodeJsNames;
+		}
 	}
 }
 
