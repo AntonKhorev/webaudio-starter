@@ -252,6 +252,13 @@ const filterClasses={
 			return lines;
 		}
 	},
+	compressor: class extends SinglePathFilter {
+		get type()                { return 'compressor'; }
+		get ctxCreateMethodName() { return 'createDynamicsCompressor'; }
+		get nodeProperties() {
+			return [];
+		}
+	},
 };
 
 class FilterSequence extends Feature {

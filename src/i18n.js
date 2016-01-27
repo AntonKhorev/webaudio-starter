@@ -36,6 +36,9 @@ const strings={
 	'options.filters.convolver.reverb': "Reverb (Dry/Wet)",
 	'options.filters.convolver.buffer.loading': "Loading and decoding the impulse response",
 	'options.filters.convolver.buffer.error': "Error while loading the impulse response",
+	'options.filters.compressor': "Dynamics Compressor",
+	'options.filters.compressor.comment': "create dynamics compressor node",
+	'options.filters.compressor.add': "Add Dynamics Compressor",
 
 	'options-output.drag': "Drag or press up/down while in focus to reorder",
 	'options-output.delete': "Delete",

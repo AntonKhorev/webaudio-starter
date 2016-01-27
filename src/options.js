@@ -31,7 +31,7 @@ class Options extends BaseOptions {
 						'http://mainline.i3s.unice.fr/mooc/Scala-Milan-Opera-Hall.wav',
 					]],
 				]],
-				// TODO Void compressor
+				['Void','compressor'],
 			]],
 		];
 	}
