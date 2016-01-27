@@ -22,11 +22,16 @@ class Filter {
 			return '';
 		}
 	}
+	getPropertyOption(property) {
+		const name=(property.optionName!==undefined ? property.optionName : property.name);
+		return this.options[name];
+	}
+	getPropertyOptionName(property) {
+		const name=(property.optionName!==undefined ? property.optionName : property.name);
+		return 'options.filters.'+this.type+'.'+name;
+	}
 	get nodeJsName() {
 		return toCamelCase(this.type+this.nSuffix+'.node');
-	}
-	getPropertyOptionName(propertyName) {
-		return 'options.filters.'+this.type+'.'+propertyName;
 	}
 	getPropertyInputHtmlName(propertyName) {
 		return 'my.'+this.type+this.nSuffix+'.'+propertyName;
@@ -37,25 +42,25 @@ class Filter {
 	getHtmlLines(i18n) {
 		const lines=new Lines;
 		this.nodeProperties.forEach(property=>{
-			const option=this.options[property.name];
+			const option=this.getPropertyOption(property);
 			const inputHtmlName=this.getPropertyInputHtmlName(property.name);
 			if (property.type=='range' && option.input) {
 				lines.a(
-					"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property.name))+"</label>",
+					"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property))+"</label>",
 					"<input id='"+inputHtmlName+"' type='range' value='"+option+"' min='"+option.min+"' max='"+option.max+"'"+(option.step!=1?" step='"+option.step+"'":"")+" />"
 				);
-			} else if (property.type=='select') {
+			} else if (property.type=='select' && option.input) {
 				lines.a(
-					"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property.name))+"</label>",
+					"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property))+"</label>",
 					(
-						new Lines(...property.options.map(option=>"<option>"+option+"</option>"))
+						new Lines(...option.availableValues.map(value=>"<option>"+value+"</option>"))
 					).wrap(
 						"<select id='"+inputHtmlName+"'>","</select>"
 					)
 				);
 			} else if (property.type=='xhr') {
 				lines.a(
-					"<span id='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property.name)+'.loading')+"</span>"
+					"<span id='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property)+'.loading')+"</span>"
 				);
 			}
 		});
@@ -86,10 +91,13 @@ class SinglePathFilter extends Filter {
 	getJsLines(i18n,prevNodeJsNames) {
 		const lines=super.getJsLines(i18n,prevNodeJsNames);
 		this.nodeProperties.forEach(property=>{
-			const option=this.options[property.name];
+			const option=this.getPropertyOption(property);
 			const nodePropertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"");
-			if (property.type=='range') {
+			//if (property.type=='range' || property.type=='select') {
 				let value=option.value;
+				if (property.type=='select') {
+					value="'"+value+"'";
+				}
 				if (property.fn) {
 					value=property.fn(value);
 				}
@@ -98,8 +106,8 @@ class SinglePathFilter extends Filter {
 						nodePropertyJsName+"="+value+";"
 					);
 				}
-			}
-			if (property.type!='range' || option.input) {
+			//}
+			if (option.input) {
 				//const inputJsName=this.getPropertyInputJsName(property.name);
 				const inputHtmlName=this.getPropertyInputHtmlName(property.name);
 				let value="this.value";
@@ -153,8 +161,8 @@ const filterClasses={
 			return [
 				{
 					name:'type',
+					optionName:'filtertype',
 					type:'select',
-					options:['lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch','allpass'],
 				},{
 					name:'frequency',
 					type:'range',
@@ -237,7 +245,7 @@ const filterClasses={
 				"	}",
 				"};",
 				"xhr.onerror=function(){",
-				"	document.getElementById('"+messageHtmlName+"').textContent='"+i18n(this.getPropertyOptionName('buffer')+'.error')+"';",
+				"	document.getElementById('"+messageHtmlName+"').textContent='"+i18n('options.filters.convolver.buffer.error')+"';",
 				"};",
 				"xhr.send();"
 			);

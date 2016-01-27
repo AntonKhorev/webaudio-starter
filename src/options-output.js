@@ -43,6 +43,7 @@ class OptionsOutput extends BaseOptionsOutput {
 					$("<input type='number' required>"),
 					()=>$sliderInput
 				))
+				.append(" ")
 				.append(
 					$inputCheckbox=$("<input type='checkbox' id='"+inputCheckboxId+"'>")
 						.prop('checked',option.input)
@@ -65,6 +66,38 @@ class OptionsOutput extends BaseOptionsOutput {
 						$inputCheckbox.prop('checked',false).change();
 						$rangeMinInput.val(option.availableMin).change();
 						$rangeMaxInput.val(option.availableMax).change();
+					})
+				);
+		});
+		optionClassWriters.set(Option.LiveSelect,(option,writeOption,i18n,generateId)=>{
+			const id=generateId();
+			const inputCheckboxId=generateId();
+			let $select,$inputCheckbox;
+			return option.$=$("<div class='option'>")
+				.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
+				.append(" ")
+				.append(
+					$select=$("<select id='"+id+"'>").append(
+						option.availableValues.map(function(availableValue){
+							return $("<option>").val(availableValue).html(i18n('options.'+option.fullName+'.'+availableValue))
+						})
+					).val(option.value).change(function(){
+						option.value=this.value;
+					})
+				)
+				.append(" ")
+				.append(
+					$inputCheckbox=$("<input type='checkbox' id='"+inputCheckboxId+"'>")
+						.prop('checked',option.input)
+						.change(function(){
+							option.input=$(this).prop('checked');
+						})
+				)
+				.append(" <label for='"+inputCheckboxId+"'>"+i18n('options-output.input')+"</label> ")
+				.append(
+					$("<button type='button'>"+i18n('options-output.reset')+"</button>").click(function(){
+						$select.val(option.defaultValue).change();
+						$inputCheckbox.prop('checked',false).change();
 					})
 				);
 		});

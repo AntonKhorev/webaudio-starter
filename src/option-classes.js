@@ -4,25 +4,19 @@ const Option=Object.create(require('../base/option-classes.js'));
 
 // differs from webgl-starter:
 //	has defaultValue - although it's potentially confusing: user input default vs Web Audio Node property default - they are currently the same
+//	no setToDefault, which is needed only if speed is present
+//	name is set, b/c it wasn't needed only for speed
 class FixedLiveNumber {
-	constructor(src,setToDefault) {
-		if (!setToDefault) {
-			this.value=src.value;
-			this.min=src.min;
-			this.max=src.max;
-			//this.input=Input.createFromString(src.input);
-			this.input=src.input;
-		} else {
-			this.value=src.defaultValue;
-			this.min=src.availableMin;
-			this.max=src.availableMax;
-			//this.input=Input.createFromString('constant');
-			this.input=false;
-		}
+	constructor(src) {
+		this.value=src.value;
+		this.min=src.min;
+		this.max=src.max;
+		this.input=src.input;
 		this.defaultValue=src.defaultValue;
 		this.availableMin=src.availableMin;
 		this.availableMax=src.availableMax;
 		this.step=src.step;
+		this.name=src.name;
 	}
 	valueOf() {
 		return this.value;
@@ -98,9 +92,7 @@ Option.LiveNumber = class extends Option.RangeInput {
 		return this.exportHelper(this);
 	}
 	fix() {
-		const fixed=new FixedLiveNumber(this);
-		fixed.name=this.name;
-		return fixed;
+		return new FixedLiveNumber(this);
 	}
 };
 
@@ -113,6 +105,52 @@ Option.LiveInt = class extends Option.LiveNumber {
 Option.LiveFloat = class extends Option.LiveNumber {
 	get step() {
 		return 0.01;
+	}
+};
+
+class FixedLiveSelect {
+	constructor(src) {
+		this.value=src.value;
+		this.input=src.input;
+		this.defaultValue=src.defaultValue;
+		this.availableValues=src.availableValues;
+		this.name=src.name;
+	}
+	valueOf() {
+		return this.value;
+	}
+	toString() {
+		return this.value;
+	}
+}
+
+Option.LiveSelect = class extends Option.Select {
+	constructor(name,availableValues,defaultValue,data,fullName,isVisible,updateCallback) {
+		let dataValue,dataInput;
+		if (typeof data == 'object') {
+			dataValue=data.value;
+			dataInput=data.input;
+		} else {
+			dataValue=data;
+		}
+		super(name,availableValues,defaultValue,dataValue,fullName,isVisible,updateCallback);
+		this._input=!!dataInput;
+	}
+	get input() {
+		return this._input;
+	}
+	set input(input) {
+		this._input=input;
+		this.updateCallback();
+	}
+	export() {
+		const data={};
+		if (this.value!=this.defaultValue) data.value=this.value;
+		if (this.input) data.input=this.input;
+		return data;
+	}
+	fix() {
+		return new FixedLiveSelect(this);
 	}
 };
 

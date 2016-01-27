@@ -18,6 +18,9 @@ class Options extends BaseOptions {
 					['LiveFloat','pan',[-1,1],0],
 				]],
 				['Group','biquad',[
+					['LiveSelect','filtertype',[ // can't have array entry with suboption 'type'
+						'lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch','allpass'
+					]],
 					['LiveInt','frequency',[0,22050],350],
 					['LiveInt','detune',[0,100]],
 					['LiveFloat','Q',[-4,4],0], // log Q
