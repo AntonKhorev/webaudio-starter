@@ -64,7 +64,7 @@ class Filter {
 				);
 			}
 		});
-		return lines.wrap("<div>","</div>");
+		return lines.wrapIfNotEmpty("<div>","</div>");
 	}
 	getJsLines(i18n,prevNodeJsNames) {
 		const lines=new Lines;
