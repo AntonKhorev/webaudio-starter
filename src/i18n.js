@@ -1,8 +1,9 @@
 'use strict';
 
 const strings={
-	'options.audio.comment': "create audio context and source node",
-	'options.source': "Source URL", // TODO audio.source
+	'options.source': "Source",
+	'options.source.comment': "create audio context and source node",
+	'options.source.url': "Source URL",
 
 	'options.filters': "Filters",
 	'options.filters.gain': "Gain",
@@ -36,10 +37,11 @@ const strings={
 	'options.filters.convolver.buffer.loading': "Loading and decoding the impulse response",
 	'options.filters.convolver.buffer.error': "Error while loading the impulse response",
 
-	'options.audio-destination.comment': "connect last filter node to destination",
-	'options.audio-destination.compressor.comment': "create dynamics compressor node and connect it to destination",
-	'options.audio-destination.compressor.enable': "Enable Dynamics Compressor",
-	'options.compressor': "Add Dynamics Compressor before the destination",
+	'options.destination': "Destination",
+	'options.destination.comment': "connect last filter node to destination",
+	'options.destination.compressor': "Add Dynamics Compressor before the destination",
+	'options.destination.compressor.comment': "create dynamics compressor node and connect it to destination",
+	'options.destination.compressor.enable': "Enable Dynamics Compressor",
 
 	'options-output.drag': "Drag or press up/down while in focus to reorder",
 	'options-output.delete': "Delete",

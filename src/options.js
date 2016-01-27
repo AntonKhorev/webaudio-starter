@@ -5,10 +5,12 @@ const BaseOptions=require('../base/options.js');
 class Options extends BaseOptions {
 	get entriesDescription() {
 		return [
-			['Text','source',[
-				// w3c mooc:
-				'http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3',
-				'http://mainline.i3s.unice.fr/mooc/drums.mp3',
+			['Group','source',[
+				['Text','url',[
+					// w3c mooc:
+					'http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3',
+					'http://mainline.i3s.unice.fr/mooc/drums.mp3',
+				]],
 			]],
 			['Array','filters',[
 				['Group','gain',[
@@ -32,7 +34,9 @@ class Options extends BaseOptions {
 					]],
 				]],
 			]],
-			['Checkbox','compressor'],
+			['Group','destination',[
+				['Checkbox','compressor'],
+			]],
 		];
 	}
 	get optionClasses() {

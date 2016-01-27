@@ -10,7 +10,7 @@ module.exports=function(options,i18n){
 	const features=[];
 	features.push(new Audio(options.source));
 	features.push(new FilterSequence(options.filters));
-	features.push(new AudioDestination(options.compressor));
+	features.push(new AudioDestination(options.destination));
 	features.forEach(feature=>{
 		feature.requestFeatureContext(featureContext);
 	});
