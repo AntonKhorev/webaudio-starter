@@ -263,22 +263,57 @@ const filterClasses={
 			return [this.nodeJsName];
 		}
 		getJsLines(i18n,prevNodeJsNames) {
+			const getJsLoopLines=()=>{
+				const lines=new Lines;
+				lines.a(
+					"var freq=freqData[0], gain=freqData[1];",
+					""+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();"
+				);
+				if (prevNodeJsNames.length==1) {
+					lines.a(
+						"prevNode.connect("+this.nodeJsName+");"
+					);
+				} else {
+					lines.a(
+						"prevNodes.forEach(function(prevNode){",
+						"	prevNode.connect("+this.nodeJsName+");",
+						"});"
+					);
+				}
+				lines.a(
+					this.nodeJsName+".type='peaking';",
+					this.nodeJsName+".frequency.value=freq;",
+					this.nodeJsName+".gain.value=gain;"
+				);
+				if (prevNodeJsNames.length==1) {
+					lines.a(
+						"prevNode="+this.nodeJsName+";"
+					);
+				} else {
+					lines.a(
+						"prevNodes=["+this.nodeJsName+"];"
+					);
+				}
+				return lines;
+			};
 			const lines=new Lines;
 			const freqData="["+this.frequencies.map((freq,i)=>"["+freq+","+this.getPropertyOption(this.nodeProperties[i])+"]").join()+"]";
 			lines.a(
-				"// "+i18n('options.filters.'+this.type+'.comment'),
-				"var prevNodes=["+prevNodeJsNames.join()+"];",
+				"// "+i18n('options.filters.'+this.type+'.comment')
+			);
+			if (prevNodeJsNames.length==1) {
+				lines.a(
+					"var prevNode="+prevNodeJsNames[0]+";"
+				);
+			} else {
+				lines.a(
+					"var prevNodes=["+prevNodeJsNames.join()+"];"
+				);
+			}
+			lines.a(
 				"var "+this.nodeJsName+";",
 				freqData+".forEach(function(freqData){",
-				"	var freq=freqData[0], gain=freqData[1];",
-				"	"+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
-				"	prevNodes.forEach(function(prevNode){",
-				"		prevNode.connect("+this.nodeJsName+");",
-				"	});",
-				"	"+this.nodeJsName+".type='peaking';",
-				"	"+this.nodeJsName+".frequency.value=freq;",
-				"	"+this.nodeJsName+".gain.value=gain;",
-				"	prevNodes=["+this.nodeJsName+"];",
+				getJsLoopLines().indent(),
 				"});"
 			);
 			return lines;
