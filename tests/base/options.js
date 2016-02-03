@@ -371,7 +371,7 @@ describe("Base/Options",()=>{
 					{filter:'biquad'},
 					{gain:'3'},
 					{},
-				]
+				],
 			});
 			const arrayEntry=options.root.entries[0];
 			assert.equal(arrayEntry.entries.length,6);
@@ -382,6 +382,24 @@ describe("Base/Options",()=>{
 				assert.equal(option.name,names[i]);
 				assert.equal(option.entries[0].name,subNames[i]);
 				assert.equal(option.entries[0].value,subValues[i]);
+			});
+		});
+		it("exports changed data",()=>{
+			const options=new TestOptions;
+			const arrayEntry=options.root.entries[0];
+			arrayEntry.addEntry('gain');
+			arrayEntry.entries[0].entries[0].value='4';
+			arrayEntry.addEntry('biquad');
+			arrayEntry.entries[1].entries[0].value='notch';
+			arrayEntry.addEntry('gain');
+			arrayEntry.addEntry('biquad');
+			assert.deepEqual(options.export(),{
+				arr: [
+					{gain:'4'},
+					{filter:'biquad', type:'notch'},
+					{},
+					{filter:'biquad'},
+				],
 			});
 		});
 	});

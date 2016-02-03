@@ -226,7 +226,7 @@ Option.Array = class extends Option.Base {
 			value: this._entries.map(entry=>{
 				const subData=entry.export();
 				const subType=entry.name;
-				if (subType!=defaultType) subData.type=subType;
+				if (subType!=defaultType) subData[this.typePropertyName]=subType;
 				return entry.shortenExport(subData);
 			}),
 		};
