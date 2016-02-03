@@ -11,7 +11,8 @@ fixed options spec:
 	input option returns its value in primitive context (possibly with valueOf() method)
 		value has primitive type
 	options have the following properties in order of priority (most important first)
-		'type' if option is an array member
+		type property (defaults to 'type') if option is an array member
+			why need type property if there's name? - because name is not imported/exported
 		suboption-named properties equal to suboptions for collections
 		'entries' array of suboptions for array and collection
 		'value' and 'name' properties for non-boolean options
@@ -236,7 +237,7 @@ Option.Array = class extends Option.Base {
 			name: this.name,
 			entries: this._entries.map(entry=>{
 				const subFixed=entry.fix();
-				if (typeof subFixed == 'object') subFixed.type=entry.name;
+				if (typeof subFixed == 'object') subFixed[this.typePropertyName]=entry.name;
 				return subFixed;
 			}),
 		};

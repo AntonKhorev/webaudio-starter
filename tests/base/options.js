@@ -402,6 +402,26 @@ describe("Base/Options",()=>{
 				],
 			});
 		});
+		it("fixes data",()=>{
+			const options=new TestOptions;
+			const arrayEntry=options.root.entries[0];
+			arrayEntry.addEntry('gain');
+			arrayEntry.entries[0].entries[0].value='4';
+			arrayEntry.addEntry('biquad');
+			arrayEntry.entries[1].entries[0].value='notch';
+			arrayEntry.addEntry('gain');
+			arrayEntry.addEntry('biquad');
+			const fixed=options.fix();
+			assert.equal(fixed.arr.entries.length,4);
+			assert.equal(fixed.arr.entries[0].filter,'gain');
+			assert.equal(fixed.arr.entries[0].gain,'4');
+			assert.equal(fixed.arr.entries[1].filter,'biquad');
+			assert.equal(fixed.arr.entries[1].type,'notch');
+			assert.equal(fixed.arr.entries[2].filter,'gain');
+			assert.equal(fixed.arr.entries[2].gain,'1');
+			assert.equal(fixed.arr.entries[3].filter,'biquad');
+			assert.equal(fixed.arr.entries[3].type,'lowpass');
+		});
 	});
 	context("array of groups in reverse order with member named 'type'",()=>{
 		class TestOptions extends Options {
