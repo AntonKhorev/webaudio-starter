@@ -36,6 +36,15 @@ const strings={
 	'options.filters.convolver.reverb': "Reverb (Dry/Wet)",
 	'options.filters.convolver.buffer.loading': "Loading and decoding the impulse response",
 	'options.filters.convolver.buffer.error': "Error while loading the impulse response",
+	'options.filters.equalizer': "Equalizer",
+	'options.filters.equalizer.comment': "create equalizer as a sequence of peaking filter nodes",
+	'options.filters.equalizer.add': "Add Equalizer",
+	'options.filters.equalizer.gain60': "60 Hz gain", // TODO {,} expansion
+	'options.filters.equalizer.gain170': "170 Hz gain",
+	'options.filters.equalizer.gain350': "350 Hz gain",
+	'options.filters.equalizer.gain1000': "1000 Hz gain",
+	'options.filters.equalizer.gain3500': "3500 Hz gain",
+	'options.filters.equalizer.gain10000': "10000 Hz gain",
 
 	'options.destination': "Destination",
 	'options.destination.comment': "connect last filter node to destination",

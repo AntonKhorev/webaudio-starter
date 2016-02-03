@@ -33,6 +33,7 @@ class Options extends BaseOptions {
 						'http://mainline.i3s.unice.fr/mooc/Scala-Milan-Opera-Hall.wav',
 					]],
 				]],
+				['Group','equalizer',[60,170,350,1000,3500,10000].map(freq=>['LiveInt','gain'+freq,[-30,30],0])],
 			],'filter'],
 			['Group','destination',[
 				['Checkbox','compressor'],

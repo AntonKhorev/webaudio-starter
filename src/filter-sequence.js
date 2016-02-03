@@ -249,6 +249,41 @@ const filterClasses={
 			return lines;
 		}
 	},
+	equalizer: class extends Filter {
+		get type()                { return 'equalizer'; }
+		get ctxCreateMethodName() { return 'createBiquadFilter'; }
+		get frequencies()         { return [60,170,350,1000,3500,10000]; }
+		get nodeProperties() {
+			return this.frequencies.map(freq=>({
+				name:'gain'+freq,
+				type:'range',
+			}));
+		}
+		get nodeJsNames() {
+			return [this.nodeJsName];
+		}
+		getJsLines(i18n,prevNodeJsNames) {
+			const lines=new Lines;
+			const freqData="["+this.frequencies.map((freq,i)=>"["+freq+","+this.getPropertyOption(this.nodeProperties[i])+"]").join()+"]";
+			lines.a(
+				"// "+i18n('options.filters.'+this.type+'.comment'),
+				"var prevNodes=["+prevNodeJsNames.join()+"];",
+				"var "+this.nodeJsName+";",
+				freqData+".forEach(function(freqData){",
+				"	var freq=freqData[0], gain=freqData[1];",
+				"	"+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
+				"	prevNodes.forEach(function(prevNode){",
+				"		prevNode.connect("+this.nodeJsName+");",
+				"	});",
+				"	"+this.nodeJsName+".type='peaking';",
+				"	"+this.nodeJsName+".frequency.value=freq;",
+				"	"+this.nodeJsName+".gain.value=gain;",
+				"	prevNodes=["+this.nodeJsName+"];",
+				"});"
+			);
+			return lines;
+		}
+	},
 };
 
 class FilterSequence extends Feature {
