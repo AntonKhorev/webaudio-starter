@@ -263,56 +263,79 @@ const filterClasses={
 			return [this.nodeJsName];
 		}
 		getJsLines(i18n,prevNodeJsNames) {
-			const getJsLoopLines=()=>{
+			const allGainsConstant=this.nodeProperties.every(prop=>this.getPropertyOption(prop).input==false);
+			const getJsDataLines=()=>{
 				const lines=new Lines;
 				lines.a(
-					"var freq=freqData[0], gain=freqData[1];",
-					""+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();"
+					this.frequencies.map((freq,i)=>{
+						const option=this.getPropertyOption(this.nodeProperties[i]);
+						if (allGainsConstant) {
+							return "["+freq+","+option.value+"]";
+						} else {
+							return "["+freq+","+option.value+","+option.input+"]";
+						}
+					}).join()
 				);
+				return lines;
+			};
+			const getJsLoopLines=()=>{
+				const nodeJsName=(allGainsConstant ? this.nodeJsName : 'node');
+				const lines=new Lines;
+				lines.a("var freq=freqData[0], gain=freqData[1]");
+				if (!allGainsConstant) {
+					lines.t(", editable=freqData[2]");
+				}
+				lines.t(";");
+				if (allGainsConstant) {
+					lines.a("");
+				} else {
+					lines.a("var ");
+				}
+				lines.t(nodeJsName+"=ctx."+this.ctxCreateMethodName+"();");
 				if (prevNodeJsNames.length==1) {
-					lines.a(
-						"prevNode.connect("+this.nodeJsName+");"
-					);
+					lines.a("prevNode.connect("+nodeJsName+");");
 				} else {
 					lines.a(
 						"prevNodes.forEach(function(prevNode){",
-						"	prevNode.connect("+this.nodeJsName+");",
+						"	prevNode.connect("+nodeJsName+");",
 						"});"
 					);
 				}
 				lines.a(
-					this.nodeJsName+".type='peaking';",
-					this.nodeJsName+".frequency.value=freq;",
-					this.nodeJsName+".gain.value=gain;"
+					nodeJsName+".type='peaking';",
+					nodeJsName+".frequency.value=freq;",
+					nodeJsName+".gain.value=gain;"
 				);
+				if (!allGainsConstant) {
+					const inputHtmlNamePrefix=this.getPropertyInputHtmlName('gain');
+					lines.a(
+						"if (editable) {",
+						"	document.getElementById('"+inputHtmlNamePrefix+"'+freq).oninput=function(){",
+						"		"+nodeJsName+".gain.value=this.value;",
+						"	};",
+						"}"
+					);
+				}
+				const outerNodeJsName=(allGainsConstant ? nodeJsName : this.nodeJsName+"="+nodeJsName);
 				if (prevNodeJsNames.length==1) {
-					lines.a(
-						"prevNode="+this.nodeJsName+";"
-					);
+					lines.a("prevNode="+outerNodeJsName+";");
 				} else {
-					lines.a(
-						"prevNodes=["+this.nodeJsName+"];"
-					);
+					lines.a("prevNodes=["+outerNodeJsName+"];");
 				}
 				return lines;
 			};
 			const lines=new Lines;
-			const freqData="["+this.frequencies.map((freq,i)=>"["+freq+","+this.getPropertyOption(this.nodeProperties[i])+"]").join()+"]";
-			lines.a(
-				"// "+i18n('options.filters.'+this.type+'.comment')
-			);
+			lines.a("// "+i18n('options.filters.'+this.type+'.comment'));
 			if (prevNodeJsNames.length==1) {
-				lines.a(
-					"var prevNode="+prevNodeJsNames[0]+";"
-				);
+				lines.a("var prevNode="+prevNodeJsNames[0]+";");
 			} else {
-				lines.a(
-					"var prevNodes=["+prevNodeJsNames.join()+"];"
-				);
+				lines.a("var prevNodes=["+prevNodeJsNames.join()+"];");
 			}
 			lines.a(
 				"var "+this.nodeJsName+";",
-				freqData+".forEach(function(freqData){",
+				"[",
+				getJsDataLines().indent(),
+				"].forEach(function(freqData){",
 				getJsLoopLines().indent(),
 				"});"
 			);
