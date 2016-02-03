@@ -330,7 +330,8 @@ describe("Base/Options",()=>{
 				return [
 					['Array','arr',[
 						['Group','gain',[
-							['Float','gain',[0,10],1],
+							// ['Float','gain',[0,10],1],
+							['Text','gain',['0','10'],'1'],
 						]],
 						['Group','biquad',[
 							['Select','type',[
@@ -361,6 +362,28 @@ describe("Base/Options",()=>{
 			assert.equal(arrayEntry.entries[0].entries[0].name,'type');
 			assert.equal(arrayEntry.entries[0].entries[0].value,'lowpass');
 		});
+		it("imports data",()=>{
+			const options=new TestOptions({
+				arr: [
+					{filter:'gain', gain:'2'},
+					{filter:'biquad', type:'bandpass'},
+					{filter:'gain'},
+					{filter:'biquad'},
+					{gain:'3'},
+					{},
+				]
+			});
+			const arrayEntry=options.root.entries[0];
+			assert.equal(arrayEntry.entries.length,6);
+			const names=['gain','biquad','gain','biquad','gain','gain'];
+			const subNames=['gain','type','gain','type','gain','gain'];
+			const subValues=['2','bandpass','1','lowpass','3','1'];
+			arrayEntry.entries.forEach((option,i)=>{
+				assert.equal(option.name,names[i]);
+				assert.equal(option.entries[0].name,subNames[i]);
+				assert.equal(option.entries[0].value,subValues[i]);
+			});
+		});
 	});
 	context("array of groups in reverse order with member named 'type'",()=>{
 		class TestOptions extends Options {
@@ -373,7 +396,8 @@ describe("Base/Options",()=>{
 							]],
 						]],
 						['Group','gain',[
-							['Float','gain',[0,10],1],
+							// ['Float','gain',[0,10],1],
+							['Text','gain',['0','10'],'1'],
 						]],
 					],'filter'],
 				];

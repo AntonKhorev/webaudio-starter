@@ -178,6 +178,8 @@ Option.Array = class extends Option.Base {
 	constructor(name,availableConstructors,typePropertyName,data,fullName,isVisible,updateCallback) {
 		super(name,undefined,undefined,undefined,fullName,isVisible,updateCallback);
 		this.availableConstructors=availableConstructors; // Map {type:constructor}
+		if (typePropertyName===undefined) typePropertyName='type';
+		this.typePropertyName=typePropertyName;
 		this._entries=[];
 		let subDatas=[];
 		if (Array.isArray(data)) {
@@ -189,8 +191,8 @@ Option.Array = class extends Option.Base {
 		for (let i=0;i<subDatas.length;i++) {
 			const subData=subDatas[i];
 			let subType=defaultType;
-			if (typeof subData == 'object' && subData.type!==undefined) {
-				subType=subData.type;
+			if (typeof subData == 'object' && subData[typePropertyName]!==undefined) {
+				subType=subData[typePropertyName];
 			}
 			let subCtor=this.availableConstructors.get(subType);
 			if (subCtor) {
