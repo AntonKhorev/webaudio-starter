@@ -23,12 +23,10 @@ class Filter {
 		}
 	}
 	getPropertyOption(property) {
-		const name=(property.optionName!==undefined ? property.optionName : property.name);
-		return this.options[name];
+		return this.options[property.name];
 	}
 	getPropertyOptionName(property) {
-		const name=(property.optionName!==undefined ? property.optionName : property.name);
-		return 'options.filters.'+this.type+'.'+name;
+		return 'options.filters.'+this.type+'.'+property.name;
 	}
 	get nodeJsName() {
 		return toCamelCase(this.type+this.nSuffix+'.node');
@@ -161,7 +159,6 @@ const filterClasses={
 			return [
 				{
 					name:'type',
-					optionName:'filtertype',
 					type:'select',
 				},{
 					name:'frequency',
@@ -259,19 +256,19 @@ class FilterSequence extends Feature {
 		super();
 		const filterCounts={};
 		filterOptions.entries.forEach(entry=>{
-			if (!filterCounts[entry.type]) {
-				filterCounts[entry.type]=0;
+			if (!filterCounts[entry.filter]) {
+				filterCounts[entry.filter]=0;
 			}
-			filterCounts[entry.type]++;
+			filterCounts[entry.filter]++;
 		});
 		const filterCounts2={};
 		this.filters=filterOptions.entries.map(entry=>{
-			const filterClass=filterClasses[entry.type];
-			if (filterCounts[entry.type]>1) {
-				if (!filterCounts2[entry.type]) {
-					filterCounts2[entry.type]=0;
+			const filterClass=filterClasses[entry.filter];
+			if (filterCounts[entry.filter]>1) {
+				if (!filterCounts2[entry.filter]) {
+					filterCounts2[entry.filter]=0;
 				}
-				return new filterClass(filterCounts2[entry.type]++,entry);
+				return new filterClass(filterCounts2[entry.filter]++,entry);
 			} else {
 				return new filterClass(undefined,entry);
 			}
