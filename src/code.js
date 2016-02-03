@@ -20,6 +20,22 @@ module.exports=function(options,i18n){
 		"<head>",
 		"<meta charset='utf-8' />",
 		"<title>WebAudio example - Generated code</title>",
+		(()=>{
+			const lines=new Lines;
+			if (featureContext.alignedInputs) {
+				lines.a(
+					".aligned label {",
+					"	display: inline-block;",
+					"	width: 10em;",
+					"	text-align: right;",
+					"}"
+				);
+			}
+			return lines.wrapIfNotEmpty(
+				"<style>",
+				"</style>"
+			);
+		})(),
 		"</head>",
 		"<body>",
 		(()=>{

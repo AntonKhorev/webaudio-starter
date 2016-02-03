@@ -37,6 +37,8 @@ class Filter {
 	//getPropertyInputJsName(propertyName) {
 	//	return toCamelCase(this.type+this.nSuffix+'.'+propertyName+'.input');
 	//}
+	requestFeatureContext(featureContext) {
+	}
 	getHtmlPropertyLines(i18n,property) {
 		const lines=new Lines;
 		const option=this.getPropertyOption(property);
@@ -266,9 +268,12 @@ const filterClasses={
 		get nodeJsNames() {
 			return [this.nodeJsName];
 		}
+		requestFeatureContext(featureContext) {
+			featureContext.alignedInputs=true;
+		}
 		getHtmlPropertyLines(i18n,property) {
 			const lines=super.getHtmlPropertyLines(i18n,property);
-			return lines.wrapIfNotEmpty("<div>","</div>");
+			return lines.wrapIfNotEmpty("<div class='aligned'>","</div>");
 		}
 		getJsLines(i18n,prevNodeJsNames) {
 			const allGainsConstant=this.nodeProperties.every(prop=>this.getPropertyOption(prop).input==false);
@@ -379,6 +384,9 @@ class FilterSequence extends Feature {
 		if (this.filters.length>0) {
 			featureContext.audioContext=true;
 		}
+		this.filters.forEach(filter=>{
+			filter.requestFeatureContext(featureContext);
+		});
 	}
 	getHtmlLines(featureContext,i18n) {
 		return new Lines(...this.filters.map(filter=>filter.getHtmlLines(i18n)));
