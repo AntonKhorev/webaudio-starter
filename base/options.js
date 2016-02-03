@@ -18,7 +18,7 @@ class Options {
 			const fullName=fullNamePath+name;
 			const ctorArgsDescription=description.slice(2);
 			let contents=[];
-			let defaultValueOrConstructors;
+			let defaultValue;
 			let visibilityData={};
 			let nScalars=0;
 			let nArrays=0;
@@ -27,7 +27,7 @@ class Options {
 				let arg=ctorArgsDescription[i];
 				if (typeof arg == 'string' || typeof arg == 'number' || typeof arg == 'boolean') {
 					if (nScalars==0) {
-						defaultValueOrConstructors=arg;
+						defaultValue=arg;
 					} else {
 						throw new Error("too many scalar arguments");
 					}
@@ -35,11 +35,11 @@ class Options {
 				} else if (Array.isArray(arg)) {
 					if (nArrays==0) {
 						if (!isInsideArray && className=='Array') { // TODO test array inside array
-							defaultValueOrConstructors={};
+							contents=new Map;
 							arg.forEach(x=>{
 								const type=x[1];
-								contents.push(type);
-								defaultValueOrConstructors[type]=subData=>makeEntry(x,fullName+'.',subData,true);
+								const ctor=subData=>makeEntry(x,fullName+'.',subData,true);
+								contents.set(type,ctor);
 							});
 						} else {
 							contents=arg.map(x=>{
@@ -91,7 +91,7 @@ class Options {
 					if (this.updateCallback) this.updateCallback();
 				};
 			}
-			const option=new Option[className](name,contents,defaultValueOrConstructors,data,fullName,isVisible,updateCallback);
+			const option=new Option[className](name,contents,defaultValue,data,fullName,isVisible,updateCallback);
 			if (!isInsideArray) {
 				optionByFullName[fullName]=option;
 				for (let testName in visibilityData) {

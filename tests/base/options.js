@@ -324,4 +324,67 @@ describe("Base/Options",()=>{
 			assert.equal(arrayEntry.entries[0].entries[0].value,'blabla');
 		});
 	});
+	context("array of groups with member named 'type'",()=>{
+		class TestOptions extends Options {
+			get entriesDescription() {
+				return [
+					['Array','arr',[
+						['Group','gain',[
+							['Float','gain',[0,10],1],
+						]],
+						['Group','biquad',[
+							['Select','type',[
+								'lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch','allpass'
+							]],
+						]],
+					],'filter'],
+				];
+			}
+		}
+		it("has empty array by default",()=>{
+			const options=new TestOptions;
+			const arrayEntry=options.root.entries[0];
+			assert.equal(arrayEntry.entries.length,0);
+		});
+		it("returns available array types",()=>{
+			const options=new TestOptions;
+			const arrayEntry=options.root.entries[0];
+			assert.deepEqual(arrayEntry.availableTypes,[
+				'gain','biquad'
+			]);
+		});
+		it("adds array entry",()=>{
+			const options=new TestOptions;
+			const arrayEntry=options.root.entries[0];
+			arrayEntry.addEntry('biquad');
+			assert.equal(arrayEntry.entries.length,1);
+			assert.equal(arrayEntry.entries[0].entries[0].name,'type');
+			assert.equal(arrayEntry.entries[0].entries[0].value,'lowpass');
+		});
+	});
+	context("array of groups in reverse order with member named 'type'",()=>{
+		class TestOptions extends Options {
+			get entriesDescription() {
+				return [
+					['Array','arr',[
+						['Group','biquad',[
+							['Select','type',[
+								'lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch','allpass'
+							]],
+						]],
+						['Group','gain',[
+							['Float','gain',[0,10],1],
+						]],
+					],'filter'],
+				];
+			}
+		}
+		it("returns available array types",()=>{
+			const options=new TestOptions;
+			const arrayEntry=options.root.entries[0];
+			assert.deepEqual(arrayEntry.availableTypes,[
+				'biquad','gain'
+			]);
+		});
+	});
 });

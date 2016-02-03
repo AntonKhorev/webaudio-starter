@@ -20,7 +20,7 @@ class Options extends BaseOptions {
 					['LiveFloat','pan',[-1,1],0],
 				]],
 				['Group','biquad',[
-					['LiveSelect','filtertype',[ // can't have array entry with suboption 'type'
+					['LiveSelect','type',[
 						'lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch','allpass'
 					]],
 					['LiveInt','frequency',[0,22050],350],
@@ -33,7 +33,7 @@ class Options extends BaseOptions {
 						'http://mainline.i3s.unice.fr/mooc/Scala-Milan-Opera-Hall.wav',
 					]],
 				]],
-			]],
+			],'filter'],
 			['Group','destination',[
 				['Checkbox','compressor'],
 			]],

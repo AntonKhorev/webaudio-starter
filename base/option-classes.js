@@ -175,10 +175,9 @@ Option.Root = class extends Option.Collection {};
 Option.Group = class extends Option.Collection {};
 
 Option.Array = class extends Option.Base {
-	constructor(name,availableTypes,availableConstructors,data,fullName,isVisible,updateCallback) {
+	constructor(name,availableConstructors,typePropertyName,data,fullName,isVisible,updateCallback) {
 		super(name,undefined,undefined,undefined,fullName,isVisible,updateCallback);
-		this.availableTypes=availableTypes;
-		this.availableConstructors=availableConstructors;
+		this.availableConstructors=availableConstructors; // Map {type:constructor}
 		this._entries=[];
 		let subDatas=[];
 		if (Array.isArray(data)) {
@@ -186,16 +185,25 @@ Option.Array = class extends Option.Base {
 		} else if (typeof data == 'object') {
 			subDatas=data.value;
 		}
+		let defaultType=this.availableTypes[0];
 		for (let i=0;i<subDatas.length;i++) {
 			const subData=subDatas[i];
-			let subType=availableTypes[0];
+			let subType=defaultType;
 			if (typeof subData == 'object' && subData.type!==undefined) {
 				subType=subData.type;
 			}
-			if (availableConstructors[subType]) {
-				this._entries.push(availableConstructors[subType](subData));
+			let subCtor=this.availableConstructors.get(subType);
+			if (subCtor) {
+				this._entries.push(subCtor(subData));
 			}
 		}
+	}
+	get availableTypes() {
+		const types=[];
+		this.availableConstructors.forEach((_,type)=>{
+			types.push(type);
+		});
+		return types;
 	}
 	get entries() {
 		return this._entries;
@@ -205,17 +213,18 @@ Option.Array = class extends Option.Base {
 		this.updateCallback();
 	}
 	addEntry(type) {
-		const entry=this.availableConstructors[type]();
+		const entry=this.availableConstructors.get(type)();
 		this._entries.push(entry);
 		this.updateCallback();
 		return entry;
 	}
 	export() {
+		let defaultType=this.availableTypes[0];
 		return {
 			value: this._entries.map(entry=>{
 				const subData=entry.export();
 				const subType=entry.name;
-				if (subType!=this.availableTypes[0]) subData.type=subType;
+				if (subType!=defaultType) subData.type=subType;
 				return entry.shortenExport(subData);
 			}),
 		};
