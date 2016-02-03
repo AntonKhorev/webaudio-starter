@@ -37,31 +37,35 @@ class Filter {
 	//getPropertyInputJsName(propertyName) {
 	//	return toCamelCase(this.type+this.nSuffix+'.'+propertyName+'.input');
 	//}
-	getHtmlLines(i18n) {
+	getHtmlPropertyLines(i18n,property) {
 		const lines=new Lines;
-		this.nodeProperties.forEach(property=>{
-			const option=this.getPropertyOption(property);
-			const inputHtmlName=this.getPropertyInputHtmlName(property.name);
-			if (property.type=='range' && option.input) {
-				lines.a(
-					"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property))+"</label>",
-					"<input id='"+inputHtmlName+"' type='range' value='"+option+"' min='"+option.min+"' max='"+option.max+"'"+(option.step!=1?" step='"+option.step+"'":"")+" />"
-				);
-			} else if (property.type=='select' && option.input) {
-				lines.a(
-					"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property))+"</label>",
-					(
-						new Lines(...option.availableValues.map(value=>"<option>"+value+"</option>"))
-					).wrap(
-						"<select id='"+inputHtmlName+"'>","</select>"
-					)
-				);
-			} else if (property.type=='xhr') {
-				lines.a(
-					"<span id='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property)+'.loading')+"</span>"
-				);
-			}
-		});
+		const option=this.getPropertyOption(property);
+		const inputHtmlName=this.getPropertyInputHtmlName(property.name);
+		if (property.type=='range' && option.input) {
+			lines.a(
+				"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property))+"</label>",
+				"<input id='"+inputHtmlName+"' type='range' value='"+option+"' min='"+option.min+"' max='"+option.max+"'"+(option.step!=1?" step='"+option.step+"'":"")+" />"
+			);
+		} else if (property.type=='select' && option.input) {
+			lines.a(
+				"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property))+"</label>",
+				(
+					new Lines(...option.availableValues.map(value=>"<option>"+value+"</option>"))
+				).wrap(
+					"<select id='"+inputHtmlName+"'>","</select>"
+				)
+			);
+		} else if (property.type=='xhr') {
+			lines.a(
+				"<span id='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property)+'.loading')+"</span>"
+			);
+		}
+		return lines;
+	}
+	getHtmlLines(i18n) {
+		const lines=new Lines(
+			...this.nodeProperties.map(property=>this.getHtmlPropertyLines(i18n,property))
+		);
 		return lines.wrapIfNotEmpty("<div>","</div>");
 	}
 	getJsLines(i18n,prevNodeJsNames) {
@@ -261,6 +265,10 @@ const filterClasses={
 		}
 		get nodeJsNames() {
 			return [this.nodeJsName];
+		}
+		getHtmlPropertyLines(i18n,property) {
+			const lines=super.getHtmlPropertyLines(i18n,property);
+			return lines.wrapIfNotEmpty("<div>","</div>");
 		}
 		getJsLines(i18n,prevNodeJsNames) {
 			const allGainsConstant=this.nodeProperties.every(prop=>this.getPropertyOption(prop).input==false);
