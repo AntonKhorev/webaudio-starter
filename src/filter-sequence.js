@@ -259,6 +259,9 @@ const filterClasses={
 		get type()                { return 'equalizer'; }
 		get ctxCreateMethodName() { return 'createBiquadFilter'; }
 		get frequencies()         { return [60,170,350,1000,3500,10000]; }
+		get allGainsConstant() {
+			return this.nodeProperties.every(prop=>this.getPropertyOption(prop).input==false);
+		}
 		get nodeProperties() {
 			return this.frequencies.map(freq=>({
 				name:'gain'+freq,
@@ -269,20 +272,21 @@ const filterClasses={
 			return [this.nodeJsName];
 		}
 		requestFeatureContext(featureContext) {
-			featureContext.alignedInputs=true;
+			if (!this.allGainsConstant) {
+				featureContext.alignedInputs=true;
+			}
 		}
 		getHtmlPropertyLines(i18n,property) {
 			const lines=super.getHtmlPropertyLines(i18n,property);
 			return lines.wrapIfNotEmpty("<div class='aligned'>","</div>");
 		}
 		getJsLines(i18n,prevNodeJsNames) {
-			const allGainsConstant=this.nodeProperties.every(prop=>this.getPropertyOption(prop).input==false);
 			const getJsDataLines=()=>{
 				const lines=new Lines;
 				lines.a(
 					this.frequencies.map((freq,i)=>{
 						const option=this.getPropertyOption(this.nodeProperties[i]);
-						if (allGainsConstant) {
+						if (this.allGainsConstant) {
 							return "["+freq+","+option.value+"]";
 						} else {
 							return "["+freq+","+option.value+","+option.input+"]";
@@ -292,14 +296,14 @@ const filterClasses={
 				return lines;
 			};
 			const getJsLoopLines=()=>{
-				const nodeJsName=(allGainsConstant ? this.nodeJsName : 'node');
+				const nodeJsName=(this.allGainsConstant ? this.nodeJsName : 'node');
 				const lines=new Lines;
 				lines.a("var freq=freqData[0], gain=freqData[1]");
-				if (!allGainsConstant) {
+				if (!this.allGainsConstant) {
 					lines.t(", editable=freqData[2]");
 				}
 				lines.t(";");
-				if (allGainsConstant) {
+				if (this.allGainsConstant) {
 					lines.a("");
 				} else {
 					lines.a("var ");
@@ -319,7 +323,7 @@ const filterClasses={
 					nodeJsName+".frequency.value=freq;",
 					nodeJsName+".gain.value=gain;"
 				);
-				if (!allGainsConstant) {
+				if (!this.allGainsConstant) {
 					const inputHtmlNamePrefix=this.getPropertyInputHtmlName('gain');
 					lines.a(
 						"if (editable) {",
@@ -329,7 +333,7 @@ const filterClasses={
 						"}"
 					);
 				}
-				const outerNodeJsName=(allGainsConstant ? nodeJsName : this.nodeJsName+"="+nodeJsName);
+				const outerNodeJsName=(this.allGainsConstant ? nodeJsName : this.nodeJsName+"="+nodeJsName);
 				if (prevNodeJsNames.length==1) {
 					lines.a("prevNode="+outerNodeJsName+";");
 				} else {
