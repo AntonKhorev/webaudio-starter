@@ -1,7 +1,7 @@
 'use strict';
 
 const gulp=require('gulp');
-const gulpTasks=require('./base/gulp-tasks.js');
+const gulpTasks=require('crnx-build/gulp-tasks');
 
 gulpTasks(
 	gulp,
