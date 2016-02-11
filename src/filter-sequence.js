@@ -1,7 +1,7 @@
 'use strict';
 
 const Lines=require('crnx-base/lines');
-const Feature=require('./feature.js');
+const CollectionFeature=require('./collection-feature.js');
 
 function capitalize(s) {
 	return s.charAt(0).toUpperCase()+s.slice(1);
@@ -11,9 +11,9 @@ function toCamelCase(s) {
 }
 
 class Filter {
-	constructor(n,options) {
-		this.n=n;
+	constructor(options,n) {
 		this.options=options;
+		this.n=n;
 	}
 	get nSuffix() {
 		if (this.n!==undefined) {
@@ -64,7 +64,7 @@ class Filter {
 		}
 		return lines;
 	}
-	getHtmlLines(i18n) {
+	getHtmlLines(featureContext,i18n) {
 		const lines=new Lines(
 			...this.nodeProperties.map(property=>this.getHtmlPropertyLines(i18n,property))
 		);
@@ -361,55 +361,33 @@ const filterClasses={
 	},
 };
 
-class FilterSequence extends Feature {
-	constructor(filterOptions) {
-		super();
-		const filterCounts={};
-		filterOptions.entries.forEach(entry=>{
-			if (!filterCounts[entry.filter]) {
-				filterCounts[entry.filter]=0;
-			}
-			filterCounts[entry.filter]++;
-		});
-		const filterCounts2={};
-		this.filters=filterOptions.entries.map(entry=>{
-			const filterClass=filterClasses[entry.filter];
-			if (filterCounts[entry.filter]>1) {
-				if (!filterCounts2[entry.filter]) {
-					filterCounts2[entry.filter]=0;
-				}
-				return new filterClass(filterCounts2[entry.filter]++,entry);
-			} else {
-				return new filterClass(undefined,entry);
-			}
-		});
+class FilterSequence extends CollectionFeature {
+	getEntryClass(entryOption) {
+		return filterClasses[entryOption.filter];
 	}
 	requestFeatureContext(featureContext) {
-		if (this.filters.length>0) {
+		if (this.entries.length>0) {
 			featureContext.audioContext=true;
 		}
-		this.filters.forEach(filter=>{
-			filter.requestFeatureContext(featureContext);
+		this.entries.forEach(entry=>{
+			entry.requestFeatureContext(featureContext);
 		});
-	}
-	getHtmlLines(featureContext,i18n) {
-		return new Lines(...this.filters.map(filter=>filter.getHtmlLines(i18n)));
 	}
 	getJsLines(featureContext,i18n,prevNodeJsNames) {
 		const lines=super.getJsLines(...arguments);
-		if (this.filters.length==0) {
+		if (this.entries.length==0) {
 			return lines;
 		}
-		lines.interleave(...this.filters.map(filter=>{
-			const lines=filter.getJsLines(i18n,prevNodeJsNames);
-			prevNodeJsNames=filter.nodeJsNames;
+		lines.interleave(...this.entries.map(entry=>{
+			const lines=entry.getJsLines(i18n,prevNodeJsNames);
+			prevNodeJsNames=entry.nodeJsNames;
 			return lines;
 		}));
 		return lines;
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {
-		if (this.filters.length>0) {
-			return this.filters[this.filters.length-1].nodeJsNames;
+		if (this.entries.length>0) {
+			return this.entries[this.entries.length-1].nodeJsNames;
 		} else {
 			return prevNodeJsNames;
 		}

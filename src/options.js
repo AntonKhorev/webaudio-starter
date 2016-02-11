@@ -19,7 +19,7 @@ class Options extends BaseOptions {
 					['Int','width',[1,1920],320],
 					['Int','height',[1,1080],240],
 				]],
-			]],
+			],'source'],
 			['Array','filters',[
 				['Group','gain',[
 					['LiveFloat','gain',[0,10,0,1],1],
