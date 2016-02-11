@@ -1,16 +1,16 @@
 'use strict';
 
 const Lines=require('crnx-base/lines');
-const Audio=require('./audio.js');
+const SourceSet=require('./source-set.js');
 const FilterSequence=require('./filter-sequence.js');
-const AudioDestination=require('./audio-destination.js');
+const Destination=require('./destination.js');
 
 module.exports=function(options,i18n){
 	const featureContext={};
 	const features=[];
-	features.push(new Audio(options.source));
+	features.push(new SourceSet(options.sources));
 	features.push(new FilterSequence(options.filters));
-	features.push(new AudioDestination(options.destination));
+	features.push(new Destination(options.destination));
 	features.forEach(feature=>{
 		feature.requestFeatureContext(featureContext);
 	});

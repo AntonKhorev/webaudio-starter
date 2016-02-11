@@ -5,11 +5,19 @@ const BaseOptions=require('crnx-base/options');
 class Options extends BaseOptions {
 	get entriesDescription() {
 		return [
-			['Group','source',[
-				['Text','url',[
-					// w3c mooc:
-					'http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3',
-					'http://mainline.i3s.unice.fr/mooc/drums.mp3',
+			['Array','sources',[ // urls are from w3c mooc
+				['Group','audio',[
+					['Text','url',[
+						'http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3',
+						'http://mainline.i3s.unice.fr/mooc/drums.mp3',
+					]],
+				]],
+				['Group','video',[
+					['Text','url',[
+						'http://mainline.i3s.unice.fr/mooc/elephants-dream-medium.mp4',
+					]],
+					['Int','width',[1,1920],320],
+					['Int','height',[1,1080],240],
 				]],
 			]],
 			['Array','filters',[

@@ -3,7 +3,7 @@
 const Lines=require('crnx-base/lines');
 const Feature=require('./feature.js');
 
-class AudioDestination extends Feature {
+class Destination extends Feature {
 	constructor(options) {
 		super();
 		this.compressor=options.compressor;
@@ -60,4 +60,4 @@ class AudioDestination extends Feature {
 	}
 }
 
-module.exports=AudioDestination;
+module.exports=Destination;

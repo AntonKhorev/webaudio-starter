@@ -3,10 +3,11 @@
 const Lines=require('crnx-base/lines');
 const Feature=require('./feature.js');
 
-class Audio extends Feature {
+class SourceSet extends Feature {
 	constructor(options) {
 		super();
-		this.url=options.url;
+		//this.url=options.url;
+		this.url='TODO';
 	}
 	getHtmlLines(featureContext,i18n) {
 		return (new Lines(
@@ -34,4 +35,4 @@ class Audio extends Feature {
 	}
 }
 
-module.exports=Audio;
+module.exports=SourceSet;
