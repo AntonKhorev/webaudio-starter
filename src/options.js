@@ -1,6 +1,6 @@
 'use strict';
 
-const BaseOptions=require('../base/options.js');
+const BaseOptions=require('crnx-base/options');
 
 class Options extends BaseOptions {
 	get entriesDescription() {

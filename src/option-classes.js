@@ -1,6 +1,6 @@
 'use strict';
 
-const Option=Object.create(require('../base/option-classes.js'));
+const Option=Object.create(require('crnx-base/option-classes'));
 
 // differs from webgl-starter:
 //	has defaultValue - although it's potentially confusing: user input default vs Web Audio Node property default - they are currently the same

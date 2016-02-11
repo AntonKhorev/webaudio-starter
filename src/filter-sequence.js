@@ -1,6 +1,6 @@
 'use strict';
 
-const Lines=require('../base/lines.js');
+const Lines=require('crnx-base/lines');
 const Feature=require('./feature.js');
 
 function capitalize(s) {
