@@ -2,8 +2,11 @@
   "name": "webaudio-starter",
   "private": true,
   "license": "ISC",
+  "dependencies": {
+    "crnx-base": "github:antonkhorev/crnx-base#v0.0.0"
+  },
   "devDependencies": {
-    "crnx-build": "github:antonkhorev/crnx-build#v0.0.0",
+    "crnx-build": "github:antonkhorev/crnx-build#v0.1.0",
     "gulp": "^3.9.1"
   },
   "scripts": {
