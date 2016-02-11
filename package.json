@@ -4,9 +4,10 @@
   "license": "ISC",
   "devDependencies": {
     "crnx-build": "github:antonkhorev/crnx-build#v0.0.0",
-    "gulp": "^3.9.0"
+    "gulp": "^3.9.1"
   },
   "scripts": {
+    "gulp": "gulp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": "AntonKhorev/webaudio-starter",
