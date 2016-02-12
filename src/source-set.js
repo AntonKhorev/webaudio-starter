@@ -3,6 +3,13 @@
 const Lines=require('crnx-base/lines');
 const CollectionFeature=require('./collection-feature.js');
 
+function capitalize(s) {
+	return s.charAt(0).toUpperCase()+s.slice(1);
+}
+function toCamelCase(s) {
+	return s.split('.').map((w,i)=>i>0?capitalize(w):w).join('');
+}
+
 class Source {
 	constructor(options,n) {
 		this.options=options;
@@ -18,8 +25,17 @@ class Source {
 	get elementHtmlName() {
 		return 'my.'+this.type+this.nSuffix;
 	}
+	get nodeJsName() {
+		return toCamelCase(this.type+this.nSuffix+'.node');
+	}
 	getHtmlLines(featureContext,i18n) {
 		return this.getElementHtmlLines(featureContext,i18n).wrap("<div>","</div>");
+	}
+	getJsLines(i18n) {
+		return new Lines(
+			"// "+i18n('options.sources.'+this.type+'.comment'),
+			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
+		);
 	}
 	// abstract:
 	// get type()
@@ -51,19 +67,23 @@ class SourceSet extends CollectionFeature {
 	}
 	getJsLines(featureContext,i18n,prevNodeJsNames) {
 		const lines=super.getJsLines(...arguments);
-		if (featureContext.audioContext) {
-			lines.a(
-				"// "+i18n('options.source.comment'),
-				"var ctx=new (AudioContext || webkitAudioContext);",
-				"var sourceElement=document.getElementById('my.source');",
-				"var sourceNode=ctx.createMediaElementSource(sourceElement);"
-			);
+		if (!featureContext.audioContext) {
+			return lines;
 		}
+		lines.a(
+			"// "+i18n('options.sources.comment'),
+			"var ctx=new (AudioContext || webkitAudioContext);"
+		);
+		if (this.entries.length==0) {
+			return lines;
+		}
+		lines.a("");
+		lines.interleave(...this.entries.map(entry=>entry.getJsLines(i18n)));
 		return lines;
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {
 		if (featureContext.audioContext) {
-			return ["sourceNode"];
+			return this.entries.map(entry=>entry.nodeJsName);
 		} else {
 			return prevNodeJsNames;
 		}

@@ -2,11 +2,13 @@
 
 const strings={
 	'options.sources': "Sources",
-	'options.sources.comment': "create audio context and source nodes",
+	'options.sources.comment': "create audio context",
 	'options.sources.audio': "Audio element",
+	'options.sources.audio.comment': "create audio source node",
 	'options.sources.audio.add': "Add audio element",
 	'options.sources.audio.url': "Source URL",
 	'options.sources.video': "Video element",
+	'options.sources.video.comment': "create video source node",
 	'options.sources.video.add': "Add video element",
 	'options.sources.video.url': "Source URL",
 	'options.sources.video.width': "Player width",

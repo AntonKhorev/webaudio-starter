@@ -71,15 +71,13 @@ class Filter {
 		return lines.wrapIfNotEmpty("<div>","</div>");
 	}
 	getJsLines(i18n,prevNodeJsNames) {
-		const lines=new Lines;
-		lines.a(
+		return new Lines(
 			"// "+i18n('options.filters.'+this.type+'.comment'),
 			"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
 			...prevNodeJsNames.map(
 				prevNodeJsName=>prevNodeJsName+".connect("+this.nodeJsName+");"
 			)
 		);
-		return lines;
 	}
 	// abstract:
 	// get type()
