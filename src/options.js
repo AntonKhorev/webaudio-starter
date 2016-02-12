@@ -14,7 +14,10 @@ class Options extends BaseOptions {
 				]],
 				['Group','video',[
 					['Text','url',[
+						'http://mainline.i3s.unice.fr/mooc/elephants-dream-medium.webm',
 						'http://mainline.i3s.unice.fr/mooc/elephants-dream-medium.mp4',
+						'http://mainline.i3s.unice.fr/mooc/sintel.webm',
+						'http://mainline.i3s.unice.fr/mooc/sintel.mp4',
 					]],
 					['Int','width',[1,1920],320],
 					['Int','height',[1,1080],240],
@@ -44,7 +47,7 @@ class Options extends BaseOptions {
 				['Group','equalizer',[60,170,350,1000,3500,10000].map(freq=>['LiveInt','gain'+freq,[-30,30],0])],
 			],'filter'],
 			['Group','destination',[
-				['Checkbox','compressor'],
+				['Checkbox','compressor'], // Firefox compresses automatically?
 			]],
 		];
 	}
