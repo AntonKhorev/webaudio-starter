@@ -1,6 +1,7 @@
 'use strict';
 
 const Lines=require('./html-lines.js');
+const UnescapedLines=require('crnx-base/lines');
 const CollectionFeature=require('./collection-feature.js');
 
 function capitalize(s) {
@@ -72,7 +73,7 @@ class Filter {
 	}
 	getJsLines(i18n,prevNodeJsNames) {
 		return new Lines(
-			"// "+i18n('options.filters.'+this.type+'.comment'),
+			new UnescapedLines("// "+i18n('options.filters.'+this.type+'.comment')),
 			"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
 			...prevNodeJsNames.map(
 				prevNodeJsName=>prevNodeJsName+".connect("+this.nodeJsName+");"
@@ -339,8 +340,9 @@ const filterClasses={
 				}
 				return lines;
 			};
-			const lines=new Lines;
-			lines.a("// "+i18n('options.filters.'+this.type+'.comment'));
+			const lines=new Lines(
+				new UnescapedLines("// "+i18n('options.filters.'+this.type+'.comment'))
+			);
 			if (prevNodeJsNames.length==1) {
 				lines.a("var prevNode="+prevNodeJsNames[0]+";");
 			} else {

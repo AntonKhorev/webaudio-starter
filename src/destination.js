@@ -1,6 +1,7 @@
 'use strict';
 
 const Lines=require('./html-lines.js');
+const UnescapedLines=require('crnx-base/lines');
 const Feature=require('./feature.js');
 
 class Destination extends Feature {
@@ -28,7 +29,7 @@ class Destination extends Feature {
 		if (featureContext.audioContext) {
 			if (this.compressor) {
 				lines.a(
-					"// "+i18n('options.destination.compressor.comment'),
+					new UnescapedLines("// "+i18n('options.destination.compressor.comment')),
 					"var compressorNode=ctx.createDynamicsCompressor();",
 					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(compressorNode);"),
 					"compressorNode.connect(ctx.destination);",
@@ -44,7 +45,7 @@ class Destination extends Feature {
 				);
 			} else {
 				lines.a(
-					"// "+i18n('options.destination.comment'),
+					new UnescapedLines("// "+i18n('options.destination.comment')),
 					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(ctx.destination);")
 				);
 			}

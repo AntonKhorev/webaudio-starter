@@ -72,7 +72,7 @@ class SourceSet extends CollectionFeature {
 			return lines;
 		}
 		lines.a(
-			"// "+i18n('options.sources.comment'),
+			new UnescapedLines("// "+i18n('options.sources.comment')),
 			"var ctx=new (AudioContext || webkitAudioContext);"
 		);
 		if (this.entries.length==0) {
