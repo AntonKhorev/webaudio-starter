@@ -21,7 +21,7 @@ class CodeOutput {
 			)
 		};
 		const $output=$("<div class='code-output'>").append(writeControls()).append(
-			$("<pre>").append($code=$("<code>").text(generateCodeFn()))
+			$("<pre>").append($code=$("<code>").html(generateCodeFn()))
 		);
 		if (window.hljs) {
 			hljs.highlightBlock($code[0]);
@@ -35,7 +35,7 @@ class CodeOutput {
 		const update=()=>{
 			clearTimeout(timeoutId);
 			timeoutId=setTimeout(()=>{
-				$code.text(generateCodeFn());
+				$code.html(generateCodeFn());
 				if (window.hljs) hljs.highlightBlock($code[0]);
 			},delay);
 		};

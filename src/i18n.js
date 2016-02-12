@@ -1,10 +1,10 @@
 'use strict';
 
-const strings={
+let strings={
 	'options.sources': "Sources",
 	'options.sources.comment': "create audio context",
 	'options.sources.audio': "Audio element",
-	'options.sources.audio.comment': "create audio source node",
+	'options.sources.audio.comment': "create [https://www.w3.org/TR/webaudio/#MediaElementAudioSourceNode audio source node]",
 	'options.sources.audio.add': "Add audio element",
 	'options.sources.audio.url': "Source URL",
 	'options.sources.video': "Video element",
@@ -67,6 +67,17 @@ const strings={
 	'options-output.range': "with range",
 	'options-output.reset': "Reset",
 };
+
+function i18nLinkFilter(inStrings) {
+	const linkRegexp=/\[(\S+)\s+([^\]]+)]/g;
+	const outStrings={};
+	for (let id in inStrings) {
+		outStrings[id]=inStrings[id].replace(linkRegexp,(match,url,text)=>"<a href='"+url+"'>"+text+"</a>");
+	}
+	return outStrings;
+}
+
+strings=i18nLinkFilter(strings);
 
 module.exports=function(lang){
 	// TODO use lang to pick strings

@@ -1,6 +1,6 @@
 'use strict';
 
-const Lines=require('crnx-base/lines');
+const Lines=require('./html-lines.js');
 const SourceSet=require('./source-set.js');
 const FilterSequence=require('./filter-sequence.js');
 const Destination=require('./destination.js');

@@ -1,6 +1,7 @@
 'use strict';
 
-const Lines=require('crnx-base/lines');
+const Lines=require('./html-lines.js');
+const UnescapedLines=require('crnx-base/lines');
 const CollectionFeature=require('./collection-feature.js');
 
 function capitalize(s) {
@@ -33,7 +34,7 @@ class Source {
 	}
 	getJsLines(i18n) {
 		return new Lines(
-			"// "+i18n('options.sources.'+this.type+'.comment'),
+			new UnescapedLines("// "+i18n('options.sources.'+this.type+'.comment')),
 			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
 		);
 	}

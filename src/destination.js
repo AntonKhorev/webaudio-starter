@@ -1,6 +1,6 @@
 'use strict';
 
-const Lines=require('crnx-base/lines');
+const Lines=require('./html-lines.js');
 const Feature=require('./feature.js');
 
 class Destination extends Feature {

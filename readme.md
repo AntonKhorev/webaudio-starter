@@ -14,4 +14,5 @@ Includes examples adapted from [*HTML5 Part 2: Advanced Techniques for Designing
 * [The most useful filter nodes / Biquad filter](http://jsbin.com/faqowo/edit)
 * [The most useful filter nodes / Convolver node](http://jsbin.com/rikivu/edit)
 * [The most useful filter nodes / The Dynamics Compressor node](http://jsbin.com/joyayi/edit)
-* [Writing an equalizer using biquad filters / an audio equalizer](http://jsbin.com/tipala/edit)
+* [Writing an equalizer using biquad filters / An audio equalizer with an `<audio>` element](http://jsbin.com/tipala/edit)
+* [Writing an equalizer using biquad filters / The same example but with a `<video>` element](http://jsbin.com/podaju/edit)
