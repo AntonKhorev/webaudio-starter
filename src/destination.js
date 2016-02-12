@@ -27,8 +27,8 @@ class Destination extends Feature {
 		}
 		return lines.wrapIfNotEmpty("<div>","</div>");
 	}
-	getJsLines(featureContext,i18n,prevNodeJsNames) {
-		const lines=super.getJsLines(...arguments);
+	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
+		const lines=super.getJsInitLines(...arguments);
 		if (featureContext.audioContext) {
 			if (this.options.compressor) {
 				lines.a(
@@ -67,6 +67,27 @@ class Destination extends Feature {
 			lines.a(
 				new UnescapedLines("// "+i18n('comment.destination')),
 				...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(ctx.destination);")
+			);
+		}
+		return lines;
+	}
+	getJsLoopLines(featureContext,i18n) {
+		const lines=super.getJsLoopLines(...arguments);
+		if (this.options.waveform) {
+			lines.a(
+				"analyserNode.getByteTimeDomainData(analyserData);",
+				"canvasContext.clearRect(0,0,canvas.width,canvas.height);",
+				"canvasContext.beginPath();",
+				"for (var i=0;i<analyserData.length;i++) {",
+				"	var x=i*canvas.width/analyserData.length;",
+				"	var y=analyserData[i]*canvas.height/255;",
+				"	if (i==0) {",
+				"		canvasContext.moveTo(x,y);",
+				"	} else {",
+				"		canvasContext.lineTo(x,y);",
+				"	}",
+				"}",
+				"canvasContext.stroke();"
 			);
 		}
 		return lines;

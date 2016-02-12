@@ -5,8 +5,8 @@ const UnescapedLines=require('crnx-base/lines');
 const Feature=require('./feature.js');
 
 class AudioContext extends Feature {
-	getJsLines(featureContext,i18n,prevNodeJsNames) {
-		const lines=super.getJsLines(...arguments);
+	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
+		const lines=super.getJsInitLines(...arguments);
 		if (featureContext.audioContext) {
 			lines.a(
 				new UnescapedLines("// "+i18n('comment.context')),

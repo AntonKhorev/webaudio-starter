@@ -32,7 +32,7 @@ class Source {
 	getHtmlLines(featureContext,i18n) {
 		return this.getElementHtmlLines(featureContext,i18n).wrap("<div>","</div>");
 	}
-	getJsLines(i18n) {
+	getJsInitLines(i18n) {
 		return new Lines(
 			new UnescapedLines("// "+i18n('comment.sources.'+this.type)),
 			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
@@ -66,10 +66,10 @@ class SourceSet extends CollectionFeature {
 	getEntryClass(entryOption) {
 		return sourceClasses[entryOption.source];
 	}
-	getJsLines(featureContext,i18n,prevNodeJsNames) {
-		const lines=super.getJsLines(...arguments);
+	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
+		const lines=super.getJsInitLines(...arguments);
 		if (featureContext.audioContext) {
-			lines.interleave(...this.entries.map(entry=>entry.getJsLines(i18n)));
+			lines.interleave(...this.entries.map(entry=>entry.getJsInitLines(i18n)));
 		}
 		return lines;
 	}

@@ -71,7 +71,7 @@ class Filter {
 		);
 		return lines.wrapIfNotEmpty("<div>","</div>");
 	}
-	getJsLines(i18n,prevNodeJsNames) {
+	getJsInitLines(i18n,prevNodeJsNames) {
 		return new Lines(
 			new UnescapedLines("// "+i18n('comment.filters.'+this.type)),
 			"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
@@ -91,8 +91,8 @@ class SinglePathFilter extends Filter {
 	get nodeJsNames() {
 		return [this.nodeJsName];
 	}
-	getJsLines(i18n,prevNodeJsNames) {
-		const lines=super.getJsLines(i18n,prevNodeJsNames);
+	getJsInitLines(i18n,prevNodeJsNames) {
+		const lines=super.getJsInitLines(i18n,prevNodeJsNames);
 		this.nodeProperties.forEach(property=>{
 			const option=this.getPropertyOption(property);
 			const nodePropertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"");
@@ -202,8 +202,8 @@ const filterClasses={
 		get wetGainNodeJsName() {
 			return toCamelCase(this.type+this.nSuffix+'.wet.gain.node');
 		}
-		getJsLines(i18n,prevNodeJsNames) {
-			const lines=super.getJsLines(i18n,prevNodeJsNames);
+		getJsInitLines(i18n,prevNodeJsNames) {
+			const lines=super.getJsInitLines(i18n,prevNodeJsNames);
 			const inputHtmlName=this.getPropertyInputHtmlName('reverb');
 			const messageHtmlName=this.getPropertyInputHtmlName('buffer');
 			lines.a(
@@ -279,7 +279,7 @@ const filterClasses={
 			const lines=super.getHtmlPropertyLines(i18n,property);
 			return lines.wrapIfNotEmpty("<div class='aligned'>","</div>");
 		}
-		getJsLines(i18n,prevNodeJsNames) {
+		getJsInitLines(i18n,prevNodeJsNames) {
 			const getJsDataLines=()=>{
 				const lines=new Lines;
 				lines.a(
@@ -373,13 +373,13 @@ class FilterSequence extends CollectionFeature {
 			entry.requestFeatureContext(featureContext);
 		});
 	}
-	getJsLines(featureContext,i18n,prevNodeJsNames) {
-		const lines=super.getJsLines(...arguments);
+	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
+		const lines=super.getJsInitLines(...arguments);
 		if (this.entries.length==0) {
 			return lines;
 		}
 		lines.interleave(...this.entries.map(entry=>{
-			const lines=entry.getJsLines(i18n,prevNodeJsNames);
+			const lines=entry.getJsInitLines(i18n,prevNodeJsNames);
 			prevNodeJsNames=entry.nodeJsNames;
 			return lines;
 		}));

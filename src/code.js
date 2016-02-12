@@ -56,13 +56,32 @@ module.exports=function(options,i18n){
 			return lines;
 		})(),
 		(()=>{
-			const lines=new Lines;
 			let prevNodeJsNames;
-			lines.interleave(...features.map(feature=>{
-				const lines=feature.getJsLines(featureContext,i18n,prevNodeJsNames);
+			const jsTopLineSets=features.map(feature=>{
+				const lines=feature.getJsInitLines(featureContext,i18n,prevNodeJsNames);
 				prevNodeJsNames=feature.getNodeJsNames(featureContext,prevNodeJsNames);
 				return lines;
-			}));
+			});
+			jsTopLineSets.push((()=>{
+				//const lines=new Lines;
+				//lines.interleave(...features.map(feature=>feature.getJsLoopLines(featureContext,i18n)));
+				const lines=new Lines(...features.map(feature=>feature.getJsLoopLines(featureContext,i18n)));
+				//
+				if (lines.isEmpty()) {
+					return lines;
+				} else {
+					return new Lines(
+						"function visualize() {",
+						lines.indent(),
+						//"	",
+						"	requestAnimationFrame(visualize);",
+						"}",
+						"requestAnimationFrame(visualize);"
+					);
+				}
+			})());
+			const lines=new Lines;
+			lines.interleave(...jsTopLineSets);
 			return lines.wrapIfNotEmpty("<script>","</script>");
 		})(),
 		"</body>",
