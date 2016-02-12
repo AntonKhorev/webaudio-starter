@@ -10,6 +10,7 @@ class Options extends BaseOptions {
 					['Text','url',[
 						'http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3',
 						'http://mainline.i3s.unice.fr/mooc/drums.mp3',
+						'http://mainline.i3s.unice.fr/mooc/LaSueur.mp3',
 					]],
 				]],
 				['Group','video',[
@@ -48,6 +49,7 @@ class Options extends BaseOptions {
 			],'filter'],
 			['Group','destination',[
 				['Checkbox','compressor'], // Firefox compresses automatically?
+				['Checkbox','waveform'],
 			]],
 		];
 	}

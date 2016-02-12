@@ -7,16 +7,19 @@ const Feature=require('./feature.js');
 class Destination extends Feature {
 	constructor(options) {
 		super();
-		this.compressor=options.compressor;
+		this.options=options;
 	}
 	requestFeatureContext(featureContext) {
-		if (this.compressor) {
+		if (this.options.compressor || this.options.waveform) {
 			featureContext.audioContext=true;
+		}
+		if (this.options.waveform) {
+			featureContext.canvas=true;
 		}
 	}
 	getHtmlLines(featureContext,i18n) {
 		const lines=new Lines;
-		if (this.compressor) {
+		if (this.options.compressor) {
 			lines.a(
 				"<input id='my.compressor' type='checkbox' checked />",
 				"<label for='my.compressor'>"+i18n('options.destination.compressor.enable')+"</label>"
@@ -27,28 +30,43 @@ class Destination extends Feature {
 	getJsLines(featureContext,i18n,prevNodeJsNames) {
 		const lines=super.getJsLines(...arguments);
 		if (featureContext.audioContext) {
-			if (this.compressor) {
+			if (this.options.compressor) {
 				lines.a(
 					new UnescapedLines("// "+i18n('options.destination.compressor.comment')),
 					"var compressorNode=ctx.createDynamicsCompressor();",
-					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(compressorNode);"),
-					"compressorNode.connect(ctx.destination);",
-					"document.getElementById('my.compressor').onchange=function(){",
-					"	if (this.checked) {",
-					...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".disconnect(ctx.destination);"),
-					...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".connect(compressorNode);"),
-					"	} else {",
-					...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".disconnect(compressorNode);"),
-					...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".connect(ctx.destination);"),
-					"	}",
-					"};"
+					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(compressorNode);")
 				);
-			} else {
-				lines.a(
-					new UnescapedLines("// "+i18n('options.destination.comment')),
-					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(ctx.destination);")
-				);
+				if (prevNodeJsNames.length>0) {
+					lines.a(
+						"document.getElementById('my.compressor').onchange=function(){",
+						"	if (this.checked) {",
+						...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".disconnect(ctx.destination);"),
+						...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".connect(compressorNode);"),
+						"	} else {",
+						...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".disconnect(compressorNode);"),
+						...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".connect(ctx.destination);"),
+						"	}",
+						"};",
+						""
+					);
+				}
+				prevNodeJsNames=['compressorNode'];
 			}
+			if (this.options.waveform) {
+				lines.a(
+					new UnescapedLines("// "+i18n('options.destination.waveform.comment')),
+					"var analyserNode=ctx.createAnalyser();",
+					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(analyserNode);"),
+					"analyserNode.fftSize=1024;",
+					"var analyserData=new Uint8Array(analyserNode.frequencyBinCount);",
+					""
+				);
+				prevNodeJsNames=['analyserNode'];
+			}
+			lines.a(
+				new UnescapedLines("// "+i18n('options.destination.comment')),
+				...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(ctx.destination);")
+			);
 		}
 		return lines;
 	}

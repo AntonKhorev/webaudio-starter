@@ -56,10 +56,12 @@ let strings={
 	'options.filters.equalizer.gain10000': "10000 Hz gain",
 
 	'options.destination': "Destination",
-	'options.destination.comment': "connect last filter node to [https://www.w3.org/TR/webaudio/#AudioDestinationNode destination]",
+	'options.destination.comment': "connect last node to [https://www.w3.org/TR/webaudio/#AudioDestinationNode destination]",
 	'options.destination.compressor': "Add dynamics compressor before the destination",
-	'options.destination.compressor.comment': "create [https://www.w3.org/TR/webaudio/#the-dynamicscompressornode-interface dynamics compressor node] and connect it to [https://www.w3.org/TR/webaudio/#AudioDestinationNode destination]",
+	'options.destination.compressor.comment': "create [https://www.w3.org/TR/webaudio/#the-dynamicscompressornode-interface dynamics compressor node]",
 	'options.destination.compressor.enable': "Enable dynamics compressor",
+	'options.destination.waveform': "Add waveform visualization",
+	'options.destination.waveform.comment': "create [https://www.w3.org/TR/webaudio/#the-analysernode-interface analyser node] for waveform visualization",
 
 	'options-output.drag': "Drag or press up/down while in focus to reorder",
 	'options-output.delete': "Delete",
