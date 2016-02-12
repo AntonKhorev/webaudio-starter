@@ -5,6 +5,7 @@ const AudioContext=require('./audio-context.js');
 const SourceSet=require('./source-set.js');
 const FilterSequence=require('./filter-sequence.js');
 const Destination=require('./destination.js');
+const Canvas=require('./canvas.js');
 
 module.exports=function(options,i18n){
 	const featureContext={};
@@ -13,6 +14,7 @@ module.exports=function(options,i18n){
 		new SourceSet(options.sources),
 		new FilterSequence(options.filters),
 		new Destination(options.destination),
+		new Canvas,
 	];
 	features.forEach(feature=>{
 		feature.requestFeatureContext(featureContext);
@@ -31,6 +33,13 @@ module.exports=function(options,i18n){
 					"	display: inline-block;",
 					"	width: 10em;",
 					"	text-align: right;",
+					"}"
+				);
+			}
+			if (featureContext.canvas) {
+				lines.a(
+					"canvas {",
+					"	border: 1px solid;",
 					"}"
 				);
 			}

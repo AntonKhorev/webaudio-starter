@@ -68,10 +68,9 @@ class SourceSet extends CollectionFeature {
 	}
 	getJsLines(featureContext,i18n,prevNodeJsNames) {
 		const lines=super.getJsLines(...arguments);
-		if (!featureContext.audioContext) {
-			return lines;
+		if (featureContext.audioContext) {
+			lines.interleave(...this.entries.map(entry=>entry.getJsLines(i18n)));
 		}
-		lines.interleave(...this.entries.map(entry=>entry.getJsLines(i18n)));
 		return lines;
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {
