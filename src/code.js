@@ -1,16 +1,19 @@
 'use strict';
 
 const Lines=require('./html-lines.js');
+const AudioContext=require('./audio-context.js');
 const SourceSet=require('./source-set.js');
 const FilterSequence=require('./filter-sequence.js');
 const Destination=require('./destination.js');
 
 module.exports=function(options,i18n){
 	const featureContext={};
-	const features=[];
-	features.push(new SourceSet(options.sources));
-	features.push(new FilterSequence(options.filters));
-	features.push(new Destination(options.destination));
+	const features=[
+		new AudioContext,
+		new SourceSet(options.sources),
+		new FilterSequence(options.filters),
+		new Destination(options.destination),
+	];
 	features.forEach(feature=>{
 		feature.requestFeatureContext(featureContext);
 	});

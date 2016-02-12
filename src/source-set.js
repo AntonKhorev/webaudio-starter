@@ -71,14 +71,6 @@ class SourceSet extends CollectionFeature {
 		if (!featureContext.audioContext) {
 			return lines;
 		}
-		lines.a(
-			new UnescapedLines("// "+i18n('options.sources.comment')),
-			"var ctx=new (AudioContext || webkitAudioContext);"
-		);
-		if (this.entries.length==0) {
-			return lines;
-		}
-		lines.a("");
 		lines.interleave(...this.entries.map(entry=>entry.getJsLines(i18n)));
 		return lines;
 	}

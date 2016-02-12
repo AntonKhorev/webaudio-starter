@@ -2,7 +2,6 @@
 
 let strings={
 	'options.sources': "Sources",
-	'options.sources.comment': "create [https://www.w3.org/TR/webaudio/#AudioContext audio context]",
 	'options.sources.audio': "Audio element",
 	'options.sources.audio.comment': "create [https://www.w3.org/TR/webaudio/#MediaElementAudioSourceNode audio source node]",
 	'options.sources.audio.add': "Add audio element",
@@ -68,6 +67,8 @@ let strings={
 	'options-output.input': "Editable",
 	'options-output.range': "with range",
 	'options-output.reset': "Reset",
+
+	'comment.context': "create [https://www.w3.org/TR/webaudio/#AudioContext audio context]",
 };
 
 function i18nLinkFilter(inStrings) {
