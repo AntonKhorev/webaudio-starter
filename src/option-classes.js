@@ -43,8 +43,10 @@ Option.LiveNumber = class extends Option.RangeInput {
 			dataValue=data;
 		}
 		super(name,availableRange,defaultValue,dataValue,fullName,isVisible,updateCallback);
-		this._min=(dataMin!==undefined)?dataMin:(availableRange[2]!==undefined?availableRange[2]:this.availableMin);
-		this._max=(dataMax!==undefined)?dataMax:(availableRange[3]!==undefined?availableRange[3]:this.availableMax);
+		this.defaultMin=(availableRange[2]!==undefined?availableRange[2]:this.availableMin);
+		this.defaultMax=(availableRange[3]!==undefined?availableRange[3]:this.availableMax);
+		this._min=(dataMin!==undefined)?dataMin:this.defaultMin;
+		this._max=(dataMax!==undefined)?dataMax:this.defaultMax;
 		this._input=!!dataInput;
 		this._$range=null;
 	}

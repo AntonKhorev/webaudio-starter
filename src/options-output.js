@@ -64,8 +64,8 @@ class OptionsOutput extends BaseOptionsOutput {
 					$("<button type='button'>"+i18n('options-output.reset')+"</button>").click(function(){
 						$sliderInput.val(option.defaultValue).change();
 						$inputCheckbox.prop('checked',false).change();
-						$rangeMinInput.val(option.availableMin).change();
-						$rangeMaxInput.val(option.availableMax).change();
+						$rangeMinInput.val(option.defaultMin).change();
+						$rangeMaxInput.val(option.defaultMax).change();
 					})
 				);
 		});
