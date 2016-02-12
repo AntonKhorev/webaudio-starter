@@ -3,11 +3,9 @@
 let strings={
 	'options.sources': "Sources",
 	'options.sources.audio': "Audio element",
-	'options.sources.audio.comment': "create [https://www.w3.org/TR/webaudio/#MediaElementAudioSourceNode audio source node]",
 	'options.sources.audio.add': "Add audio element",
 	'options.sources.audio.url': "Source URL",
 	'options.sources.video': "Video element",
-	'options.sources.video.comment': "create [https://www.w3.org/TR/webaudio/#MediaElementAudioSourceNode video source node]",
 	'options.sources.video.add': "Add video element",
 	'options.sources.video.url': "Source URL",
 	'options.sources.video.width': "Player width",
@@ -15,15 +13,12 @@ let strings={
 
 	'options.filters': "Filters",
 	'options.filters.gain': "Gain",
-	'options.filters.gain.comment': "create [https://www.w3.org/TR/webaudio/#GainNode gain node]",
 	'options.filters.gain.add': "Add gain",
 	'options.filters.gain.gain': "Gain",
 	'options.filters.panner': "Stereo panner",
-	'options.filters.panner.comment': "create [https://www.w3.org/TR/webaudio/#the-stereopannernode-interface stereo panner node]",
 	'options.filters.panner.add': "Add stereo panner",
 	'options.filters.panner.pan': "Pan",
 	'options.filters.biquad': "Biquad filter",
-	'options.filters.biquad.comment': "create [https://www.w3.org/TR/webaudio/#the-biquadfilternode-interface biquad filter node]",
 	'options.filters.biquad.add': "Add biquad filter",
 	'options.filters.biquad.type': "Filter type",
 	'options.filters.biquad.type.lowpass': "lowpass",
@@ -38,14 +33,12 @@ let strings={
 	'options.filters.biquad.detune': "Detune",
 	'options.filters.biquad.Q': "Log(Q)",
 	'options.filters.convolver': "Convolver",
-	'options.filters.convolver.comment': "create dry and wet route with [https://www.w3.org/TR/webaudio/#ConvolverNode convolver node]",
 	'options.filters.convolver.add': "Add convolver",
 	'options.filters.convolver.url': "Impulse responce URL",
 	'options.filters.convolver.reverb': "Reverb (dry/wet)",
 	'options.filters.convolver.buffer.loading': "Loading and decoding the impulse response",
 	'options.filters.convolver.buffer.error': "Error while loading the impulse response",
 	'options.filters.equalizer': "Equalizer",
-	'options.filters.equalizer.comment': "create equalizer as a sequence of peaking [https://www.w3.org/TR/webaudio/#the-biquadfilternode-interface biquad filter nodes]",
 	'options.filters.equalizer.add': "Add equalizer",
 	'options.filters.equalizer.gain60': "60 Hz gain", // TODO {,} expansion
 	'options.filters.equalizer.gain170': "170 Hz gain",
@@ -55,12 +48,9 @@ let strings={
 	'options.filters.equalizer.gain10000': "10000 Hz gain",
 
 	'options.destination': "Destination",
-	'options.destination.comment': "connect last node to [https://www.w3.org/TR/webaudio/#AudioDestinationNode destination]",
 	'options.destination.compressor': "Add dynamics compressor before the destination",
-	'options.destination.compressor.comment': "create [https://www.w3.org/TR/webaudio/#the-dynamicscompressornode-interface dynamics compressor node]",
 	'options.destination.compressor.enable': "Enable dynamics compressor",
 	'options.destination.waveform': "Add waveform visualization",
-	'options.destination.waveform.comment': "create [https://www.w3.org/TR/webaudio/#the-analysernode-interface analyser node] for waveform visualization",
 
 	'options-output.drag': "Drag or press up/down while in focus to reorder",
 	'options-output.delete': "Delete",
@@ -69,6 +59,16 @@ let strings={
 	'options-output.reset': "Reset",
 
 	'comment.context': "create [https://www.w3.org/TR/webaudio/#AudioContext audio context]",
+	'comment.sources.audio': "create [https://www.w3.org/TR/webaudio/#MediaElementAudioSourceNode audio source node]",
+	'comment.sources.video': "create [https://www.w3.org/TR/webaudio/#MediaElementAudioSourceNode video source node]",
+	'comment.filters.gain': "create [https://www.w3.org/TR/webaudio/#GainNode gain node]",
+	'comment.filters.panner': "create [https://www.w3.org/TR/webaudio/#the-stereopannernode-interface stereo panner node]",
+	'comment.filters.biquad': "create [https://www.w3.org/TR/webaudio/#the-biquadfilternode-interface biquad filter node]",
+	'comment.filters.convolver': "create dry and wet route with [https://www.w3.org/TR/webaudio/#ConvolverNode convolver node]",
+	'comment.filters.equalizer': "create equalizer as a sequence of peaking [https://www.w3.org/TR/webaudio/#the-biquadfilternode-interface biquad filter nodes]",
+	'comment.destination': "connect last node to [https://www.w3.org/TR/webaudio/#AudioDestinationNode destination]",
+	'comment.destination.compressor': "create [https://www.w3.org/TR/webaudio/#the-dynamicscompressornode-interface dynamics compressor node]",
+	'comment.destination.waveform': "create [https://www.w3.org/TR/webaudio/#the-analysernode-interface analyser node] for waveform visualization",
 };
 
 function i18nLinkFilter(inStrings) {

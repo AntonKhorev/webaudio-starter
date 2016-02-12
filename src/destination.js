@@ -32,7 +32,7 @@ class Destination extends Feature {
 		if (featureContext.audioContext) {
 			if (this.options.compressor) {
 				lines.a(
-					new UnescapedLines("// "+i18n('options.destination.compressor.comment')),
+					new UnescapedLines("// "+i18n('comment.destination.compressor')),
 					"var compressorNode=ctx.createDynamicsCompressor();",
 					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(compressorNode);")
 				);
@@ -53,8 +53,9 @@ class Destination extends Feature {
 				prevNodeJsNames=['compressorNode'];
 			}
 			if (this.options.waveform) {
+				// TODO need to connect to analyser instead of ctx.destination in event listener above
 				lines.a(
-					new UnescapedLines("// "+i18n('options.destination.waveform.comment')),
+					new UnescapedLines("// "+i18n('comment.destination.waveform')),
 					"var analyserNode=ctx.createAnalyser();",
 					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(analyserNode);"),
 					"analyserNode.fftSize=1024;",
@@ -64,7 +65,7 @@ class Destination extends Feature {
 				prevNodeJsNames=['analyserNode'];
 			}
 			lines.a(
-				new UnescapedLines("// "+i18n('options.destination.comment')),
+				new UnescapedLines("// "+i18n('comment.destination')),
 				...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(ctx.destination);")
 			);
 		}

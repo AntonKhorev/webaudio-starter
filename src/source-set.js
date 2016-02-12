@@ -34,7 +34,7 @@ class Source {
 	}
 	getJsLines(i18n) {
 		return new Lines(
-			new UnescapedLines("// "+i18n('options.sources.'+this.type+'.comment')),
+			new UnescapedLines("// "+i18n('comment.sources.'+this.type)),
 			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
 		);
 	}

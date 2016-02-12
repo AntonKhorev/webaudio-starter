@@ -73,7 +73,7 @@ class Filter {
 	}
 	getJsLines(i18n,prevNodeJsNames) {
 		return new Lines(
-			new UnescapedLines("// "+i18n('options.filters.'+this.type+'.comment')),
+			new UnescapedLines("// "+i18n('comment.filters.'+this.type)),
 			"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
 			...prevNodeJsNames.map(
 				prevNodeJsName=>prevNodeJsName+".connect("+this.nodeJsName+");"
@@ -341,7 +341,7 @@ const filterClasses={
 				return lines;
 			};
 			const lines=new Lines(
-				new UnescapedLines("// "+i18n('options.filters.'+this.type+'.comment'))
+				new UnescapedLines("// "+i18n('comment.filters.'+this.type))
 			);
 			if (prevNodeJsNames.length==1) {
 				lines.a("var prevNode="+prevNodeJsNames[0]+";");
