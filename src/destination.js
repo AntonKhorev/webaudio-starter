@@ -31,6 +31,7 @@ class Destination extends Feature {
 		const lines=super.getJsInitLines(...arguments);
 		if (featureContext.audioContext) {
 			if (this.options.compressor) {
+				let nextNodeJsName=(this.options.waveform ? 'analyserNode' : 'ctx.destination');
 				lines.a(
 					new UnescapedLines("// "+i18n('comment.destination.compressor')),
 					"var compressorNode=ctx.createDynamicsCompressor();",
@@ -40,11 +41,11 @@ class Destination extends Feature {
 					lines.a(
 						"document.getElementById('my.compressor').onchange=function(){",
 						"	if (this.checked) {",
-						...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".disconnect(ctx.destination);"),
+						...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".disconnect("+nextNodeJsName+");"),
 						...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".connect(compressorNode);"),
 						"	} else {",
 						...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".disconnect(compressorNode);"),
-						...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".connect(ctx.destination);"),
+						...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".connect("+nextNodeJsName+");"),
 						"	}",
 						"};",
 						""
