@@ -385,14 +385,15 @@ const filterClasses={
 				}
 				return lines;
 			};
-			const lines=new Lines(
-				new UnescapedLines("// "+i18n('comment.filters.'+this.type))
-			);
 			if (singleFreq) {
-				lines.a(
+				return new Lines(
+					new UnescapedLines("// "+i18n('comment.filters.'+this.type+'.single')),
 					getJsLoopLines()
 				);
 			} else {
+				const lines=new Lines(
+					new UnescapedLines("// "+i18n('comment.filters.'+this.type))
+				);
 				if (prevNodeJsNames.length==1) {
 					lines.a("var prevNode="+prevNodeJsNames[0]+";");
 				} else {
@@ -404,8 +405,8 @@ const filterClasses={
 					getJsLoopLines().indent(),
 					"});"
 				);
+				return lines;
 			}
-			return lines;
 		}
 	},
 };
