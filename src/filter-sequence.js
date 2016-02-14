@@ -279,28 +279,29 @@ const filterClasses={
 		getJsInitLines(i18n,prevNodeJsNames) {
 			const allGainsConstant=this.nodeProperties.every(prop=>this.getPropertyOption(prop).input==false);
 			const noGainsConstant=this.nodeProperties.every(prop=>this.getPropertyOption(prop).input==true);
-			const getJsDataLines=()=>{
-				const lines=new Lines;
-				lines.a(
-					this.frequencies.map((freq,i)=>{
-						const option=this.getPropertyOption(this.nodeProperties[i]);
-						if (allGainsConstant || noGainsConstant) {
-							return "["+freq+","+option.value+"]";
-						} else {
-							return "["+freq+","+option.value+","+option.input+"]";
-						}
-					}).join()
-				);
-				return lines;
+			const getJsData=()=>{
+				return this.frequencies.map((freq,i)=>{
+					const option=this.getPropertyOption(this.nodeProperties[i]);
+					if (noGainsConstant) {
+						return freq;
+					} else {
+						return "["+freq+","+(option.input ? 'null' : option.value)+"]";
+					}
+				}).join();
+			};
+			const getJsDataItem=()=>{
+				if (noGainsConstant) {
+					return "freq";
+				} else {
+					return "freqData";
+				}
 			};
 			const getJsLoopLines=()=>{
 				const nodeJsName=(allGainsConstant ? this.nodeJsName : 'node');
 				const lines=new Lines;
-				lines.a("var freq=freqData[0], gain=freqData[1]");
-				if (!allGainsConstant) {
-					lines.t(", editable=freqData[2]");
+				if (!noGainsConstant) {
+					lines.a("var freq=freqData[0], gain=freqData[1];");
 				}
-				lines.t(";");
 				if (allGainsConstant) {
 					lines.a("");
 				} else {
@@ -318,18 +319,25 @@ const filterClasses={
 				}
 				lines.a(
 					nodeJsName+".type='peaking';",
-					nodeJsName+".frequency.value=freq;",
-					nodeJsName+".gain.value=gain;"
+					nodeJsName+".frequency.value=freq;"
 				);
+				if (!noGainsConstant) {
+					let gainLines=new Lines(nodeJsName+".gain.value=gain;");
+					if (!allGainsConstant) {
+						gainLines.wrap("if (gain!==null) {","}");
+					}
+					lines.a(gainLines);
+				}
 				if (!allGainsConstant) {
 					const inputHtmlNamePrefix=this.getPropertyInputHtmlName('gain');
 					let listenerLines=new Lines(
-						"document.getElementById('"+inputHtmlNamePrefix+"'+freq).oninput=function(){",
-						"	"+nodeJsName+".gain.value=this.value;",
-						"};"
+						"var element=document.getElementById('"+inputHtmlNamePrefix+"'+freq);",
+						"(element.oninput=function(){",
+						"	"+nodeJsName+".gain.value=element.value;",
+						"})();"
 					);
 					if (!noGainsConstant) {
-						listenerLines.wrap("if (editable) {","}");
+						listenerLines.wrap("if (gain===null) {","}");
 					}
 					lines.a(listenerLines);
 				}
@@ -351,9 +359,7 @@ const filterClasses={
 			}
 			lines.a(
 				"var "+this.nodeJsName+";",
-				"[",
-				getJsDataLines().indent(),
-				"].forEach(function(freqData){",
+				"["+getJsData()+"].forEach(function("+getJsDataItem()+"){",
 				getJsLoopLines().indent(),
 				"});"
 			);
