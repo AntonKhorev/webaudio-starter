@@ -277,17 +277,34 @@ const filterClasses={
 			return lines.wrapIfNotEmpty("<div class='aligned'>","</div>");
 		}
 		getJsInitLines(i18n,prevNodeJsNames) {
-			const allGainsConstant=this.nodeProperties.every(prop=>this.getPropertyOption(prop).input==false);
-			const noGainsConstant=this.nodeProperties.every(prop=>this.getPropertyOption(prop).input==true);
+			const affectedFreqs=[];
+			const affectedOptions=[];
+			this.frequencies.forEach((freq,i)=>{
+				const option=this.getPropertyOption(this.nodeProperties[i]);
+				if (option.input!=false || option.value!=0) {
+					affectedFreqs.push(freq);
+					affectedOptions.push(option);
+				}
+			});
+			// { hack: make at least one node
+			if (affectedFreqs.length==0) {
+				affectedFreqs.push(this.frequencies[0]);
+				affectedOptions.push(this.getPropertyOption(this.nodeProperties[0]));
+			}
+			// }
+			const allGainsConstant=affectedOptions.every(option=>option.input==false);
+			const noGainsConstant=affectedOptions.every(option=>option.input==true);
 			const getJsData=()=>{
-				return this.frequencies.map((freq,i)=>{
-					const option=this.getPropertyOption(this.nodeProperties[i]);
+				const data=[];
+				affectedFreqs.forEach((freq,i)=>{
+					const option=affectedOptions[i];
 					if (noGainsConstant) {
-						return freq;
+						data.push(freq);
 					} else {
-						return "["+freq+","+(option.input ? 'null' : option.value)+"]";
+						data.push("["+freq+","+(option.input ? 'null' : option.value)+"]");
 					}
-				}).join();
+				});
+				return data.join();
 			};
 			const getJsDataItem=()=>{
 				if (noGainsConstant) {
