@@ -258,9 +258,6 @@ const filterClasses={
 		get type()                { return 'equalizer'; }
 		get ctxCreateMethodName() { return 'createBiquadFilter'; }
 		get frequencies()         { return [60,170,350,1000,3500,10000]; }
-		get allGainsConstant() {
-			return this.nodeProperties.every(prop=>this.getPropertyOption(prop).input==false);
-		}
 		get nodeProperties() {
 			return this.frequencies.map(freq=>({
 				name:'gain'+freq,
@@ -280,12 +277,14 @@ const filterClasses={
 			return lines.wrapIfNotEmpty("<div class='aligned'>","</div>");
 		}
 		getJsInitLines(i18n,prevNodeJsNames) {
+			const allGainsConstant=this.nodeProperties.every(prop=>this.getPropertyOption(prop).input==false);
+			const noGainsConstant=this.nodeProperties.every(prop=>this.getPropertyOption(prop).input==true);
 			const getJsDataLines=()=>{
 				const lines=new Lines;
 				lines.a(
 					this.frequencies.map((freq,i)=>{
 						const option=this.getPropertyOption(this.nodeProperties[i]);
-						if (this.allGainsConstant) {
+						if (allGainsConstant || noGainsConstant) {
 							return "["+freq+","+option.value+"]";
 						} else {
 							return "["+freq+","+option.value+","+option.input+"]";
@@ -295,14 +294,14 @@ const filterClasses={
 				return lines;
 			};
 			const getJsLoopLines=()=>{
-				const nodeJsName=(this.allGainsConstant ? this.nodeJsName : 'node');
+				const nodeJsName=(allGainsConstant ? this.nodeJsName : 'node');
 				const lines=new Lines;
 				lines.a("var freq=freqData[0], gain=freqData[1]");
-				if (!this.allGainsConstant) {
+				if (!allGainsConstant) {
 					lines.t(", editable=freqData[2]");
 				}
 				lines.t(";");
-				if (this.allGainsConstant) {
+				if (allGainsConstant) {
 					lines.a("");
 				} else {
 					lines.a("var ");
@@ -322,17 +321,19 @@ const filterClasses={
 					nodeJsName+".frequency.value=freq;",
 					nodeJsName+".gain.value=gain;"
 				);
-				if (!this.allGainsConstant) {
+				if (!allGainsConstant) {
 					const inputHtmlNamePrefix=this.getPropertyInputHtmlName('gain');
-					lines.a(
-						"if (editable) {",
-						"	document.getElementById('"+inputHtmlNamePrefix+"'+freq).oninput=function(){",
-						"		"+nodeJsName+".gain.value=this.value;",
-						"	};",
-						"}"
+					let listenerLines=new Lines(
+						"document.getElementById('"+inputHtmlNamePrefix+"'+freq).oninput=function(){",
+						"	"+nodeJsName+".gain.value=this.value;",
+						"};"
 					);
+					if (!noGainsConstant) {
+						listenerLines.wrap("if (editable) {","}");
+					}
+					lines.a(listenerLines);
 				}
-				const outerNodeJsName=(this.allGainsConstant ? nodeJsName : this.nodeJsName+"="+nodeJsName);
+				const outerNodeJsName=(allGainsConstant ? nodeJsName : this.nodeJsName+"="+nodeJsName);
 				if (prevNodeJsNames.length==1) {
 					lines.a("prevNode="+outerNodeJsName+";");
 				} else {
