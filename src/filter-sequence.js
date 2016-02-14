@@ -367,9 +367,13 @@ const filterClasses={
 						"})();"
 					);
 					if (!noGainsConstant) {
-						listenerLines.wrap("if (gain===null) {","}");
+						lines.t(
+							// continues "if (gain!==null) {...}"
+							listenerLines.wrap(" else {","}")
+						);
+					} else {
+						lines.a(listenerLines);
 					}
-					lines.a(listenerLines);
 				}
 				if (!singleFreq) {
 					const outerNodeJsName=(allGainsConstant ? nodeJsName : this.nodeJsName+"="+nodeJsName);
