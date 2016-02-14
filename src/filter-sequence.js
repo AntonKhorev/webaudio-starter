@@ -32,9 +32,9 @@ class Filter {
 	getPropertyInputHtmlName(propertyName) {
 		return 'my.'+this.type+this.nSuffix+'.'+propertyName;
 	}
-	//getPropertyInputJsName(propertyName) {
-	//	return toCamelCase(this.type+this.nSuffix+'.'+propertyName+'.input');
-	//}
+	getPropertyInputJsName(propertyName) {
+		return toCamelCase(this.type+this.nSuffix+'.'+propertyName+'.input');
+	}
 	requestFeatureContext(featureContext) {
 	}
 	getHtmlPropertyLines(i18n,property) {
@@ -290,18 +290,17 @@ const filterClasses={
 			if (this.affectedFreqsAndOptions.length==0) {
 				return new Lines;
 			}
+			const singleFreq=this.affectedFreqsAndOptions.length==1;
 			const allGainsConstant=this.affectedFreqsAndOptions.every(fo=>fo.option.input==false);
 			const noGainsConstant=this.affectedFreqsAndOptions.every(fo=>fo.option.input==true);
 			const getJsData=()=>{
-				const data=[];
-				this.affectedFreqsAndOptions.forEach(fo=>{
+				return this.affectedFreqsAndOptions.map(fo=>{
 					if (noGainsConstant) {
-						data.push(fo.freq);
+						return fo.freq;
 					} else {
-						data.push("["+fo.freq+","+(fo.option.input ? 'null' : fo.option.value)+"]");
+						return "["+fo.freq+","+(fo.option.input ? 'null' : fo.option.value)+"]";
 					}
-				});
-				return data.join();
+				}).join();
 			};
 			const getJsDataItem=()=>{
 				if (noGainsConstant) {
@@ -311,43 +310,60 @@ const filterClasses={
 				}
 			};
 			const getJsLoopLines=()=>{
-				const nodeJsName=(allGainsConstant ? this.nodeJsName : 'node');
+				const nodeJsName=((allGainsConstant || singleFreq) ? this.nodeJsName : 'node');
+				const freq=(singleFreq ? this.affectedFreqsAndOptions[0].freq : 'freq');
+				const gain=(singleFreq ? this.affectedFreqsAndOptions[0].option.value : 'gain');
 				const lines=new Lines;
-				if (!noGainsConstant) {
+				if (!(noGainsConstant || singleFreq)) {
 					lines.a("var freq=freqData[0], gain=freqData[1];");
 				}
-				if (allGainsConstant) {
+				if (allGainsConstant && !singleFreq) {
 					lines.a("");
 				} else {
 					lines.a("var ");
 				}
 				lines.t(nodeJsName+"=ctx."+this.ctxCreateMethodName+"();");
-				if (prevNodeJsNames.length==1) {
-					lines.a("prevNode.connect("+nodeJsName+");");
-				} else {
+				if (singleFreq) {
 					lines.a(
-						"prevNodes.forEach(function(prevNode){",
-						"	prevNode.connect("+nodeJsName+");",
-						"});"
+						...prevNodeJsNames.map(
+							prevNodeJsName=>prevNodeJsName+".connect("+nodeJsName+");"
+						)
 					);
+				} else {
+					if (prevNodeJsNames.length==1) {
+						lines.a("prevNode.connect("+nodeJsName+");");
+					} else {
+						lines.a(
+							"prevNodes.forEach(function(prevNode){",
+							"	prevNode.connect("+nodeJsName+");",
+							"});"
+						);
+					}
 				}
 				lines.a(
 					nodeJsName+".type='peaking';",
-					nodeJsName+".frequency.value=freq;"
+					nodeJsName+".frequency.value="+freq+";"
 				);
 				if (!noGainsConstant) {
-					let gainLines=new Lines(nodeJsName+".gain.value=gain;");
+					let gainLines=new Lines(nodeJsName+".gain.value="+gain+";");
 					if (!allGainsConstant) {
 						gainLines.wrap("if (gain!==null) {","}");
 					}
 					lines.a(gainLines);
 				}
 				if (!allGainsConstant) {
-					const inputHtmlNamePrefix=this.getPropertyInputHtmlName('gain');
+					const inputJsName=(singleFreq
+						? this.getPropertyInputJsName('gain'+freq)
+						: 'input'
+					);
+					const inputHtmlNameExpr=(singleFreq
+						? "'"+this.getPropertyInputHtmlName('gain'+freq)+"'"
+						: "'"+this.getPropertyInputHtmlName('gain')+"'+freq"
+					);
 					let listenerLines=new Lines(
-						"var element=document.getElementById('"+inputHtmlNamePrefix+"'+freq);",
-						"(element.oninput=function(){",
-						"	"+nodeJsName+".gain.value=element.value;",
+						"var "+inputJsName+"=document.getElementById("+inputHtmlNameExpr+");",
+						"("+inputJsName+".oninput=function(){",
+						"	"+nodeJsName+".gain.value="+inputJsName+".value;",
 						"})();"
 					);
 					if (!noGainsConstant) {
@@ -355,28 +371,36 @@ const filterClasses={
 					}
 					lines.a(listenerLines);
 				}
-				const outerNodeJsName=(allGainsConstant ? nodeJsName : this.nodeJsName+"="+nodeJsName);
-				if (prevNodeJsNames.length==1) {
-					lines.a("prevNode="+outerNodeJsName+";");
-				} else {
-					lines.a("prevNodes=["+outerNodeJsName+"];");
+				if (!singleFreq) {
+					const outerNodeJsName=(allGainsConstant ? nodeJsName : this.nodeJsName+"="+nodeJsName);
+					if (prevNodeJsNames.length==1) {
+						lines.a("prevNode="+outerNodeJsName+";");
+					} else {
+						lines.a("prevNodes=["+outerNodeJsName+"];");
+					}
 				}
 				return lines;
 			};
 			const lines=new Lines(
 				new UnescapedLines("// "+i18n('comment.filters.'+this.type))
 			);
-			if (prevNodeJsNames.length==1) {
-				lines.a("var prevNode="+prevNodeJsNames[0]+";");
+			if (singleFreq) {
+				lines.a(
+					getJsLoopLines()
+				);
 			} else {
-				lines.a("var prevNodes=["+prevNodeJsNames.join()+"];");
+				if (prevNodeJsNames.length==1) {
+					lines.a("var prevNode="+prevNodeJsNames[0]+";");
+				} else {
+					lines.a("var prevNodes=["+prevNodeJsNames.join()+"];");
+				}
+				lines.a(
+					"var "+this.nodeJsName+";",
+					"["+getJsData()+"].forEach(function("+getJsDataItem()+"){",
+					getJsLoopLines().indent(),
+					"});"
+				);
 			}
-			lines.a(
-				"var "+this.nodeJsName+";",
-				"["+getJsData()+"].forEach(function("+getJsDataItem()+"){",
-				getJsLoopLines().indent(),
-				"});"
-			);
 			return lines;
 		}
 	},
