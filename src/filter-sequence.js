@@ -23,9 +23,6 @@ class Filter {
 			return '';
 		}
 	}
-	getPropertyOption(property) {
-		return this.options[property.name];
-	}
 	getPropertyOptionName(property) {
 		return 'options.filters.'+this.type+'.'+property.name;
 	}
@@ -42,7 +39,7 @@ class Filter {
 	}
 	getHtmlPropertyLines(i18n,property) {
 		const lines=new Lines;
-		const option=this.getPropertyOption(property);
+		const option=this.options[property.name];
 		const inputHtmlName=this.getPropertyInputHtmlName(property.name);
 		if (property.type=='range' && option.input) {
 			lines.a(
@@ -80,21 +77,21 @@ class Filter {
 			)
 		);
 	}
+	getNodeJsNames(prevNodeJsNames) {
+		return [this.nodeJsName];
+	}
 	// abstract:
 	// get type()
 	// get ctxCreateMethodName()
-	// get nodeJsNames()
+	// getNodeJsNames(prevNodeJsNames)
 	// get nodeProperties()
 }
 
 class SinglePathFilter extends Filter {
-	get nodeJsNames() {
-		return [this.nodeJsName];
-	}
 	getJsInitLines(i18n,prevNodeJsNames) {
 		const lines=super.getJsInitLines(i18n,prevNodeJsNames);
 		this.nodeProperties.forEach(property=>{
-			const option=this.getPropertyOption(property);
+			const option=this.options[property.name];
 			const nodePropertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"");
 			//if (property.type=='range' || property.type=='select') {
 				let value=option.value;
@@ -193,7 +190,7 @@ const filterClasses={
 				}
 			];
 		}
-		get nodeJsNames() {
+		getNodeJsNames(prevNodeJsNames) {
 			return [this.wetGainNodeJsName,this.dryGainNodeJsName];
 		}
 		get dryGainNodeJsName() {
@@ -264,8 +261,21 @@ const filterClasses={
 				type:'range',
 			}));
 		}
-		get nodeJsNames() {
-			return [this.nodeJsName];
+		getFrequencyOption(i) {
+			return this.options[this.nodeProperties[i].name];
+		}
+		get affectedFreqsAndOptions() {
+			return this.frequencies.map((freq,i)=>{
+				const option=this.getFrequencyOption(i);
+				return {freq,option};
+			}).filter(fo=>(fo.option.input!=false || fo.option.value!=0));
+		}
+		getNodeJsNames(prevNodeJsNames) {
+			if (this.affectedFreqsAndOptions.length>0) {
+				return [this.nodeJsName];
+			} else {
+				return prevNodeJsNames;
+			}
 		}
 		requestFeatureContext(featureContext) {
 			if (!this.allGainsConstant) {
@@ -277,31 +287,18 @@ const filterClasses={
 			return lines.wrapIfNotEmpty("<div class='aligned'>","</div>");
 		}
 		getJsInitLines(i18n,prevNodeJsNames) {
-			const affectedFreqs=[];
-			const affectedOptions=[];
-			this.frequencies.forEach((freq,i)=>{
-				const option=this.getPropertyOption(this.nodeProperties[i]);
-				if (option.input!=false || option.value!=0) {
-					affectedFreqs.push(freq);
-					affectedOptions.push(option);
-				}
-			});
-			// { hack: make at least one node
-			if (affectedFreqs.length==0) {
-				affectedFreqs.push(this.frequencies[0]);
-				affectedOptions.push(this.getPropertyOption(this.nodeProperties[0]));
+			if (this.affectedFreqsAndOptions.length==0) {
+				return new Lines;
 			}
-			// }
-			const allGainsConstant=affectedOptions.every(option=>option.input==false);
-			const noGainsConstant=affectedOptions.every(option=>option.input==true);
+			const allGainsConstant=this.affectedFreqsAndOptions.every(fo=>fo.option.input==false);
+			const noGainsConstant=this.affectedFreqsAndOptions.every(fo=>fo.option.input==true);
 			const getJsData=()=>{
 				const data=[];
-				affectedFreqs.forEach((freq,i)=>{
-					const option=affectedOptions[i];
+				this.affectedFreqsAndOptions.forEach(fo=>{
 					if (noGainsConstant) {
-						data.push(freq);
+						data.push(fo.freq);
 					} else {
-						data.push("["+freq+","+(option.input ? 'null' : option.value)+"]");
+						data.push("["+fo.freq+","+(fo.option.input ? 'null' : fo.option.value)+"]");
 					}
 				});
 				return data.join();
@@ -404,17 +401,16 @@ class FilterSequence extends CollectionFeature {
 		}
 		lines.interleave(...this.entries.map(entry=>{
 			const lines=entry.getJsInitLines(i18n,prevNodeJsNames);
-			prevNodeJsNames=entry.nodeJsNames;
+			prevNodeJsNames=entry.getNodeJsNames(prevNodeJsNames);
 			return lines;
 		}));
 		return lines;
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {
-		if (this.entries.length>0) {
-			return this.entries[this.entries.length-1].nodeJsNames;
-		} else {
-			return prevNodeJsNames;
-		}
+		this.entries.forEach(entry=>{
+			prevNodeJsNames=entry.getNodeJsNames(prevNodeJsNames);
+		});
+		return prevNodeJsNames;
 	}
 }
 
