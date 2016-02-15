@@ -50,7 +50,7 @@ class Filter {
 			lines.a(
 				"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property))+"</label>",
 				(
-					new Lines(...option.availableValues.map(value=>"<option>"+value+"</option>"))
+					new Lines(...option.availableValues.map(value=>"<option"+(option.value==value?" selected":"")+">"+value+"</option>"))
 				).wrap(
 					"<select id='"+inputHtmlName+"'>","</select>"
 				)
