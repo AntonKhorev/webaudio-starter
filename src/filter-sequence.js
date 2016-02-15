@@ -97,7 +97,22 @@ class SinglePathFilter extends Filter {
 		this.nodeProperties.forEach(property=>{
 			const option=this.options[property.name];
 			const nodePropertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"");
-			//if (property.type=='range' || property.type=='select') {
+			if (option.input) {
+				const inputJsName=this.getPropertyInputJsName(property.name);
+				const inputHtmlName=this.getPropertyInputHtmlName(property.name);
+				let value=inputJsName+".value";
+				if (property.fn) {
+					value=property.fn(value);
+				}
+				const eventProp=(property.type=='range'?'oninput':'onchange');
+				lines.a(
+					"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
+					// was for IE11 compat (but IE11 has no Web Audio): (property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
+					"("+inputJsName+"."+eventProp+"=function(){",
+					"	"+nodePropertyJsName+"="+value+";",
+					"})();"
+				);
+			} else {
 				let value=option.value;
 				if (property.type=='select') {
 					value="'"+value+"'";
@@ -110,23 +125,6 @@ class SinglePathFilter extends Filter {
 						nodePropertyJsName+"="+value+";"
 					);
 				}
-			//}
-			if (option.input) {
-				//const inputJsName=this.getPropertyInputJsName(property.name);
-				const inputHtmlName=this.getPropertyInputHtmlName(property.name);
-				let value="this.value";
-				if (property.fn) {
-					value=property.fn(value);
-				}
-				const eventProp=(property.type=='range'?'oninput':'onchange'); //
-				lines.a(
-					//"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
-					//(property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
-					"document.getElementById('"+inputHtmlName+"')."+eventProp+"=function(){",
-					//
-					"	"+nodePropertyJsName+"="+value+";",
-					"};"
-				);
 			}
 		});
 		return lines;
