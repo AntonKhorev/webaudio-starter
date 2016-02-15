@@ -68,6 +68,10 @@ class Filter {
 		);
 		return lines.wrapIfNotEmpty("<div>","</div>");
 	}
+	get skipNode() {
+		return false;
+	}
+	// { not called if skipNode is set
 	getJsInitLines(i18n,prevNodeJsNames) {
 		return new Lines(
 			new UnescapedLines("// "+i18n('comment.filters.'+this.type)),
@@ -77,13 +81,13 @@ class Filter {
 			)
 		);
 	}
-	getNodeJsNames(prevNodeJsNames) {
+	get nodeJsNames() {
 		return [this.nodeJsName];
 	}
+	// }
 	// abstract:
 	// get type()
 	// get ctxCreateMethodName()
-	// getNodeJsNames(prevNodeJsNames)
 	// get nodeProperties()
 }
 
@@ -129,8 +133,17 @@ class SinglePathFilter extends Filter {
 	}
 }
 
+class PassiveByDefaultSinglePathFilter extends SinglePathFilter {
+	get skipNode() {
+		return this.nodeProperties.every(property=>{
+			const option=this.options[property.name];
+			return option.value==option.defaultValue && !option.input;
+		});
+	}
+}
+
 const filterClasses={
-	gain: class extends SinglePathFilter {
+	gain: class extends PassiveByDefaultSinglePathFilter {
 		get type()                { return 'gain'; }
 		get ctxCreateMethodName() { return 'createGain'; }
 		get nodeProperties() {
@@ -142,7 +155,7 @@ const filterClasses={
 			];
 		}
 	},
-	panner: class extends SinglePathFilter {
+	panner: class extends PassiveByDefaultSinglePathFilter {
 		get type()                { return 'panner'; }
 		get ctxCreateMethodName() { return 'createStereoPanner'; }
 		get nodeProperties() {
@@ -189,9 +202,6 @@ const filterClasses={
 					type:'xhr',
 				}
 			];
-		}
-		getNodeJsNames(prevNodeJsNames) {
-			return [this.wetGainNodeJsName,this.dryGainNodeJsName];
 		}
 		get dryGainNodeJsName() {
 			return toCamelCase(this.type+this.nSuffix+'.dry.gain.node');
@@ -250,6 +260,9 @@ const filterClasses={
 			);
 			return lines;
 		}
+		get nodeJsNames() {
+			return [this.wetGainNodeJsName,this.dryGainNodeJsName];
+		}
 	},
 	equalizer: class extends Filter {
 		get type()                { return 'equalizer'; }
@@ -270,13 +283,6 @@ const filterClasses={
 				return {freq,option};
 			}).filter(fo=>(fo.option.input!=false || fo.option.value!=0));
 		}
-		getNodeJsNames(prevNodeJsNames) {
-			if (this.affectedFreqsAndOptions.length>0) {
-				return [this.nodeJsName];
-			} else {
-				return prevNodeJsNames;
-			}
-		}
 		requestFeatureContext(featureContext) {
 			if (!this.allGainsConstant) {
 				featureContext.alignedInputs=true;
@@ -286,10 +292,10 @@ const filterClasses={
 			const lines=super.getHtmlPropertyLines(i18n,property);
 			return lines.wrapIfNotEmpty("<div class='aligned'>","</div>");
 		}
+		get skipNode() {
+			return this.affectedFreqsAndOptions.length==0;
+		}
 		getJsInitLines(i18n,prevNodeJsNames) {
-			if (this.affectedFreqsAndOptions.length==0) {
-				return new Lines;
-			}
 			const singleFreq=this.affectedFreqsAndOptions.length==1;
 			const allGainsConstant=this.affectedFreqsAndOptions.every(fo=>fo.option.input==false);
 			const noGainsConstant=this.affectedFreqsAndOptions.every(fo=>fo.option.input==true);
@@ -425,19 +431,18 @@ class FilterSequence extends CollectionFeature {
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		const lines=super.getJsInitLines(...arguments);
-		if (this.entries.length==0) {
-			return lines;
-		}
-		lines.interleave(...this.entries.map(entry=>{
+		lines.interleave(...this.entries.filter(entry=>!entry.skipNode).map(entry=>{
 			const lines=entry.getJsInitLines(i18n,prevNodeJsNames);
-			prevNodeJsNames=entry.getNodeJsNames(prevNodeJsNames);
+			prevNodeJsNames=entry.nodeJsNames;
 			return lines;
 		}));
 		return lines;
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {
 		this.entries.forEach(entry=>{
-			prevNodeJsNames=entry.getNodeJsNames(prevNodeJsNames);
+			if (!entry.skipNode) {
+				prevNodeJsNames=entry.nodeJsNames;
+			}
 		});
 		return prevNodeJsNames;
 	}
