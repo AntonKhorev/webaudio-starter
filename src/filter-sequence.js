@@ -62,16 +62,16 @@ class Filter {
 		}
 		return lines;
 	}
+	get skipNode() {
+		return false;
+	}
+	// { not called if skipNode is set
 	getHtmlLines(featureContext,i18n) {
 		const lines=new Lines(
 			...this.nodeProperties.map(property=>this.getHtmlPropertyLines(i18n,property))
 		);
 		return lines.wrapIfNotEmpty("<div>","</div>");
 	}
-	get skipNode() {
-		return false;
-	}
-	// { not called if skipNode is set
 	getJsInitLines(i18n,prevNodeJsNames) {
 		return new Lines(
 			new UnescapedLines("// "+i18n('comment.filters.'+this.type)),
@@ -206,6 +206,9 @@ const filterClasses={
 		}
 		get wetGainNodeJsName() {
 			return toCamelCase(this.type+this.nSuffix+'.wet.gain.node');
+		}
+		get skipNode() {
+			return this.options.reverb==0 && !this.options.reverb.input;
 		}
 		getJsInitLines(i18n,prevNodeJsNames) {
 			const lines=super.getJsInitLines(i18n,prevNodeJsNames);
@@ -426,6 +429,9 @@ class FilterSequence extends CollectionFeature {
 		this.entries.forEach(entry=>{
 			entry.requestFeatureContext(featureContext);
 		});
+	}
+	getHtmlLines(featureContext,i18n) {
+		return new Lines(...this.entries.filter(entry=>!entry.skipNode).map(entry=>entry.getHtmlLines(featureContext,i18n)));
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		const lines=super.getJsInitLines(...arguments);
