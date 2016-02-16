@@ -36,8 +36,9 @@ class Options extends BaseOptions {
 						'lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch','allpass'
 					]],
 					['LiveInt','frequency',[0,22050],350],
-					['LiveInt','detune',[0,100]],
 					['LiveFloat','Q',[-4,4],0], // log Q
+					['LiveInt','gain',[-30,30],0],
+					['LiveInt','detune',[0,100]],
 				]],
 				['Group','convolver',[
 					['LiveFloat','reverb',[0,1]],
