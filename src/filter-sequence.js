@@ -421,11 +421,11 @@ class FilterSequence extends CollectionFeature {
 		return filterClasses[entryOption.filter];
 	}
 	requestFeatureContext(featureContext) {
-		if (this.entries.length>0) {
-			featureContext.audioContext=true;
-		}
 		this.entries.forEach(entry=>{
-			entry.requestFeatureContext(featureContext);
+			if (!entry.skipNode) {
+				featureContext.audioContext=true;
+				entry.requestFeatureContext(featureContext);
+			}
 		});
 	}
 	getHtmlLines(featureContext,i18n) {
