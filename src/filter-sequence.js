@@ -211,8 +211,19 @@ const filterClasses={
 			return this.options.reverb==0 && !this.options.reverb.input;
 		}
 		getJsInitLines(i18n,prevNodeJsNames) {
-			const lines=super.getJsInitLines(i18n,prevNodeJsNames);
 			const messageHtmlName=this.getPropertyInputHtmlName('buffer');
+			const lines=new Lines;
+			if (this.options.reverb.input || this.options.reverb!=1) {
+				lines.a(new UnescapedLines("// "+i18n('comment.filters.'+this.type)));
+			} else {
+				lines.a(new UnescapedLines("// "+i18n('comment.filters.'+this.type+'.single')));
+			}
+			lines.a(
+				"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
+				...prevNodeJsNames.map(
+					prevNodeJsName=>prevNodeJsName+".connect("+this.nodeJsName+");"
+				)
+			);
 			if (this.options.reverb.input || this.options.reverb!=1) {
 				lines.a(
 					"var "+this.wetGainNodeJsName+"=ctx.createGain();",

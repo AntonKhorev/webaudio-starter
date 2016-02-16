@@ -65,6 +65,7 @@ let strings={
 	'comment.filters.panner': "create [https://www.w3.org/TR/webaudio/#the-stereopannernode-interface stereo panner node]",
 	'comment.filters.biquad': "create [https://www.w3.org/TR/webaudio/#the-biquadfilternode-interface biquad filter node]",
 	'comment.filters.convolver': "create dry and wet routes with [https://www.w3.org/TR/webaudio/#ConvolverNode convolver node]",
+	'comment.filters.convolver.single': "create [https://www.w3.org/TR/webaudio/#ConvolverNode convolver node]",
 	'comment.filters.equalizer': "create equalizer as a sequence of [https://www.w3.org/TR/webaudio/#idl-def-BiquadFilterType.peaking peaking] [https://www.w3.org/TR/webaudio/#the-biquadfilternode-interface biquad filter nodes]",
 	'comment.filters.equalizer.single': "create equalizer as a [https://www.w3.org/TR/webaudio/#idl-def-BiquadFilterType.peaking peaking] [https://www.w3.org/TR/webaudio/#the-biquadfilternode-interface biquad filter node]",
 	'comment.destination': "connect last node to [https://www.w3.org/TR/webaudio/#AudioDestinationNode destination]",
