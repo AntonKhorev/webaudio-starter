@@ -189,6 +189,13 @@ const filterClasses={
 				}
 			];
 		}
+		get skipNode() {
+			// lowshelf, highshelf and peaking are passive when gain==0
+			return (
+				!this.options.type.input && ['lowshelf','highshelf','peaking'].indexOf(this.options.type.value)>=0 &&
+				!this.options.gain.input && this.options.gain==0
+			);
+		}
 	},
 	convolver: class extends Filter {
 		get type()                { return 'convolver'; }
