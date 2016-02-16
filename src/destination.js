@@ -10,6 +10,7 @@ class Destination extends Feature {
 		this.options=options;
 	}
 	requestFeatureContext(featureContext) {
+		if (!featureContext.audioSource) return;
 		if (this.options.compressor || this.options.waveform) {
 			featureContext.audioContext=true;
 		}
@@ -18,6 +19,7 @@ class Destination extends Feature {
 		}
 	}
 	getHtmlLines(featureContext,i18n) {
+		if (!featureContext.audioSource) return new Lines;
 		const lines=new Lines;
 		if (this.options.compressor) {
 			lines.a(
@@ -28,6 +30,7 @@ class Destination extends Feature {
 		return lines.wrapIfNotEmpty("<div>","</div>");
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
+		if (!featureContext.audioSource) return new Lines;
 		const lines=super.getJsInitLines(...arguments);
 		if (featureContext.audioContext) {
 			if (this.options.compressor) {
@@ -73,6 +76,7 @@ class Destination extends Feature {
 		return lines;
 	}
 	getJsLoopLines(featureContext,i18n) {
+		if (!featureContext.audioSource) return new Lines;
 		const lines=super.getJsLoopLines(...arguments);
 		if (this.options.waveform) {
 			lines.a(
@@ -94,6 +98,7 @@ class Destination extends Feature {
 		return lines;
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {
+		if (!featureContext.audioSource) return prevNodeJsNames;
 		if (featureContext.audioContext) {
 			return ["ctx.destination"];
 		} else {

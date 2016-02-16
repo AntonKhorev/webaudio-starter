@@ -442,6 +442,7 @@ class FilterSequence extends CollectionFeature {
 		return filterClasses[entryOption.filter];
 	}
 	requestFeatureContext(featureContext) {
+		if (!featureContext.audioSource) return;
 		this.entries.forEach(entry=>{
 			if (!entry.skipNode) {
 				featureContext.audioContext=true;
@@ -450,9 +451,11 @@ class FilterSequence extends CollectionFeature {
 		});
 	}
 	getHtmlLines(featureContext,i18n) {
+		if (!featureContext.audioSource) return new Lines;
 		return new Lines(...this.entries.filter(entry=>!entry.skipNode).map(entry=>entry.getHtmlLines(featureContext,i18n)));
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
+		if (!featureContext.audioSource) return new Lines;
 		const lines=super.getJsInitLines(...arguments);
 		lines.interleave(...this.entries.filter(entry=>!entry.skipNode).map(entry=>{
 			const lines=entry.getJsInitLines(i18n,prevNodeJsNames);
@@ -462,6 +465,7 @@ class FilterSequence extends CollectionFeature {
 		return lines;
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {
+		if (!featureContext.audioSource) return prevNodeJsNames;
 		this.entries.forEach(entry=>{
 			if (!entry.skipNode) {
 				prevNodeJsNames=entry.nodeJsNames;

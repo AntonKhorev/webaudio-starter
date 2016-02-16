@@ -66,6 +66,11 @@ class SourceSet extends CollectionFeature {
 	getEntryClass(entryOption) {
 		return sourceClasses[entryOption.source];
 	}
+	requestFeatureContext(featureContext) {
+		if (this.entries.length>0) {
+			featureContext.audioSource=true; // this is a hack: featureContext was intended for requests, but here we provide
+		}
+	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		const lines=super.getJsInitLines(...arguments);
 		if (featureContext.audioContext) {
