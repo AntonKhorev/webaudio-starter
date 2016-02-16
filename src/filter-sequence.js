@@ -212,7 +212,6 @@ const filterClasses={
 		}
 		getJsInitLines(i18n,prevNodeJsNames) {
 			const lines=super.getJsInitLines(i18n,prevNodeJsNames);
-			const inputHtmlName=this.getPropertyInputHtmlName('reverb');
 			const messageHtmlName=this.getPropertyInputHtmlName('buffer');
 			if (this.options.reverb.input || this.options.reverb!=1) {
 				lines.a(
@@ -223,22 +222,15 @@ const filterClasses={
 						prevNodeJsName=>prevNodeJsName+".connect("+this.dryGainNodeJsName+");"
 					)
 				);
-				if (this.options.reverb!=1) {
-					lines.a(
-						this.wetGainNodeJsName+".gain.value="+this.options.reverb+";"
-					);
-				}
-				if (this.options.reverb!=0) {
-					lines.a(
-						this.dryGainNodeJsName+".gain.value="+(1-this.options.reverb)+";"
-					);
-				}
 				if (this.options.reverb.input) {
+					const inputHtmlName=this.getPropertyInputHtmlName('reverb');
+					const inputJsName=this.getPropertyInputJsName('reverb');
 					lines.a(
-						"document.getElementById('"+inputHtmlName+"').oninput=function(){",
-						"	"+this.wetGainNodeJsName+".gain.value=this.value;",
-						"	"+this.dryGainNodeJsName+".gain.value=1-this.value;",
-						"};"
+						"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
+						"("+inputJsName+".oninput=function(){",
+						"	"+this.wetGainNodeJsName+".gain.value="+inputJsName+".value;",
+						"	"+this.dryGainNodeJsName+".gain.value=1-"+inputJsName+".value;",
+						"})();"
 					);
 				}
 			}
