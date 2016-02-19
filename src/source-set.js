@@ -44,7 +44,7 @@ class Source {
 	}
 	// abstract:
 	// get type()
-	// getElementHtmlLines(featureContext,i18n) // TODO html escape
+	// getElementHtmlLines(featureContext,i18n)
 }
 
 const sourceClasses={
@@ -52,7 +52,7 @@ const sourceClasses={
 		get type() { return 'audio'; }
 		getElementHtmlLines(featureContext,i18n) {
 			return Lines.bae(
-				"<audio src='"+this.options.url+"' id='"+this.elementHtmlName+"' controls loop"+(featureContext.audioContext?" crossorigin='anonymous'":"")+"></audio>"
+				Lines.html`<audio src=${this.options.url} id=${this.elementHtmlName} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></audio>`
 			);
 		}
 	},
@@ -60,7 +60,7 @@ const sourceClasses={
 		get type() { return 'video'; }
 		getElementHtmlLines(featureContext,i18n) {
 			return Lines.bae(
-				"<video src='"+this.options.url+"' id='"+this.elementHtmlName+"' width='"+this.options.width+"' height='"+this.options.height+"' controls loop"+(featureContext.audioContext?" crossorigin='anonymous'":"")+"></video>"
+				Lines.html`<video src=${this.options.url} id=${this.elementHtmlName} width=${this.options.width} height=${this.options.height} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></video>`
 			);
 		}
 	},
