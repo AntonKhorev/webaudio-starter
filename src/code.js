@@ -1,91 +1,88 @@
 'use strict';
 
-const Lines=require('./html-lines.js');
 const AudioContext=require('./audio-context.js');
 const SourceSet=require('./source-set.js');
 const FilterSequence=require('./filter-sequence.js');
 const Destination=require('./destination.js');
 const Canvas=require('./canvas.js');
 
-module.exports=function(options,i18n){
-	const featureContext={};
-	const features=[
-		new AudioContext,
-		new SourceSet(options.sources),
-		new FilterSequence(options.filters),
-		new Destination(options.destination),
-		new Canvas,
-	];
-	features.forEach(feature=>{
-		feature.requestFeatureContext(featureContext);
-	});
-	const lines=new Lines(
-		"<!DOCTYPE html>",
-		"<html lang='en'>",
-		"<head>",
-		"<meta charset='utf-8' />",
-		"<title>WebAudio example - Generated code</title>",
-		(()=>{
-			const lines=new Lines;
-			if (featureContext.alignedInputs) {
-				lines.a(
-					".aligned label {",
-					"	display: inline-block;",
-					"	width: 10em;",
-					"	text-align: right;",
-					"}"
-				);
-			}
-			if (featureContext.canvas) {
-				lines.a(
-					"canvas {",
-					"	border: 1px solid;",
-					"}"
-				);
-			}
-			return lines.wrapIfNotEmpty(
-				"<style>",
-				"</style>"
+const Lines=require('crnx-base/lines');
+const InterleaveLines=require('crnx-base/interleave-lines');
+const NoseWrapLines=require('crnx-base/nose-wrap-lines');
+const BaseWebCode=require('crnx-base/web-code');
+
+class Code extends BaseWebCode {
+	constructor(options,i18n) {
+		super();
+		this.i18n=i18n;
+		this.featureContext={};
+		this.features=[
+			new AudioContext,
+			new SourceSet(options.sources),
+			new FilterSequence(options.filters),
+			new Destination(options.destination),
+			new Canvas,
+		];
+		this.features.forEach(feature=>{
+			feature.requestFeatureContext(this.featureContext);
+		});
+	}
+	get basename() {
+		return 'webaudio';
+	}
+	get lang() {
+		return 'en';
+	}
+	get title() {
+		return "WebAudio example - Generated code";
+	}
+	get styleLines() {
+		const a=Lines.b();
+		if (this.featureContext.alignedInputs) {
+			a(
+				".aligned label {",
+				"	display: inline-block;",
+				"	width: 10em;",
+				"	text-align: right;",
+				"}"
 			);
-		})(),
-		"</head>",
-		"<body>",
-		(()=>{
-			const lines=new Lines;
-			lines.a(...features.map(feature=>feature.getHtmlLines(featureContext,i18n)));
-			return lines;
-		})(),
-		(()=>{
-			let prevNodeJsNames;
-			const jsTopLineSets=features.map(feature=>{
-				const lines=feature.getJsInitLines(featureContext,i18n,prevNodeJsNames);
-				prevNodeJsNames=feature.getNodeJsNames(featureContext,prevNodeJsNames);
+		}
+		if (this.featureContext.canvas) {
+			a(
+				"canvas {",
+				"	border: 1px solid;",
+				"}"
+			);
+		}
+		return a.e();
+	}
+	get bodyLines() {
+		return Lines.bae(
+			...this.features.map(feature=>feature.getHtmlLines(this.featureContext,this.i18n))
+		);
+	}
+	get scriptLines() {
+		let prevNodeJsNames;
+		return InterleaveLines.bae(
+			...this.features.map(feature=>{
+				const lines=feature.getJsInitLines(this.featureContext,this.i18n,prevNodeJsNames);
+				prevNodeJsNames=feature.getNodeJsNames(this.featureContext,prevNodeJsNames);
 				return lines;
-			});
-			jsTopLineSets.push((()=>{
-				//const lines=new Lines;
-				//lines.interleave(...features.map(feature=>feature.getJsLoopLines(featureContext,i18n)));
-				const lines=new Lines(...features.map(feature=>feature.getJsLoopLines(featureContext,i18n)));
-				//
-				if (lines.isEmpty()) {
-					return lines;
-				} else {
-					return new Lines(
-						"function visualize() {",
-						lines.indent(),
-						//"	",
-						"	requestAnimationFrame(visualize);",
-						"}",
-						"requestAnimationFrame(visualize);"
-					);
-				}
-			})());
-			const lines=new Lines;
-			lines.interleave(...jsTopLineSets);
-			return lines.wrapIfNotEmpty("<script>","</script>");
-		})(),
-		"</body>",
-		"</html>"
-	);
-	return lines.join('\t');
-};
+			}),
+			NoseWrapLines.b(
+				Lines.bae(
+					"function visualize() {"
+				),
+				Lines.bae(
+					"	requestAnimationFrame(visualize);",
+					"}",
+					"requestAnimationFrame(visualize);"
+				)
+			).ae(
+				...this.features.map(feature=>feature.getJsLoopLines(this.featureContext,this.i18n))
+			)
+		);
+	}
+}
+
+module.exports=Code;

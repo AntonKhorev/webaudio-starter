@@ -59,21 +59,27 @@ let strings={
 	'options-output.range': "with range",
 	'options-output.reset': "Reset",
 
-	'comment.context': "create [https://www.w3.org/TR/webaudio/#AudioContext audio context]",
-	'comment.sources.audio': "create [https://www.w3.org/TR/webaudio/#MediaElementAudioSourceNode audio source node]",
-	'comment.sources.video': "create [https://www.w3.org/TR/webaudio/#MediaElementAudioSourceNode video source node]",
-	'comment.filters.gain': "create [https://www.w3.org/TR/webaudio/#GainNode gain node]",
-	'comment.filters.panner': "create [https://www.w3.org/TR/webaudio/#the-stereopannernode-interface stereo panner node]",
-	'comment.filters.biquad': "create [https://www.w3.org/TR/webaudio/#the-biquadfilternode-interface biquad filter node]",
-	'comment.filters.convolver': "create dry and wet routes with [https://www.w3.org/TR/webaudio/#ConvolverNode convolver node]",
-	'comment.filters.convolver.single': "create [https://www.w3.org/TR/webaudio/#ConvolverNode convolver node]",
-	'comment.filters.equalizer': "create equalizer as a sequence of [https://www.w3.org/TR/webaudio/#idl-def-BiquadFilterType.peaking peaking] [https://www.w3.org/TR/webaudio/#the-biquadfilternode-interface biquad filter nodes]",
-	'comment.filters.equalizer.single': "create equalizer as a [https://www.w3.org/TR/webaudio/#idl-def-BiquadFilterType.peaking peaking] [https://www.w3.org/TR/webaudio/#the-biquadfilternode-interface biquad filter node]",
-	'comment.destination': "connect last node to [https://www.w3.org/TR/webaudio/#AudioDestinationNode destination]",
-	'comment.destination.compressor': "create [https://www.w3.org/TR/webaudio/#the-dynamicscompressornode-interface dynamics compressor node]",
-	'comment.destination.waveform': "create [https://www.w3.org/TR/webaudio/#the-analysernode-interface analyser node] for waveform visualization",
+	'code-output.save': "Save source code",
+	'code-output.run': "Run in new window",
+	'code-output.warning.ie': "these buttons don't work in Internet Explorer, copy-paste the code manually",
+	'code-output.warning.no-hljs': "<a href='https://highlightjs.org/'>highlight.js</a> (hosted on cdnjs.cloudflare.com) is not loaded. Syntax highlighting is disabled.",
+
+	'comment.context': "create [audio context][context]",
+	'comment.sources.audio': "create [audio source node][source]",
+	'comment.sources.video': "create [video source node][source]",
+	'comment.filters.gain': "create [gain node][gain]",
+	'comment.filters.panner': "create [stereo panner node][panner]",
+	'comment.filters.biquad': "create [biquad filter node][biquad]",
+	'comment.filters.convolver': "create dry and wet routes with [convolver node][convolver]",
+	'comment.filters.convolver.single': "create [convolver node][convolver]",
+	'comment.filters.equalizer': "create equalizer as a sequence of [peaking][peaking] [biquad filter nodes][biquad]",
+	'comment.filters.equalizer.single': "create equalizer as a [peaking][peaking] [biquad filter node][biquad]",
+	'comment.destination': "connect last node to [destination][destination]",
+	'comment.destination.compressor': "create [dynamics compressor node][compressor]",
+	'comment.destination.waveform': "create [analyser node][analyser] for waveform visualization",
 };
 
+/*
 function i18nLinkFilter(inStrings) {
 	const linkRegexp=/\[(\S+)\s+([^\]]+)]/g;
 	const outStrings={};
@@ -82,8 +88,8 @@ function i18nLinkFilter(inStrings) {
 	}
 	return outStrings;
 }
-
 strings=i18nLinkFilter(strings);
+*/
 
 module.exports=function(lang){
 	// TODO use lang to pick strings
