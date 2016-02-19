@@ -1,7 +1,9 @@
 'use strict';
 
-const Lines=require('./html-lines.js');
-const UnescapedLines=require('crnx-base/lines');
+const Lines=require('crnx-base/lines');
+const WrapLines=require('crnx-base/wrap-lines');
+const InterleaveLines=require('crnx-base/interleave-lines');
+const RefLines=require('crnx-base/ref-lines');
 const CollectionFeature=require('./collection-feature.js');
 
 function capitalize(s) {
@@ -30,11 +32,13 @@ class Source {
 		return toCamelCase(this.type+this.nSuffix+'.node');
 	}
 	getHtmlLines(featureContext,i18n) {
-		return this.getElementHtmlLines(featureContext,i18n).wrap("<div>","</div>");
+		return WrapLines.b("<div>","</div>").ae(
+			this.getElementHtmlLines(featureContext,i18n)
+		);
 	}
 	getJsInitLines(i18n) {
-		return new Lines(
-			new UnescapedLines("// "+i18n('comment.sources.'+this.type)),
+		return Lines.bae(
+			RefLines.parse("// "+i18n('comment.sources.'+this.type)),
 			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
 		);
 	}
@@ -47,7 +51,7 @@ const sourceClasses={
 	audio: class extends Source {
 		get type() { return 'audio'; }
 		getElementHtmlLines(featureContext,i18n) {
-			return new Lines(
+			return Lines.bae(
 				"<audio src='"+this.options.url+"' id='"+this.elementHtmlName+"' controls loop"+(featureContext.audioContext?" crossorigin='anonymous'":"")+"></audio>"
 			);
 		}
@@ -55,7 +59,7 @@ const sourceClasses={
 	video: class extends Source {
 		get type() { return 'video'; }
 		getElementHtmlLines(featureContext,i18n) {
-			return new Lines(
+			return Lines.bae(
 				"<video src='"+this.options.url+"' id='"+this.elementHtmlName+"' width='"+this.options.width+"' height='"+this.options.height+"' controls loop"+(featureContext.audioContext?" crossorigin='anonymous'":"")+"></video>"
 			);
 		}
@@ -72,11 +76,11 @@ class SourceSet extends CollectionFeature {
 		}
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
-		const lines=super.getJsInitLines(...arguments);
+		const a=InterleaveLines.b();
 		if (featureContext.audioContext) {
-			lines.interleave(...this.entries.map(entry=>entry.getJsInitLines(i18n)));
+			a(...this.entries.map(entry=>entry.getJsInitLines(i18n)));
 		}
-		return lines;
+		return a.e();
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {
 		if (featureContext.audioContext) {

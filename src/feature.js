@@ -1,18 +1,18 @@
 'use strict';
 
-const Lines=require('./html-lines.js');
+const Lines=require('crnx-base/lines');
 
 class Feature {
 	requestFeatureContext(featureContext) {
 	}
 	getHtmlLines(featureContext,i18n) {
-		return new Lines;
+		return Lines.be();
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
-		return new Lines;
+		return Lines.be();
 	}
 	getJsLoopLines(featureContext,i18n) {
-		return new Lines;
+		return Lines.be();
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {
 		return prevNodeJsNames;

@@ -7,10 +7,7 @@ function generateId() {
 
 const i18n=require('./i18n.js')('en');
 const Options=require('./options.js');
-//
-//const Code=require('./code.js');
-const Code=require('crnx-base/web-code');
-//
+const Code=require('./code.js');
 const OptionsOutput=require('./options-output.js');
 const CodeOutput=require('./code-output.js');
 

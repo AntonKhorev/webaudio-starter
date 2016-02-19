@@ -1,6 +1,6 @@
 'use strict';
 
-const Lines=require('./html-lines.js');
+const Lines=require('crnx-base/lines');
 const Feature=require('./feature.js');
 
 class CollectionFeature extends Feature {
@@ -24,7 +24,7 @@ class CollectionFeature extends Feature {
 		});
 	}
 	getHtmlLines(featureContext,i18n) {
-		return new Lines(...this.entries.map(entry=>entry.getHtmlLines(featureContext,i18n)));
+		return Lines.bae(...this.entries.map(entry=>entry.getHtmlLines(featureContext,i18n)));
 	}
 	// abstract:
 	// getEntryClass(entryOption) {}
