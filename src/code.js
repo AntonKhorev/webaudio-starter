@@ -1,10 +1,10 @@
 'use strict';
 
-//const AudioContext=require('./audio-context.js');
+const AudioContext=require('./audio-context.js');
 const SourceSet=require('./source-set.js');
 const FilterSequence=require('./filter-sequence.js');
-//const Destination=require('./destination.js');
-//const Canvas=require('./canvas.js');
+const Destination=require('./destination.js');
+const Canvas=require('./canvas.js');
 
 const Lines=require('crnx-base/lines');
 const InterleaveLines=require('crnx-base/interleave-lines');
@@ -17,11 +17,11 @@ class Code extends BaseWebCode {
 		this.i18n=i18n;
 		this.featureContext={};
 		this.features=[
-			//new AudioContext,
+			new AudioContext,
 			new SourceSet(options.sources),
 			new FilterSequence(options.filters),
-			//new Destination(options.destination),
-			//new Canvas,
+			new Destination(options.destination),
+			new Canvas,
 		];
 		this.features.forEach(feature=>{
 			feature.requestFeatureContext(this.featureContext);
