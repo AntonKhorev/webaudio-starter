@@ -2,7 +2,7 @@
 
 //const AudioContext=require('./audio-context.js');
 const SourceSet=require('./source-set.js');
-//const FilterSequence=require('./filter-sequence.js');
+const FilterSequence=require('./filter-sequence.js');
 //const Destination=require('./destination.js');
 //const Canvas=require('./canvas.js');
 
@@ -19,7 +19,7 @@ class Code extends BaseWebCode {
 		this.features=[
 			//new AudioContext,
 			new SourceSet(options.sources),
-			//new FilterSequence(options.filters),
+			new FilterSequence(options.filters),
 			//new Destination(options.destination),
 			//new Canvas,
 		];

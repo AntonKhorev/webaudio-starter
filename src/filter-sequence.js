@@ -1,7 +1,10 @@
 'use strict';
 
-const Lines=require('./html-lines.js');
-const UnescapedLines=require('crnx-base/lines');
+const Lines=require('crnx-base/lines');
+const WrapLines=require('crnx-base/wrap-lines');
+const NoseWrapLines=require('crnx-base/nose-wrap-lines');
+const InterleaveLines=require('crnx-base/interleave-lines');
+const RefLines=require('crnx-base/ref-lines');
 const CollectionFeature=require('./collection-feature.js');
 
 function capitalize(s) {
@@ -38,43 +41,44 @@ class Filter {
 	requestFeatureContext(featureContext) {
 	}
 	getHtmlPropertyLines(i18n,property) {
-		const lines=new Lines;
 		const option=this.options[property.name];
 		const inputHtmlName=this.getPropertyInputHtmlName(property.name);
+		const a=Lines.b();
 		if (property.type=='range' && option.input) {
-			lines.a(
+			a(
 				"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property))+"</label>",
 				"<input id='"+inputHtmlName+"' type='range' value='"+option+"' min='"+option.min+"' max='"+option.max+"'"+(option.step!=1?" step='"+option.step+"'":"")+" />"
 			);
 		} else if (property.type=='select' && option.input) {
-			lines.a(
+			a(
 				"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property))+"</label>",
-				(
-					new Lines(...option.availableValues.map(value=>"<option"+(option.value==value?" selected":"")+">"+value+"</option>"))
-				).wrap(
+				WrapLines.b(
 					"<select id='"+inputHtmlName+"'>","</select>"
+				).ae(
+					...option.availableValues.map(value=>"<option"+(option.value==value?" selected":"")+">"+value+"</option>")
 				)
 			);
 		} else if (property.type=='xhr') {
-			lines.a(
+			a(
 				"<span id='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property)+'.loading')+"</span>"
 			);
 		}
-		return lines;
+		return a.e();
 	}
 	get skipNode() {
 		return false;
 	}
 	// { not called if skipNode is set
 	getHtmlLines(featureContext,i18n) {
-		const lines=new Lines(
+		return NoseWrapLines.b(
+			"<div>","</div>"
+		).ae(
 			...this.nodeProperties.map(property=>this.getHtmlPropertyLines(i18n,property))
 		);
-		return lines.wrapIfNotEmpty("<div>","</div>");
 	}
 	getJsInitLines(i18n,prevNodeJsNames) {
-		return new Lines(
-			new UnescapedLines("// "+i18n('comment.filters.'+this.type)),
+		return Lines.bae(
+			RefLines.parse("// "+i18n('comment.filters.'+this.type)),
 			"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
 			...prevNodeJsNames.map(
 				prevNodeJsName=>prevNodeJsName+".connect("+this.nodeJsName+");"
@@ -93,41 +97,42 @@ class Filter {
 
 class SinglePathFilter extends Filter {
 	getJsInitLines(i18n,prevNodeJsNames) {
-		const lines=super.getJsInitLines(i18n,prevNodeJsNames);
-		this.nodeProperties.forEach(property=>{
-			const option=this.options[property.name];
-			const nodePropertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"");
-			if (option.input) {
-				const inputJsName=this.getPropertyInputJsName(property.name);
-				const inputHtmlName=this.getPropertyInputHtmlName(property.name);
-				let value=inputJsName+".value";
-				if (property.fn) {
-					value=property.fn(value);
-				}
-				const eventProp=(property.type=='range'?'oninput':'onchange');
-				lines.a(
-					"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
-					// was for IE11 compat (but IE11 has no Web Audio): (property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
-					"("+inputJsName+"."+eventProp+"=function(){",
-					"	"+nodePropertyJsName+"="+value+";",
-					"})();"
-				);
-			} else {
-				let value=option.value;
-				if (property.type=='select') {
-					value="'"+value+"'";
-				}
-				if (property.fn) {
-					value=property.fn(value);
-				}
-				if (option.value!=option.defaultValue) {
-					lines.a(
+		return Lines.bae(
+			super.getJsInitLines(i18n,prevNodeJsNames),
+			...this.nodeProperties.map(property=>{
+				const option=this.options[property.name];
+				const nodePropertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"");
+				const a=Lines.b();
+				if (option.input) {
+					const inputJsName=this.getPropertyInputJsName(property.name);
+					const inputHtmlName=this.getPropertyInputHtmlName(property.name);
+					let value=inputJsName+".value";
+					if (property.fn) {
+						value=property.fn(value);
+					}
+					const eventProp=(property.type=='range'?'oninput':'onchange');
+					a(
+						"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
+						// was for IE11 compat (but IE11 has no Web Audio): (property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
+						"("+inputJsName+"."+eventProp+"=function(){",
+						"	"+nodePropertyJsName+"="+value+";",
+						"})();"
+					);
+				} else if (option.value!=option.defaultValue) {
+					let value=option.value;
+					if (property.type=='select') {
+						value="'"+value+"'";
+					}
+					if (property.fn) {
+						value=property.fn(value);
+					}
+					a(
 						nodePropertyJsName+"="+value+";"
 					);
 				}
-			}
-		});
-		return lines;
+				return a.e();
+			})
+		)
 	}
 }
 
@@ -222,20 +227,20 @@ const filterClasses={
 		}
 		getJsInitLines(i18n,prevNodeJsNames) {
 			const messageHtmlName=this.getPropertyInputHtmlName('buffer');
-			const lines=new Lines;
+			const a=Lines.b();
 			if (this.options.reverb.input || this.options.reverb!=1) {
-				lines.a(new UnescapedLines("// "+i18n('comment.filters.'+this.type)));
+				a(RefLines.parse("// "+i18n('comment.filters.'+this.type)));
 			} else {
-				lines.a(new UnescapedLines("// "+i18n('comment.filters.'+this.type+'.single')));
+				a(RefLines.parse("// "+i18n('comment.filters.'+this.type+'.single')));
 			}
-			lines.a(
+			a(
 				"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
 				...prevNodeJsNames.map(
 					prevNodeJsName=>prevNodeJsName+".connect("+this.nodeJsName+");"
 				)
 			);
 			if (this.options.reverb.input || this.options.reverb!=1) {
-				lines.a(
+				a(
 					"var "+this.wetGainNodeJsName+"=ctx.createGain();",
 					this.nodeJsName+".connect("+this.wetGainNodeJsName+");",
 					"var "+this.dryGainNodeJsName+"=ctx.createGain();",
@@ -246,7 +251,7 @@ const filterClasses={
 				if (this.options.reverb.input) {
 					const inputHtmlName=this.getPropertyInputHtmlName('reverb');
 					const inputJsName=this.getPropertyInputJsName('reverb');
-					lines.a(
+					a(
 						"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
 						"("+inputJsName+".oninput=function(){",
 						"	"+this.wetGainNodeJsName+".gain.value="+inputJsName+".value;",
@@ -255,7 +260,7 @@ const filterClasses={
 					);
 				}
 			}
-			lines.a(
+			a(
 				"var xhr=new XMLHttpRequest();",
 				"xhr.open('GET','"+this.options.url+"');", // TODO html escape
 				"xhr.responseType='arraybuffer';",
@@ -274,7 +279,7 @@ const filterClasses={
 				"};",
 				"xhr.send();"
 			);
-			return lines;
+			return a.e();
 		}
 		get nodeJsNames() {
 			if (this.options.reverb.input || this.options.reverb!=1) {
@@ -309,8 +314,11 @@ const filterClasses={
 			}
 		}
 		getHtmlPropertyLines(i18n,property) {
-			const lines=super.getHtmlPropertyLines(i18n,property);
-			return lines.wrapIfNotEmpty("<div class='aligned'>","</div>");
+			return NoseWrapLines.b(
+				"<div class='aligned'>","</div>"
+			).ae(
+				super.getHtmlPropertyLines(i18n,property)
+			);
 		}
 		get skipNode() {
 			return this.affectedFreqsAndOptions.length==0;
@@ -337,101 +345,97 @@ const filterClasses={
 			};
 			const getJsLoopLines=()=>{
 				const nodeJsName=((allGainsConstant || singleFreq) ? this.nodeJsName : 'node');
+				const inputJsName=(singleFreq
+					? this.getPropertyInputJsName('gain'+freq)
+					: 'input'
+				);
+				const inputHtmlNameExpr=(singleFreq
+					? "'"+this.getPropertyInputHtmlName('gain'+freq)+"'"
+					: "'"+this.getPropertyInputHtmlName('gain')+"'+freq"
+				);
 				const freq=(singleFreq ? this.affectedFreqsAndOptions[0].freq : 'freq');
 				const gain=(singleFreq ? this.affectedFreqsAndOptions[0].option.value : 'gain');
-				const lines=new Lines;
+				const a=Lines.b();
 				if (!(noGainsConstant || singleFreq)) {
-					lines.a("var freq=freqData[0], gain=freqData[1];");
+					a("var freq=freqData[0], gain=freqData[1];");
 				}
 				if (allGainsConstant && !singleFreq) {
-					lines.a("");
+					a("");
 				} else {
-					lines.a("var ");
+					a("var ");
 				}
-				lines.t(nodeJsName+"=ctx."+this.ctxCreateMethodName+"();");
+				a.t(nodeJsName+"=ctx."+this.ctxCreateMethodName+"();");
 				if (singleFreq) {
-					lines.a(
+					a(
 						...prevNodeJsNames.map(
 							prevNodeJsName=>prevNodeJsName+".connect("+nodeJsName+");"
 						)
 					);
 				} else {
 					if (prevNodeJsNames.length==1) {
-						lines.a("prevNode.connect("+nodeJsName+");");
+						a("prevNode.connect("+nodeJsName+");");
 					} else {
-						lines.a(
+						a(
 							"prevNodes.forEach(function(prevNode){",
 							"	prevNode.connect("+nodeJsName+");",
 							"});"
 						);
 					}
 				}
-				lines.a(
+				a(
 					nodeJsName+".type='peaking';",
 					nodeJsName+".frequency.value="+freq+";"
 				);
-				if (!noGainsConstant) {
-					let gainLines=new Lines(nodeJsName+".gain.value="+gain+";");
-					if (!allGainsConstant) {
-						gainLines.wrap("if (gain!==null) {","}");
-					}
-					lines.a(gainLines);
-				}
-				if (!allGainsConstant) {
-					const inputJsName=(singleFreq
-						? this.getPropertyInputJsName('gain'+freq)
-						: 'input'
-					);
-					const inputHtmlNameExpr=(singleFreq
-						? "'"+this.getPropertyInputHtmlName('gain'+freq)+"'"
-						: "'"+this.getPropertyInputHtmlName('gain')+"'+freq"
-					);
-					let listenerLines=new Lines(
-						"var "+inputJsName+"=document.getElementById("+inputHtmlNameExpr+");",
-						"("+inputJsName+".oninput=function(){",
-						"	"+nodeJsName+".gain.value="+inputJsName+".value;",
-						"})();"
-					);
-					if (!noGainsConstant) {
-						lines.t(
-							// continues "if (gain!==null) {...}"
-							listenerLines.wrap(" else {","}")
-						);
-					} else {
-						lines.a(listenerLines);
-					}
+				const constLines=Lines.bae(
+					nodeJsName+".gain.value="+gain+";"
+				);
+				const varLines=Lines.bae(
+					"var "+inputJsName+"=document.getElementById("+inputHtmlNameExpr+");",
+					"("+inputJsName+".oninput=function(){",
+					"	"+nodeJsName+".gain.value="+inputJsName+".value;",
+					"})();"
+				);
+				if (!noGainsConstant && allGainsConstant) {
+					a(constLines);
+				} else if (noGainsConstant && !allGainsConstant) {
+					a(varLines);
+				} else if (!noGainsConstant && !allGainsConstant) {
+					a(WrapLines.b("if (gain!==null) {","} else {","}").ae(constLines,varLines));
 				}
 				if (!singleFreq) {
 					const outerNodeJsName=(allGainsConstant ? nodeJsName : this.nodeJsName+"="+nodeJsName);
 					if (prevNodeJsNames.length==1) {
-						lines.a("prevNode="+outerNodeJsName+";");
+						a("prevNode="+outerNodeJsName+";");
 					} else {
-						lines.a("prevNodes=["+outerNodeJsName+"];");
+						a("prevNodes=["+outerNodeJsName+"];");
 					}
 				}
-				return lines;
+				return a.e();
 			};
 			if (singleFreq) {
-				return new Lines(
-					new UnescapedLines("// "+i18n('comment.filters.'+this.type+'.single')),
+				return Lines.bae(
+					RefLines.parse("// "+i18n('comment.filters.'+this.type+'.single')),
 					getJsLoopLines()
 				);
 			} else {
-				const lines=new Lines(
-					new UnescapedLines("// "+i18n('comment.filters.'+this.type))
+				const a=Lines.b();
+				a(
+					RefLines.parse("// "+i18n('comment.filters.'+this.type))
 				);
 				if (prevNodeJsNames.length==1) {
-					lines.a("var prevNode="+prevNodeJsNames[0]+";");
+					a("var prevNode="+prevNodeJsNames[0]+";");
 				} else {
-					lines.a("var prevNodes=["+prevNodeJsNames.join()+"];");
+					a("var prevNodes=["+prevNodeJsNames.join()+"];");
 				}
-				lines.a(
+				a(
 					"var "+this.nodeJsName+";",
-					"["+getJsData()+"].forEach(function("+getJsDataItem()+"){",
-					getJsLoopLines().indent(),
-					"});"
+					WrapLines.b(
+						"["+getJsData()+"].forEach(function("+getJsDataItem()+"){","});"
+					).ae(
+						getJsLoopLines()
+					)
 				);
-				return lines;
+				return a.e();
 			}
 		}
 	},
@@ -451,18 +455,16 @@ class FilterSequence extends CollectionFeature {
 		});
 	}
 	getHtmlLines(featureContext,i18n) {
-		if (!featureContext.audioProcessing) return new Lines;
-		return new Lines(...this.entries.filter(entry=>!entry.skipNode).map(entry=>entry.getHtmlLines(featureContext,i18n)));
+		if (!featureContext.audioProcessing) return Lines.be();
+		return Lines.bae(...this.entries.filter(entry=>!entry.skipNode).map(entry=>entry.getHtmlLines(featureContext,i18n)));
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
-		if (!featureContext.audioProcessing) return new Lines;
-		const lines=super.getJsInitLines(...arguments);
-		lines.interleave(...this.entries.filter(entry=>!entry.skipNode).map(entry=>{
+		if (!featureContext.audioProcessing) return Lines.be();
+		return InterleaveLines.bae(...this.entries.filter(entry=>!entry.skipNode).map(entry=>{
 			const lines=entry.getJsInitLines(i18n,prevNodeJsNames);
 			prevNodeJsNames=entry.nodeJsNames;
 			return lines;
 		}));
-		return lines;
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {
 		if (!featureContext.audioProcessing) return prevNodeJsNames;
