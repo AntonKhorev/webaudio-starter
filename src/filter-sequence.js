@@ -46,21 +46,21 @@ class Filter {
 		const a=Lines.b();
 		if (property.type=='range' && option.input) {
 			a(
-				"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property))+"</label>",
-				"<input id='"+inputHtmlName+"' type='range' value='"+option+"' min='"+option.min+"' max='"+option.max+"'"+(option.step!=1?" step='"+option.step+"'":"")+" />"
+				Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}</label>`,
+				Lines.html`<input id=${inputHtmlName} type=range value=${option} min=${option.min} max=${option.max} step=${option.step!=1?option.step:false}>`
 			);
 		} else if (property.type=='select' && option.input) {
 			a(
-				"<label for='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property))+"</label>",
+				Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}</label>`,
 				WrapLines.b(
-					"<select id='"+inputHtmlName+"'>","</select>"
+					Lines.html`<select id=${inputHtmlName}>`,`</select>`
 				).ae(
-					...option.availableValues.map(value=>"<option"+(option.value==value?" selected":"")+">"+value+"</option>")
+					...option.availableValues.map(value=>Lines.html`<option selected=${option.value==value}>${value}</option>`)
 				)
 			);
 		} else if (property.type=='xhr') {
 			a(
-				"<span id='"+inputHtmlName+"'>"+i18n(this.getPropertyOptionName(property)+'.loading')+"</span>"
+				Lines.html`<span id=${inputHtmlName}>${i18n(this.getPropertyOptionName(property)+'.loading')}</span>`
 			);
 		}
 		return a.e();
@@ -315,7 +315,7 @@ const filterClasses={
 		}
 		getHtmlPropertyLines(i18n,property) {
 			return NoseWrapLines.b(
-				"<div class='aligned'>","</div>"
+				"<div class=aligned>","</div>"
 			).ae(
 				super.getHtmlPropertyLines(i18n,property)
 			);
