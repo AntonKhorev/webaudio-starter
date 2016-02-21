@@ -66,6 +66,10 @@ let strings={
 	'code-output.section.html': "HTML",
 	'code-output.section.css': "CSS",
 	'code-output.section.js': "JavaScript",
+	'code-output.embedded': "embedded into HTML source code",
+	'code-output.mode.embed': "embed in HTML",
+	'code-output.mode.paste': "extract to paste into HTML later",
+	'code-output.mode.file': "extract to load as external resource",
 
 	'comment.context': "create [audio context][context]",
 	'comment.sources.audio': "create [audio source node][source]",
