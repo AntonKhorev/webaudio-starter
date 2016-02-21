@@ -61,7 +61,7 @@ let strings={
 
 	'code-output.save': "Save source code",
 	'code-output.run': "Run in new window",
-	'code-output.warning.ie': "these buttons don't work in Internet Explorer, copy-paste the code manually",
+	'code-output.warning.ie': "this button doesn't work in Internet Explorer, copy-paste the code manually",
 	'code-output.warning.no-hljs': "<a href='https://highlightjs.org/'>highlight.js</a> (hosted on cdnjs.cloudflare.com) is not loaded. Syntax highlighting is disabled.",
 	'code-output.section.html': "HTML",
 	'code-output.section.css': "CSS",
