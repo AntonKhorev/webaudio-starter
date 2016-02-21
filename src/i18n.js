@@ -63,6 +63,9 @@ let strings={
 	'code-output.run': "Run in new window",
 	'code-output.warning.ie': "these buttons don't work in Internet Explorer, copy-paste the code manually",
 	'code-output.warning.no-hljs': "<a href='https://highlightjs.org/'>highlight.js</a> (hosted on cdnjs.cloudflare.com) is not loaded. Syntax highlighting is disabled.",
+	'code-output.section.html': "HTML",
+	'code-output.section.css': "CSS",
+	'code-output.section.js': "JavaScript",
 
 	'comment.context': "create [audio context][context]",
 	'comment.sources.audio': "create [audio source node][source]",
