@@ -66,6 +66,8 @@ let strings={
 	'code-output.section.css': "CSS",
 	'code-output.section.js': "JavaScript",
 	'code-output.embedded': "embedded into HTML source code",
+	'code-output.mode.full': "complete HTML",
+	'code-output.mode.body': "only HTML body",
 	'code-output.mode.embed': "embed in HTML",
 	'code-output.mode.paste': "extract to paste into HTML later",
 	'code-output.mode.file': "extract to load as external resource",
