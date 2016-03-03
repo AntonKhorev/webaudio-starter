@@ -254,7 +254,7 @@ const filterClasses={
 					const inputJsName=this.getPropertyInputJsName('reverb')
 					a(
 						"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
-						"("+inputJsName+".oninput=function(){",
+						";("+inputJsName+".oninput=function(){",
 						"	"+this.wetGainNodeJsName+".gain.value="+inputJsName+".value;",
 						"	"+this.dryGainNodeJsName+".gain.value=1-"+inputJsName+".value;",
 						"})();"
@@ -431,7 +431,7 @@ const filterClasses={
 				a(
 					"var "+this.nodeJsName+";",
 					WrapLines.b(
-						"["+getJsData()+"].forEach(function("+getJsDataItem()+"){","});"
+						JsLines.bae(";["+getJsData()+"].forEach(function("+getJsDataItem()+"){"),JsLines.bae("});")
 					).ae(
 						getJsLoopLines()
 					)

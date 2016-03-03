@@ -211,4 +211,77 @@ describe("Code",()=>{
 			]
 		})
 	})
+	it("adds equalizer with 2 inputs",()=>{
+		const ctx=getAudioContext({
+			sources: [
+				{
+					source: 'audio',
+				}
+			],
+			filters: [
+				{
+					filter: 'equalizer',
+					gain60: {
+						input: true,
+					},
+					gain170: {
+						input: true,
+					},
+				}
+			],
+		})
+		assert.deepEqual(ctx.toJSON(),{
+			"name": "AudioDestinationNode",
+			"inputs": [
+				{
+					"name": "BiquadFilterNode",
+					"type": "peaking",
+					"frequency": {
+						"value": 170,
+						"inputs": []
+					},
+					"detune": {
+						"value": 0,
+						"inputs": []
+					},
+					"Q": {
+						"value": 1,
+						"inputs": []
+					},
+					"gain": {
+						"value": 0,
+						"inputs": []
+					},
+					"inputs": [
+						{
+							"name": "BiquadFilterNode",
+							"type": "peaking",
+							"frequency": {
+								"value": 60,
+								"inputs": []
+							},
+							"detune": {
+								"value": 0,
+								"inputs": []
+							},
+							"Q": {
+								"value": 1,
+								"inputs": []
+							},
+							"gain": {
+								"value": 0,
+								"inputs": []
+							},
+							"inputs": [
+								{
+									"name": "MediaElementAudioSourceNode",
+									"inputs": []
+								}
+							]
+						}
+					]
+				}
+			]
+		})
+	})
 })

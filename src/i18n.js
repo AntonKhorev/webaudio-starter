@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 let strings={
 	'options.sources': "Sources",
@@ -86,25 +86,25 @@ let strings={
 	'comment.destination': "connect last node to [destination][destination]",
 	'comment.destination.compressor': "create [dynamics compressor node][compressor]",
 	'comment.destination.waveform': "create [analyser node][analyser] for waveform visualization",
-};
+}
 
 /*
 function i18nLinkFilter(inStrings) {
-	const linkRegexp=/\[(\S+)\s+([^\]]+)]/g;
-	const outStrings={};
+	const linkRegexp=/\[(\S+)\s+([^\]]+)]/g
+	const outStrings={}
 	for (let id in inStrings) {
-		outStrings[id]=inStrings[id].replace(linkRegexp,(match,url,text)=>"<a href='"+url+"'>"+text+"</a>");
+		outStrings[id]=inStrings[id].replace(linkRegexp,(match,url,text)=>"<a href='"+url+"'>"+text+"</a>")
 	}
-	return outStrings;
+	return outStrings
 }
-strings=i18nLinkFilter(strings);
+strings=i18nLinkFilter(strings)
 */
 
 module.exports=function(lang){
 	// TODO use lang to pick strings
 	const i18n=function(id){
-		return strings[id];
-	};
-	i18n.lang=lang;
-	return i18n;
-};
+		return strings[id]
+	}
+	i18n.lang=lang
+	return i18n
+}

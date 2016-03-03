@@ -1,6 +1,6 @@
-'use strict';
+'use strict'
 
-const BaseOptions=require('crnx-base/options');
+const BaseOptions=require('crnx-base/options')
 
 class Options extends BaseOptions {
 	get entriesDescription() {
@@ -52,11 +52,11 @@ class Options extends BaseOptions {
 				['Checkbox','compressor'], // Firefox compresses automatically?
 				['Checkbox','waveform'],
 			]],
-		];
+		]
 	}
 	get optionClasses() {
-		return require('./option-classes.js');
+		return require('./option-classes.js')
 	}
 }
 
-module.exports=Options;
+module.exports=Options
