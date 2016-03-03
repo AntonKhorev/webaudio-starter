@@ -1,43 +1,44 @@
-'use strict';
+'use strict'
 
-const AudioContext=require('./audio-context.js');
-const SourceSet=require('./source-set.js');
-const FilterSequence=require('./filter-sequence.js');
-const Destination=require('./destination.js');
-const Canvas=require('./canvas.js');
+const AudioContext=require('./audio-context.js')
+const SourceSet=require('./source-set.js')
+const FilterSequence=require('./filter-sequence.js')
+const Destination=require('./destination.js')
+const Canvas=require('./canvas.js')
 
-const Lines=require('crnx-base/lines');
-const InterleaveLines=require('crnx-base/interleave-lines');
-const NoseWrapLines=require('crnx-base/nose-wrap-lines');
-const BaseWebCode=require('crnx-base/web-code');
+const Lines=require('crnx-base/lines')
+const JsLines=require('crnx-base/js-lines')
+const InterleaveLines=require('crnx-base/interleave-lines')
+const NoseWrapLines=require('crnx-base/nose-wrap-lines')
+const BaseWebCode=require('crnx-base/web-code')
 
 class Code extends BaseWebCode {
 	constructor(options,i18n) {
-		super();
-		this.i18n=i18n;
-		this.featureContext={};
+		super()
+		this.i18n=i18n
+		this.featureContext={}
 		this.features=[
 			new AudioContext,
 			new SourceSet(options.sources),
 			new FilterSequence(options.filters),
 			new Destination(options.destination),
 			new Canvas,
-		];
+		]
 		this.features.forEach(feature=>{
-			feature.requestFeatureContext(this.featureContext);
-		});
+			feature.requestFeatureContext(this.featureContext)
+		})
 	}
 	get basename() {
-		return 'webaudio';
+		return 'webaudio'
 	}
 	get lang() {
-		return 'en';
+		return 'en'
 	}
 	get title() {
-		return "WebAudio example - Generated code";
+		return "WebAudio example - Generated code"
 	}
 	get styleLines() {
-		const a=Lines.b();
+		const a=Lines.b()
 		if (this.featureContext.alignedInputs) {
 			a(
 				".aligned label {",
@@ -45,35 +46,35 @@ class Code extends BaseWebCode {
 				"	width: 10em;",
 				"	text-align: right;",
 				"}"
-			);
+			)
 		}
 		if (this.featureContext.canvas) {
 			a(
 				"canvas {",
 				"	border: 1px solid;",
 				"}"
-			);
+			)
 		}
-		return a.e();
+		return a.e()
 	}
 	get bodyLines() {
 		return Lines.bae(
 			...this.features.map(feature=>feature.getHtmlLines(this.featureContext,this.i18n))
-		);
+		)
 	}
 	get scriptLines() {
-		let prevNodeJsNames;
+		let prevNodeJsNames
 		return InterleaveLines.bae(
 			...this.features.map(feature=>{
-				const lines=feature.getJsInitLines(this.featureContext,this.i18n,prevNodeJsNames);
-				prevNodeJsNames=feature.getNodeJsNames(this.featureContext,prevNodeJsNames);
-				return lines;
+				const lines=feature.getJsInitLines(this.featureContext,this.i18n,prevNodeJsNames)
+				prevNodeJsNames=feature.getNodeJsNames(this.featureContext,prevNodeJsNames)
+				return lines
 			}),
 			NoseWrapLines.b(
-				Lines.bae(
+				JsLines.bae(
 					"function visualize() {"
 				),
-				Lines.bae(
+				JsLines.bae(
 					"	requestAnimationFrame(visualize);",
 					"}",
 					"requestAnimationFrame(visualize);"
@@ -81,8 +82,8 @@ class Code extends BaseWebCode {
 			).ae(
 				...this.features.map(feature=>feature.getJsLoopLines(this.featureContext,this.i18n))
 			)
-		);
+		)
 	}
 }
 
-module.exports=Code;
+module.exports=Code

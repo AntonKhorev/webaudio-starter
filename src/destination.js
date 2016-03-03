@@ -1,44 +1,45 @@
-'use strict';
+'use strict'
 
-const Lines=require('crnx-base/lines');
-const NoseWrapLines=require('crnx-base/nose-wrap-lines');
-const RefLines=require('crnx-base/ref-lines');
-const Feature=require('./feature.js');
+const Lines=require('crnx-base/lines')
+const JsLines=require('crnx-base/js-lines')
+const NoseWrapLines=require('crnx-base/nose-wrap-lines')
+const RefLines=require('crnx-base/ref-lines')
+const Feature=require('./feature.js')
 
 class Destination extends Feature {
 	constructor(options) {
-		super();
-		this.options=options;
+		super()
+		this.options=options
 	}
 	requestFeatureContext(featureContext) {
-		if (!featureContext.audioProcessing) return;
+		if (!featureContext.audioProcessing) return
 		if (this.options.compressor || this.options.waveform) {
-			featureContext.audioContext=true;
+			featureContext.audioContext=true
 		}
 		if (this.options.waveform) {
-			featureContext.canvas=true;
+			featureContext.canvas=true
 		}
 	}
 	getHtmlLines(featureContext,i18n) {
-		const a=NoseWrapLines.b("<div>","</div>");
+		const a=NoseWrapLines.b("<div>","</div>")
 		if (featureContext.audioProcessing && this.options.compressor) {
 			a(
 				"<input id=my.compressor type=checkbox checked>",
 				Lines.html`<label for=my.compressor>${i18n('options.destination.compressor.enable')}</label>`
-			);
+			)
 		}
-		return a.e();
+		return a.e()
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
-		const a=Lines.b();
+		const a=JsLines.b()
 		if (featureContext.audioProcessing && featureContext.audioContext) {
 			if (this.options.compressor) {
-				let nextNodeJsName=(this.options.waveform ? 'analyserNode' : 'ctx.destination');
+				let nextNodeJsName=(this.options.waveform ? 'analyserNode' : 'ctx.destination')
 				a(
 					RefLines.parse("// "+i18n('comment.destination.compressor')),
 					"var compressorNode=ctx.createDynamicsCompressor();",
 					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(compressorNode);")
-				);
+				)
 				if (prevNodeJsNames.length>0) {
 					a(
 						"document.getElementById('my.compressor').onchange=function(){",
@@ -51,9 +52,9 @@ class Destination extends Feature {
 						"	}",
 						"};",
 						""
-					);
+					)
 				}
-				prevNodeJsNames=['compressorNode'];
+				prevNodeJsNames=['compressorNode']
 			}
 			if (this.options.waveform) {
 				a(
@@ -63,18 +64,18 @@ class Destination extends Feature {
 					"analyserNode.fftSize=1024;",
 					"var analyserData=new Uint8Array(analyserNode.frequencyBinCount);",
 					""
-				);
-				prevNodeJsNames=['analyserNode'];
+				)
+				prevNodeJsNames=['analyserNode']
 			}
 			a(
 				RefLines.parse("// "+i18n('comment.destination')),
 				...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(ctx.destination);")
-			);
+			)
 		}
-		return a.e();
+		return a.e()
 	}
 	getJsLoopLines(featureContext,i18n) {
-		const a=Lines.b();
+		const a=JsLines.b()
 		if (featureContext.audioProcessing && this.options.waveform) {
 			a(
 				"analyserNode.getByteTimeDomainData(analyserData);",
@@ -90,18 +91,18 @@ class Destination extends Feature {
 				"	}",
 				"}",
 				"canvasContext.stroke();"
-			);
+			)
 		}
-		return a.e();
+		return a.e()
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {
-		if (!featureContext.audioProcessing) return prevNodeJsNames;
+		if (!featureContext.audioProcessing) return prevNodeJsNames
 		if (featureContext.audioContext) {
-			return ["ctx.destination"];
+			return ["ctx.destination"]
 		} else {
-			return prevNodeJsNames;
+			return prevNodeJsNames
 		}
 	}
 }
 
-module.exports=Destination;
+module.exports=Destination

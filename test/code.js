@@ -1,45 +1,45 @@
-'use strict';
+'use strict'
 
-global.WEB_AUDIO_TEST_API_IGNORE=true;
+global.WEB_AUDIO_TEST_API_IGNORE=true
 
-const assert=require('assert');
-const vm=require('vm');
-const WebAudioTestAPI=require('web-audio-test-api');
-const i18n=require('../src/i18n.js')('en');
-const Options=require('../src/options.js');
-const Code=require('../src/code.js');
+const assert=require('assert')
+const vm=require('vm')
+const WebAudioTestAPI=require('web-audio-test-api')
+const i18n=require('../src/i18n.js')('en')
+const Options=require('../src/options.js')
+const Code=require('../src/code.js')
 
-WebAudioTestAPI.setState('AudioContext#createStereoPanner','enabled');
+WebAudioTestAPI.setState('AudioContext#createStereoPanner','enabled')
 
 describe("Code",()=>{
 	function getAudioContext(optionsData) {
-		const options=new Options(optionsData);
-		const code=new Code(options.fix(),i18n);
-		const sections=code.extractSections({html:'body',css:'paste',js:'paste'});
+		const options=new Options(optionsData)
+		const code=new Code(options.fix(),i18n)
+		const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
 		const sandbox={
 			AudioContext,
 			document: {
 				getElementById: id=>{
 					if (id.startsWith('my.audio')) {
-						return new WebAudioTestAPI.HTMLMediaElement();
+						return new WebAudioTestAPI.HTMLMediaElement()
 					} else {
-						return {value:1}; // TODO pass real value from html
+						return {value:1} // TODO pass real value from html
 					}
 				}
 			},
-		};
+		}
 		vm.runInNewContext(
 			sections.js.get().join("\n"),
 			sandbox
-		);
-		return sandbox.ctx;
+		)
+		return sandbox.ctx
 	}
 	beforeEach(()=>{
-		WebAudioTestAPI.use();
-	});
+		WebAudioTestAPI.use()
+	})
 	afterEach(()=>{
-		WebAudioTestAPI.unuse();
-	});
+		WebAudioTestAPI.unuse()
+	})
 	it("ignores gain node with default gain",()=>{
 		const ctx=getAudioContext({
 			sources: [
@@ -52,9 +52,9 @@ describe("Code",()=>{
 					filter: 'gain',
 				}
 			],
-		});
-		assert.strictEqual(ctx,undefined);
-	});
+		})
+		assert.strictEqual(ctx,undefined)
+	})
 	it("adds gain node",()=>{
 		const ctx=getAudioContext({
 			sources: [
@@ -68,7 +68,7 @@ describe("Code",()=>{
 					gain: 0.5,
 				}
 			],
-		});
+		})
 		assert.deepEqual(ctx.toJSON(),{
 			"name": "AudioDestinationNode",
 			"inputs": [
@@ -86,8 +86,8 @@ describe("Code",()=>{
 					]
 				}
 			]
-		});
-	});
+		})
+	})
 	it("adds gain node with input",()=>{
 		const ctx=getAudioContext({
 			sources: [
@@ -103,7 +103,7 @@ describe("Code",()=>{
 					},
 				}
 			],
-		});
+		})
 		assert.deepEqual(ctx.toJSON(),{
 			"name": "AudioDestinationNode",
 			"inputs": [
@@ -121,8 +121,8 @@ describe("Code",()=>{
 					]
 				}
 			]
-		});
-	});
+		})
+	})
 	it("adds panner node",()=>{
 		const ctx=getAudioContext({
 			sources: [
@@ -136,7 +136,7 @@ describe("Code",()=>{
 					pan: 1,
 				}
 			],
-		});
+		})
 		assert.deepEqual(ctx.toJSON(),{
 			"name": "AudioDestinationNode",
 			"inputs": [
@@ -154,6 +154,54 @@ describe("Code",()=>{
 					]
 				}
 			]
-		});
-	});
-});
+		})
+	})
+	it("adds equalizer with 1 input",()=>{
+		const ctx=getAudioContext({
+			sources: [
+				{
+					source: 'audio',
+				}
+			],
+			filters: [
+				{
+					filter: 'equalizer',
+					gain60: {
+						input: true,
+					},
+				}
+			],
+		})
+		assert.deepEqual(ctx.toJSON(),{
+			"name": "AudioDestinationNode",
+			"inputs": [
+				{
+					"name": "BiquadFilterNode",
+					"type": "peaking",
+					"frequency": {
+						"value": 60,
+						"inputs": []
+					},
+					"detune": {
+						"value": 0,
+						"inputs": []
+					},
+					"Q": {
+						"value": 1,
+						"inputs": []
+					},
+					"gain": {
+						"value": 0,
+						"inputs": []
+					},
+					"inputs": [
+						{
+							"name": "MediaElementAudioSourceNode",
+							"inputs": []
+						}
+					]
+				}
+			]
+		})
+	})
+})
