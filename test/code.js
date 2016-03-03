@@ -19,7 +19,13 @@ describe("Code",()=>{
 		const sandbox={
 			AudioContext,
 			document: {
-				getElementById: id=>new WebAudioTestAPI.HTMLMediaElement(),
+				getElementById: id=>{
+					if (id.startsWith('my.audio')) {
+						return new WebAudioTestAPI.HTMLMediaElement();
+					} else {
+						return {value:1}; // TODO pass real value from html
+					}
+				}
 			},
 		};
 		vm.runInNewContext(
@@ -70,6 +76,41 @@ describe("Code",()=>{
 					"name": "GainNode",
 					"gain": {
 						"value": 0.5,
+						"inputs": []
+					},
+					"inputs": [
+						{
+							"name": "MediaElementAudioSourceNode",
+							"inputs": []
+						}
+					]
+				}
+			]
+		});
+	});
+	it("adds gain node with input",()=>{
+		const ctx=getAudioContext({
+			sources: [
+				{
+					source: 'audio',
+				}
+			],
+			filters: [
+				{
+					filter: 'gain',
+					gain: {
+						input: true,
+					},
+				}
+			],
+		});
+		assert.deepEqual(ctx.toJSON(),{
+			"name": "AudioDestinationNode",
+			"inputs": [
+				{
+					"name": "GainNode",
+					"gain": {
+						"value": 1,
 						"inputs": []
 					},
 					"inputs": [
