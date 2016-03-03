@@ -12,7 +12,7 @@ const Code=require('../src/code.js');
 WebAudioTestAPI.setState('AudioContext#createStereoPanner','enabled');
 
 describe("Code",()=>{
-	function getAudioGraph(optionsData) {
+	function getAudioContext(optionsData) {
 		const options=new Options(optionsData);
 		const code=new Code(options.fix(),i18n);
 		const sections=code.extractSections({html:'body',css:'paste',js:'paste'});
@@ -26,7 +26,7 @@ describe("Code",()=>{
 			sections.js.get().join("\n"),
 			sandbox
 		);
-		return sandbox.ctx.toJSON();
+		return sandbox.ctx;
 	}
 	beforeEach(()=>{
 		WebAudioTestAPI.use();
@@ -34,8 +34,23 @@ describe("Code",()=>{
 	afterEach(()=>{
 		WebAudioTestAPI.unuse();
 	});
-	it("has gain node",()=>{
-		assert.deepEqual(getAudioGraph({
+	it("ignores gain node with default gain",()=>{
+		const ctx=getAudioContext({
+			sources: [
+				{
+					source: 'audio',
+				}
+			],
+			filters: [
+				{
+					filter: 'gain',
+				}
+			],
+		});
+		assert.strictEqual(ctx,undefined);
+	});
+	it("adds gain node",()=>{
+		const ctx=getAudioContext({
 			sources: [
 				{
 					source: 'audio',
@@ -47,7 +62,8 @@ describe("Code",()=>{
 					gain: 0.5,
 				}
 			],
-		}),{
+		});
+		assert.deepEqual(ctx.toJSON(),{
 			"name": "AudioDestinationNode",
 			"inputs": [
 				{
@@ -66,8 +82,8 @@ describe("Code",()=>{
 			]
 		});
 	});
-	it("has panner node",()=>{
-		assert.deepEqual(getAudioGraph({
+	it("adds panner node",()=>{
+		const ctx=getAudioContext({
 			sources: [
 				{
 					source: 'audio',
@@ -79,7 +95,8 @@ describe("Code",()=>{
 					pan: 1,
 				}
 			],
-		}),{
+		});
+		assert.deepEqual(ctx.toJSON(),{
 			"name": "AudioDestinationNode",
 			"inputs": [
 				{
