@@ -4,6 +4,7 @@ global.WEB_AUDIO_TEST_API_IGNORE=true
 
 const assert=require('assert')
 const vm=require('vm')
+const jsdom=require('jsdom').jsdom
 const WebAudioTestAPI=require('web-audio-test-api')
 const i18n=require('../src/i18n.js')('en')
 const Options=require('../src/options.js')
@@ -16,14 +17,20 @@ describe("Code",()=>{
 		const options=new Options(optionsData)
 		const code=new Code(options.fix(),i18n)
 		const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
+		const document=jsdom(sections.html.get().join("\n"),{
+			features:{FetchExternalResources:false}
+		})
+		const window=document.defaultView
 		const sandbox={
 			AudioContext,
 			document: {
 				getElementById: id=>{
-					if (id.startsWith('my.audio')) {
+					const element=document.getElementById(id)
+					if (element instanceof window.HTMLMediaElement) {
 						return new WebAudioTestAPI.HTMLMediaElement()
 					} else {
-						return {value:1} // TODO pass real value from html
+						//return element // WebAudioTestAPI doesn't like strings as parameter values
+						return {value: Number(element.value)}
 					}
 				}
 			},
