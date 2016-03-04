@@ -1,18 +1,12 @@
 'use strict'
 
+const camelCase=require('lodash.camelcase')
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
 const WrapLines=require('crnx-base/wrap-lines')
 const InterleaveLines=require('crnx-base/interleave-lines')
 const RefLines=require('crnx-base/ref-lines')
 const CollectionFeature=require('./collection-feature.js')
-
-function capitalize(s) {
-	return s.charAt(0).toUpperCase()+s.slice(1)
-}
-function toCamelCase(s) {
-	return s.split('.').map((w,i)=>i>0?capitalize(w):w).join('')
-}
 
 class Source {
 	constructor(options,n) {
@@ -30,7 +24,7 @@ class Source {
 		return 'my.'+this.type+this.nSuffix
 	}
 	get nodeJsName() {
-		return toCamelCase(this.type+this.nSuffix+'.node')
+		return camelCase(this.type+this.nSuffix+'.node')
 	}
 	getHtmlLines(featureContext,i18n) {
 		return WrapLines.b("<div>","</div>").ae(

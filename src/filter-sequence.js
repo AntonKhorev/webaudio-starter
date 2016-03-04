@@ -1,5 +1,6 @@
 'use strict'
 
+const camelCase=require('lodash.camelcase')
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
 const WrapLines=require('crnx-base/wrap-lines')
@@ -7,13 +8,6 @@ const NoseWrapLines=require('crnx-base/nose-wrap-lines')
 const InterleaveLines=require('crnx-base/interleave-lines')
 const RefLines=require('crnx-base/ref-lines')
 const CollectionFeature=require('./collection-feature.js')
-
-function capitalize(s) {
-	return s.charAt(0).toUpperCase()+s.slice(1)
-}
-function toCamelCase(s) {
-	return s.split('.').map((w,i)=>i>0?capitalize(w):w).join('')
-}
 
 class Filter {
 	constructor(options,n) {
@@ -31,13 +25,13 @@ class Filter {
 		return 'options.filters.'+this.type+'.'+property.name
 	}
 	get nodeJsName() {
-		return toCamelCase(this.type+this.nSuffix+'.node')
+		return camelCase(this.type+this.nSuffix+'.node')
 	}
 	getPropertyInputHtmlName(propertyName) {
 		return 'my.'+this.type+this.nSuffix+'.'+propertyName
 	}
 	getPropertyInputJsName(propertyName) {
-		return toCamelCase(this.type+this.nSuffix+'.'+propertyName+'.input')
+		return camelCase(this.type+this.nSuffix+'.'+propertyName+'.input')
 	}
 	requestFeatureContext(featureContext) {
 	}
@@ -218,10 +212,10 @@ const filterClasses={
 			]
 		}
 		get dryGainNodeJsName() {
-			return toCamelCase(this.type+this.nSuffix+'.dry.gain.node')
+			return camelCase(this.type+this.nSuffix+'.dry.gain.node')
 		}
 		get wetGainNodeJsName() {
-			return toCamelCase(this.type+this.nSuffix+'.wet.gain.node')
+			return camelCase(this.type+this.nSuffix+'.wet.gain.node')
 		}
 		get skipNode() {
 			return this.options.reverb==0 && !this.options.reverb.input
