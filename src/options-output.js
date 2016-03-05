@@ -1,6 +1,6 @@
 'use strict'
 
-const Option=require('./option-classes.js')
+const Option=require('./option-classes')
 const BaseOptionsOutput=require('crnx-base/options-output')
 
 class OptionsOutput extends BaseOptionsOutput {

@@ -6,7 +6,7 @@ const JsLines=require('crnx-base/js-lines')
 const WrapLines=require('crnx-base/wrap-lines')
 const InterleaveLines=require('crnx-base/interleave-lines')
 const RefLines=require('crnx-base/ref-lines')
-const CollectionFeature=require('./collection-feature.js')
+const CollectionFeature=require('./collection-feature')
 
 class Source {
 	constructor(options,n) {

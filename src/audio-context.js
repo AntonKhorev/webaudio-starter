@@ -2,7 +2,7 @@
 
 const JsLines=require('crnx-base/js-lines')
 const RefLines=require('crnx-base/ref-lines')
-const Feature=require('./feature.js')
+const Feature=require('./feature')
 
 class AudioContext extends Feature {
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {

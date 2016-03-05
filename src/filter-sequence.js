@@ -7,7 +7,7 @@ const WrapLines=require('crnx-base/wrap-lines')
 const NoseWrapLines=require('crnx-base/nose-wrap-lines')
 const InterleaveLines=require('crnx-base/interleave-lines')
 const RefLines=require('crnx-base/ref-lines')
-const CollectionFeature=require('./collection-feature.js')
+const CollectionFeature=require('./collection-feature')
 
 class Filter {
 	constructor(options,n) {

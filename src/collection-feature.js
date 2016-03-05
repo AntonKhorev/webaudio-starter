@@ -1,7 +1,7 @@
 'use strict'
 
 const Lines=require('crnx-base/lines')
-const Feature=require('./feature.js')
+const Feature=require('./feature')
 
 class CollectionFeature extends Feature {
 	constructor(entryOptions) {

@@ -1,10 +1,10 @@
 'use strict'
 
-const AudioContext=require('./audio-context.js')
-const SourceSet=require('./source-set.js')
-const FilterSequence=require('./filter-sequence.js')
-const Destination=require('./destination.js')
-const Canvas=require('./canvas.js')
+const AudioContext=require('./audio-context')
+const SourceSet=require('./source-set')
+const FilterSequence=require('./filter-sequence')
+const Destination=require('./destination')
+const Canvas=require('./canvas')
 
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')

@@ -4,7 +4,7 @@ const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
 const NoseWrapLines=require('crnx-base/nose-wrap-lines')
 const RefLines=require('crnx-base/ref-lines')
-const Feature=require('./feature.js')
+const Feature=require('./feature')
 
 class Destination extends Feature {
 	constructor(options) {

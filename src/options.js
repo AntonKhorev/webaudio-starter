@@ -55,7 +55,7 @@ class Options extends BaseOptions {
 		]
 	}
 	get optionClasses() {
-		return require('./option-classes.js')
+		return require('./option-classes')
 	}
 }
 

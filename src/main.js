@@ -5,11 +5,11 @@ function generateId() {
 	return 'webaudio-starter-id-'+(idCounter++)
 }
 
-const i18n=require('./i18n.js')('en')
-const Options=require('./options.js')
-const Code=require('./code.js')
-const OptionsOutput=require('./options-output.js')
-const CodeOutput=require('./code-output.js')
+const i18n=require('./i18n')('en')
+const Options=require('./options')
+const Code=require('./code')
+const OptionsOutput=require('./options-output')
+const CodeOutput=require('./code-output')
 
 $(function(){
 	$('.webaudio-starter').each(function(){

@@ -2,7 +2,7 @@
 
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
-const Feature=require('./feature.js')
+const Feature=require('./feature')
 
 class Canvas extends Feature {
 	getHtmlLines(featureContext,i18n) {

@@ -6,9 +6,9 @@ const assert=require('assert')
 const vm=require('vm')
 const jsdom=require('jsdom').jsdom
 const WebAudioTestAPI=require('web-audio-test-api')
-const i18n=require('../src/i18n.js')('en')
-const Options=require('../src/options.js')
-const Code=require('../src/code.js')
+const i18n=require('../src/i18n')('en')
+const Options=require('../src/options')
+const Code=require('../src/code')
 
 WebAudioTestAPI.setState('AudioContext#createStereoPanner','enabled')
 
