@@ -1,6 +1,6 @@
 'use strict'
 
-const camelCase=require('lodash.camelcase')
+const camelCase=require('crnx-base/fake-lodash/camelcase')
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
 const WrapLines=require('crnx-base/wrap-lines')
