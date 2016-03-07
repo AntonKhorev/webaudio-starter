@@ -59,20 +59,6 @@ let strings={
 	'options-output.range': "with range",
 	'options-output.reset': "Reset",
 
-	'code-output.save': "Save source code",
-	'code-output.run': "Run in new window",
-	'code-output.warning.no-hljs': "<a href='https://highlightjs.org/'>highlight.js</a> (hosted on cdnjs.cloudflare.com) is not loaded. Syntax highlighting is disabled.",
-	'code-output.warning.jsfiddle-run': "You may have to click <kbd>Run</kbd> in JSFiddle to get sound output working",
-	'code-output.section.html': "HTML",
-	'code-output.section.css': "CSS",
-	'code-output.section.js': "JavaScript",
-	'code-output.embedded': "embedded in HTML source code",
-	'code-output.mode.full': "complete HTML",
-	'code-output.mode.body': "only HTML body",
-	'code-output.mode.embed': "embed in HTML",
-	'code-output.mode.paste': "extract to paste into HTML later",
-	'code-output.mode.file': "extract to load as external resource",
-
 	'comment.context': "create [audio context][context]",
 	'comment.sources.audio': "create [audio source node][source]",
 	'comment.sources.video': "create [video source node][source]",
@@ -99,6 +85,8 @@ function i18nLinkFilter(inStrings) {
 }
 strings=i18nLinkFilter(strings)
 */
+
+strings=require('crnx-base/code-output-i18n')(strings)
 
 module.exports=function(lang){
 	// TODO use lang to pick strings
