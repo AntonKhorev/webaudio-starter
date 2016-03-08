@@ -17,6 +17,10 @@ class CodeOutput extends BaseCodeOutput {
 			analyser:    'https://www.w3.org/TR/webaudio/#the-analysernode-interface',
 		}
 	}
+	writeButtons(getCode,getFormatting,i18n) {
+		return super.writeButtons(getCode,getFormatting,i18n)
+			.append(" <span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.jsfiddle-run')+"</span></span>")
+	}
 }
 
 module.exports=CodeOutput

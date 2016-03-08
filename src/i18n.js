@@ -59,6 +59,8 @@ let strings={
 	'options-output.range': "with range",
 	'options-output.reset': "Reset",
 
+	'code-output.warning.jsfiddle-run': "You may have to click <kbd>Run</kbd> in JSFiddle to get sound output working",
+
 	'comment.context': "create [audio context][context]",
 	'comment.sources.audio': "create [audio source node][source]",
 	'comment.sources.video': "create [video source node][source]",
