@@ -35,7 +35,7 @@ class Code extends BaseWebCode {
 		return 'en'
 	}
 	get title() {
-		return "WebAudio example - Generated code"
+		return "Web Audio example - Generated code"
 	}
 	get styleLines() {
 		const a=Lines.b()
