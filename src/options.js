@@ -52,6 +52,19 @@ class Options extends BaseOptions {
 				['Checkbox','compressor'], // Firefox compresses automatically?
 				['Checkbox','waveform'],
 			]],
+			['Group','canvas',[
+				['Int','width',[1,1920],300],
+				['Int','height',[1,1080],100],
+				['Select','background',[
+					'clear','filled'
+				]],
+				['Group','fill',[
+					['Int','r',[0,100],100],
+					['Int','g',[0,100],100],
+					['Int','b',[0,100],100],
+					['Int','a',[0,100],100],
+				],{'canvas.background':['filled']}],
+			],{'destination.waveform':[true]}],
 		]
 	}
 	get optionClasses() {

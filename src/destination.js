@@ -74,12 +74,11 @@ class Destination extends Feature {
 		}
 		return a.e()
 	}
-	getJsLoopLines(featureContext,i18n) {
+	getJsLoopVisLines(featureContext,i18n) {
 		const a=JsLines.b()
 		if (featureContext.audioProcessing && this.options.waveform) {
 			a(
 				"analyserNode.getByteTimeDomainData(analyserData);",
-				"canvasContext.clearRect(0,0,canvas.width,canvas.height);",
 				"canvasContext.beginPath();",
 				"for (var i=0;i<analyserData.length;i++) {",
 				"	var x=i*canvas.width/analyserData.length;",

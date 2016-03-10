@@ -11,7 +11,10 @@ class Feature {
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		return Lines.be()
 	}
-	getJsLoopLines(featureContext,i18n) {
+	getJsLoopPreLines(featureContext,i18n) {
+		return Lines.be()
+	}
+	getJsLoopVisLines(featureContext,i18n) {
 		return Lines.be()
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {

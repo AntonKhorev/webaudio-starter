@@ -53,6 +53,18 @@ let strings={
 	'options.destination.compressor.enable': "Enable dynamics compressor",
 	'options.destination.waveform': "Add waveform visualization",
 
+	'options.canvas': "Canvas",
+	'options.canvas.width': "Canvas width",
+	'options.canvas.height': "Canvas height",
+	'options.canvas.background': "Background",
+	'options.canvas.background.clear': "clear",
+	'options.canvas.background.filled': "filled",
+	'options.canvas.fill': "Background fill",
+	'options.canvas.fill.r': "Background fill red",
+	'options.canvas.fill.g': "Background fill green",
+	'options.canvas.fill.b': "Background fill blue",
+	'options.canvas.fill.a': "Background fill opacity (blur)",
+
 	'options-output.drag': "Drag or press up/down while in focus to reorder",
 	'options-output.delete': "Delete",
 	'options-output.input': "Editable",

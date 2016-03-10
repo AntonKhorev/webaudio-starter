@@ -22,7 +22,7 @@ class Code extends BaseWebCode {
 			new SourceSet(options.sources),
 			new FilterSequence(options.filters),
 			new Destination(options.destination),
-			new Canvas,
+			new Canvas(options.canvas),
 		]
 		this.features.forEach(feature=>{
 			feature.requestFeatureContext(this.featureContext)
@@ -80,7 +80,8 @@ class Code extends BaseWebCode {
 					"requestAnimationFrame(visualize);"
 				)
 			).ae(
-				...this.features.map(feature=>feature.getJsLoopLines(this.featureContext,this.i18n))
+				...this.features.map(feature=>feature.getJsLoopPreLines(this.featureContext,this.i18n)),
+				...this.features.map(feature=>feature.getJsLoopVisLines(this.featureContext,this.i18n))
 			)
 		)
 	}
