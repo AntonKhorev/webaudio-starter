@@ -55,6 +55,12 @@ class Options extends BaseOptions {
 			['Group','canvas',[
 				['Int','width',[1,1920],300],
 				['Int','height',[1,1080],100],
+				['Group','stroke',[
+					['Int','r',[0,100],0],
+					['Int','g',[0,100],0],
+					['Int','b',[0,100],0],
+					['Int','a',[0,100],100],
+				]],
 				['Select','background',[
 					'clear','filled'
 				]],

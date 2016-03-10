@@ -32,18 +32,26 @@ class Canvas extends Feature {
 	}
 	getJsLoopPreLines(featureContext,i18n) {
 		const a=JsLines.b()
+		const writeStyle=(canvasContextProperty,colorOption)=>{
+			const cs=['r','g','b']
+			const color=cs.map(c=>colorOption[c]+"%").join()
+			const isBlack=cs.every(c=>colorOption[c]==0)
+			if (colorOption.a==100) {
+				if (!isBlack) {
+					a("canvasContext."+canvasContextProperty+"='rgb("+color+")';")
+				}
+			} else {
+				a("canvasContext."+canvasContextProperty+"='rgba("+color+","+(colorOption.a/100).toFixed(2)+")';")
+			}
+		}
 		if (featureContext.canvas) {
 			if (this.options.background=='clear') {
 				a("canvasContext.clearRect(0,0,canvas.width,canvas.height);")
 			} else {
-				const color=['r','g','b'].map(c=>this.options.fill[c]+"%").join()
-				if (this.options.fill.a==100) {
-					a("canvasContext.fillStyle='rgb("+color+")';")
-				} else {
-					a("canvasContext.fillStyle='rgba("+color+","+(this.options.fill.a/100).toFixed(2)+")';")
-				}
+				writeStyle('fillStyle',this.options.fill)
 				a("canvasContext.fillRect(0,0,canvas.width,canvas.height);")
 			}
+			writeStyle('strokeStyle',this.options.stroke)
 		}
 		return a.e()
 	}
