@@ -55,21 +55,25 @@ class Options extends BaseOptions {
 			['Group','canvas',[
 				['Int','width',[1,1920],300],
 				['Int','height',[1,1080],100],
-				['Group','stroke',[
-					['Int','r',[0,100],0],
-					['Int','g',[0,100],0],
-					['Int','b',[0,100],0],
-					['Int','a',[0,100],100],
+				['Group','line',[
+					//['Float','width',[0,10],1], // TODO
+					['LiveFloat','width',[0,10],1],
+					['Group','color',[
+						['Int','r',[0,100],0],
+						['Int','g',[0,100],0],
+						['Int','b',[0,100],0],
+						['Int','a',[0,100],100],
+					]],
 				]],
-				['Select','background',[
-					'clear','filled'
+				['Group','background',[
+					['Select','type',['clear','filled']],
+					['Group','color',[
+						['Int','r',[0,100],100],
+						['Int','g',[0,100],100],
+						['Int','b',[0,100],100],
+						['Int','a',[0,100],100],
+					],{'canvas.background.type':['filled']}],
 				]],
-				['Group','fill',[
-					['Int','r',[0,100],100],
-					['Int','g',[0,100],100],
-					['Int','b',[0,100],100],
-					['Int','a',[0,100],100],
-				],{'canvas.background':['filled']}],
 			],{'destination.waveform':[true]}],
 		]
 	}

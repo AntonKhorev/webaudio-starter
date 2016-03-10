@@ -45,13 +45,16 @@ class Canvas extends Feature {
 			}
 		}
 		if (featureContext.canvas) {
-			if (this.options.background=='clear') {
+			if (this.options.background.type=='clear') {
 				a("canvasContext.clearRect(0,0,canvas.width,canvas.height);")
 			} else {
-				writeStyle('fillStyle',this.options.fill)
+				writeStyle('fillStyle',this.options.background.color)
 				a("canvasContext.fillRect(0,0,canvas.width,canvas.height);")
 			}
-			writeStyle('strokeStyle',this.options.stroke)
+			if (this.options.line.width!=1.0) {
+				a("canvasContext.lineWidth="+this.options.line.width+";")
+			}
+			writeStyle('strokeStyle',this.options.line.color)
 		}
 		return a.e()
 	}
