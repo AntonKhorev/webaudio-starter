@@ -31,7 +31,7 @@ class FixedLiveNumber {
 // 	float subclasses have a fixed precision of 2
 //	no speed
 //	can specify defaultMin, defaultMax
-Option.LiveNumber = class extends Option.NumberInput {
+Option.LiveNumber = class extends Option.Number {
 	constructor(
 		name,arrayArg,scalarArg,objectArg,data,
 		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
