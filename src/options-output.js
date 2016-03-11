@@ -7,10 +7,11 @@ class OptionsOutput extends BaseOptionsOutput {
 	setOptionClassWriters(optionClassWriters) {
 		super.setOptionClassWriters(optionClassWriters)
 		optionClassWriters.set(Option.LiveNumber,(option,writeOption,i18n,generateId)=>{
+			const p=option.precision
 			const setInputAttrs=$input=>$input
 				.attr('min',option.availableMin)
 				.attr('max',option.availableMax)
-				.attr('step',option.step)
+				.attr('step',Math.pow(0.1,p).toFixed(p))
 			const setInputAttrsAndListeners=($input,getOtherInput)=>setInputAttrs($input)
 				.val(option.value)
 				.on('input change',function(){

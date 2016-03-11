@@ -40,9 +40,10 @@ class Filter {
 		const inputHtmlName=this.getPropertyInputHtmlName(property.name)
 		const a=Lines.b()
 		if (property.type=='range' && option.input) {
+			const p=option.precision
 			a(
 				Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}</label>`,
-				Lines.html`<input id=${inputHtmlName} type=range value=${option} min=${option.min} max=${option.max} step=${option.step!=1?option.step:false}>`
+				Lines.html`<input id=${inputHtmlName} type=range value=${option} min=${option.min} max=${option.max} step=${p?Math.pow(0.1,p).toFixed(p):false}>`
 			)
 		} else if (property.type=='select' && option.input) {
 			a(

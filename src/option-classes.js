@@ -15,7 +15,7 @@ class FixedLiveNumber {
 		this.defaultValue=src.defaultValue
 		this.availableMin=src.availableMin
 		this.availableMax=src.availableMax
-		this.step=src.step
+		this.precision=src.precision
 		this.name=src.name
 	}
 	valueOf() {
@@ -28,11 +28,14 @@ class FixedLiveNumber {
 
 // differs from webgl-starter:
 //	input is a boolean
-// 	float subclasses have a fixed step of 0.01
+// 	float subclasses have a fixed precision of 2
 //	no speed
-//	has range specified as [availableMin,availableMax,defaultMin,defaultMax]
-Option.LiveNumber = class extends Option.RangeInput {
-	constructor(name,availableRange,defaultValue,data,fullName,isVisible,updateCallback) {
+//	can specify defaultMin, defaultMax
+Option.LiveNumber = class extends Option.NumberInput {
+	constructor(
+		name,arrayArg,scalarArg,objectArg,data,
+		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
+	) {
 		let dataValue,dataMin,dataMax,dataInput
 		if (typeof data == 'object') {
 			dataValue=data.value
@@ -42,9 +45,16 @@ Option.LiveNumber = class extends Option.RangeInput {
 		} else {
 			dataValue=data
 		}
-		super(name,availableRange,defaultValue,dataValue,fullName,isVisible,updateCallback)
-		this.defaultMin=(availableRange[2]!==undefined?availableRange[2]:this.availableMin)
-		this.defaultMax=(availableRange[3]!==undefined?availableRange[3]:this.availableMax)
+		super(...arguments)
+		if (objectArg===undefined) objectArg={}
+		this.defaultMin=this.availableMin
+		if (objectArg.defaultMin!==undefined) {
+			this.defaultMin=objectArg.defaultMin
+		}
+		this.defaultMax=this.availableMax
+		if (objectArg.defaultMax!==undefined) {
+			this.defaultMax=objectArg.defaultMax
+		}
 		this._min=(dataMin!==undefined)?dataMin:this.defaultMin
 		this._max=(dataMax!==undefined)?dataMax:this.defaultMax
 		this._input=!!dataInput
@@ -99,14 +109,14 @@ Option.LiveNumber = class extends Option.RangeInput {
 }
 
 Option.LiveInt = class extends Option.LiveNumber {
-	get step() {
-		return 1
+	get precision() {
+		return 0
 	}
 }
 
 Option.LiveFloat = class extends Option.LiveNumber {
-	get step() {
-		return 0.01
+	get precision() {
+		return 2
 	}
 }
 
@@ -127,7 +137,10 @@ class FixedLiveSelect {
 }
 
 Option.LiveSelect = class extends Option.Select {
-	constructor(name,availableValues,defaultValue,data,fullName,isVisible,updateCallback) {
+	constructor(
+		name,arrayArg,scalarArg,objectArg,data,
+		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
+	) {
 		let dataValue,dataInput
 		if (typeof data == 'object') {
 			dataValue=data.value
@@ -135,7 +148,7 @@ Option.LiveSelect = class extends Option.Select {
 		} else {
 			dataValue=data
 		}
-		super(name,availableValues,defaultValue,dataValue,fullName,isVisible,updateCallback)
+		super(...arguments)
 		this._input=!!dataInput
 	}
 	get input() {
