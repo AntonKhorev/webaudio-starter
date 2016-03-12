@@ -29,11 +29,12 @@ class OptionsOutput extends BaseOptionsOutput {
 						option.input=$(this).prop('checked')
 					}),
 				" <label for='"+inputCheckboxId+"'>"+i18n('options-output.input')+"</label> ",
-				option.$range=$("<span class='range'>")
-					.append(i18n('options-output.range')+" ")
-					.append($rangeMinInput=writeMinMaxInput('min'))
-					.append(" .. ")
-					.append($rangeMaxInput=writeMinMaxInput('max')),
+				option.$range=$("<span class='range'>").append(
+					i18n('options-output.range')+" ",
+					$rangeMinInput=writeMinMaxInput('min'),
+					" .. ",
+					$rangeMaxInput=writeMinMaxInput('max')
+				),
 				" "
 			).click(function(){
 				$inputCheckbox.prop('checked',false).change()
@@ -46,33 +47,27 @@ class OptionsOutput extends BaseOptionsOutput {
 			const id=generateId()
 			const inputCheckboxId=generateId()
 			let $select,$inputCheckbox
-			return option.$=$("<div class='option'>")
-				.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
-				.append(" ")
-				.append(
-					$select=$("<select id='"+id+"'>").append(
-						option.availableValues.map(function(availableValue){
-							return $("<option>").val(availableValue).html(i18n('options.'+option.fullName+'.'+availableValue))
-						})
-					).val(option.value).change(function(){
-						option.value=this.value
+			return option.$=$("<div class='option'>").append(
+				"<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label> ",
+				$select=$("<select id='"+id+"'>").append(
+					option.availableValues.map(function(availableValue){
+						return $("<option>").val(availableValue).html(i18n('options.'+option.fullName+'.'+availableValue))
 					})
-				)
-				.append(" ")
-				.append(
-					$inputCheckbox=$("<input type='checkbox' id='"+inputCheckboxId+"'>")
-						.prop('checked',option.input)
-						.change(function(){
-							option.input=$(this).prop('checked')
-						})
-				)
-				.append(" <label for='"+inputCheckboxId+"'>"+i18n('options-output.input')+"</label> ")
-				.append(
-					$("<button type='button'>"+i18n('options-output.reset')+"</button>").click(function(){
-						$select.val(option.defaultValue).change()
-						$inputCheckbox.prop('checked',false).change()
-					})
-				)
+				).val(option.value).change(function(){
+					option.value=this.value
+				}),
+				" ",
+				$inputCheckbox=$("<input type='checkbox' id='"+inputCheckboxId+"'>")
+					.prop('checked',option.input)
+					.change(function(){
+						option.input=$(this).prop('checked')
+					}),
+				" <label for='"+inputCheckboxId+"'>"+i18n('options-output.input')+"</label> ",
+				$("<button type='button'>"+i18n('options-output.reset')+"</button>").click(function(){
+					$select.val(option.defaultValue).change()
+					$inputCheckbox.prop('checked',false).change()
+				})
+			)
 		})
 	}
 }
