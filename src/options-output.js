@@ -12,15 +12,6 @@ class OptionsOutput extends BaseOptionsOutput {
 				.attr('min',option.availableMin)
 				.attr('max',option.availableMax)
 				.attr('step',Math.pow(0.1,p).toFixed(p))
-			const setInputAttrsAndListeners=($input,getOtherInput)=>setInputAttrs($input)
-				.val(option.value)
-				.on('input change',function(){
-					if (this.checkValidity()) {
-						const $that=getOtherInput()
-						$that.val(this.value)
-						option.value=parseFloat(this.value)
-					}
-				})
 			const writeMinMaxInput=minOrMax=>setInputAttrs($("<input type='number' required>"))
 				.val(option[minOrMax])
 				.on('input change',function(){
@@ -28,47 +19,28 @@ class OptionsOutput extends BaseOptionsOutput {
 						option[minOrMax]=parseFloat(this.value)
 					}
 				})
-			const id=generateId()
 			const inputCheckboxId=generateId()
-			let $sliderInput,$numberInput,$inputCheckbox
-			let $rangeMinInput,$rangeMaxInput
-			return option.$=$("<div class='option'>")
-				.append("<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label>")
-				.append(" <span class='min'>"+option.availableMin+"</span> ")
-				.append($sliderInput=setInputAttrsAndListeners(
-					$("<input type='range' id='"+id+"'>"),
-					()=>$numberInput
-				))
-				.append(" <span class='max'>"+option.availableMax+"</span> ")
-				.append($numberInput=setInputAttrsAndListeners(
-					$("<input type='number' required>"),
-					()=>$sliderInput
-				))
-				.append(" ")
-				.append(
-					$inputCheckbox=$("<input type='checkbox' id='"+inputCheckboxId+"'>")
-						.prop('checked',option.input)
-						.change(function(){
-							option.input=$(this).prop('checked')
-						})
-				)
-				.append(" <label for='"+inputCheckboxId+"'>"+i18n('options-output.input')+"</label> ")
-				.append(
-					option.$range=$("<span class='range'>")
-						.append(i18n('options-output.range')+" ")
-						.append($rangeMinInput=writeMinMaxInput('min'))
-						.append(" .. ")
-						.append($rangeMaxInput=writeMinMaxInput('max'))
-				)
-				.append(" ")
-				.append(
-					$("<button type='button'>"+i18n('options-output.reset')+"</button>").click(function(){
-						$sliderInput.val(option.defaultValue).change()
-						$inputCheckbox.prop('checked',false).change()
-						$rangeMinInput.val(option.defaultMin).change()
-						$rangeMaxInput.val(option.defaultMax).change()
-					})
-				)
+			let $inputCheckbox,$rangeMinInput,$rangeMaxInput
+			const $output=optionClassWriters.get(Option.Number)(option,writeOption,i18n,generateId)
+			$output.find('button').before(
+				$inputCheckbox=$("<input type='checkbox' id='"+inputCheckboxId+"'>")
+					.prop('checked',option.input)
+					.change(function(){
+						option.input=$(this).prop('checked')
+					}),
+				" <label for='"+inputCheckboxId+"'>"+i18n('options-output.input')+"</label> ",
+				option.$range=$("<span class='range'>")
+					.append(i18n('options-output.range')+" ")
+					.append($rangeMinInput=writeMinMaxInput('min'))
+					.append(" .. ")
+					.append($rangeMaxInput=writeMinMaxInput('max')),
+				" "
+			).click(function(){
+				$inputCheckbox.prop('checked',false).change()
+				$rangeMinInput.val(option.defaultMin).change()
+				$rangeMaxInput.val(option.defaultMax).change()
+			})
+			return $output
 		})
 		optionClassWriters.set(Option.LiveSelect,(option,writeOption,i18n,generateId)=>{
 			const id=generateId()
