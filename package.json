@@ -3,7 +3,7 @@
   "private": true,
   "license": "ISC",
   "dependencies": {
-    "crnx-base": "github:antonkhorev/crnx-base#v0.1.3"
+    "crnx-base": "github:antonkhorev/crnx-base#v0.2.0"
   },
   "devDependencies": {
     "crnx-build": "github:antonkhorev/crnx-build#v0.1.2",
