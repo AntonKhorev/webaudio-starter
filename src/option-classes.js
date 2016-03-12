@@ -32,10 +32,7 @@ class FixedLiveNumber {
 //	no speed
 //	can specify defaultMin, defaultMax
 Option.LiveNumber = class extends Option.Number {
-	constructor(
-		name,arrayArg,scalarArg,objectArg,data,
-		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
-	) {
+	constructor(name,settings,data,fullName,optionByFullName,updateCallback,makeEntry,isInsideArray) {
 		let dataValue,dataMin,dataMax,dataInput
 		if (typeof data == 'object') {
 			dataValue=data.value
@@ -46,14 +43,15 @@ Option.LiveNumber = class extends Option.Number {
 			dataValue=data
 		}
 		super(...arguments)
-		if (objectArg===undefined) objectArg={}
-		this.defaultMin=this.availableMin
-		if (objectArg.defaultMin!==undefined) {
-			this.defaultMin=objectArg.defaultMin
+		if (settings.defaultMin!==undefined) {
+			this.defaultMin=settings.defaultMin
+		} else {
+			this.defaultMin=this.availableMin
 		}
-		this.defaultMax=this.availableMax
-		if (objectArg.defaultMax!==undefined) {
-			this.defaultMax=objectArg.defaultMax
+		if (settings.defaultMax!==undefined) {
+			this.defaultMax=settings.defaultMax
+		} else {
+			this.defaultMax=this.availableMax
 		}
 		this._min=(dataMin!==undefined)?dataMin:this.defaultMin
 		this._max=(dataMax!==undefined)?dataMax:this.defaultMax
@@ -137,10 +135,7 @@ class FixedLiveSelect {
 }
 
 Option.LiveSelect = class extends Option.Select {
-	constructor(
-		name,arrayArg,scalarArg,objectArg,data,
-		fullName,optionByFullName,updateCallback,makeEntry,isInsideArray
-	) {
+	constructor(name,settings,data,fullName,optionByFullName,updateCallback,makeEntry,isInsideArray) {
 		let dataValue,dataInput
 		if (typeof data == 'object') {
 			dataValue=data.value
