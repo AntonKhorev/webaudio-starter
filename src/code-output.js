@@ -18,8 +18,9 @@ class CodeOutput extends BaseCodeOutput {
 		}
 	}
 	writeButtons(getCode,getFormatting,i18n) {
-		return super.writeButtons(getCode,getFormatting,i18n)
-			.append(" <span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.jsfiddle-run')+"</span></span>")
+		return super.writeButtons(getCode,getFormatting,i18n).append(
+			" <span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.jsfiddle-run')+"</span></span>"
+		)
 	}
 }
 
