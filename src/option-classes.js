@@ -13,8 +13,6 @@ class FixedLiveNumber {
 		this.max=src.max
 		this.input=src.input
 		this.defaultValue=src.defaultValue
-		this.availableMin=src.availableMin
-		this.availableMax=src.availableMax
 		this.precision=src.precision
 		this.name=src.name
 	}
