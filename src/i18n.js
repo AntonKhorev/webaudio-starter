@@ -2,14 +2,10 @@
 
 let strings={
 	'options.sources': "Sources",
-	'options.sources.audio': "Audio element",
-	'options.sources.audio.add': "Add audio element",
-	'options.sources.audio.url': "Source URL",
-	'options.sources.video': "Video element",
-	'options.sources.video.add': "Add video element",
-	'options.sources.video.url': "Source URL",
-	'options.sources.video.width': "Player width",
-	'options.sources.video.height': "Player height",
+	'options.sources.{audio,video}': "{Audio,Video} element",
+	'options.sources.{audio,video}.add': "Add {audio,video} element",
+	'options.sources.{audio,video}.url': "Source URL",
+	'options.sources.video.{width,height}': "Player {width,height}",
 
 	'options.filters': "Filters",
 	'options.filters.gain': "Gain",
@@ -21,14 +17,7 @@ let strings={
 	'options.filters.biquad': "Biquad filter",
 	'options.filters.biquad.add': "Add biquad filter",
 	'options.filters.biquad.type': "Filter type",
-	'options.filters.biquad.type.lowpass': "lowpass",
-	'options.filters.biquad.type.highpass': "highpass",
-	'options.filters.biquad.type.bandpass': "bandpass",
-	'options.filters.biquad.type.lowshelf': "lowshelf",
-	'options.filters.biquad.type.highshelf': "highshelf",
-	'options.filters.biquad.type.peaking': "peaking",
-	'options.filters.biquad.type.notch': "notch",
-	'options.filters.biquad.type.allpass': "allpass",
+	'options.filters.biquad.type.{lowpass,highpass,bandpass,lowshelf,highshelf,peaking,notch,allpass}': "{lowpass,highpass,bandpass,lowshelf,highshelf,peaking,notch,allpass}",
 	'options.filters.biquad.frequency': "Frequency",
 	'options.filters.biquad.Q': "Log(Q)",
 	'options.filters.biquad.detune': "Detune",
@@ -41,12 +30,7 @@ let strings={
 	'options.filters.convolver.buffer.error': "Error while loading the impulse response",
 	'options.filters.equalizer': "Equalizer",
 	'options.filters.equalizer.add': "Add equalizer",
-	'options.filters.equalizer.gain60': "60 Hz gain", // TODO {,} expansion
-	'options.filters.equalizer.gain170': "170 Hz gain",
-	'options.filters.equalizer.gain350': "350 Hz gain",
-	'options.filters.equalizer.gain1000': "1000 Hz gain",
-	'options.filters.equalizer.gain3500': "3500 Hz gain",
-	'options.filters.equalizer.gain10000': "10000 Hz gain",
+	'options.filters.equalizer.gain{60,170,350,1000,3500,10000}': "{60,170,350,1000,3500,10000} Hz gain",
 
 	'options.destination': "Destination",
 	'options.destination.compressor': "Add dynamics compressor before the destination",
@@ -54,24 +38,17 @@ let strings={
 	'options.destination.waveform': "Add waveform visualization",
 
 	'options.canvas': "Canvas",
-	'options.canvas.width': "Canvas width",
-	'options.canvas.height': "Canvas height",
+	'options.canvas.{width,height}': "Canvas {width,height}",
 	'options.canvas.line': "Waveform line",
 	'options.canvas.line.width': "Waveform line width",
 	'options.canvas.line.color': "Waveform line color",
-	'options.canvas.line.color.r': "Waveform line red",
-	'options.canvas.line.color.g': "Waveform line green",
-	'options.canvas.line.color.b': "Waveform line blue",
-	'options.canvas.line.color.a': "Waveform line opacity",
+	'options.canvas.line.color.{r,g,b,a}': "Waveform line {red,green,blue,opacity}",
 	'options.canvas.background': "Background",
 	'options.canvas.background.type': "Background type",
 	'options.canvas.background.type.clear': "clear",
 	'options.canvas.background.type.filled': "filled",
 	'options.canvas.background.color': "Background fill color",
-	'options.canvas.background.color.r': "Background fill red",
-	'options.canvas.background.color.g': "Background fill green",
-	'options.canvas.background.color.b': "Background fill blue",
-	'options.canvas.background.color.a': "Background fill opacity (blur)",
+	'options.canvas.background.color.{r,g,b,a}': "Background fill {red,green,blue,opacity (blur)}",
 
 	'options-output.drag': "Drag or press up/down while in focus to reorder",
 	'options-output.delete': "Delete",
@@ -108,13 +85,7 @@ function i18nLinkFilter(inStrings) {
 strings=i18nLinkFilter(strings)
 */
 
+strings=require('crnx-base/i18n-expand-curly')(strings)
 strings=require('crnx-base/code-output-i18n')(strings)
 
-module.exports=function(lang){
-	// TODO use lang to pick strings
-	const i18n=function(id){
-		return strings[id]
-	}
-	i18n.lang=lang
-	return i18n
-}
+module.exports=require('crnx-base/i18n')({en:strings})
