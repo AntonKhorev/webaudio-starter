@@ -3,9 +3,9 @@
 let strings={
 	'options.sources': "Sources",
 	'options.sources.{audio,video}': "{Audio,Video} element",
-	'options.sources.{audio,video}.add': "Add {audio,video} element",
+	'options.sources.{audio,video}.add': "Add {} element",
 	'options.sources.{audio,video}.url': "Source URL",
-	'options.sources.video.{width,height}': "Player {width,height}",
+	'options.sources.video.{width,height}': "Player {}",
 
 	'options.filters': "Filters",
 	'options.filters.gain': "Gain",
@@ -17,7 +17,7 @@ let strings={
 	'options.filters.biquad': "Biquad filter",
 	'options.filters.biquad.add': "Add biquad filter",
 	'options.filters.biquad.type': "Filter type",
-	'options.filters.biquad.type.{lowpass,highpass,bandpass,lowshelf,highshelf,peaking,notch,allpass}': "{lowpass,highpass,bandpass,lowshelf,highshelf,peaking,notch,allpass}",
+	'options.filters.biquad.type.{lowpass,highpass,bandpass,lowshelf,highshelf,peaking,notch,allpass}': "{}",
 	'options.filters.biquad.frequency': "Frequency",
 	'options.filters.biquad.Q': "Log(Q)",
 	'options.filters.biquad.detune': "Detune",
@@ -30,7 +30,7 @@ let strings={
 	'options.filters.convolver.buffer.error': "Error while loading the impulse response",
 	'options.filters.equalizer': "Equalizer",
 	'options.filters.equalizer.add': "Add equalizer",
-	'options.filters.equalizer.gain{60,170,350,1000,3500,10000}': "{60,170,350,1000,3500,10000} Hz gain",
+	'options.filters.equalizer.gain{60,170,350,1000,3500,10000}': "{} Hz gain",
 
 	'options.destination': "Destination",
 	'options.destination.compressor': "Add dynamics compressor before the destination",
@@ -38,15 +38,14 @@ let strings={
 	'options.destination.waveform': "Add waveform visualization",
 
 	'options.canvas': "Canvas",
-	'options.canvas.{width,height}': "Canvas {width,height}",
+	'options.canvas.{width,height}': "Canvas {}",
 	'options.canvas.line': "Waveform line",
 	'options.canvas.line.width': "Waveform line width",
 	'options.canvas.line.color': "Waveform line color",
 	'options.canvas.line.color.{r,g,b,a}': "Waveform line {red,green,blue,opacity}",
 	'options.canvas.background': "Background",
 	'options.canvas.background.type': "Background type",
-	'options.canvas.background.type.clear': "clear",
-	'options.canvas.background.type.filled': "filled",
+	'options.canvas.background.type.{clear,filled}': "{}",
 	'options.canvas.background.color': "Background fill color",
 	'options.canvas.background.color.{r,g,b,a}': "Background fill {red,green,blue,opacity (blur)}",
 
