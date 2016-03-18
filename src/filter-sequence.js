@@ -35,6 +35,17 @@ class Filter {
 		return camelCase(this.type+this.nSuffix+'.'+propertyName+'.input')
 	}
 	requestFeatureContext(featureContext) {
+		const hasRangeInputs=this.nodeProperties.some(property=>{
+			if (property.type=='range') {
+				const option=this.options[property.name]
+				return option.input
+			} else {
+				return false
+			}
+		})
+		if (hasRangeInputs) {
+			featureContext.alignedInputs=true
+		}
 	}
 	getHtmlPropertyLines(i18n,property) {
 		const option=this.options[property.name]
@@ -46,14 +57,14 @@ class Filter {
 			const fmtLabels=formatNumbers({ min:option.min, max:option.max },p)
 			const minMax=n=>i18n.numberWithUnits(n,option.unit,(a,e)=>Lines.html`<abbr title=${e}>`+a+`</abbr>`)
 			a(
-				Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}</label>`,
-				minMax(fmtLabels.min)+
-				Lines.html` <input id=${inputHtmlName} type=range value=${fmtAttrs.value} min=${fmtAttrs.min} max=${fmtAttrs.max} step=${p?Math.pow(0.1,p).toFixed(p):false}> `+
-				minMax(fmtLabels.max)
+				Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}:</label>`,
+				"<span class=min>"+minMax(fmtLabels.min)+"</span>",
+				Lines.html`<input id=${inputHtmlName} type=range value=${fmtAttrs.value} min=${fmtAttrs.min} max=${fmtAttrs.max} step=${p?Math.pow(0.1,p).toFixed(p):false}>`,
+				"<span class=max>"+minMax(fmtLabels.max)+"</span>"
 			)
 		} else if (property.type=='select' && option.input) {
 			a(
-				Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}</label>`,
+				Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}:</label>`,
 				WrapLines.b(
 					Lines.html`<select id=${inputHtmlName}>`,`</select>`
 				).ae(
@@ -72,10 +83,14 @@ class Filter {
 	}
 	// { not called if skipNode is set
 	getHtmlLines(featureContext,i18n) {
-		return NoseWrapLines.b(
-			"<div>","</div>"
-		).ae(
-			...this.nodeProperties.map(property=>this.getHtmlPropertyLines(i18n,property))
+		return Lines.bae(
+			...this.nodeProperties.map(
+				property=>NoseWrapLines.b(
+					"<div>","</div>"
+				).ae(
+					this.getHtmlPropertyLines(i18n,property)
+				)
+			)
 		)
 	}
 	getJsInitLines(i18n,prevNodeJsNames) {
@@ -314,13 +329,6 @@ const filterClasses={
 			if (!this.allGainsConstant) {
 				featureContext.alignedInputs=true
 			}
-		}
-		getHtmlPropertyLines(i18n,property) {
-			return NoseWrapLines.b(
-				"<div class=aligned>","</div>"
-			).ae(
-				super.getHtmlPropertyLines(i18n,property)
-			)
 		}
 		get skipNode() {
 			return this.affectedFreqsAndOptions.length==0

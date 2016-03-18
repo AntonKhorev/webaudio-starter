@@ -41,10 +41,20 @@ class Code extends BaseWebCode {
 		const a=Lines.b()
 		if (this.featureContext.alignedInputs) {
 			a(
-				".aligned label {",
+				"label {",
 				"	display: inline-block;",
 				"	width: 10em;",
 				"	text-align: right;",
+				"}",
+				".min {",
+				"	display: inline-block;",
+				"	width: 5em;",
+				"	text-align: right;",
+				"}",
+				".max {",
+				"	display: inline-block;",
+				"	width: 5em;",
+				"	text-align: left;",
 				"}"
 			)
 		}
