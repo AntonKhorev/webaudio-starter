@@ -21,7 +21,7 @@ let strings={
 	'options.filters.biquad.frequency': "Frequency",
 	'options.filters.biquad.Q': "Log(Q)",
 	'options.filters.biquad.detune': "Detune",
-	'options.filters.biquad.gain': "Gain [dB]",
+	'options.filters.biquad.gain': "Gain",
 	'options.filters.convolver': "Convolver",
 	'options.filters.convolver.add': "Add convolver",
 	'options.filters.convolver.url': "Impulse responce URL",
@@ -70,6 +70,13 @@ let strings={
 	'comment.destination': "connect last node to [destination][destination]",
 	'comment.destination.compressor': "create [dynamics compressor node][compressor]",
 	'comment.destination.waveform': "create [analyser node][analyser] for waveform visualization",
+
+	'units.pixel.a': "px",
+	'units.pixel.{1,2}': "pixel{,s}",
+	'units.hertz.a': "Hz",
+	'units.hertz.{1,2}': "Hertz",
+	'units.decibel.a': "dB",
+	'units.decibel.{1,2}': "decibel{,s}",
 }
 
 /*

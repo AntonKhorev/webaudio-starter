@@ -3,32 +3,11 @@
 const Option=Object.create(require('crnx-base/option-classes'))
 
 // differs from webgl-starter:
-//	has defaultValue - although it's potentially confusing: user input default vs Web Audio Node property default - they are currently the same
-//	no setToDefault, which is needed only if speed is present
-//	name is set, b/c it wasn't needed only for speed
-class FixedLiveNumber {
-	constructor(src) {
-		this.value=src.value
-		this.min=src.min
-		this.max=src.max
-		this.input=src.input
-		this.defaultValue=src.defaultValue
-		this.precision=src.precision
-		this.name=src.name
-	}
-	valueOf() {
-		return this.value
-	}
-	toString() {
-		return String(this.value)
-	}
-}
-
-// differs from webgl-starter:
 //	input is a boolean
 // 	float subclasses have a fixed precision of 2
 //	no speed
 //	can specify defaultMin, defaultMax
+//	fixed has defaultValue - although it's potentially confusing: user input default vs Web Audio Node property default - they are currently the same
 Option.LiveNumber = class extends Option.Number {
 	constructor(name,settings,data,fullName,optionByFullName,updateCallback,makeEntry,isInsideArray) {
 		let dataValue,dataMin,dataMax,dataInput
@@ -100,7 +79,12 @@ Option.LiveNumber = class extends Option.Number {
 		return this.exportHelper(this)
 	}
 	fix() {
-		return new FixedLiveNumber(this)
+		const fixed=super.fix()
+		fixed.min=this.min
+		fixed.max=this.max
+		fixed.input=this.input
+		fixed.defaultValue=this.defaultValue
+		return fixed
 	}
 }
 
