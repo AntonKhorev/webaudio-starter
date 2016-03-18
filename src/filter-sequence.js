@@ -1,6 +1,7 @@
 'use strict'
 
 const camelCase=require('crnx-base/fake-lodash/camelcase')
+const formatNumbers=require('crnx-base/format-numbers')
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
 const WrapLines=require('crnx-base/wrap-lines')
@@ -41,9 +42,14 @@ class Filter {
 		const a=Lines.b()
 		if (property.type=='range' && option.input) {
 			const p=option.precision
+			const fmtAttrs=formatNumbers.html({ min:option.min, max:option.max, value:option.value },p)
+			const fmtLabels=formatNumbers({ min:option.min, max:option.max },p)
+			const minMax=n=>i18n.numberWithUnits(n,option.unit,(a,e)=>Lines.html`<abbr title=${e}>`+a+`</abbr>`)
 			a(
 				Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}</label>`,
-				Lines.html`<input id=${inputHtmlName} type=range value=${option} min=${option.min} max=${option.max} step=${p?Math.pow(0.1,p).toFixed(p):false}>`
+				minMax(fmtLabels.min)+
+				Lines.html` <input id=${inputHtmlName} type=range value=${fmtAttrs.value} min=${fmtAttrs.min} max=${fmtAttrs.max} step=${p?Math.pow(0.1,p).toFixed(p):false}> `+
+				minMax(fmtLabels.max)
 			)
 		} else if (property.type=='select' && option.input) {
 			a(
