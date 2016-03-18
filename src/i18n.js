@@ -49,11 +49,8 @@ let strings={
 	'options.canvas.background.color': "Background fill color",
 	'options.canvas.background.color.{r,g,b,a}': "Background fill {red,green,blue,opacity (blur)}",
 
-	'options-output.drag': "Drag or press up/down while in focus to reorder",
-	'options-output.delete': "Delete",
 	'options-output.input': "Editable",
 	'options-output.range': "with range",
-	'options-output.reset': "Reset",
 
 	'code-output.warning.jsfiddle-run': "You may have to click <kbd>Run</kbd> in JSFiddle to get sound output working",
 
@@ -92,6 +89,7 @@ strings=i18nLinkFilter(strings)
 */
 
 strings=require('crnx-base/i18n-expand-curly')(strings)
-strings=require('crnx-base/code-output-i18n')(strings)
+strings=require('crnx-base/options-output-i18n')('en')(strings)
+strings=require('crnx-base/code-output-i18n')('en')(strings)
 
 module.exports=require('crnx-base/i18n')({en:strings})
