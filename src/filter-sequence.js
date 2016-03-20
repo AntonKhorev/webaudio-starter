@@ -68,7 +68,10 @@ class Filter {
 				WrapLines.b(
 					Lines.html`<select id=${inputHtmlName}>`,`</select>`
 				).ae(
-					...option.availableValues.map(value=>Lines.html`<option selected=${option.value==value}>${value}</option>`)
+					...option.availableValues.map(value=>{
+						const title=i18n(this.getPropertyOptionName(property)+'.'+value)
+						return Lines.html`<option selected=${option.value==value} value=${value!=title && value}>${title}</option>`
+					})
 				)
 			)
 		} else if (property.type=='xhr') {
