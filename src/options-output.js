@@ -1,5 +1,6 @@
 'use strict'
 
+const debounce=require('crnx-base/fake-lodash/debounce')
 const Option=require('./option-classes')
 const BaseOptionsOutput=require('crnx-base/options-output')
 
@@ -88,6 +89,35 @@ class OptionsOutput extends BaseOptionsOutput {
 			let shown=false
 			let $magnitudeFigure, $phaseFigure
 			let magnitudeCanvasContext, phaseCanvasContext
+			const updatePlots=()=>{
+				biquadNode.type=option.entries[0].value
+				biquadNode.frequency.value=option.entries[1].value
+				biquadNode.Q.value=Math.pow(10,option.entries[2].value)
+				biquadNode.gain.value=option.entries[3].value
+				biquadNode.detune.value=option.entries[4].value
+				biquadNode.getFrequencyResponse(frequencyArray,magnitudeArray,phaseArray)
+				const plotResponse=(canvasContext,array)=>{
+					const min=Math.min(...array)
+					const max=Math.max(...array)
+					canvasContext.clearRect(0,0,width,height)
+					canvasContext.strokeStyle='#F00'
+					canvasContext.beginPath()
+					for (let i=0;i<width;i++) {
+						const x=i
+						//const y=height*(1-array[i]/max)
+						const y=height*(1-(array[i]-min)/(max-min))
+						if (i==0) {
+							canvasContext.moveTo(x,y)
+						} else {
+							canvasContext.lineTo(x,y)
+						}
+					}
+					canvasContext.stroke()
+				}
+				plotResponse(magnitudeCanvasContext,magnitudeArray)
+				plotResponse(phaseCanvasContext,phaseArray)
+			}
+			const delayedUpdatePlots=debounce(updatePlots,50)
 			return option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
 				option.entries.map(writeOption),
 				$("<div class='option'>").append(
@@ -111,26 +141,7 @@ class OptionsOutput extends BaseOptionsOutput {
 							if (!audioContext) {
 								initAudioContext()
 							}
-							biquadNode.getFrequencyResponse(frequencyArray,magnitudeArray,phaseArray)
-							const drawResponse=(canvasContext,array)=>{
-								const min=Math.min(...array)
-								const max=Math.max(...array)
-								canvasContext.strokeStyle='#F00'
-								canvasContext.beginPath()
-								for (let i=0;i<width;i++) {
-									const x=i
-									//const y=height*(1-array[i]/max)
-									const y=height*(1-(array[i]-min)/(max-min))
-									if (i==0) {
-										canvasContext.moveTo(x,y)
-									} else {
-										canvasContext.lineTo(x,y)
-									}
-								}
-								canvasContext.stroke()
-							}
-							drawResponse(magnitudeCanvasContext,magnitudeArray)
-							drawResponse(phaseCanvasContext,phaseArray)
+							updatePlots()
 						} else {
 							$magnitudeFigure.remove()
 							$phaseFigure.remove()
@@ -139,7 +150,11 @@ class OptionsOutput extends BaseOptionsOutput {
 						}
 					})
 				)
-			)
+			).on('input change',function(){
+				if (shown) {
+					delayedUpdatePlots()
+				}
+			})
 		})
 	}
 }
