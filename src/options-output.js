@@ -72,23 +72,29 @@ class OptionsOutput extends BaseOptionsOutput {
 		optionClassWriters.set(Option.BiquadFilter,(option,writeOption,i18n,generateId)=>{
 			const width=300
 			const height=300
-			const maxFreq=22050
-			const frequencyArray=new Float32Array(width)
-			const magnitudeArray=new Float32Array(width)
-			const phaseArray=new Float32Array(width)
-			for (let i=0;i<width;i++) {
-				frequencyArray[i]=maxFreq/width*i
+			let audioContext,biquadNode
+			let frequencyArray,magnitudeArray,phaseArray
+			const initAudioContext=()=>{
+				audioContext=new (AudioContext || webkitAudioContext)
+				biquadNode=audioContext.createBiquadFilter()
+				frequencyArray=new Float32Array(width)
+				magnitudeArray=new Float32Array(width)
+				phaseArray=new Float32Array(width)
+				const maxFreq=audioContext.sampleRate/2
+				for (let i=0;i<width;i++) {
+					frequencyArray[i]=maxFreq/width*i
+				}
 			}
 			let shown=false
-			let ctx,biquadNode
 			let $magnitudeFigure, $phaseFigure
-			let $magnitudeCanvas, $phaseCanvas
+			let magnitudeCanvasContext, phaseCanvasContext
 			return option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
 				option.entries.map(writeOption),
 				$("<div class='option'>").append(
 					"<label>Frequency response:</label> ",
 					$("<button type='button'>Show</button>").click(function(){
 						if (!shown) {
+							let $magnitudeCanvas, $phaseCanvas
 							$(this).before(
 								$magnitudeFigure=$("<figure>").append(
 									"<figcaption>Magnitude</figcaption>",
@@ -100,24 +106,31 @@ class OptionsOutput extends BaseOptionsOutput {
 								)
 							).text('Hide')
 							shown=true
-							if (!ctx) {
-								ctx=new (AudioContext || webkitAudioContext)
-								biquadNode=ctx.createBiquadFilter()
+							magnitudeCanvasContext=$magnitudeCanvas[0].getContext('2d')
+							phaseCanvasContext=$phaseCanvas[0].getContext('2d')
+							if (!audioContext) {
+								initAudioContext()
 							}
 							biquadNode.getFrequencyResponse(frequencyArray,magnitudeArray,phaseArray)
-							const maxMagnitude=Math.max(...magnitudeArray)
-							let magnitudeCanvasContext=$magnitudeCanvas[0].getContext('2d')
-							magnitudeCanvasContext.beginPath()
-							for (let i=0;i<width;i++) {
-								const x=i
-								const y=height*(1-magnitudeArray[i]/maxMagnitude)
-								if (i==0) {
-									magnitudeCanvasContext.moveTo(x,y)
-								} else {
-									magnitudeCanvasContext.lineTo(x,y)
+							const drawResponse=(canvasContext,array)=>{
+								const min=Math.min(...array)
+								const max=Math.max(...array)
+								canvasContext.strokeStyle='#F00'
+								canvasContext.beginPath()
+								for (let i=0;i<width;i++) {
+									const x=i
+									//const y=height*(1-array[i]/max)
+									const y=height*(1-(array[i]-min)/(max-min))
+									if (i==0) {
+										canvasContext.moveTo(x,y)
+									} else {
+										canvasContext.lineTo(x,y)
+									}
 								}
+								canvasContext.stroke()
 							}
-							magnitudeCanvasContext.stroke()
+							drawResponse(magnitudeCanvasContext,magnitudeArray)
+							drawResponse(phaseCanvasContext,phaseArray)
 						} else {
 							$magnitudeFigure.remove()
 							$phaseFigure.remove()
