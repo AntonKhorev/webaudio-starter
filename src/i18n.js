@@ -55,6 +55,8 @@ const langStrings={
 
 		'code-output.warning.jsfiddle-run': "You may have to click <kbd>Run</kbd> in JSFiddle to get sound output working",
 
+		'code.title': "Web Audio API example — generated code",
+
 		'comment.context': "create [audio context][context]",
 		'comment.sources.audio': "create [audio source node][source]",
 		'comment.sources.video': "create [video source node][source]",
@@ -96,7 +98,9 @@ const langStrings={
 		'options.filters.biquad.type.lowpass': "нижних частот",
 		'options.filters.biquad.type.highpass': "верхних частот",
 		'options.filters.biquad.type.bandpass': "полосовой",
-		'options.filters.biquad.type.{lowshelf,highshelf,peaking,notch,allpass}': "{}", // TODO
+		'options.filters.biquad.type.{lowshelf,highshelf,peaking}': "{}", // TODO
+		'options.filters.biquad.type.notch': "полосно-заграждающий",
+		'options.filters.biquad.type.allpass': "всепропускающий", // http://www.dsplib.ru/content/allpass/allpass.html
 		'options.filters.biquad.frequency': "Частота",
 		'options.filters.biquad.Q': "Логарифм добротности",
 		'options.filters.biquad.detune': "Detune",
@@ -133,20 +137,21 @@ const langStrings={
 
 		'code-output.warning.jsfiddle-run': "Для корректного вывода звука в JSFiddle может потребоваться нажатие кнопки <kbd>Run</kbd>",
 
-		// TODO
-		'comment.context': "create [audio context][context]",
-		'comment.sources.audio': "create [audio source node][source]",
-		'comment.sources.video': "create [video source node][source]",
-		'comment.filters.gain': "create [gain node][gain]",
-		'comment.filters.panner': "create [stereo panner node][panner]",
-		'comment.filters.biquad': "create [biquad filter node][biquad]",
-		'comment.filters.convolver': "create dry and wet routes with [convolver node][convolver]",
-		'comment.filters.convolver.single': "create [convolver node][convolver]",
-		'comment.filters.equalizer': "create equalizer as a sequence of [peaking][peaking] [biquad filter nodes][biquad]",
-		'comment.filters.equalizer.single': "create equalizer as a [peaking][peaking] [biquad filter node][biquad]",
-		'comment.destination': "connect last node to [destination][destination]",
-		'comment.destination.compressor': "create [dynamics compressor node][compressor]",
-		'comment.destination.waveform': "create [analyser node][analyser] for waveform visualization",
+		'code.title': "Пример использования Web Audio API — сгенерированный код",
+
+		'comment.context': "создаём [аудио-контекст][context]",
+		'comment.sources.audio': "создаём [узел источника аудио][source]",
+		'comment.sources.video': "создаём [узел источника видео][source]",
+		'comment.filters.gain': "создаём [узел усилителя][gain]",
+		'comment.filters.panner': "создаём [узел панорамирования][panner]",
+		'comment.filters.biquad': "создаём [узел биквадратичного фильтра][biquad]",
+		'comment.filters.convolver': "создаём прямой путь и путь через [узел свёртки][convolver]",
+		'comment.filters.convolver.single': "создаём [узел свёртки][convolver]",
+		'comment.filters.equalizer': "создаём эквалайзер в виде последовательности [peaking][peaking] [биквадратичных фильтров][biquad]",
+		'comment.filters.equalizer.single': "создаём эквалайзер в виде [peaking][peaking] [биквадратичного фильтра][biquad]",
+		'comment.destination': "соединяем последний узел с [выходом][destination]",
+		'comment.destination.compressor': "создаём [узел компрессора][compressor]",
+		'comment.destination.waveform': "создаём [узел анализатора][analyser] для визуализации формы волны",
 
 		'units.pixel.a': "px",
 		'units.pixel.{1,2,5}': "пиксел{ь,я,ей}",

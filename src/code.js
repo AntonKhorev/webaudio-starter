@@ -32,10 +32,10 @@ class Code extends BaseWebCode {
 		return 'webaudio'
 	}
 	get lang() {
-		return 'en'
+		return this.i18n.lang
 	}
 	get title() {
-		return "Web Audio example - Generated code"
+		return this.i18n('code.title')
 	}
 	get styleLines() {
 		const a=Lines.b()
