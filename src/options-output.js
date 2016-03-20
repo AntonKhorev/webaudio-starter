@@ -73,6 +73,7 @@ class OptionsOutput extends BaseOptionsOutput {
 		optionClassWriters.set(Option.BiquadFilter,(option,writeOption,i18n,generateId)=>{
 			const width=300
 			const height=300
+			const pad=50
 			let audioContext,biquadNode
 			let frequencyArray,magnitudeArray,phaseArray
 			const initAudioContext=()=>{
@@ -96,10 +97,25 @@ class OptionsOutput extends BaseOptionsOutput {
 				biquadNode.gain.value=option.entries[3].value
 				biquadNode.detune.value=option.entries[4].value
 				biquadNode.getFrequencyResponse(frequencyArray,magnitudeArray,phaseArray)
+				for (let i=0;i<width;i++) {
+					magnitudeArray[i]=Math.log(magnitudeArray[i])
+				}
 				const plotResponse=(canvasContext,array)=>{
-					const min=Math.min(...array)
-					const max=Math.max(...array)
+					let min=Math.min(...array)
+					let max=Math.max(...array)
+					min=Math.min(min,max/(1-height/pad))
+					max=Math.max(max,min/(1-height/pad))
 					canvasContext.clearRect(0,0,width,height)
+					canvasContext.save()
+					canvasContext.strokeStyle='#000'
+					canvasContext.setLineDash([5,5]);
+					const y=height*(1-(0-min)/(max-min))
+					canvasContext.beginPath()
+					canvasContext.moveTo(0,y)
+					canvasContext.lineTo(width,y)
+					canvasContext.stroke()
+					canvasContext.restore()
+					canvasContext.save()
 					canvasContext.strokeStyle='#F00'
 					canvasContext.beginPath()
 					for (let i=0;i<width;i++) {
@@ -113,6 +129,7 @@ class OptionsOutput extends BaseOptionsOutput {
 						}
 					}
 					canvasContext.stroke()
+					canvasContext.restore()
 				}
 				plotResponse(magnitudeCanvasContext,magnitudeArray)
 				plotResponse(phaseCanvasContext,phaseArray)
