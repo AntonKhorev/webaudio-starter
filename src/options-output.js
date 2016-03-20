@@ -83,7 +83,7 @@ class OptionsOutput extends BaseOptionsOutput {
 				phaseArray=new Float32Array(width)
 				const maxFreq=audioContext.sampleRate/2
 				for (let i=0;i<width;i++) {
-					frequencyArray[i]=maxFreq/width*i
+					frequencyArray[i]=maxFreq/width*(i+0.5)
 				}
 			}
 			let shown=false
