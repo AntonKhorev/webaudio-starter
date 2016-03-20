@@ -3,9 +3,19 @@
 	@import 'code-output';
 	@import 'tip';
 	.options-output {
-		canvas {
-			border: 1px solid;
-			vertical-align: top;
+		figure {
+			display: inline-block;
+			vertical-align: text-top;
+			margin: 0;
+			padding: 0;
+			canvas {
+				border: 1px solid;
+			}
+		}
+		figure + figure {
+			canvas {
+				border-left: none;
+			}
 		}
 	}
 }

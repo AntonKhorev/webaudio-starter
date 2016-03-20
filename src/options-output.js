@@ -71,21 +71,58 @@ class OptionsOutput extends BaseOptionsOutput {
 		})
 		optionClassWriters.set(Option.BiquadFilter,(option,writeOption,i18n,generateId)=>{
 			const width=300
-			const height=100
-			let $canvas
+			const height=300
+			const maxFreq=22050
+			const frequencyArray=new Float32Array(width)
+			const magnitudeArray=new Float32Array(width)
+			const phaseArray=new Float32Array(width)
+			for (let i=0;i<width;i++) {
+				frequencyArray[i]=maxFreq/width*i
+			}
+			let shown=false
+			let ctx,biquadNode
+			let $magnitudeFigure, $phaseFigure
+			let $magnitudeCanvas, $phaseCanvas
 			return option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
 				option.entries.map(writeOption),
 				$("<div class='option'>").append(
 					"<label>Frequency response:</label> ",
 					$("<button type='button'>Show</button>").click(function(){
-						if (!$canvas) {
+						if (!shown) {
 							$(this).before(
-								$canvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
+								$magnitudeFigure=$("<figure>").append(
+									"<figcaption>Magnitude</figcaption>",
+									$magnitudeCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
+								),
+								$phaseFigure=$("<figure>").append(
+									"<figcaption>Phase</figcaption>",
+									$phaseCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
+								)
 							).text('Hide')
+							shown=true
+							if (!ctx) {
+								ctx=new (AudioContext || webkitAudioContext)
+								biquadNode=ctx.createBiquadFilter()
+							}
+							biquadNode.getFrequencyResponse(frequencyArray,magnitudeArray,phaseArray)
+							const maxMagnitude=Math.max(...magnitudeArray)
+							let magnitudeCanvasContext=$magnitudeCanvas[0].getContext('2d')
+							magnitudeCanvasContext.beginPath()
+							for (let i=0;i<width;i++) {
+								const x=i
+								const y=height*(1-magnitudeArray[i]/maxMagnitude)
+								if (i==0) {
+									magnitudeCanvasContext.moveTo(x,y)
+								} else {
+									magnitudeCanvasContext.lineTo(x,y)
+								}
+							}
+							magnitudeCanvasContext.stroke()
 						} else {
-							$canvas.remove()
-							$canvas=undefined
+							$magnitudeFigure.remove()
+							$phaseFigure.remove()
 							$(this).text('Show')
+							shown=false
 						}
 					})
 				)
