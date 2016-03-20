@@ -43,8 +43,9 @@ class Code extends BaseWebCode {
 			a(
 				"label {",
 				"	display: inline-block;",
-				"	width: 10em;",
+				"	width: 15em;",
 				"	text-align: right;",
+				"	line-height: 0.8em;",
 				"}",
 				".min {",
 				"	display: inline-block;",
