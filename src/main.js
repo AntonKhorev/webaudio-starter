@@ -5,7 +5,7 @@ function generateId() {
 	return 'webaudio-starter-id-'+(idCounter++)
 }
 
-const i18n=require('./i18n')('en')
+const i18ns=require('./i18n')
 const Options=require('./options')
 const Code=require('./code')
 const OptionsOutput=require('./options-output')
@@ -14,6 +14,8 @@ const CodeOutput=require('./code-output')
 $(function(){
 	$('.webaudio-starter').each(function(){
 		const $container=$(this)
+		const lang=$container.closest('[lang]').attr('lang')
+		const i18n=i18ns(lang)
 		const options=new Options()
 		const codeOutput=new CodeOutput(()=>new Code(options.fix(),i18n),i18n)
 		options.updateCallback=codeOutput.update
