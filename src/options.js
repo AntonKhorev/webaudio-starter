@@ -33,15 +33,7 @@ class Options extends BaseOptions {
 				['Group','panner',[
 					['LiveFloat','pan',[-1,1],0],
 				]],
-				['Group','biquad',[
-					['LiveSelect','type',[
-						'lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch','allpass'
-					]],
-					['LiveInt','frequency',[0,22050],350,{ unit: 'hertz' }],
-					['LiveFloat','Q',[-4,4],0], // log Q
-					['LiveInt','gain',[-30,30],0,{ unit: 'decibel' }],
-					['LiveInt','detune',[0,100],{ unit: '¢' }],
-				]],
+				['BiquadFilter','biquad'],
 				['Group','convolver',[
 					['LiveFloat','reverb',[0,1]],
 					['Text','url',[

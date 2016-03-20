@@ -146,4 +146,20 @@ Option.LiveSelect = class extends Option.Select {
 	}
 }
 
+Option.BiquadFilter =  class extends Option.Group {
+	static collectArgs(scalarArg,arrayArg,settings) {
+		settings=Object.create(settings)
+		settings.descriptions=[
+			['LiveSelect','type',[
+				'lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch','allpass'
+			]],
+			['LiveInt','frequency',[0,22050],350,{ unit: 'hertz' }],
+			['LiveFloat','Q',[-4,4],0], // log Q
+			['LiveInt','gain',[-30,30],0,{ unit: 'decibel' }],
+			['LiveInt','detune',[0,100],{ unit: '¢' }],
+		]
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+}
+
 module.exports=Option

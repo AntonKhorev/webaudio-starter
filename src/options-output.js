@@ -69,6 +69,28 @@ class OptionsOutput extends BaseOptionsOutput {
 				})
 			)
 		})
+		optionClassWriters.set(Option.BiquadFilter,(option,writeOption,i18n,generateId)=>{
+			const width=300
+			const height=100
+			let $canvas
+			return option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
+				option.entries.map(writeOption),
+				$("<div class='option'>").append(
+					"<label>Frequency response:</label> ",
+					$("<button type='button'>Show</button>").click(function(){
+						if (!$canvas) {
+							$(this).before(
+								$canvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
+							).text('Hide')
+						} else {
+							$canvas.remove()
+							$canvas=undefined
+							$(this).text('Show')
+						}
+					})
+				)
+			)
+		})
 	}
 }
 
