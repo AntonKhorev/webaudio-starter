@@ -122,6 +122,7 @@ class OptionsOutput extends BaseOptionsOutput {
 					canvasContext.clearRect(0,0,width,height)
 					canvasContext.save()
 					canvasContext.strokeStyle='#444'
+					canvasContext.fillStyle='#444'
 					canvasContext.font=`${fontSize}px`
 					const numLogs=Math.log(max-min)-Math.log(maxNGridLines)
 					let k
