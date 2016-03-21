@@ -115,6 +115,20 @@ class OptionsOutput extends BaseOptionsOutput {
 						min=Math.min(min,(height*v-pad*max)/(height-pad))
 						max=Math.max(max,(height*v-pad*min)/(height-pad))
 					}
+					const calcDv=()=>{
+						const numLogs=Math.log(max-min)-Math.log(maxNGridLines)
+						let k
+						let p=Infinity
+						;[1,2,5].forEach(tk=>{
+							const tp=Math.ceil((numLogs-Math.log(tk))/Math.LN10)
+							if (tp<p) {
+								p=tp
+								k=tk
+							}
+						})
+						const dv=k*Math.pow(10,p)
+						return k*Math.pow(10,p)
+					}
 					const calcY=v=>height*(1-(v-min)/(max-min))
 					keepInsidePlot(min0)
 					keepInsidePlot(max0)
@@ -124,10 +138,8 @@ class OptionsOutput extends BaseOptionsOutput {
 					canvasContext.strokeStyle='#444'
 					//canvasContext.setLineDash([1,1]);
 					canvasContext.font=`${fontSize}px`
-					const p=Math.ceil((Math.log(max-min)-Math.log(maxNGridLines))/Math.LN10)
-					const dv=Math.pow(10,p)
+					const dv=calcDv()
 					const v0=Math.ceil(min/dv)*dv
-					console.log(min,max,p,dv,v0)
 					for (let v=v0;v<max;v+=dv) {
 						//canvasContext.strokeStyle=(v==0 ? '#444' : '#888')
 						canvasContext.lineWidth=(v==0 ? 1 : 0.5)
