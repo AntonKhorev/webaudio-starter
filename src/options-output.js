@@ -108,11 +108,9 @@ class OptionsOutput extends BaseOptionsOutput {
 					// TODO - test on allpass
 					phaseArray[i]*=180/Math.PI
 				}
-				const plotResponse=(canvasContext,array)=>{
+				const plotResponse=(canvasContext,array,units)=>{
 					let min0=Math.min(...array), min=min0
 					let max0=Math.max(...array), max=max0
-					//min=Math.min(min,max/(1-height/pad))
-					//max=Math.max(max,min/(1-height/pad))
 					const keepInsidePlot=v=>{
 						min=Math.min(min,(height*v-pad*max)/(height-pad))
 						max=Math.max(max,(height*v-pad*min)/(height-pad))
@@ -138,7 +136,7 @@ class OptionsOutput extends BaseOptionsOutput {
 						canvasContext.moveTo(0,y)
 						canvasContext.lineTo(width,y)
 						canvasContext.stroke()
-						canvasContext.fillText(v,fontOffset,y-fontOffset)
+						canvasContext.fillText(`${v}${units}`,fontOffset,y-fontOffset)
 					}
 					canvasContext.restore()
 					canvasContext.save()
@@ -156,8 +154,8 @@ class OptionsOutput extends BaseOptionsOutput {
 					canvasContext.stroke()
 					canvasContext.restore()
 				}
-				plotResponse(magnitudeCanvasContext,magnitudeArray)
-				plotResponse(phaseCanvasContext,phaseArray)
+				plotResponse(magnitudeCanvasContext,magnitudeArray,' dB')
+				plotResponse(phaseCanvasContext,phaseArray,'°')
 			}
 			const delayedUpdatePlots=debounce(updatePlots,50)
 			return option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
