@@ -125,6 +125,7 @@ class OptionsOutput extends BaseOptionsOutput {
 					canvasContext.setLineDash([1,1])
 					canvasContext.fillStyle='#444'
 					canvasContext.font=`${fontSize}px`
+					canvasContext.textAlign='right'
 					const numLogs=Math.log(max-min)-Math.log(maxNGridLines)
 					let k
 					let p=Infinity
@@ -142,16 +143,16 @@ class OptionsOutput extends BaseOptionsOutput {
 						numbers.push(v)
 					}
 					const fmt=formatNumbers(numbers,p<0?-p:0)
-					let i=0
-					for (let v=v0;v<max;v+=dv) {
+					const getLabel=n=>`${i18n.number(n)}${units}`
+					const labelWidth=Math.max(...fmt.map(n=>canvasContext.measureText(getLabel(n)).width))
+					for (let v=v0,i=0;v<max;v+=dv,i++) {
 						canvasContext.strokeStyle=(v==0 ? '#000' : '#888')
 						const y=Math.round(calcY(v))
 						canvasContext.beginPath()
 						canvasContext.moveTo(0,y)
 						canvasContext.lineTo(width,y)
 						canvasContext.stroke()
-						const vs=i18n.number(fmt[i++])
-						canvasContext.fillText(`${vs}${units}`,fontOffset,y-fontOffset)
+						canvasContext.fillText(getLabel(fmt[i]),fontOffset+labelWidth,y-fontOffset)
 					}
 					canvasContext.restore()
 					canvasContext.save()
