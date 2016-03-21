@@ -109,12 +109,16 @@ class OptionsOutput extends BaseOptionsOutput {
 					phaseArray[i]*=180/Math.PI
 				}
 				const plotResponse=(canvasContext,array,units)=>{
-					let min0=Math.min(...array), min=min0
-					let max0=Math.max(...array), max=max0
-					const keepInsidePlot=v=>{
-						min=Math.min(min,(height*v-pad*max)/(height-pad))
-						max=Math.max(max,(height*v-pad*min)/(height-pad))
+					let min,max
+					const setPlotRange=(min0,max0)=>{
+						const ph=pad/height
+						min=((min0+max0)*ph-min0)/(2*ph-1)
+						max=((min0+max0)*ph-max0)/(2*ph-1)
 					}
+					setPlotRange(
+						Math.min(-1,Math.min(...array)), // can't write Math.min(-1,...array) in Babel
+						Math.max(+1,Math.max(...array))
+					)
 					const calcX=v=>width*(v-frequencyArray[0])/(frequencyArray[width-1]-frequencyArray[0])
 					const calcY=v=>height*(1-(v-min)/(max-min))
 					const drawGrid=(min,max,calcY,labelLimit,units)=>{
@@ -157,9 +161,6 @@ class OptionsOutput extends BaseOptionsOutput {
 						canvasContext.restore()
 						return labelWidth
 					}
-					keepInsidePlot(min0)
-					keepInsidePlot(max0)
-					keepInsidePlot(0)
 					canvasContext.clearRect(0,0,width,height)
 					const yLabelWidth=drawGrid(min,max,calcY,0,units)
 					canvasContext.save()
