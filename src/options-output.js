@@ -220,8 +220,8 @@ class OptionsOutput extends BaseOptionsOutput {
 				$("<div class='option'>").append(
 					"<label>"+i18n('options-output.biquadFilter.frequencyResponse')+":</label> ",
 					$("<button type='button'>"+i18n('options-output.show')+"</button>").click(function(){
+						const $button=$(this)
 						if (!shown) {
-							const $button=$(this)
 							if (!audioContext) {
 								initAudioContext()
 							}
