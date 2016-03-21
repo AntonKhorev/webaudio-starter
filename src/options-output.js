@@ -117,7 +117,7 @@ class OptionsOutput extends BaseOptionsOutput {
 					}
 					const calcX=v=>width*(v-frequencyArray[0])/(frequencyArray[width-1]-frequencyArray[0])
 					const calcY=v=>height*(1-(v-min)/(max-min))
-					const drawGrid=(min,max,calcY,units)=>{
+					const drawGrid=(min,max,calcY,labelLimit,units)=>{
 						canvasContext.save()
 						canvasContext.translate(0,0.5) // don't translate along x to keep dashes sharp
 						canvasContext.setLineDash([1,1])
@@ -150,20 +150,22 @@ class OptionsOutput extends BaseOptionsOutput {
 							canvasContext.moveTo(0,y)
 							canvasContext.lineTo(width,y)
 							canvasContext.stroke()
-							canvasContext.fillText(getLabel(fmt[i]),fontOffset+labelWidth,y-fontOffset)
+							if (y-fontOffset-fontSize>labelLimit) {
+								canvasContext.fillText(getLabel(fmt[i]),fontOffset+labelWidth,y-fontOffset)
+							}
 						}
 						canvasContext.restore()
-						// return labelWidth
+						return labelWidth
 					}
 					keepInsidePlot(min0)
 					keepInsidePlot(max0)
 					keepInsidePlot(0)
 					canvasContext.clearRect(0,0,width,height)
-					drawGrid(min,max,calcY,units)
+					const yLabelWidth=drawGrid(min,max,calcY,0,units)
 					canvasContext.save()
 					canvasContext.rotate(-Math.PI/2)
 					canvasContext.translate(-height,0)
-					drawGrid(frequencyArray[0],frequencyArray[width-1],calcX,' '+i18n('units.hertz.a'))
+					drawGrid(frequencyArray[0],frequencyArray[width-1],calcX,fontOffset+yLabelWidth,' '+i18n('units.hertz.a'))
 					canvasContext.restore()
 					canvasContext.save()
 					canvasContext.translate(0.5,0.5)
