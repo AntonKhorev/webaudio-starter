@@ -55,6 +55,7 @@ const langStrings={
 		'options-output.biquadFilter.frequencyResponse': "Frequency response",
 		'options-output.biquadFilter.magnitude': "Magnitude",
 		'options-output.biquadFilter.phase': "Phase",
+		'options-output.biquadFilter.error': "Error creating audio context. Browser likely doesn't support Web Audio API.",
 		'options-output.show': "Show",
 		'options-output.hide': "Hide",
 
@@ -142,6 +143,7 @@ const langStrings={
 		'options-output.biquadFilter.frequencyResponse': "Частотная характеристика",
 		'options-output.biquadFilter.magnitude': "Амплитуда",
 		'options-output.biquadFilter.phase': "Фаза",
+		'options-output.biquadFilter.error': "Ошибка создания аудио-контекста. Вероятно, браузер не поддерживает Web Audio API.",
 		'options-output.show': "Показать",
 		'options-output.hide': "Скрыть",
 

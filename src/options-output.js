@@ -81,14 +81,18 @@ class OptionsOutput extends BaseOptionsOutput {
 			let audioContext,biquadNode
 			let frequencyArray,magnitudeArray,phaseArray
 			const initAudioContext=()=>{
-				audioContext=new (AudioContext || webkitAudioContext)
-				biquadNode=audioContext.createBiquadFilter()
-				frequencyArray=new Float32Array(width)
-				magnitudeArray=new Float32Array(width)
-				phaseArray=new Float32Array(width)
-				const maxFreq=audioContext.sampleRate/2
-				for (let i=0;i<width;i++) {
-					frequencyArray[i]=maxFreq/width*(i+0.5)
+				try {
+					audioContext=new (AudioContext || webkitAudioContext)
+					biquadNode=audioContext.createBiquadFilter()
+					frequencyArray=new Float32Array(width)
+					magnitudeArray=new Float32Array(width)
+					phaseArray=new Float32Array(width)
+					const maxFreq=audioContext.sampleRate/2
+					for (let i=0;i<width;i++) {
+						frequencyArray[i]=maxFreq/width*(i+0.5)
+					}
+				} catch (e) {
+					audioContext=undefined
 				}
 			}
 			let shown=false
@@ -206,8 +210,16 @@ class OptionsOutput extends BaseOptionsOutput {
 					"<label>"+i18n('options-output.biquadFilter.frequencyResponse')+":</label> ",
 					$("<button type='button'>"+i18n('options-output.show')+"</button>").click(function(){
 						if (!shown) {
+							const $button=$(this)
+							if (!audioContext) {
+								initAudioContext()
+							}
+							if (!audioContext) {
+								$button.replaceWith(i18n('options-output.biquadFilter.error'))
+								return
+							}
 							let $magnitudeCanvas, $phaseCanvas
-							$(this).before(
+							$button.before(
 								$magnitudeFigure=$("<figure>").append(
 									"<figcaption>"+i18n('options-output.biquadFilter.magnitude')+"</figcaption>",
 									$magnitudeCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
@@ -217,17 +229,14 @@ class OptionsOutput extends BaseOptionsOutput {
 									$phaseCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
 								)
 							).text(i18n('options-output.hide'))
-							shown=true
 							magnitudeCanvasContext=$magnitudeCanvas[0].getContext('2d')
 							phaseCanvasContext=$phaseCanvas[0].getContext('2d')
-							if (!audioContext) {
-								initAudioContext()
-							}
 							updatePlots()
+							shown=true
 						} else {
 							$magnitudeFigure.remove()
 							$phaseFigure.remove()
-							$(this).text(i18n('options-output.show'))
+							$button.text(i18n('options-output.show'))
 							shown=false
 						}
 					})
