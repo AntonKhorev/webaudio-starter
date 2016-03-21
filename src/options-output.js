@@ -115,45 +115,55 @@ class OptionsOutput extends BaseOptionsOutput {
 						min=Math.min(min,(height*v-pad*max)/(height-pad))
 						max=Math.max(max,(height*v-pad*min)/(height-pad))
 					}
+					const calcX=v=>width*(v-frequencyArray[0])/(frequencyArray[width-1]-frequencyArray[0])
 					const calcY=v=>height*(1-(v-min)/(max-min))
+					const drawGrid=(min,max,calcY,units)=>{
+						canvasContext.save()
+						canvasContext.translate(0,0.5) // don't translate along x to keep dashes sharp
+						canvasContext.setLineDash([1,1])
+						canvasContext.fillStyle='#444'
+						canvasContext.font=`${fontSize}px`
+						canvasContext.textAlign='right'
+						const numLogs=Math.log(max-min)-Math.log(maxNGridLines)
+						let k
+						let p=Infinity
+						;[1,2,5].forEach(tk=>{
+							const tp=Math.ceil((numLogs-Math.log(tk))/Math.LN10)
+							if (tp<p) {
+								p=tp
+								k=tk
+							}
+						})
+						const dv=k*Math.pow(10,p)
+						const v0=Math.ceil(min/dv)*dv
+						const numbers=[]
+						for (let v=v0;v<max;v+=dv) {
+							numbers.push(v)
+						}
+						const fmt=formatNumbers(numbers,p<0?-p:0)
+						const getLabel=n=>`${i18n.number(n)}${units}`
+						const labelWidth=Math.max(...fmt.map(n=>canvasContext.measureText(getLabel(n)).width))
+						for (let v=v0,i=0;v<max;v+=dv,i++) {
+							canvasContext.strokeStyle=(v==0 ? '#000' : '#888')
+							const y=Math.round(calcY(v))
+							canvasContext.beginPath()
+							canvasContext.moveTo(0,y)
+							canvasContext.lineTo(width,y)
+							canvasContext.stroke()
+							canvasContext.fillText(getLabel(fmt[i]),fontOffset+labelWidth,y-fontOffset)
+						}
+						canvasContext.restore()
+						// return labelWidth
+					}
 					keepInsidePlot(min0)
 					keepInsidePlot(max0)
 					keepInsidePlot(0)
 					canvasContext.clearRect(0,0,width,height)
+					drawGrid(min,max,calcY,units)
 					canvasContext.save()
-					canvasContext.translate(0,0.5) // don't translate along x to keep dashes sharp
-					canvasContext.setLineDash([1,1])
-					canvasContext.fillStyle='#444'
-					canvasContext.font=`${fontSize}px`
-					canvasContext.textAlign='right'
-					const numLogs=Math.log(max-min)-Math.log(maxNGridLines)
-					let k
-					let p=Infinity
-					;[1,2,5].forEach(tk=>{
-						const tp=Math.ceil((numLogs-Math.log(tk))/Math.LN10)
-						if (tp<p) {
-							p=tp
-							k=tk
-						}
-					})
-					const dv=k*Math.pow(10,p)
-					const v0=Math.ceil(min/dv)*dv
-					const numbers=[]
-					for (let v=v0;v<max;v+=dv) {
-						numbers.push(v)
-					}
-					const fmt=formatNumbers(numbers,p<0?-p:0)
-					const getLabel=n=>`${i18n.number(n)}${units}`
-					const labelWidth=Math.max(...fmt.map(n=>canvasContext.measureText(getLabel(n)).width))
-					for (let v=v0,i=0;v<max;v+=dv,i++) {
-						canvasContext.strokeStyle=(v==0 ? '#000' : '#888')
-						const y=Math.round(calcY(v))
-						canvasContext.beginPath()
-						canvasContext.moveTo(0,y)
-						canvasContext.lineTo(width,y)
-						canvasContext.stroke()
-						canvasContext.fillText(getLabel(fmt[i]),fontOffset+labelWidth,y-fontOffset)
-					}
+					canvasContext.rotate(-Math.PI/2)
+					canvasContext.translate(-height,0)
+					drawGrid(frequencyArray[0],frequencyArray[width-1],calcX,' '+i18n('units.hertz.a'))
 					canvasContext.restore()
 					canvasContext.save()
 					canvasContext.translate(0.5,0.5)
