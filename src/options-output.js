@@ -73,7 +73,10 @@ class OptionsOutput extends BaseOptionsOutput {
 		optionClassWriters.set(Option.BiquadFilter,(option,writeOption,i18n,generateId)=>{
 			const width=300
 			const height=300
-			const pad=50
+			const pad=30
+			const maxNGridLines=10
+			const fontSize=10
+			const fontOffset=3
 			let audioContext,biquadNode
 			let frequencyArray,magnitudeArray,phaseArray
 			const initAudioContext=()=>{
@@ -97,31 +100,53 @@ class OptionsOutput extends BaseOptionsOutput {
 				biquadNode.gain.value=option.entries[3].value
 				biquadNode.detune.value=option.entries[4].value
 				biquadNode.getFrequencyResponse(frequencyArray,magnitudeArray,phaseArray)
-				for (let i=0;i<width;i++) {
-					magnitudeArray[i]=Math.log(magnitudeArray[i])
+				for (let i=0;i<width;i++) { // convert to decibels
+					// TODO - test on peaking
+					magnitudeArray[i]=20*Math.log(magnitudeArray[i])/Math.LN10
+				}
+				for (let i=1;i<width;i++) { // unwrap phase
+					// TODO - test on allpass
+					phaseArray[i]*=180/Math.PI
 				}
 				const plotResponse=(canvasContext,array)=>{
-					let min=Math.min(...array)
-					let max=Math.max(...array)
-					min=Math.min(min,max/(1-height/pad))
-					max=Math.max(max,min/(1-height/pad))
+					let min0=Math.min(...array), min=min0
+					let max0=Math.max(...array), max=max0
+					//min=Math.min(min,max/(1-height/pad))
+					//max=Math.max(max,min/(1-height/pad))
+					const keepInsidePlot=v=>{
+						min=Math.min(min,(height*v-pad*max)/(height-pad))
+						max=Math.max(max,(height*v-pad*min)/(height-pad))
+					}
+					const calcY=v=>height*(1-(v-min)/(max-min))
+					keepInsidePlot(min0)
+					keepInsidePlot(max0)
+					keepInsidePlot(0)
 					canvasContext.clearRect(0,0,width,height)
 					canvasContext.save()
-					canvasContext.strokeStyle='#000'
-					canvasContext.setLineDash([5,5]);
-					const y=height*(1-(0-min)/(max-min))
-					canvasContext.beginPath()
-					canvasContext.moveTo(0,y)
-					canvasContext.lineTo(width,y)
-					canvasContext.stroke()
+					canvasContext.strokeStyle='#444'
+					//canvasContext.setLineDash([1,1]);
+					canvasContext.font=`${fontSize}px`
+					const p=Math.ceil((Math.log(max-min)-Math.log(maxNGridLines))/Math.LN10)
+					const dv=Math.pow(10,p)
+					const v0=Math.ceil(min/dv)*dv
+					console.log(min,max,p,dv,v0)
+					for (let v=v0;v<max;v+=dv) {
+						//canvasContext.strokeStyle=(v==0 ? '#444' : '#888')
+						canvasContext.lineWidth=(v==0 ? 1 : 0.5)
+						const y=calcY(v)
+						canvasContext.beginPath()
+						canvasContext.moveTo(0,y)
+						canvasContext.lineTo(width,y)
+						canvasContext.stroke()
+						canvasContext.fillText(v,fontOffset,y-fontOffset)
+					}
 					canvasContext.restore()
 					canvasContext.save()
 					canvasContext.strokeStyle='#F00'
 					canvasContext.beginPath()
 					for (let i=0;i<width;i++) {
 						const x=i
-						//const y=height*(1-array[i]/max)
-						const y=height*(1-(array[i]-min)/(max-min))
+						const y=calcY(array[i])
 						if (i==0) {
 							canvasContext.moveTo(x,y)
 						} else {
