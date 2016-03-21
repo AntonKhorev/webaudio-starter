@@ -121,7 +121,8 @@ class OptionsOutput extends BaseOptionsOutput {
 					keepInsidePlot(0)
 					canvasContext.clearRect(0,0,width,height)
 					canvasContext.save()
-					canvasContext.strokeStyle='#444'
+					canvasContext.translate(0,0.5) // don't translate along x to keep dashes sharp
+					canvasContext.setLineDash([1,1])
 					canvasContext.fillStyle='#444'
 					canvasContext.font=`${fontSize}px`
 					const numLogs=Math.log(max-min)-Math.log(maxNGridLines)
@@ -143,8 +144,8 @@ class OptionsOutput extends BaseOptionsOutput {
 					const fmt=formatNumbers(numbers,p<0?-p:0)
 					let i=0
 					for (let v=v0;v<max;v+=dv) {
-						canvasContext.lineWidth=(v==0 ? 1 : 0.5)
-						const y=calcY(v)
+						canvasContext.strokeStyle=(v==0 ? '#000' : '#888')
+						const y=Math.round(calcY(v))
 						canvasContext.beginPath()
 						canvasContext.moveTo(0,y)
 						canvasContext.lineTo(width,y)
@@ -154,6 +155,7 @@ class OptionsOutput extends BaseOptionsOutput {
 					}
 					canvasContext.restore()
 					canvasContext.save()
+					canvasContext.translate(0.5,0.5)
 					canvasContext.strokeStyle='#F00'
 					canvasContext.beginPath()
 					for (let i=0;i<width;i++) {
