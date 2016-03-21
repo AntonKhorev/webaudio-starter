@@ -1,6 +1,7 @@
 'use strict'
 
 const debounce=require('crnx-base/fake-lodash/debounce')
+const formatNumbers=require('crnx-base/format-numbers')
 const Option=require('./option-classes')
 const BaseOptionsOutput=require('crnx-base/options-output')
 
@@ -101,7 +102,6 @@ class OptionsOutput extends BaseOptionsOutput {
 				biquadNode.detune.value=option.entries[4].value
 				biquadNode.getFrequencyResponse(frequencyArray,magnitudeArray,phaseArray)
 				for (let i=0;i<width;i++) { // convert to decibels
-					// TODO - test on peaking
 					magnitudeArray[i]=20*Math.log(magnitudeArray[i])/Math.LN10
 				}
 				for (let i=1;i<width;i++) { // unwrap phase
@@ -115,20 +115,6 @@ class OptionsOutput extends BaseOptionsOutput {
 						min=Math.min(min,(height*v-pad*max)/(height-pad))
 						max=Math.max(max,(height*v-pad*min)/(height-pad))
 					}
-					const calcDv=()=>{
-						const numLogs=Math.log(max-min)-Math.log(maxNGridLines)
-						let k
-						let p=Infinity
-						;[1,2,5].forEach(tk=>{
-							const tp=Math.ceil((numLogs-Math.log(tk))/Math.LN10)
-							if (tp<p) {
-								p=tp
-								k=tk
-							}
-						})
-						const dv=k*Math.pow(10,p)
-						return k*Math.pow(10,p)
-					}
 					const calcY=v=>height*(1-(v-min)/(max-min))
 					keepInsidePlot(min0)
 					keepInsidePlot(max0)
@@ -136,19 +122,34 @@ class OptionsOutput extends BaseOptionsOutput {
 					canvasContext.clearRect(0,0,width,height)
 					canvasContext.save()
 					canvasContext.strokeStyle='#444'
-					//canvasContext.setLineDash([1,1]);
 					canvasContext.font=`${fontSize}px`
-					const dv=calcDv()
+					const numLogs=Math.log(max-min)-Math.log(maxNGridLines)
+					let k
+					let p=Infinity
+					;[1,2,5].forEach(tk=>{
+						const tp=Math.ceil((numLogs-Math.log(tk))/Math.LN10)
+						if (tp<p) {
+							p=tp
+							k=tk
+						}
+					})
+					const dv=k*Math.pow(10,p)
 					const v0=Math.ceil(min/dv)*dv
+					const numbers=[]
 					for (let v=v0;v<max;v+=dv) {
-						//canvasContext.strokeStyle=(v==0 ? '#444' : '#888')
+						numbers.push(v)
+					}
+					const fmt=formatNumbers(numbers,p<0?-p:0)
+					let i=0
+					for (let v=v0;v<max;v+=dv) {
 						canvasContext.lineWidth=(v==0 ? 1 : 0.5)
 						const y=calcY(v)
 						canvasContext.beginPath()
 						canvasContext.moveTo(0,y)
 						canvasContext.lineTo(width,y)
 						canvasContext.stroke()
-						canvasContext.fillText(`${v}${units}`,fontOffset,y-fontOffset)
+						const vs=i18n.number(fmt[i++])
+						canvasContext.fillText(`${vs}${units}`,fontOffset,y-fontOffset)
 					}
 					canvasContext.restore()
 					canvasContext.save()
@@ -166,27 +167,27 @@ class OptionsOutput extends BaseOptionsOutput {
 					canvasContext.stroke()
 					canvasContext.restore()
 				}
-				plotResponse(magnitudeCanvasContext,magnitudeArray,' dB')
+				plotResponse(magnitudeCanvasContext,magnitudeArray,' '+i18n('units.decibel.a'))
 				plotResponse(phaseCanvasContext,phaseArray,'°')
 			}
 			const delayedUpdatePlots=debounce(updatePlots,50)
 			return option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
 				option.entries.map(writeOption),
 				$("<div class='option'>").append(
-					"<label>Frequency response:</label> ",
-					$("<button type='button'>Show</button>").click(function(){
+					"<label>"+i18n('options-output.biquadFilter.frequencyResponse')+":</label> ",
+					$("<button type='button'>"+i18n('options-output.show')+"</button>").click(function(){
 						if (!shown) {
 							let $magnitudeCanvas, $phaseCanvas
 							$(this).before(
 								$magnitudeFigure=$("<figure>").append(
-									"<figcaption>Magnitude</figcaption>",
+									"<figcaption>"+i18n('options-output.biquadFilter.magnitude')+"</figcaption>",
 									$magnitudeCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
 								),
 								$phaseFigure=$("<figure>").append(
-									"<figcaption>Phase</figcaption>",
+									"<figcaption>"+i18n('options-output.biquadFilter.phase')+"</figcaption>",
 									$phaseCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
 								)
-							).text('Hide')
+							).text(i18n('options-output.hide'))
 							shown=true
 							magnitudeCanvasContext=$magnitudeCanvas[0].getContext('2d')
 							phaseCanvasContext=$phaseCanvas[0].getContext('2d')
@@ -197,7 +198,7 @@ class OptionsOutput extends BaseOptionsOutput {
 						} else {
 							$magnitudeFigure.remove()
 							$phaseFigure.remove()
-							$(this).text('Show')
+							$(this).text(i18n('options-output.show'))
 							shown=false
 						}
 					})

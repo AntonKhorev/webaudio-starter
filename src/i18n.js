@@ -52,6 +52,11 @@ const langStrings={
 
 		'options-output.input': "Editable",
 		'options-output.range': "with range",
+		'options-output.biquadFilter.frequencyResponse': "Frequency response",
+		'options-output.biquadFilter.magnitude': "Magnitude",
+		'options-output.biquadFilter.phase': "Phase",
+		'options-output.show': "Show",
+		'options-output.hide': "Hide",
 
 		'code-output.warning.jsfiddle-run': "You may have to click <kbd>Run</kbd> in JSFiddle to get sound output working",
 
@@ -134,6 +139,11 @@ const langStrings={
 
 		'options-output.input': "Значение изменяемо",
 		'options-output.range': "в диапазоне",
+		'options-output.biquadFilter.frequencyResponse': "Частотная характеристика",
+		'options-output.biquadFilter.magnitude': "Амплитуда",
+		'options-output.biquadFilter.phase': "Фаза",
+		'options-output.show': "Показать",
+		'options-output.hide': "Скрыть",
 
 		'code-output.warning.jsfiddle-run': "Для корректного вывода звука в JSFiddle может потребоваться нажатие кнопки <kbd>Run</kbd>",
 
