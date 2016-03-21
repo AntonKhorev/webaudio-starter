@@ -104,9 +104,19 @@ class OptionsOutput extends BaseOptionsOutput {
 				for (let i=0;i<width;i++) { // convert to decibels
 					magnitudeArray[i]=20*Math.log(magnitudeArray[i])/Math.LN10
 				}
-				for (let i=1;i<width;i++) { // unwrap phase
-					// TODO - test on allpass
-					phaseArray[i]*=180/Math.PI
+				function wrap(v,maxAbs) {
+					v%=maxAbs*2
+					if (Math.abs(v)<=maxAbs) return v
+					return v-(v>0?1:-1)*maxAbs*2
+				}
+				let k=0
+				let v0=0
+				for (let i=0;i<width;i++) { // unwrap phase
+					let v1=wrap(phaseArray[i]/Math.PI,1)
+					k+=(v1<v0 && (v0-v1)>((v1+2)-v0))
+					k-=(v1>v0 && (v1-v0)>(v0-(v1-2)))
+					v0=v1
+					phaseArray[i]=v0+2*k
 				}
 				const plotResponse=(canvasContext,array,units)=>{
 					let min,max
@@ -185,7 +195,7 @@ class OptionsOutput extends BaseOptionsOutput {
 					canvasContext.restore()
 				}
 				plotResponse(magnitudeCanvasContext,magnitudeArray,' '+i18n('units.decibel.a'))
-				plotResponse(phaseCanvasContext,phaseArray,'°')
+				plotResponse(phaseCanvasContext,phaseArray,'π')
 			}
 			const delayedUpdatePlots=debounce(updatePlots,50)
 			return option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
