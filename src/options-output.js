@@ -118,16 +118,18 @@ class OptionsOutput extends BaseOptionsOutput {
 					v0=v1
 					phaseArray[i]=v0+2*k
 				}
-				const plotResponse=(canvasContext,array,units,minRange,majorGridLineTest)=>{
+				const plotResponse=(canvasContext,array,units,enforcedRange,majorGridLineTest)=>{
 					let min,max
 					const setPlotRange=(min0,max0)=>{
 						const ph=pad/height
 						min=((min0+max0)*ph-min0)/(2*ph-1)
 						max=((min0+max0)*ph-max0)/(2*ph-1)
 					}
+					const minArr=Math.min(...array)
+					const maxArr=Math.max(...array)
 					setPlotRange(
-						Math.min(-minRange,Math.min(...array)), // can't write Math.min(-1,...array) in Babel
-						Math.max(+minRange,Math.max(...array))
+						Math.min(0,-enforcedRange+Math.max(0,maxArr-enforcedRange),minArr),
+						Math.max(0,enforcedRange-Math.max(0,-enforcedRange-minArr),maxArr)
 					)
 					const calcX=v=>width*(v-frequencyArray[0])/(frequencyArray[width-1]-frequencyArray[0])
 					const calcY=v=>height*(1-(v-min)/(max-min))
