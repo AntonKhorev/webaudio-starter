@@ -118,7 +118,7 @@ class OptionsOutput extends BaseOptionsOutput {
 					v0=v1
 					phaseArray[i]=v0+2*k
 				}
-				const plotResponse=(canvasContext,array,units)=>{
+				const plotResponse=(canvasContext,array,units,minRange)=>{
 					let min,max
 					const setPlotRange=(min0,max0)=>{
 						const ph=pad/height
@@ -126,8 +126,8 @@ class OptionsOutput extends BaseOptionsOutput {
 						max=((min0+max0)*ph-max0)/(2*ph-1)
 					}
 					setPlotRange(
-						Math.min(-1,Math.min(...array)), // can't write Math.min(-1,...array) in Babel
-						Math.max(+1,Math.max(...array))
+						Math.min(-minRange,Math.min(...array)), // can't write Math.min(-1,...array) in Babel
+						Math.max(+minRange,Math.max(...array))
 					)
 					const calcX=v=>width*(v-frequencyArray[0])/(frequencyArray[width-1]-frequencyArray[0])
 					const calcY=v=>height*(1-(v-min)/(max-min))
@@ -158,7 +158,7 @@ class OptionsOutput extends BaseOptionsOutput {
 						const getLabel=n=>`${i18n.number(n)}${units}`
 						const labelWidth=Math.max(...fmt.map(n=>canvasContext.measureText(getLabel(n)).width))
 						for (let v=v0,i=0;v<max;v+=dv,i++) {
-							canvasContext.strokeStyle=(v==0 ? '#000' : '#888')
+							canvasContext.strokeStyle=(Number(fmt[i])==0 ? '#000' : '#888')
 							const y=Math.round(calcY(v))
 							canvasContext.beginPath()
 							canvasContext.moveTo(0,y)
@@ -194,8 +194,8 @@ class OptionsOutput extends BaseOptionsOutput {
 					canvasContext.stroke()
 					canvasContext.restore()
 				}
-				plotResponse(magnitudeCanvasContext,magnitudeArray,' '+i18n('units.decibel.a'))
-				plotResponse(phaseCanvasContext,phaseArray,'π')
+				plotResponse(magnitudeCanvasContext,magnitudeArray,' '+i18n('units.decibel.a'),1)
+				plotResponse(phaseCanvasContext,phaseArray,'π',0.1)
 			}
 			const delayedUpdatePlots=debounce(updatePlots,50)
 			return option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
