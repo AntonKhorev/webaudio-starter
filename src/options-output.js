@@ -140,7 +140,6 @@ class OptionsOutput extends BaseOptionsOutput {
 					const drawGrid=(min,max,calcY,labelLimit,units,majorGridLineTest)=>{
 						canvasContext.save()
 						canvasContext.translate(0,0.5) // don't translate along x to keep dashes sharp
-						canvasContext.setLineDash([1,1])
 						canvasContext.fillStyle='#444'
 						canvasContext.font=`${fontSize}px`
 						canvasContext.textAlign='right'
@@ -164,12 +163,24 @@ class OptionsOutput extends BaseOptionsOutput {
 						const getLabel=n=>`${i18n.number(n)}${units}`
 						const labelWidth=Math.max(...fmt.map(n=>canvasContext.measureText(getLabel(n)).width))
 						for (let v=v0,i=0;v<max;v+=dv,i++) {
-							canvasContext.strokeStyle=(majorGridLineTest(Number(fmt[i])) ? '#000' : '#888')
 							const y=Math.round(calcY(v))
-							canvasContext.beginPath()
-							canvasContext.moveTo(0,y)
-							canvasContext.lineTo(width,y)
-							canvasContext.stroke()
+							const drawLine=()=>{
+								canvasContext.beginPath()
+								canvasContext.moveTo(0,y)
+								canvasContext.lineTo(width,y)
+								canvasContext.stroke()
+							}
+							const majorGridLine=majorGridLineTest(Number(fmt[i]))
+							if (majorGridLine) {
+								canvasContext.strokeStyle='rgba(70%,70%,100%,0.3)'
+								canvasContext.setLineDash([])
+								canvasContext.lineWidth=3
+								drawLine()
+							}
+							canvasContext.strokeStyle=(majorGridLine ? '#000' : '#888')
+							canvasContext.setLineDash([1])
+							canvasContext.lineWidth=1
+							drawLine()
 							if (y-fontOffset-fontSize>labelLimit) {
 								canvasContext.fillText(getLabel(fmt[i]),fontOffset+labelWidth,y-fontOffset)
 							}
