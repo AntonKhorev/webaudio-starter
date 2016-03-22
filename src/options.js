@@ -5,12 +5,19 @@ const BaseOptions=require('crnx-base/options')
 class Options extends BaseOptions {
 	get entriesDescription() {
 		return [
-			['Array','sources',[ // urls are from w3c mooc
+			['Array','sources',[
 				['Group','audio',[
 					['Text','url',[
+						// original w3c mooc - is down now
+						/*
 						'http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3',
 						'http://mainline.i3s.unice.fr/mooc/drums.mp3',
 						'http://mainline.i3s.unice.fr/mooc/LaSueur.mp3',
+						*/
+						// Web Audio Playground via RawGit
+						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/bass.ogg',
+						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/drums.ogg',
+						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/guitar.ogg',
 					]],
 				]],
 				['Group','video',[
@@ -37,7 +44,12 @@ class Options extends BaseOptions {
 				['Group','convolver',[
 					['LiveFloat','reverb',[0,1]],
 					['Text','url',[
+						// original w3c mooc - is down now
+						/*
 						'http://mainline.i3s.unice.fr/mooc/Scala-Milan-Opera-Hall.wav',
+						*/
+						// Web Audio Playground via RawGit
+						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/irHall.ogg',
 					]],
 				]],
 				['Group','equalizer',[60,170,350,1000,3500,10000].map(
