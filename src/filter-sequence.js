@@ -222,6 +222,22 @@ const filterClasses={
 			)
 		}
 	},
+	iir: class extends SinglePathFilter {
+		get type()                { return 'iir' }
+		get ctxCreateMethodName() { return 'createIIRFilter' }
+		get nodeProperties() {
+			return []
+		}
+		getJsInitLines(i18n,prevNodeJsNames) {
+			return JsLines.bae(
+				RefLines.parse("// "+i18n('comment.filters.'+this.type)),
+				"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"(["+this.options.feedforward.entries+"],["+this.options.feedback.entries+"]);",
+				...prevNodeJsNames.map(
+					prevNodeJsName=>prevNodeJsName+".connect("+this.nodeJsName+");"
+				)
+			)
+		}
+	},
 	convolver: class extends Filter {
 		get type()                { return 'convolver' }
 		get ctxCreateMethodName() { return 'createConvolver' }

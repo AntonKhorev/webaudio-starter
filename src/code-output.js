@@ -10,6 +10,7 @@ class CodeOutput extends BaseCodeOutput {
 			gain:        'https://www.w3.org/TR/webaudio/#GainNode',
 			panner:      'https://www.w3.org/TR/webaudio/#the-stereopannernode-interface',
 			biquad:      'https://www.w3.org/TR/webaudio/#the-biquadfilternode-interface',
+			iir:         'https://www.w3.org/TR/webaudio/#the-iirfilternode-interface',
 			convolver:   'https://www.w3.org/TR/webaudio/#ConvolverNode',
 			peaking:     'https://www.w3.org/TR/webaudio/#idl-def-BiquadFilterType.peaking',
 			destination: 'https://www.w3.org/TR/webaudio/#AudioDestinationNode',

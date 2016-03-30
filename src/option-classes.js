@@ -146,6 +146,9 @@ Option.LiveSelect = class extends Option.Select {
 	}
 }
 
+Option.AnyFloat = class extends Option.NonBoolean {
+}
+
 Option.BiquadFilter =  class extends Option.Group {
 	static collectArgs(scalarArg,arrayArg,settings) {
 		settings=Object.create(settings)

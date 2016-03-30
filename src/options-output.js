@@ -71,6 +71,19 @@ class OptionsOutput extends BaseOptionsOutput {
 				})
 			)
 		})
+		optionClassWriters.set(Option.AnyFloat,(option,writeOption,i18n,generateId)=>{
+			const id=generateId()
+			return option.$=$("<div class='option'>").append(
+				"<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label> ",
+				$("<input type='number' id='"+id+"' step='any' required>")
+					.val(option.value)
+					.on('input change',function(){
+						if (this.checkValidity()) {
+							option.value=parseFloat(this.value)
+						}
+					})
+			)
+		})
 		optionClassWriters.set(Option.BiquadFilter,(option,writeOption,i18n,generateId)=>{
 			const width=300
 			const height=300
@@ -104,6 +117,17 @@ class OptionsOutput extends BaseOptionsOutput {
 				biquadNode.Q.value=Math.pow(10,option.entries[2].value)
 				biquadNode.gain.value=option.entries[3].value
 				biquadNode.detune.value=option.entries[4].value
+				/* TODO clone as IIR
+				// LPF
+				const Q=Math.pow(10,option.entries[2].value)
+				const G=Math.pow(10,Q/20)
+				const omega_0=2*Math.PI*option.entries[1].value/audioContext.sampleRate
+				const alpha_Q=Math.sin(omega_0)/(2*Q)
+				const alpha_B=Math.sin(omega_0)/2*Math.sqrt((4-Math.sqrt(16-16/(G*G)))/2)
+				const alpha=alpha_B
+				const c=Math.cos(omega_0)
+				biquadNode=audioContext.createIIRFilter([(1-c)/2,1-c,(1-c)/2],[1+alpha,-2*c,1-alpha])
+				*/
 				biquadNode.getFrequencyResponse(frequencyArray,magnitudeArray,phaseArray)
 				for (let i=0;i<width;i++) { // convert to decibels
 					magnitudeArray[i]=20*Math.log(magnitudeArray[i])/Math.LN10

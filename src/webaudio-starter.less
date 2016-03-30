@@ -3,18 +3,23 @@
 	@import 'code-output';
 	@import 'tip';
 	.options-output {
-		figure {
-			display: inline-block;
-			vertical-align: text-top;
-			margin: 0;
-			padding: 0;
-			canvas {
-				border: 1px solid;
+		.option {
+			label:first-child + input[type="number"] {
+				width: 10em;
 			}
-		}
-		figure + figure {
-			canvas {
-				border-left: none;
+			figure {
+				display: inline-block;
+				vertical-align: text-top;
+				margin: 0;
+				padding: 0;
+				canvas {
+					border: 1px solid;
+				}
+			}
+			figure + figure {
+				canvas {
+					border-left: none;
+				}
 			}
 		}
 	}
