@@ -41,14 +41,7 @@ class Options extends BaseOptions {
 					['LiveFloat','pan',[-1,1],0],
 				]],
 				['BiquadFilter','biquad'],
-				['Group','iir',[
-					['Array','feedforward',[
-						['AnyFloat','b',1],
-					]],
-					['Array','feedback',[
-						['AnyFloat','a',1],
-					]],
-				]],
+				['IIRFilter','iir'],
 				['Group','convolver',[
 					['LiveFloat','reverb',[0,1]],
 					['Text','url',[

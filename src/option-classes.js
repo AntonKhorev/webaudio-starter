@@ -149,7 +149,7 @@ Option.LiveSelect = class extends Option.Select {
 Option.AnyFloat = class extends Option.NonBoolean {
 }
 
-Option.BiquadFilter =  class extends Option.Group {
+Option.BiquadFilter = class extends Option.Group {
 	static collectArgs(scalarArg,arrayArg,settings) {
 		settings=Object.create(settings)
 		settings.descriptions=[
@@ -160,6 +160,21 @@ Option.BiquadFilter =  class extends Option.Group {
 			['LiveFloat','Q',[-4,4],0], // log Q
 			['LiveInt','gain',[-30,30],0,{ unit: 'decibel' }],
 			['LiveInt','detune',[0,100],{ unit: '¢' }],
+		]
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+}
+
+Option.IIRFilter = class extends Option.Group {
+	static collectArgs(scalarArg,arrayArg,settings) {
+		settings=Object.create(settings)
+		settings.descriptions=[
+			['Array','feedforward',[
+				['AnyFloat','b',1],
+			]],
+			['Array','feedback',[
+				['AnyFloat','a',1],
+			]],
 		]
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}

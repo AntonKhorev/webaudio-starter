@@ -282,6 +282,31 @@ class OptionsOutput extends BaseOptionsOutput {
 				}
 			})
 		})
+		optionClassWriters.set(Option.IIRFilter,(option,writeOption,i18n,generateId)=>{
+			const updateLabels=($cs,c)=>{
+				$cs.find('.option label').html(i=>`${c}<sub>${i}</sub>:`)
+			}
+			const bs=option.entries[0]
+			const as=option.entries[1]
+			let $bs,$as
+			option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
+				//option.entries.map(writeOption)
+				$bs=writeOption(bs),
+				$as=writeOption(as)
+				// TODO plots
+			)
+			const prevBsUpdateCallback=bs.updateCallback
+			bs.updateCallback=()=>{
+				prevBsUpdateCallback()
+				updateLabels($bs,'b')
+			}
+			const prevAsUpdateCallback=as.updateCallback
+			as.updateCallback=()=>{
+				prevAsUpdateCallback()
+				updateLabels($as,'a')
+			}
+			return option.$
+		})
 	}
 }
 
