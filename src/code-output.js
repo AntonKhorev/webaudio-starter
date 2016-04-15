@@ -35,12 +35,11 @@ class CodeOutput extends BaseCodeOutput {
 	}
 	writeSectionSummary(sectionName,i18n) {
 		const $section=super.writeSectionSummary(sectionName,i18n)
-		const interestingWarningText="You need at least one source and some processing enabled to get interesting JavaScript code" // TODO i18n
 		if (sectionName=='html' || sectionName=='js') {
 			let $warning
 			$section.append(
 				" ",
-				$warning=$("<span class='tip-warn'><span class='tip-content'>"+interestingWarningText+"</span></span>")
+				$warning=$("<span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.interesting')+"</span></span>")
 			)
 			this.$warnings=this.$warnings.add($warning)
 		}

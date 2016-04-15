@@ -27,10 +27,7 @@ class Code extends BaseWebCode {
 		this.features.forEach(feature=>{
 			feature.requestFeatureContext(this.featureContext)
 		})
-		this.isInteresting=(
-			options.sources.entries.length>0 &&
-			(options.filters.entries.length>0 || options.destination.compressor || options.destination.waveform)
-		) // TODO check featureContext
+		this.isInteresting=!!this.featureContext.audioContext
 	}
 	get basename() {
 		return 'webaudio'

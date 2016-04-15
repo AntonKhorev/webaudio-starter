@@ -68,6 +68,7 @@ const langStrings={
 		'options-output.hide': "Hide",
 
 		'code-output.warning.jsfiddle-run': "You may have to click <kbd>Run</kbd> in JSFiddle to get sound output working",
+		'code-output.warning.interesting': "You need at least one source and some processing enabled to get interesting JavaScript code",
 
 		'code.title': "Web Audio API example — generated code",
 
@@ -165,6 +166,7 @@ const langStrings={
 		'options-output.hide': "Скрыть",
 
 		'code-output.warning.jsfiddle-run': "Для корректного вывода звука в JSFiddle может потребоваться нажатие кнопки <kbd>Run</kbd>",
+		'code-output.warning.interesting': "Для нетривиального JavaScript-кода нужно включить по крайней мере один источник и последующую обработку звука",
 
 		'code.title': "Пример использования Web Audio API — сгенерированный код",
 
