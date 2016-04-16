@@ -27,6 +27,23 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 	}
 }
 
+class IIRFilterCoefsOptionOutput extends ArrayOptionOutput {
+	constructor(option,writeOption,i18n,generateId) {
+		super(option,writeOption,i18n,generateId)
+		this.updateArrayEntryLabels()
+	}
+	updateArrayEntries() {
+		super.updateArrayEntries()
+		this.updateArrayEntryLabels()
+	}
+	updateArrayEntryLabels() {
+		this.$entries.children().each(function(i){
+			const c=$(this).data('option').name
+			$(this).find('label').html(`${c}<sub>${i}</sub>:`)
+		})
+	}
+}
+
 class OptionsOutput extends BaseOptionsOutput {
 	setOptionClassWriters(optionClassWriters) {
 		super.setOptionClassWriters(optionClassWriters)
@@ -310,30 +327,13 @@ class OptionsOutput extends BaseOptionsOutput {
 				}
 			})
 		})
+		/*
 		optionClassWriters.set(Option.IIRFilter,(option,writeOption,i18n,generateId)=>{
-			const updateLabels=($cs,c)=>{
-				$cs.find('.option label').html(i=>`${c}<sub>${i}</sub>:`)
-			}
-			const bs=option.entries[0]
-			const as=option.entries[1]
-			let $bs,$as
-			option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
-				//option.entries.map(writeOption)
-				$bs=writeOption(bs),
-				$as=writeOption(as)
-				// TODO plots
-			)
-			const prevBsUpdateCallback=bs.updateCallback
-			bs.updateCallback=()=>{
-				prevBsUpdateCallback()
-				updateLabels($bs,'b')
-			}
-			const prevAsUpdateCallback=as.updateCallback
-			as.updateCallback=()=>{
-				prevAsUpdateCallback()
-				updateLabels($as,'a')
-			}
-			return option.$
+			// TODO plots
+		})
+		*/
+		optionClassWriters.set(Option.IIRFilterCoefs,function(){
+			return new IIRFilterCoefsOptionOutput(...arguments).$output
 		})
 		optionClassWriters.set(Option.Filters,function(){
 			return new FiltersOptionOutput(...arguments).$output

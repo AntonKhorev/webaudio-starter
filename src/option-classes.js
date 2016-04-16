@@ -165,14 +165,17 @@ Option.BiquadFilter = class extends Option.Group {
 	}
 }
 
+Option.IIRFilterCoefs = class extends Option.Array {
+}
+
 Option.IIRFilter = class extends Option.Group {
 	static collectArgs(scalarArg,arrayArg,settings) {
 		settings=Object.create(settings)
 		settings.descriptions=[
-			['Array','feedforward',[
+			['IIRFilterCoefs','feedforward',[
 				['AnyFloat','b',1],
 			]],
-			['Array','feedback',[
+			['IIRFilterCoefs','feedback',[
 				['AnyFloat','a',1],
 			]],
 		]
