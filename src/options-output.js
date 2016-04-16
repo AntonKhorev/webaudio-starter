@@ -13,8 +13,12 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 		if (subOption instanceof Option.BiquadFilter) {
 			$subOutput.find('button.clone').click(function(){
 				const $button=$(this)
+				const entry=This.option.makeEntry('iir',{
+					feedforward: $button.data('feedforward'),
+					feedback: $button.data('feedback'),
+				})
 				This.$entries.append(
-					This.writeDraggableSubOption(This.option.makeEntry('iir'),writeOption,i18n)
+					This.writeDraggableSubOption(entry,writeOption,i18n)
 				)
 				This.updateArrayEntries()
 			})
@@ -297,8 +301,8 @@ class OptionsOutput extends BaseOptionsOutput {
 				$("<div class='option'>").append(
 					"<label>"+"Clone as IIR filter"+":</label> ", // TODO i18n
 					$("<button type='button' class='clone'>"+"Clone with pre-2016-04-15 coefficients"+"</button>")
-						.data('bs',[1,2,3])
-						.data('as',[4,5,6])
+						.data('feedforward',[1,2,3])
+						.data('feedback',[4,5,6])
 				)
 			).on('input change',function(){
 				if (shown) {
