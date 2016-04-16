@@ -31,7 +31,7 @@ class Options extends BaseOptions {
 					['Int','height',[1,1080],240,{ unit: 'pixel' }],
 				]],
 			],'source'],
-			['Array','filters',[
+			['Filters','filters',[
 				['Group','gain',[
 					['LiveFloat','gain',[0,10],1,{
 						defaultMax: 1,

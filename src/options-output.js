@@ -4,6 +4,24 @@ const debounce=require('crnx-base/fake-lodash/debounce')
 const formatNumbers=require('crnx-base/format-numbers')
 const Option=require('./option-classes')
 const BaseOptionsOutput=require('crnx-base/options-output')
+const ArrayOptionOutput=require('crnx-base/array-option-output')
+
+class FiltersOptionOutput extends ArrayOptionOutput {
+	writeDraggableSubOption(subOption,writeOption,i18n) {
+		const $subOutput=super.writeDraggableSubOption(subOption,writeOption,i18n)
+		const This=this
+		if (subOption instanceof Option.BiquadFilter) {
+			$subOutput.find('button.clone').click(function(){
+				const $button=$(this)
+				This.$entries.append(
+					This.writeDraggableSubOption(This.option.makeEntry('iir'),writeOption,i18n)
+				)
+				This.updateArrayEntries()
+			})
+		}
+		return $subOutput
+	}
+}
 
 class OptionsOutput extends BaseOptionsOutput {
 	setOptionClassWriters(optionClassWriters) {
@@ -275,6 +293,12 @@ class OptionsOutput extends BaseOptionsOutput {
 							shown=false
 						}
 					})
+				),
+				$("<div class='option'>").append(
+					"<label>"+"Clone as IIR filter"+":</label> ", // TODO i18n
+					$("<button type='button' class='clone'>"+"Clone with pre-2016-04-15 coefficients"+"</button>")
+						.data('bs',[1,2,3])
+						.data('as',[4,5,6])
 				)
 			).on('input change',function(){
 				if (shown) {
@@ -306,6 +330,9 @@ class OptionsOutput extends BaseOptionsOutput {
 				updateLabels($as,'a')
 			}
 			return option.$
+		})
+		optionClassWriters.set(Option.Filters,function(){
+			return new FiltersOptionOutput(...arguments).$output
 		})
 	}
 }

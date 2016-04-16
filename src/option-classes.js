@@ -180,4 +180,7 @@ Option.IIRFilter = class extends Option.Group {
 	}
 }
 
+Option.Filters = class extends Option.Array {
+}
+
 module.exports=Option
