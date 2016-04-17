@@ -6,7 +6,7 @@ class BiquadFilterOptionOutput extends FilterOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		super(option,writeOption,i18n,generateId)
 		let $cloneButton
-		const computeCoefs=(type,frequency,detune,Q,gain)=>{
+		const computeCoefs=(type,frequency,detune,Q,gain,post20160415)=>{
 			// constants defined in the spec
 			//const F_s=audioContext.sampleRate // TODO pass audioContext
 			const F_s=48000
@@ -16,8 +16,9 @@ class BiquadFilterOptionOutput extends FilterOptionOutput {
 			const A=Math.pow(10,G/40)
 			const omega_0=2*Math.PI*f_0/F_s
 			const alpha_Q=Math.sin(omega_0)/(2*Q)
-			const Q_B=Math.pow(10,Q/20) // fix for incorrect alpha_B
-			const alpha_B=Math.sin(omega_0)/2*Math.sqrt((4-Math.sqrt(16-16/(Q_B*Q_B)))/2) // was incorrect in the spec
+			const Q_dB=Math.pow(10,Q/20) // fix for incorrect alpha_B
+			const alpha_B=Math.sin(omega_0)/2*Math.sqrt((4-Math.sqrt(16-16/(Q_dB*Q_dB)))/2) // was incorrect in the spec
+			const alpha_Q_dB=Math.sin(omega_0)/(2*Q_dB) // introduced on 2016-04-15
 			const S=1
 			const alpha_S=Math.sin(omega_0)/2*Math.sqrt((A+1/A)*(1/S-1)+2)
 
@@ -28,33 +29,39 @@ class BiquadFilterOptionOutput extends FilterOptionOutput {
 			switch (type) {
 			case 'lowpass':
 				return {
-					feedforward: [(1-c)/2,1-c,(1-c)/2],
-					feedback: [1+alpha_B,-2*c,1-alpha_B],
+					feedforward: [(1-c)/2,   1-c, (1-c)/2],
+					feedback: (post20160415
+						? [1+alpha_Q_dB, -2*c, 1-alpha_Q_dB]
+						: [1+alpha_B   , -2*c, 1-alpha_B   ]
+					),
 				}
 			case 'highpass':
 				return {
-					feedforward: [(1+c)/2,-(1+c),(1+c)/2],
-					feedback: [1+alpha_B,-2*c,1-alpha_B],
+					feedforward: [(1+c)/2, -(1+c), (1+c)/2],
+					feedback: (post20160415
+						? [1+alpha_Q_dB, -2*c, 1-alpha_Q_dB]
+						: [1+alpha_B   , -2*c, 1-alpha_B   ]
+					),
 				}
 			case 'bandpass':
 				return {
-					feedforward: [alpha_Q,0,-alpha_Q],
-					feedback: [1+alpha_Q,-2*c,1-alpha_Q],
+					feedforward: [alpha_Q, 0, -alpha_Q],
+					feedback: [1+alpha_Q, -2*c, 1-alpha_Q],
 				}
 			case 'notch':
 				return {
-					feedforward: [1,-2*c,1],
-					feedback: [1+alpha_Q,-2*c,1-alpha_Q],
+					feedforward: [1, -2*c, 1],
+					feedback: [1+alpha_Q, -2*c, 1-alpha_Q],
 				}
 			case 'allpass':
 				return {
-					feedforward: [1-alpha_Q,-2*c,1+alpha_Q],
-					feedback: [1+alpha_Q,-2*c,1-alpha_Q],
+					feedforward: [1-alpha_Q, -2*c, 1+alpha_Q],
+					feedback: [1+alpha_Q, -2*c, 1-alpha_Q],
 				}
 			case 'peaking':
 				return {
-					feedforward: [1+alpha_Q*A,-2*c,1-alpha_Q*A],
-					feedback: [1+alpha_Q/A,-2*c,1-alpha_Q/A],
+					feedforward: [1+alpha_Q*A, -2*c, 1-alpha_Q*A],
+					feedback: [1+alpha_Q/A, -2*c, 1-alpha_Q/A],
 				}
 			case 'lowshelf':
 				return {
@@ -84,24 +91,30 @@ class BiquadFilterOptionOutput extends FilterOptionOutput {
 				}
 			}
 		}
+		const writeCloneButton=(post20160415)=>{
+			return $("<button type='button' class='clone'>"+"Clone with "+(post20160415?"post":"pre")+"-2016-04-15 coefficients"+"</button>").click(function(){
+				const fixedOption=option.fix()
+				const coefs=computeCoefs(
+					fixedOption.type.value,
+					fixedOption.frequency.value,
+					fixedOption.detune.value,
+					Math.pow(10,fixedOption.Q.value),
+					fixedOption.gain.value,
+					post20160415
+				)
+				if (coefs) {
+					$(this).data('coefs',coefs)
+				} else {
+					$(this).removeData('coefs')
+				}
+			})
+		}
 		this.$output.append(
 			$("<div class='option'>").append(
 				"<label>"+"Clone as IIR filter"+":</label> ", // TODO i18n
-				$("<button type='button' class='clone'>"+"Clone with pre-2016-04-15 coefficients"+"</button>").click(function(){
-					const fixedOption=option.fix()
-					const coefs=computeCoefs(
-						fixedOption.type.value,
-						fixedOption.frequency.value,
-						fixedOption.detune.value,
-						Math.pow(10,fixedOption.Q.value),
-						fixedOption.gain.value
-					)
-					if (coefs) {
-						$(this).data('coefs',coefs)
-					} else {
-						$(this).removeData('coefs')
-					}
-				})
+				writeCloneButton(false),
+				" ",
+				writeCloneButton(true)
 			)
 		)
 	}
