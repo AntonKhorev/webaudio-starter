@@ -6,11 +6,9 @@ class BiquadFilterOptionOutput extends FilterOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		super(option,writeOption,i18n,generateId)
 		let $cloneButton
-		const computeCoefs=(type,frequency,detune,Q,gain,post20160415)=>{
+		const computeCoefs=(sampleRate,type,frequency,detune,Q,gain,post20160415)=>{
 			// constants defined in the spec
-			//const F_s=audioContext.sampleRate // TODO pass audioContext
-			const F_s=48000
-			//
+			const F_s=sampleRate
 			const f_0=frequency*Math.pow(2,detune/1200)
 			const G=gain
 			const A=Math.pow(10,G/40)
@@ -91,30 +89,37 @@ class BiquadFilterOptionOutput extends FilterOptionOutput {
 				}
 			}
 		}
+		const This=this
+		let $cloneUi
 		const writeCloneButton=(post20160415)=>{
 			return $("<button type='button' class='clone'>"+"Clone with "+(post20160415?"post":"pre")+"-2016-04-15 coefficients"+"</button>").click(function(){
-				const fixedOption=option.fix()
-				const coefs=computeCoefs(
-					fixedOption.type.value,
-					fixedOption.frequency.value,
-					fixedOption.detune.value,
-					Math.pow(10,fixedOption.Q.value),
-					fixedOption.gain.value,
-					post20160415
-				)
-				if (coefs) {
-					$(this).data('coefs',coefs)
-				} else {
-					$(this).removeData('coefs')
-				}
+				This.runIfCanCreateAudioContext(audioContext=>{
+					const fixedOption=option.fix()
+					const coefs=computeCoefs(
+						audioContext.sampleRate,
+						fixedOption.type.value,
+						fixedOption.frequency.value,
+						fixedOption.detune.value,
+						Math.pow(10,fixedOption.Q.value),
+						fixedOption.gain.value,
+						post20160415
+					)
+					if (coefs) {
+						$(this).data('coefs',coefs)
+					} else {
+						$(this).removeData('coefs')
+					}
+				},$cloneUi,i18n('options-output.filter.contextError'))
 			})
 		}
 		this.$output.append(
 			$("<div class='option'>").append(
 				"<label>"+"Clone as IIR filter"+":</label> ", // TODO i18n
-				writeCloneButton(false),
-				" ",
-				writeCloneButton(true)
+				$cloneUi=$("<span>").append(
+					writeCloneButton(false),
+					" ",
+					writeCloneButton(true)
+				)
 			)
 		)
 	}

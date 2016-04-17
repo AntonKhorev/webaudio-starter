@@ -18,16 +18,6 @@ class FilterOptionOutput extends GroupOptionOutput {
 		super(option,writeOption,i18n,generateId)
 		let shown=false
 		let magnitudeCanvasContext, phaseCanvasContext
-		const initAudioContext=()=>{
-			audioContext=new (AudioContext || webkitAudioContext)
-			frequencyArray=new Float32Array(width)
-			magnitudeArray=new Float32Array(width)
-			phaseArray=new Float32Array(width)
-			const maxFreq=audioContext.sampleRate/2
-			for (let i=0;i<width;i++) {
-				frequencyArray[i]=maxFreq/width*(i+0.5)
-			}
-		}
 		const updatePlots=(filterNode)=>{
 			filterNode.getFrequencyResponse(frequencyArray,magnitudeArray,phaseArray)
 			for (let i=0;i<width;i++) { // convert to decibels
@@ -152,36 +142,30 @@ class FilterOptionOutput extends GroupOptionOutput {
 					const $button=$(this)
 					let $magnitudeFigure, $phaseFigure
 					if (!shown) {
-						if (!audioContext) {
+						This.runIfCanCreateAudioContext(audioContext=>{
+							let filterNode
 							try {
-								initAudioContext()
+								filterNode=This.getFilterNode(audioContext)
 							} catch (e) {
-								$button.replaceWith(i18n('options-output.filter.contextError'))
+								$button.replaceWith(i18n('options-output.filter.nodeError'))
 								return
 							}
-						}
-						let filterNode
-						try {
-							filterNode=This.getFilterNode(audioContext)
-						} catch (e) {
-							$button.replaceWith(i18n('options-output.filter.nodeError'))
-							return
-						}
-						let $magnitudeCanvas, $phaseCanvas
-						$button.before(
-							$magnitudeFigure=$("<figure>").append(
-								"<figcaption>"+i18n('options-output.filter.magnitude')+"</figcaption>",
-								$magnitudeCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
-							),
-							$phaseFigure=$("<figure>").append(
-								"<figcaption>"+i18n('options-output.filter.phase')+"</figcaption>",
-								$phaseCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
-							)
-						).text(i18n('options-output.hide'))
-						magnitudeCanvasContext=$magnitudeCanvas[0].getContext('2d')
-						phaseCanvasContext=$phaseCanvas[0].getContext('2d')
-						updatePlots(filterNode)
-						shown=true
+							let $magnitudeCanvas, $phaseCanvas
+							$button.before(
+								$magnitudeFigure=$("<figure>").append(
+									"<figcaption>"+i18n('options-output.filter.magnitude')+"</figcaption>",
+									$magnitudeCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
+								),
+								$phaseFigure=$("<figure>").append(
+									"<figcaption>"+i18n('options-output.filter.phase')+"</figcaption>",
+									$phaseCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
+								)
+							).text(i18n('options-output.hide'))
+							magnitudeCanvasContext=$magnitudeCanvas[0].getContext('2d')
+							phaseCanvasContext=$phaseCanvas[0].getContext('2d')
+							updatePlots(filterNode)
+							shown=true
+						},$button,i18n('options-output.filter.contextError'))
 					} else {
 						$magnitudeFigure.remove()
 						$phaseFigure.remove()
@@ -195,6 +179,27 @@ class FilterOptionOutput extends GroupOptionOutput {
 				delayedUpdate()
 			}
 		})
+	}
+	runIfCanCreateAudioContext(fn,$ui,errorMessage) {
+		const initAudioContext=()=>{
+			audioContext=new (AudioContext || webkitAudioContext)
+			frequencyArray=new Float32Array(width)
+			magnitudeArray=new Float32Array(width)
+			phaseArray=new Float32Array(width)
+			const maxFreq=audioContext.sampleRate/2
+			for (let i=0;i<width;i++) {
+				frequencyArray[i]=maxFreq/width*(i+0.5)
+			}
+		}
+		if (!audioContext) {
+			try {
+				initAudioContext()
+			} catch (e) {
+				$ui.replaceWith(errorMessage)
+				return
+			}
+		}
+		fn(audioContext)
 	}
 	// abstract
 	// getFilterNode(audioContext)
