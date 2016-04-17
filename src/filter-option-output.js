@@ -179,6 +179,13 @@ class FilterOptionOutput extends GroupOptionOutput {
 				delayedUpdate()
 			}
 		})
+		//option.entries.map(subOption=>{
+		//	const prevUpdateCallback=subOption.updateCallback
+		//	subOption.updateCallback=()=>{
+		//		prevUpdateCallback()
+		//		delayedUpdate()
+		//	}
+		//})
 	}
 	runIfCanCreateAudioContext(fn,$ui,errorMessage) {
 		const initAudioContext=()=>{
