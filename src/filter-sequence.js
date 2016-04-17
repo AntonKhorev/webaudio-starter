@@ -202,14 +202,14 @@ const filterClasses={
 					name:'frequency',
 					type:'range',
 				},{
+					name:'detune',
+					type:'range',
+				},{
 					name:'Q',
 					type:'range',
 					fn:x=>`Math.pow(10,${x})`,
 				},{
 					name:'gain',
-					type:'range',
-				},{
-					name:'detune',
 					type:'range',
 				}
 			]

@@ -157,9 +157,9 @@ Option.BiquadFilter = class extends Option.Group {
 				'lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch','allpass'
 			]],
 			['LiveInt','frequency',[0,22050],350,{ unit: 'hertz' }],
+			['LiveInt','detune',[0,100],{ unit: '¢' }],
 			['LiveFloat','Q',[-4,4],0], // log Q
 			['LiveInt','gain',[-30,30],0,{ unit: 'decibel' }],
-			['LiveInt','detune',[0,100],{ unit: '¢' }],
 		]
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
