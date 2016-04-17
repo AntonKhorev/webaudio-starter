@@ -31,13 +31,18 @@ class BiquadFilterOptionOutput extends FilterOptionOutput {
 				"<label>"+"Clone as IIR filter"+":</label> ", // TODO i18n
 				$("<button type='button' class='clone'>"+"Clone with pre-2016-04-15 coefficients"+"</button>").click(function(){
 					const fixedOption=option.fix()
-					$(this).data('coefs',computeCoefs(
+					const coefs=computeCoefs(
 						fixedOption.type.value,
 						fixedOption.frequency.value,
 						fixedOption.detune.value,
 						Math.pow(10,fixedOption.Q.value),
 						fixedOption.gain.value
-					))
+					)
+					if (coefs) {
+						$(this).data('coefs',coefs)
+					} else {
+						$(this).removeData('coefs')
+					}
 				})
 			)
 		)
