@@ -65,6 +65,8 @@ const langStrings={
 		'options-output.filter.phase': "Phase",
 		'options-output.filter.contextError': "Error creating audio context. Your browser likely doesn't support Web Audio API.",
 		'options-output.filter.nodeError': "Error creating filter node. Your browser likely doesn't support this filter type.",
+		'options-output.filter.biquad.clone': "Clone as IIR filter",
+		'options-output.filter.biquad.clone.{pre,post}': "Clone with {}-2016-04-15 coefficients",
 		'options-output.show': "Show",
 		'options-output.hide': "Hide",
 
@@ -164,6 +166,8 @@ const langStrings={
 		'options-output.filter.phase': "Фаза",
 		'options-output.filter.contextError': "Ошибка создания аудио-контекста. Вероятно, браузер не поддерживает Web Audio API.",
 		'options-output.filter.nodeError': "Ошибка создания узла фильтра. Вероятно, браузер не поддерживает данный тип фильтров.",
+		'options-output.filter.biquad.clone': "Клонировать в виде БИХ-фильтра",
+		'options-output.filter.biquad.clone.{pre,post}': "Клонировать с коэффициентами по версиям {до,после} 2016-04-15",
 		'options-output.show': "Показать",
 		'options-output.hide': "Скрыть",
 

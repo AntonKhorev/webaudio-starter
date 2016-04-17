@@ -92,7 +92,9 @@ class BiquadFilterOptionOutput extends FilterOptionOutput {
 		const This=this
 		let $cloneUi
 		const writeCloneButton=(post20160415)=>{
-			return $("<button type='button' class='clone'>"+"Clone with "+(post20160415?"post":"pre")+"-2016-04-15 coefficients"+"</button>").click(function(){
+			return $("<button type='button' class='clone'>"+i18n(
+				'options-output.filter.biquad.clone.'+(post20160415?'post':'pre')
+			)+"</button>").click(function(){
 				This.runIfCanCreateAudioContext(audioContext=>{
 					const fixedOption=option.fix()
 					const coefs=computeCoefs(
@@ -114,7 +116,7 @@ class BiquadFilterOptionOutput extends FilterOptionOutput {
 		}
 		this.$output.append(
 			$("<div class='option'>").append(
-				"<label>"+"Clone as IIR filter"+":</label> ", // TODO i18n
+				"<label>"+i18n('options-output.filter.biquad.clone')+":</label> ",
 				$cloneUi=$("<span>").append(
 					writeCloneButton(false),
 					" ",
