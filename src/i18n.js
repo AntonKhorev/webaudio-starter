@@ -60,10 +60,11 @@ const langStrings={
 
 		'options-output.input': "Editable",
 		'options-output.range': "with range",
-		'options-output.biquadFilter.frequencyResponse': "Frequency response",
-		'options-output.biquadFilter.magnitude': "Magnitude",
-		'options-output.biquadFilter.phase': "Phase",
-		'options-output.biquadFilter.error': "Error creating audio context. Browser likely doesn't support Web Audio API.",
+		'options-output.filter.frequencyResponse': "Frequency response",
+		'options-output.filter.magnitude': "Magnitude",
+		'options-output.filter.phase': "Phase",
+		'options-output.filter.contextError': "Error creating audio context. Your browser likely doesn't support Web Audio API.",
+		'options-output.filter.nodeError': "Error creating filter node. Your browser likely doesn't support this filter type.",
 		'options-output.show': "Show",
 		'options-output.hide': "Hide",
 
@@ -158,10 +159,11 @@ const langStrings={
 
 		'options-output.input': "Значение изменяемо",
 		'options-output.range': "в диапазоне",
-		'options-output.biquadFilter.frequencyResponse': "Частотная характеристика",
-		'options-output.biquadFilter.magnitude': "Амплитуда",
-		'options-output.biquadFilter.phase': "Фаза",
-		'options-output.biquadFilter.error': "Ошибка создания аудио-контекста. Вероятно, браузер не поддерживает Web Audio API.",
+		'options-output.filter.frequencyResponse': "Частотная характеристика",
+		'options-output.filter.magnitude': "Амплитуда",
+		'options-output.filter.phase': "Фаза",
+		'options-output.filter.contextError': "Ошибка создания аудио-контекста. Вероятно, браузер не поддерживает Web Audio API.",
+		'options-output.filter.nodeError': "Ошибка создания узла фильтра. Вероятно, браузер не поддерживает данный тип фильтров.",
 		'options-output.show': "Показать",
 		'options-output.hide': "Скрыть",
 

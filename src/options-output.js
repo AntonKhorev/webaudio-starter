@@ -4,6 +4,7 @@ const Option=require('./option-classes')
 const BaseOptionsOutput=require('crnx-base/options-output')
 const ArrayOptionOutput=require('crnx-base/array-option-output')
 const BiquadFilterOptionOutput=require('./biquad-filter-option-output')
+const IIRFilterOptionOutput=require('./iir-filter-option-output')
 
 class FiltersOptionOutput extends ArrayOptionOutput {
 	writeDraggableSubOption(subOption,writeOption,i18n) {
@@ -125,11 +126,9 @@ class OptionsOutput extends BaseOptionsOutput {
 		optionClassWriters.set(Option.BiquadFilter,function(){
 			return new BiquadFilterOptionOutput(...arguments).$output
 		})
-		/*
-		optionClassWriters.set(Option.IIRFilter,(option,writeOption,i18n,generateId)=>{
-			// TODO plots
+		optionClassWriters.set(Option.IIRFilter,function(){
+			return new IIRFilterOptionOutput(...arguments).$output
 		})
-		*/
 		optionClassWriters.set(Option.IIRFilterCoefs,function(){
 			return new IIRFilterCoefsOptionOutput(...arguments).$output
 		})
