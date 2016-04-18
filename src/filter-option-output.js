@@ -174,18 +174,12 @@ class FilterOptionOutput extends GroupOptionOutput {
 					}
 				})
 			)
-		).on('input change',function(){
+		)
+		option.addUpdateCallback(()=>{
 			if (shown) {
 				delayedUpdate()
 			}
 		})
-		//option.entries.map(subOption=>{
-		//	const prevUpdateCallback=subOption.updateCallback
-		//	subOption.updateCallback=()=>{
-		//		prevUpdateCallback()
-		//		delayedUpdate()
-		//	}
-		//})
 	}
 	runIfCanCreateAudioContext(fn,$ui,errorMessage) {
 		const initAudioContext=()=>{
