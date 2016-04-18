@@ -32,6 +32,9 @@ class IIRFilterCoefsOptionOutput extends ArrayOptionOutput {
 		super(option,writeOption,i18n,generateId)
 		this.updateArrayEntryLabels()
 	}
+	canDeleteEntry($entry) {
+		return this.option.entries.length>1
+	}
 	updateArrayEntries() {
 		super.updateArrayEntries()
 		this.updateArrayEntryLabels()
