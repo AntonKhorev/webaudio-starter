@@ -9,7 +9,7 @@ const Option=Object.create(require('crnx-base/option-classes'))
 //	can specify defaultMin, defaultMax
 //	fixed has defaultValue - although it's potentially confusing: user input default vs Web Audio Node property default - they are currently the same
 Option.LiveNumber = class extends Option.Number {
-	constructor(name,settings,data,path,visibilityManager,updateCallback,makeEntry) {
+	constructor(name,settings,data,path,visibilityManager,makeEntry) {
 		let dataValue,dataMin,dataMax,dataInput
 		if (typeof data == 'object') {
 			dataValue=data.value
@@ -44,21 +44,21 @@ Option.LiveNumber = class extends Option.Number {
 	set input(input) {
 		this._input=input
 		this.updateInternalVisibility()
-		this.updateCallback()
+		this.update()
 	}
 	get min() {
 		return this._min
 	}
 	set min(min) {
 		this._min=min
-		this.updateCallback()
+		this.update()
 	}
 	get max() {
 		return this._max
 	}
 	set max(max) {
 		this._max=max
-		this.updateCallback()
+		this.update()
 	}
 	get $range() {
 		return this._$range
@@ -117,7 +117,7 @@ class FixedLiveSelect {
 }
 
 Option.LiveSelect = class extends Option.Select {
-	constructor(name,settings,data,path,visibilityManager,updateCallback,makeEntry) {
+	constructor(name,settings,data,path,visibilityManager,makeEntry) {
 		let dataValue,dataInput
 		if (typeof data == 'object') {
 			dataValue=data.value
@@ -133,7 +133,7 @@ Option.LiveSelect = class extends Option.Select {
 	}
 	set input(input) {
 		this._input=input
-		this.updateCallback()
+		this.update()
 	}
 	export() {
 		const data={}
