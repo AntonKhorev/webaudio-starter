@@ -18,7 +18,7 @@ $(function(){
 		const i18n=i18ns(lang)
 		const options=new Options()
 		const codeOutput=new CodeOutput(()=>new Code(options.fix(),i18n),i18n)
-		options.updateCallback=codeOutput.update
+		options.addUpdateCallback(codeOutput.update)
 		const optionsOutput=new OptionsOutput(options,generateId,i18n)
 		$container.empty().append(
 			optionsOutput.$output,
