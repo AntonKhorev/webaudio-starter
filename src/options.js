@@ -53,9 +53,7 @@ class Options extends BaseOptions {
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/irHall.ogg',
 					]],
 				]],
-				['Group','equalizer',[60,170,350,1000,3500,10000].map(
-					freq=>['LiveInt','gain'+freq,[-30,30],0,{ unit: 'decibel' }]
-				)],
+				['EqualizerFilter','equalizer'],
 			],'filter'],
 			['Group','destination',[
 				['Checkbox','compressor'], // Firefox compresses automatically?

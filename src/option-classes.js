@@ -190,6 +190,19 @@ Option.IIRFilter = class extends Option.Group {
 	}
 }
 
+Option.EqualizerFilter = class extends Option.Group {
+	static get frequencies() {
+		return [60,170,350,1000,3500,10000]
+	}
+	static collectArgs(scalarArg,arrayArg,settings) {
+		settings=Object.create(settings)
+		settings.descriptions=Option.EqualizerFilter.frequencies.map(
+			freq=>['LiveInt','gain'+freq,[-30,30],0,{ unit: 'decibel' }]
+		)
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+}
+
 Option.Filters = class extends Option.Array {
 }
 

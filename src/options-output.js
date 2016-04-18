@@ -5,6 +5,7 @@ const BaseOptionsOutput=require('crnx-base/options-output')
 const ArrayOptionOutput=require('crnx-base/array-option-output')
 const BiquadFilterOptionOutput=require('./biquad-filter-option-output')
 const IIRFilterOptionOutput=require('./iir-filter-option-output')
+const EqualizerFilterOptionOutput=require('./equalizer-filter-option-output')
 
 class FiltersOptionOutput extends ArrayOptionOutput {
 	writeDraggableSubOption(subOption,writeOption,i18n) {
@@ -126,14 +127,17 @@ class OptionsOutput extends BaseOptionsOutput {
 					})
 			)
 		})
+		optionClassWriters.set(Option.IIRFilterCoefs,function(){
+			return new IIRFilterCoefsOptionOutput(...arguments).$output
+		})
 		optionClassWriters.set(Option.BiquadFilter,function(){
 			return new BiquadFilterOptionOutput(...arguments).$output
 		})
 		optionClassWriters.set(Option.IIRFilter,function(){
 			return new IIRFilterOptionOutput(...arguments).$output
 		})
-		optionClassWriters.set(Option.IIRFilterCoefs,function(){
-			return new IIRFilterCoefsOptionOutput(...arguments).$output
+		optionClassWriters.set(Option.EqualizerFilter,function(){
+			return new EqualizerFilterOptionOutput(...arguments).$output
 		})
 		optionClassWriters.set(Option.Filters,function(){
 			return new FiltersOptionOutput(...arguments).$output

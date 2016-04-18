@@ -125,7 +125,7 @@ class BiquadFilterOptionOutput extends FilterOptionOutput {
 			)
 		)
 	}
-	getFilterNode(audioContext) {
+	getFilterNodes(audioContext) {
 		const biquadNode=audioContext.createBiquadFilter()
 		const fixedOption=this.option.fix()
 		biquadNode.type=fixedOption.type.value
@@ -133,7 +133,7 @@ class BiquadFilterOptionOutput extends FilterOptionOutput {
 		biquadNode.detune.value=fixedOption.detune.value
 		biquadNode.Q.value=Math.pow(10,fixedOption.Q.value)
 		biquadNode.gain.value=fixedOption.gain.value
-		return biquadNode
+		return [biquadNode]
 	}
 }
 

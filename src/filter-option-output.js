@@ -19,7 +19,8 @@ class FilterOptionOutput extends GroupOptionOutput {
 		let shown=false
 		let $magnitudeFigure, $phaseFigure
 		let magnitudeCanvasContext, phaseCanvasContext
-		const updatePlots=(filterNode)=>{
+		const updatePlots=(filterNodes)=>{
+			const filterNode=filterNodes[0] // TODO the rest
 			filterNode.getFrequencyResponse(frequencyArray,magnitudeArray,phaseArray)
 			for (let i=0;i<width;i++) { // convert to decibels
 				magnitudeArray[i]=20*Math.log(magnitudeArray[i])/Math.LN10
@@ -132,7 +133,7 @@ class FilterOptionOutput extends GroupOptionOutput {
 		}
 		const delayedUpdate=debounce(()=>{
 			try {
-				updatePlots(this.getFilterNode(audioContext))
+				updatePlots(this.getFilterNodes(audioContext))
 			} catch (e) {}
 		},50)
 		const This=this
@@ -143,9 +144,9 @@ class FilterOptionOutput extends GroupOptionOutput {
 					const $button=$(this)
 					if (!shown) {
 						This.runIfCanCreateAudioContext(audioContext=>{
-							let filterNode
+							let filterNodes
 							try {
-								filterNode=This.getFilterNode(audioContext)
+								filterNodes=This.getFilterNodes(audioContext)
 							} catch (e) {
 								$button.replaceWith(i18n('options-output.filter.nodeError'))
 								return
@@ -163,7 +164,7 @@ class FilterOptionOutput extends GroupOptionOutput {
 							).text(i18n('options-output.hide'))
 							magnitudeCanvasContext=$magnitudeCanvas[0].getContext('2d')
 							phaseCanvasContext=$phaseCanvas[0].getContext('2d')
-							updatePlots(filterNode)
+							updatePlots(filterNodes)
 							shown=true
 						},$button,i18n('options-output.filter.contextError'))
 					} else {
@@ -203,7 +204,7 @@ class FilterOptionOutput extends GroupOptionOutput {
 		fn(audioContext)
 	}
 	// abstract
-	// getFilterNode(audioContext)
+	// getFilterNodes(audioContext)
 }
 
 module.exports=FilterOptionOutput
