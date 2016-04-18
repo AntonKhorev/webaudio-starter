@@ -166,6 +166,13 @@ Option.BiquadFilter = class extends Option.Group {
 }
 
 Option.IIRFilterCoefs = class extends Option.Array {
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
+		super(...arguments)
+		if (this._entries.length==0) {
+			const type=this.availableTypes[0]
+			this._entries.push(this.makeEntry(type))
+		}
+	}
 }
 
 Option.IIRFilter = class extends Option.Group {
