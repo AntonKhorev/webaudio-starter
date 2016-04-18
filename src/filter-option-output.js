@@ -17,6 +17,7 @@ class FilterOptionOutput extends GroupOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		super(option,writeOption,i18n,generateId)
 		let shown=false
+		let $magnitudeFigure, $phaseFigure
 		let magnitudeCanvasContext, phaseCanvasContext
 		const updatePlots=(filterNode)=>{
 			filterNode.getFrequencyResponse(frequencyArray,magnitudeArray,phaseArray)
@@ -140,7 +141,6 @@ class FilterOptionOutput extends GroupOptionOutput {
 				"<label>"+i18n('options-output.filter.frequencyResponse')+":</label> ",
 				$("<button type='button'>"+i18n('options-output.show')+"</button>").click(function(){
 					const $button=$(this)
-					let $magnitudeFigure, $phaseFigure
 					if (!shown) {
 						This.runIfCanCreateAudioContext(audioContext=>{
 							let filterNode
