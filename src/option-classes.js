@@ -150,6 +150,23 @@ Option.AnyFloat = class extends Option.NonBoolean {
 }
 
 Option.BiquadFilter = class extends Option.Group {
+	static typeUsesQ(type) {
+		return !!{
+			'lowpass': true,
+			'highpass': true,
+			'bandpass': true,
+			'peaking': true,
+			'notch': true,
+			'allpass': true,
+		}[type]
+	}
+	static typeUsesGain(type) {
+		return !!{
+			'lowshelf': true,
+			'highshelf': true,
+			'peaking': true,
+		}[type]
+	}
 	static collectArgs(scalarArg,arrayArg,settings) {
 		settings=Object.create(settings)
 		settings.descriptions=[
@@ -162,6 +179,18 @@ Option.BiquadFilter = class extends Option.Group {
 			['LiveInt','gain',[-30,30],0,{ unit: 'decibel' }],
 		]
 		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
+		super(...arguments)
+		const type=this.entries[0]
+		const Q=this.entries[3]
+		const gain=this.entries[4]
+		Q.isVisible=()=>(type.input || Option.BiquadFilter.typeUsesQ(type.value))
+		gain.isVisible=()=>(type.input || Option.BiquadFilter.typeUsesGain(type.value))
+		type.addUpdateCallback(()=>{
+			Q.updateVisibility()
+			gain.updateVisibility()
+		})
 	}
 }
 
