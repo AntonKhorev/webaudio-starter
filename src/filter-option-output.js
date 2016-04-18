@@ -11,7 +11,9 @@ const maxNGridLines=10
 const fontSize=10
 const fontOffset=3
 let audioContext
-let frequencyArray,magnitudeArray,phaseArray
+let frequencyArray
+let magnitudeArray,phaseArray
+let magnitudeArray0,phaseArray0
 
 class FilterOptionOutput extends GroupOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
@@ -20,8 +22,21 @@ class FilterOptionOutput extends GroupOptionOutput {
 		let $magnitudeFigure, $phaseFigure
 		let magnitudeCanvasContext, phaseCanvasContext
 		const updatePlots=(filterNodes)=>{
-			const filterNode=filterNodes[0] // TODO the rest
-			filterNode.getFrequencyResponse(frequencyArray,magnitudeArray,phaseArray)
+			for (let i=0;i<magnitudeArray.length;i++) {
+				magnitudeArray[i]=1
+			}
+			for (let i=0;i<phaseArray.length;i++) {
+				phaseArray[i]=0
+			}
+			filterNodes.forEach(filterNode=>{
+				filterNode.getFrequencyResponse(frequencyArray,magnitudeArray0,phaseArray0)
+				for (let i=0;i<magnitudeArray.length;i++) {
+					magnitudeArray[i]*=magnitudeArray0[i]
+				}
+				for (let i=0;i<phaseArray.length;i++) {
+					phaseArray[i]+=phaseArray0[i]
+				}
+			})
 			for (let i=0;i<width;i++) { // convert to decibels
 				magnitudeArray[i]=20*Math.log(magnitudeArray[i])/Math.LN10
 			}
@@ -188,6 +203,8 @@ class FilterOptionOutput extends GroupOptionOutput {
 			frequencyArray=new Float32Array(width)
 			magnitudeArray=new Float32Array(width)
 			phaseArray=new Float32Array(width)
+			magnitudeArray0=new Float32Array(width)
+			phaseArray0=new Float32Array(width)
 			const maxFreq=audioContext.sampleRate/2
 			for (let i=0;i<width;i++) {
 				frequencyArray[i]=maxFreq/width*(i+0.5)
