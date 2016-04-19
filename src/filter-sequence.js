@@ -8,6 +8,7 @@ const WrapLines=require('crnx-base/wrap-lines')
 const NoseWrapLines=require('crnx-base/nose-wrap-lines')
 const InterleaveLines=require('crnx-base/interleave-lines')
 const RefLines=require('crnx-base/ref-lines')
+const Option=require('./option-classes')
 const CollectionFeature=require('./collection-feature')
 
 class Filter {
@@ -328,7 +329,7 @@ const filterClasses={
 	equalizer: class extends Filter {
 		get type()                { return 'equalizer' }
 		get ctxCreateMethodName() { return 'createBiquadFilter' }
-		get frequencies()         { return [60,170,350,1000,3500,10000] }
+		get frequencies()         { return Option.EqualizerFilter.frequencies }
 		get nodeProperties() {
 			return this.frequencies.map(freq=>({
 				name:'gain'+freq,
