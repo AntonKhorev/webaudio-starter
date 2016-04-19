@@ -49,6 +49,9 @@ class Filter {
 		}
 	}
 	getHtmlPropertyLines(i18n,property) {
+		if (property.skip) {
+			return Lines.be()
+		}
 		const option=this.options[property.name]
 		const inputHtmlName=this.getPropertyInputHtmlName(property.name)
 		const a=Lines.b()
@@ -121,6 +124,9 @@ class SinglePathFilter extends Filter {
 		return Lines.bae(
 			super.getJsInitLines(i18n,prevNodeJsNames),
 			...this.nodeProperties.map(property=>{
+				if (property.skip) {
+					return Lines.be()
+				}
 				const option=this.options[property.name]
 				const nodePropertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")
 				const a=JsLines.b()
@@ -209,9 +215,11 @@ const filterClasses={
 					name:'Q',
 					type:'range',
 					fn:x=>`Math.pow(10,${x})`,
+					skip:(!this.options.type.input && !Option.BiquadFilter.typeUsesQ(this.options.type.value)),
 				},{
 					name:'gain',
 					type:'range',
+					skip:(!this.options.type.input && !Option.BiquadFilter.typeUsesGain(this.options.type.value)),
 				}
 			]
 		}
