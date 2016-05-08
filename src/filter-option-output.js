@@ -151,9 +151,10 @@ class FilterOptionOutput extends GroupOptionOutput {
 				updatePlots(this.getFilterNodes(audioContext))
 			} catch (e) {}
 		},50)
+		let $frOption
 		const This=this
 		this.$output.append(
-			$("<div class='option'>").append(
+			$frOption=$("<div class='option only-buttons'>").append(
 				"<label>"+i18n('options-output.filter.frequencyResponse')+":</label> ",
 				$("<button type='button'>"+i18n('options-output.show')+"</button>").click(function(){
 					const $button=$(this)
@@ -180,12 +181,14 @@ class FilterOptionOutput extends GroupOptionOutput {
 							magnitudeCanvasContext=$magnitudeCanvas[0].getContext('2d')
 							phaseCanvasContext=$phaseCanvas[0].getContext('2d')
 							updatePlots(filterNodes)
+							$frOption.removeClass('only-buttons')
 							shown=true
 						},$button,i18n('options-output.filter.contextError'))
 					} else {
 						$magnitudeFigure.remove()
 						$phaseFigure.remove()
 						$button.text(i18n('options-output.show'))
+						$frOption.addClass('only-buttons')
 						shown=false
 					}
 				})
