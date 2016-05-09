@@ -155,7 +155,7 @@ class FilterOptionOutput extends GroupOptionOutput {
 		const This=this
 		this.$output.append(
 			$frOption=$("<div class='option only-buttons'>").append(
-				"<label>"+i18n('options-output.filter.frequencyResponse')+":</label> ",
+				"<label>"+i18n('options-output.filter.frequencyResponse')+":</label><span class='space'> </span>",
 				$("<button type='button'>"+i18n('options-output.show')+"</button>").click(function(){
 					const $button=$(this)
 					if (!shown) {

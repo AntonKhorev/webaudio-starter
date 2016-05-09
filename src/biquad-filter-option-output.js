@@ -116,7 +116,7 @@ class BiquadFilterOptionOutput extends FilterOptionOutput {
 		}
 		this.$output.append(
 			$("<div class='option only-buttons'>").append(
-				"<label>"+i18n('options-output.filter.biquad.clone')+":</label> ",
+				"<label>"+i18n('options-output.filter.biquad.clone')+":</label><span class='space'> </span>",
 				$cloneUi=$("<span>").append(
 					writeCloneButton(false),
 					" ",

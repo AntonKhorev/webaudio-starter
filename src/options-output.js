@@ -92,8 +92,8 @@ class OptionsOutput extends BaseOptionsOutput {
 			const id=generateId()
 			const inputCheckboxId=generateId()
 			let $select,$inputCheckbox
-			return option.$=$("<div class='option'>").append(
-				"<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label> ",
+			return option.$=$("<div class='option'>").append( // not inheriting Option.Select b/c don't know how to handle reset button
+				this.getLeadLabel(id,i18n,option),
 				$select=$("<select id='"+id+"'>").append(
 					option.availableValues.map(function(availableValue){
 						return $("<option>").val(availableValue).html(i18n('options.'+option.fullName+'.'+availableValue))
@@ -117,7 +117,7 @@ class OptionsOutput extends BaseOptionsOutput {
 		optionClassWriters.set(Option.AnyFloat,(option,writeOption,i18n,generateId)=>{
 			const id=generateId()
 			return option.$=$("<div class='option'>").append(
-				"<label for='"+id+"'>"+i18n('options.'+option.fullName)+":</label> ",
+				this.getLeadLabel(id,i18n,option),
 				$("<input type='number' id='"+id+"' step='any' required>")
 					.val(option.value)
 					.on('input change',function(){
