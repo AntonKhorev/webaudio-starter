@@ -30,7 +30,7 @@ class CodeOutput extends BaseCodeOutput {
 	}
 	writeButtons(i18n) {
 		return super.writeButtons(i18n).append(
-			" <span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.jsfiddle-run')+"</span></span>"
+			" <span class='tip-warn' tabindex='0'><span class='tip-content'>"+i18n('code-output.warning.jsfiddle-run')+"</span></span>"
 		)
 	}
 	writeSectionSummary(sectionName,i18n) {
@@ -39,7 +39,7 @@ class CodeOutput extends BaseCodeOutput {
 			let $warning
 			$section.append(
 				" ",
-				$warning=$("<span class='tip-warn'><span class='tip-content'>"+i18n('code-output.warning.interesting')+"</span></span>")
+				$warning=$("<span class='tip-warn' tabindex='0'><span class='tip-content'>"+i18n('code-output.warning.interesting')+"</span></span>")
 			)
 			this.$warnings=this.$warnings.add($warning)
 		}
