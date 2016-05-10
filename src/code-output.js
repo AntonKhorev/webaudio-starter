@@ -1,5 +1,6 @@
 'use strict'
 
+const writeTip=require('crnx-base/tip.js')
 const BaseCodeOutput=require('crnx-base/code-output')
 
 class CodeOutput extends BaseCodeOutput {
@@ -29,18 +30,14 @@ class CodeOutput extends BaseCodeOutput {
 		this.$warnings.toggle(!this.code.isInteresting)
 	}
 	writeButtons(i18n) {
-		return super.writeButtons(i18n).append(
-			" <span class='tip-warn' tabindex='0'><span class='tip-content'>"+i18n('code-output.warning.jsfiddle-run')+"</span></span>"
-		)
+		const $warning=writeTip('warn',i18n('code-output.warning.jsfiddle-run'))
+		return super.writeButtons(i18n).append(" ",$warning)
 	}
 	writeSectionSummary(sectionName,i18n) {
 		const $section=super.writeSectionSummary(sectionName,i18n)
 		if (sectionName=='html' || sectionName=='js') {
-			let $warning
-			$section.append(
-				" ",
-				$warning=$("<span class='tip-warn' tabindex='0'><span class='tip-content'>"+i18n('code-output.warning.interesting')+"</span></span>")
-			)
+			const $warning=writeTip('warn',i18n('code-output.warning.interesting'))
+			$section.append(" ",$warning)
 			this.$warnings=this.$warnings.add($warning)
 		}
 		return $section
