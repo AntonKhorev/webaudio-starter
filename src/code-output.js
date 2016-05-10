@@ -27,7 +27,7 @@ class CodeOutput extends BaseCodeOutput {
 	}
 	applyUpdatedCode(i18n) {
 		super.applyUpdatedCode(i18n)
-		this.$warnings.toggle(!this.code.isInteresting)
+		this.$warnings.css('display',this.code.isInteresting?'none':'') // .toggle() won't work right with inline-block
 	}
 	writeButtons(i18n) {
 		const $warning=writeTip('warn',i18n('code-output.warning.jsfiddle-run'))
