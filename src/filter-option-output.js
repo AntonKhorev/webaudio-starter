@@ -57,18 +57,20 @@ class FilterOptionOutput extends GroupOptionOutput {
 				v0=v1
 				phaseArray[i]=v0+2*k
 			}
-			const plotResponse=(canvasContext,array,units,enforcedCenter,enforcedRange,majorGridLineTest)=>{
+			const plotResponse=(canvasContext,array,units,enforcedCenter,enforcedRange,enforcedFloor,majorGridLineTest)=>{
 				let min,max
 				const setPlotRange=(min0,max0)=>{
 					const ph=pad/height
 					min=((min0+max0)*ph-min0)/(2*ph-1)
 					max=((min0+max0)*ph-max0)/(2*ph-1)
 				}
-				const minArr=Math.min(...array)-enforcedCenter
-				const maxArr=Math.max(...array)-enforcedCenter
+				const minArr=Math.min(...array)
+				const maxArr=Math.max(...array)
+				const minArrCentered=Math.max(minArr,enforcedFloor)-enforcedCenter
+				const maxArrCentered=Math.max(maxArr,enforcedFloor)-enforcedCenter
 				setPlotRange(
-					enforcedCenter+Math.min(0,-enforcedRange+Math.max(0,maxArr-enforcedRange),minArr),
-					enforcedCenter+Math.max(0,enforcedRange-Math.max(0,-enforcedRange-minArr),maxArr)
+					enforcedCenter+Math.min(0,-enforcedRange+Math.max(0,maxArrCentered-enforcedRange),minArrCentered),
+					enforcedCenter+Math.max(0,enforcedRange-Math.max(0,-enforcedRange-minArrCentered),maxArrCentered)
 				)
 				const calcX=v=>width*(v-frequencyArray[0])/(frequencyArray[width-1]-frequencyArray[0])
 				const calcY=v=>height*(1-(v-min)/(max-min))
@@ -147,11 +149,11 @@ class FilterOptionOutput extends GroupOptionOutput {
 				canvasContext.restore()
 			}
 			if (magnitudeLogScale) {
-				plotResponse(magnitudeCanvasContext,magnitudeArray,' '+i18n('units.decibel.a'),0,1,v=>v==0)
+				plotResponse(magnitudeCanvasContext,magnitudeArray,' '+i18n('units.decibel.a'),0,1,-100,v=>v==0)
 			} else {
-				plotResponse(magnitudeCanvasContext,magnitudeArray,'',1,0.1,v=>(v==0 || v==1))
+				plotResponse(magnitudeCanvasContext,magnitudeArray,'',1,0.1,0,v=>(v==0 || v==1))
 			}
-			plotResponse(phaseCanvasContext,phaseArray,'π',0,0.1,v=>v%2==0)
+			plotResponse(phaseCanvasContext,phaseArray,'π',0,0.1,-Infinity,v=>v%2==0)
 		}
 		const delayedUpdate=debounce(()=>{
 			try {
