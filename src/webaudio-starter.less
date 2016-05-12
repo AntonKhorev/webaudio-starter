@@ -7,16 +7,14 @@
 			figure {
 				display: inline-block;
 				vertical-align: text-top;
-				margin: 0;
+				margin: 0 -1px 0 0;
 				padding: 0;
 				canvas {
 					border: 1px solid;
 				}
 			}
-			figure + figure {
-				canvas {
-					border-left: none;
-				}
+			figure:last-of-type {
+				margin: 0;
 			}
 		}
 	}
