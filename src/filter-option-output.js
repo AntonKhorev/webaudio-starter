@@ -149,7 +149,7 @@ class FilterOptionOutput extends GroupOptionOutput {
 			if (magnitudeLogScale) {
 				plotResponse(magnitudeCanvasContext,magnitudeArray,' '+i18n('units.decibel.a'),0,1,v=>v==0)
 			} else {
-				plotResponse(magnitudeCanvasContext,magnitudeArray,'',1,0.1,v=>v==1)
+				plotResponse(magnitudeCanvasContext,magnitudeArray,'',1,0.1,v=>(v==0 || v==1))
 			}
 			plotResponse(phaseCanvasContext,phaseArray,'π',0,0.1,v=>v%2==0)
 		}
