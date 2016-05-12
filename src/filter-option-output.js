@@ -185,8 +185,7 @@ class FilterOptionOutput extends GroupOptionOutput {
 										magnitudeLogScale=$(this).prop('checked')
 										delayedUpdate()
 									}),
-									" ",
-									"log magnitude scale" // TODO i18n
+									" "+i18n('options-output.filter.logMagnitude')
 								)
 							).add(
 								" "
