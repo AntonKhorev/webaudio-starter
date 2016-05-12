@@ -18,9 +18,10 @@ let magnitudeArray0,phaseArray0
 class FilterOptionOutput extends GroupOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		super(option,writeOption,i18n,generateId)
-		let shown=false
-		let $magnitudeFigure, $phaseFigure
-		let magnitudeCanvasContext, phaseCanvasContext
+		let $freqResponseUi=$()
+		const isFreqResponseUiShown=()=>$freqResponseUi.length>0
+		let magnitudeCanvasContext, phaseCanvasContext // TODO remove loitering on hide
+		let magnitudeLogScale=true
 		const updatePlots=(filterNodes)=>{
 			for (let i=0;i<magnitudeArray.length;i++) {
 				magnitudeArray[i]=1
@@ -37,8 +38,10 @@ class FilterOptionOutput extends GroupOptionOutput {
 					phaseArray[i]+=phaseArray0[i]
 				}
 			})
-			for (let i=0;i<width;i++) { // convert to decibels
-				magnitudeArray[i]=20*Math.log(magnitudeArray[i])/Math.LN10
+			if (magnitudeLogScale) {
+				for (let i=0;i<width;i++) { // convert to decibels
+					magnitudeArray[i]=20*Math.log(magnitudeArray[i])/Math.LN10
+				}
 			}
 			function wrap(v,maxAbs) {
 				v%=maxAbs*2
@@ -54,18 +57,18 @@ class FilterOptionOutput extends GroupOptionOutput {
 				v0=v1
 				phaseArray[i]=v0+2*k
 			}
-			const plotResponse=(canvasContext,array,units,enforcedRange,majorGridLineTest)=>{
+			const plotResponse=(canvasContext,array,units,enforcedCenter,enforcedRange,majorGridLineTest)=>{
 				let min,max
 				const setPlotRange=(min0,max0)=>{
 					const ph=pad/height
 					min=((min0+max0)*ph-min0)/(2*ph-1)
 					max=((min0+max0)*ph-max0)/(2*ph-1)
 				}
-				const minArr=Math.min(...array)
-				const maxArr=Math.max(...array)
+				const minArr=Math.min(...array)-enforcedCenter
+				const maxArr=Math.max(...array)-enforcedCenter
 				setPlotRange(
-					Math.min(0,-enforcedRange+Math.max(0,maxArr-enforcedRange),minArr),
-					Math.max(0,enforcedRange-Math.max(0,-enforcedRange-minArr),maxArr)
+					enforcedCenter+Math.min(0,-enforcedRange+Math.max(0,maxArr-enforcedRange),minArr),
+					enforcedCenter+Math.max(0,enforcedRange-Math.max(0,-enforcedRange-minArr),maxArr)
 				)
 				const calcX=v=>width*(v-frequencyArray[0])/(frequencyArray[width-1]-frequencyArray[0])
 				const calcY=v=>height*(1-(v-min)/(max-min))
@@ -143,8 +146,12 @@ class FilterOptionOutput extends GroupOptionOutput {
 				canvasContext.stroke()
 				canvasContext.restore()
 			}
-			plotResponse(magnitudeCanvasContext,magnitudeArray,' '+i18n('units.decibel.a'),1,v=>v==0)
-			plotResponse(phaseCanvasContext,phaseArray,'π',0.1,v=>v%2==0)
+			if (magnitudeLogScale) {
+				plotResponse(magnitudeCanvasContext,magnitudeArray,' '+i18n('units.decibel.a'),0,1,v=>v==0)
+			} else {
+				plotResponse(magnitudeCanvasContext,magnitudeArray,'',1,0.1,v=>v==1)
+			}
+			plotResponse(phaseCanvasContext,phaseArray,'π',0,0.1,v=>v%2==0)
 		}
 		const delayedUpdate=debounce(()=>{
 			try {
@@ -158,7 +165,7 @@ class FilterOptionOutput extends GroupOptionOutput {
 				"<label>"+i18n('options-output.filter.frequencyResponse')+":</label><span class='space'> </span>",
 				$("<button type='button'>"+i18n('options-output.show')+"</button>").click(function(){
 					const $button=$(this)
-					if (!shown) {
+					if (!isFreqResponseUiShown()) {
 						This.runIfCanCreateAudioContext(audioContext=>{
 							let filterNodes
 							try {
@@ -168,34 +175,49 @@ class FilterOptionOutput extends GroupOptionOutput {
 								return
 							}
 							let $magnitudeCanvas, $phaseCanvas
-							$button.before(
-								$magnitudeFigure=$("<figure>").append(
-									"<figcaption>"+i18n('options-output.filter.magnitude')+"</figcaption>",
-									$magnitudeCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
-								),
-								$phaseFigure=$("<figure>").append(
-									"<figcaption>"+i18n('options-output.filter.phase')+"</figcaption>",
-									$phaseCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
+							$freqResponseUi=$freqResponseUi.add(
+								" "
+							).add(
+								$("<label>").append(
+									$("<input type='checkbox'>").prop('checked',magnitudeLogScale).change(function(){
+										magnitudeLogScale=$(this).prop('checked')
+										delayedUpdate()
+									}),
+									" ",
+									"log magnitude scale" // TODO i18n
 								)
-							).text(i18n('options-output.hide'))
+							).add(
+								" "
+							).add(
+								$("<div>").append(
+									$("<figure>").append(
+										"<figcaption>"+i18n('options-output.filter.magnitude')+"</figcaption>",
+										$magnitudeCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
+									),
+									$("<figure>").append(
+										"<figcaption>"+i18n('options-output.filter.phase')+"</figcaption>",
+										$phaseCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
+									)
+								)
+							)
+							$button.after($freqResponseUi).text(i18n('options-output.hide'))
 							magnitudeCanvasContext=$magnitudeCanvas[0].getContext('2d')
 							phaseCanvasContext=$phaseCanvas[0].getContext('2d')
 							updatePlots(filterNodes)
 							$frOption.removeClass('only-buttons')
-							shown=true
 						},$button,i18n('options-output.filter.contextError'))
 					} else {
-						$magnitudeFigure.remove()
-						$phaseFigure.remove()
+						// TODO cancel scheduled update
+						$freqResponseUi.remove()
+						$freqResponseUi=$()
 						$button.text(i18n('options-output.show'))
 						$frOption.addClass('only-buttons')
-						shown=false
 					}
 				})
 			)
 		)
 		option.addUpdateCallback(()=>{
-			if (shown) {
+			if (isFreqResponseUiShown()) {
 				delayedUpdate()
 			}
 		})
