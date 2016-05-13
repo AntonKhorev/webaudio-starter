@@ -252,27 +252,25 @@ class FilterOptionOutput extends GroupOptionOutput {
 							}
 							let $magnitudeCanvas, $phaseCanvas
 							$freqResponseUi=$freqResponseUi.add(
-								" "
-							).add(
-								$("<label>").append(
-									$("<input type='checkbox'>").prop('checked',magnitudeLogScale).change(function(){
-										magnitudeLogScale=$(this).prop('checked')
-										delayedUpdate()
-									}),
-									" "+i18n('options-output.filter.logMagnitude')
+								$("<span>").append(
+									" ",
+									$("<label class='nowrap'>").append(
+										$("<input type='checkbox'>").prop('checked',magnitudeLogScale).change(function(){
+											magnitudeLogScale=$(this).prop('checked')
+											delayedUpdate()
+										}),
+										" "+i18n('options-output.filter.logMagnitude')
+									),
+									" ",
+									$("<label class='nowrap'>").append(
+										$("<input type='checkbox'>").prop('checked',frequencyLogScale).change(function(){
+											frequencyLogScale=$(this).prop('checked')
+											delayedUpdate()
+										}),
+										" "+i18n('options-output.filter.logFrequency')
+									),
+									" "
 								)
-							).add(
-								" "
-							).add(
-								$("<label>").append(
-									$("<input type='checkbox'>").prop('checked',frequencyLogScale).change(function(){
-										frequencyLogScale=$(this).prop('checked')
-										delayedUpdate()
-									}),
-									" "+i18n('options-output.filter.logFrequency')
-								)
-							).add(
-								" "
 							).add(
 								$("<div>").append(
 									$("<figure>").append(

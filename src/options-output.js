@@ -64,21 +64,25 @@ class OptionsOutput extends BaseOptionsOutput {
 						option[minOrMax]=parseFloat(this.value)
 					}
 				})
-			const inputCheckboxId=generateId()
 			let $inputCheckbox,$rangeMinInput,$rangeMaxInput
 			const $output=optionClassWriters.get(Option.Number)(option,writeOption,i18n,generateId)
 			$output.find('button').before(
-				$inputCheckbox=$("<input type='checkbox' id='"+inputCheckboxId+"'>")
-					.prop('checked',option.input)
-					.change(function(){
-						option.input=$(this).prop('checked')
-					}),
-				" <label for='"+inputCheckboxId+"'>"+i18n('options-output.input')+"</label> ",
+				$("<label class='nowrap'>").append(
+					$inputCheckbox=$("<input type='checkbox'>")
+						.prop('checked',option.input)
+						.change(function(){
+							option.input=$(this).prop('checked')
+						}),
+					" "+i18n('options-output.input')
+				),
+				" ",
 				option.$range=$("<span class='range'>").append(
 					i18n('options-output.range')+" ",
-					$rangeMinInput=writeMinMaxInput('min'),
-					" .. ",
-					$rangeMaxInput=writeMinMaxInput('max')
+					$("<span class='nowrap'>").append(
+						$rangeMinInput=writeMinMaxInput('min'),
+						" .. ",
+						$rangeMaxInput=writeMinMaxInput('max')
+					)
 				),
 				" "
 			).click(function(){
@@ -90,7 +94,6 @@ class OptionsOutput extends BaseOptionsOutput {
 		})
 		optionClassWriters.set(Option.LiveSelect,(option,writeOption,i18n,generateId)=>{
 			const id=generateId()
-			const inputCheckboxId=generateId()
 			let $select,$inputCheckbox
 			return option.$=$("<div class='option'>").append( // not inheriting Option.Select b/c don't know how to handle reset button
 				this.getLeadLabel(id,i18n,option),
@@ -102,12 +105,15 @@ class OptionsOutput extends BaseOptionsOutput {
 					option.value=this.value
 				}),
 				" ",
-				$inputCheckbox=$("<input type='checkbox' id='"+inputCheckboxId+"'>")
-					.prop('checked',option.input)
-					.change(function(){
-						option.input=$(this).prop('checked')
-					}),
-				" <label for='"+inputCheckboxId+"'>"+i18n('options-output.input')+"</label> ",
+				$("<label class='nowrap'>").append(
+					$inputCheckbox=$("<input type='checkbox'>")
+						.prop('checked',option.input)
+						.change(function(){
+							option.input=$(this).prop('checked')
+						}),
+					" "+i18n('options-output.input')
+				),
+				" ",
 				$("<button type='button'>"+i18n('options-output.reset')+"</button>").click(function(){
 					$select.val(option.defaultValue).change()
 					$inputCheckbox.prop('checked',false).change()
