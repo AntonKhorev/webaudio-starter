@@ -10,19 +10,28 @@ const pad=30
 const maxNGridLines=10
 const fontSize=10
 const fontOffset=3
+const minFrequencyInLogMode=10
 let audioContext
-let frequencyArray
+let linearFrequencyArray,logFrequencyArray
+let logFrequencyArrayLinearLimit0,logFrequencyArrayLinearLimit1
 let magnitudeArray,phaseArray
 let magnitudeArray0,phaseArray0
+
+const log10=x=>Math.log(x)/Math.LN10
+const mix=(a,b,x)=>a*(1-x)+b*x
 
 class FilterOptionOutput extends GroupOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		super(option,writeOption,i18n,generateId)
 		let $freqResponseUi=$()
 		const isFreqResponseUiShown=()=>$freqResponseUi.length>0
-		let magnitudeCanvasContext, phaseCanvasContext // TODO remove loitering on hide
-		let magnitudeLogScale=true
+		let magnitudeCanvasContext, phaseCanvasContext // TODO remove loitering on hide - but have to cancel update
+		let magnitudeLogScale=true, frequencyLogScale=false
 		const updatePlots=(filterNodes)=>{
+			const frequencyArray=(frequencyLogScale
+				? logFrequencyArray
+				: linearFrequencyArray
+			)
 			for (let i=0;i<magnitudeArray.length;i++) {
 				magnitudeArray[i]=1
 			}
@@ -72,14 +81,8 @@ class FilterOptionOutput extends GroupOptionOutput {
 					enforcedCenter+Math.min(0,-enforcedRange+Math.max(0,maxArrCentered-enforcedRange),minArrCentered),
 					enforcedCenter+Math.max(0,enforcedRange-Math.max(0,-enforcedRange-minArrCentered),maxArrCentered)
 				)
-				const calcX=v=>width*(v-frequencyArray[0])/(frequencyArray[width-1]-frequencyArray[0])
 				const calcY=v=>height*(1-(v-min)/(max-min))
-				const drawGrid=(min,max,calcY,labelLimit,units,majorGridLineTest)=>{
-					canvasContext.save()
-					canvasContext.translate(0,0.5) // don't translate along x to keep dashes sharp
-					canvasContext.fillStyle='#444'
-					canvasContext.font=`${fontSize}px`
-					canvasContext.textAlign='right'
+				const getGridNumbers=(min,max)=>{
 					const numLogs=Math.log(max-min)-Math.log(maxNGridLines)
 					let k
 					let p=Infinity
@@ -96,18 +99,25 @@ class FilterOptionOutput extends GroupOptionOutput {
 					for (let v=v0;v<max;v+=dv) {
 						numbers.push(v)
 					}
-					const fmt=formatNumbers(numbers,p<0?-p:0)
+					return [numbers,p<0?-p:0]
+				}
+				const drawGrid=(numbers,visibleNumbers,calcPosition,labelLimit,units,majorGridLineTest)=>{
+					canvasContext.save()
+					canvasContext.translate(0,0.5) // don't translate along x to keep dashes sharp
+					canvasContext.fillStyle='#444'
+					canvasContext.font=`${fontSize}px`
+					canvasContext.textAlign='right'
 					const getLabel=n=>`${i18n.number(n)}${units}`
-					const labelWidth=Math.max(...fmt.map(n=>canvasContext.measureText(getLabel(n)).width))
-					for (let v=v0,i=0;v<max;v+=dv,i++) {
-						const y=Math.round(calcY(v))
+					const labelWidth=Math.max(...visibleNumbers.map(n=>canvasContext.measureText(getLabel(n)).width))
+					for (let i=0;i<numbers.length;i++) {
+						const y=Math.round(calcPosition(numbers[i]))
 						const drawLine=()=>{
 							canvasContext.beginPath()
 							canvasContext.moveTo(0,y)
 							canvasContext.lineTo(width,y)
 							canvasContext.stroke()
 						}
-						const majorGridLine=majorGridLineTest(Number(fmt[i]))
+						const majorGridLine=majorGridLineTest(Number(visibleNumbers[i]))
 						if (majorGridLine) {
 							canvasContext.strokeStyle='rgba(70%,70%,100%,0.3)'
 							canvasContext.setLineDash([])
@@ -119,18 +129,30 @@ class FilterOptionOutput extends GroupOptionOutput {
 						canvasContext.lineWidth=1
 						drawLine()
 						if (y-fontOffset-fontSize>labelLimit) {
-							canvasContext.fillText(getLabel(fmt[i]),fontOffset+labelWidth,y-fontOffset)
+							canvasContext.fillText(getLabel(visibleNumbers[i]),fontOffset+labelWidth,y-fontOffset)
 						}
 					}
 					canvasContext.restore()
 					return labelWidth
 				}
 				canvasContext.clearRect(0,0,width,height)
-				const yLabelWidth=drawGrid(min,max,calcY,0,units,majorGridLineTest)
+				const yGridNumbersAndPrecision=getGridNumbers(min,max)
+				const yVisibleGridNumbers=formatNumbers(...yGridNumbersAndPrecision)
+				const yLabelWidth=drawGrid(yGridNumbersAndPrecision[0],yVisibleGridNumbers,calcY,0,units,majorGridLineTest)
 				canvasContext.save()
 				canvasContext.rotate(-Math.PI/2)
 				canvasContext.translate(-height,0)
-				drawGrid(frequencyArray[0],frequencyArray[width-1],calcX,fontOffset+yLabelWidth,' '+i18n('units.hertz.a'),v=>false)
+				if (frequencyLogScale) {
+					const calcX=v=>width*(v-logFrequencyArrayLinearLimit0)/(logFrequencyArrayLinearLimit1-logFrequencyArrayLinearLimit0)
+					const xGridNumbersAndPrecision=getGridNumbers(logFrequencyArrayLinearLimit0,logFrequencyArrayLinearLimit1)
+					const xVisibleGridNumbers=formatNumbers(xGridNumbersAndPrecision[0].map(n=>Math.pow(10,n)),0)
+					drawGrid(xGridNumbersAndPrecision[0],xVisibleGridNumbers,calcX,fontOffset+yLabelWidth,' '+i18n('units.hertz.a'),v=>false)
+				} else {
+					const calcX=v=>width*(v-frequencyArray[0])/(frequencyArray[width-1]-frequencyArray[0])
+					const xGridNumbersAndPrecision=getGridNumbers(frequencyArray[0],frequencyArray[width-1])
+					const xVisibleGridNumbers=formatNumbers(...xGridNumbersAndPrecision)
+					drawGrid(xGridNumbersAndPrecision[0],xVisibleGridNumbers,calcX,fontOffset+yLabelWidth,' '+i18n('units.hertz.a'),v=>false)
+				}
 				canvasContext.restore()
 				canvasContext.save()
 				canvasContext.translate(0.5,0.5)
@@ -190,6 +212,16 @@ class FilterOptionOutput extends GroupOptionOutput {
 							).add(
 								" "
 							).add(
+								$("<label>").append(
+									$("<input type='checkbox'>").prop('checked',frequencyLogScale).change(function(){
+										frequencyLogScale=$(this).prop('checked')
+										delayedUpdate()
+									}),
+									" "+i18n('options-output.filter.logFrequency')
+								)
+							).add(
+								" "
+							).add(
 								$("<div>").append(
 									$("<figure>").append(
 										"<figcaption>"+i18n('options-output.filter.magnitude')+"</figcaption>",
@@ -226,15 +258,22 @@ class FilterOptionOutput extends GroupOptionOutput {
 	runIfCanCreateAudioContext(fn,$ui,errorMessage) {
 		const initAudioContext=()=>{
 			audioContext=new (AudioContext || webkitAudioContext)
-			frequencyArray=new Float32Array(width)
+			linearFrequencyArray=new Float32Array(width)
+			logFrequencyArray=new Float32Array(width)
 			magnitudeArray=new Float32Array(width)
 			phaseArray=new Float32Array(width)
 			magnitudeArray0=new Float32Array(width)
 			phaseArray0=new Float32Array(width)
-			const maxFreq=audioContext.sampleRate/2
+			const maxFrequency=audioContext.sampleRate/2
+			const log10minFrequency=log10(minFrequencyInLogMode)
+			const log10maxFrequency=log10(maxFrequency)
 			for (let i=0;i<width;i++) {
-				frequencyArray[i]=maxFreq/width*(i+0.5)
+				const x=(i+0.5)/width
+				linearFrequencyArray[i]=maxFrequency*x
+				logFrequencyArray[i]=Math.pow(10,mix(log10minFrequency,log10maxFrequency,x))
 			}
+			logFrequencyArrayLinearLimit0=mix(log10minFrequency,log10maxFrequency,0.5/width)
+			logFrequencyArrayLinearLimit1=mix(log10minFrequency,log10maxFrequency,1-0.5/width)
 		}
 		if (!audioContext) {
 			try {
