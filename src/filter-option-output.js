@@ -135,40 +135,49 @@ class FilterOptionOutput extends GroupOptionOutput {
 					canvasContext.restore()
 					return labelWidth
 				}
-				canvasContext.clearRect(0,0,width,height)
-				const yGridNumbersAndPrecision=getGridNumbers(min,max)
-				const yVisibleGridNumbers=formatNumbers(...yGridNumbersAndPrecision)
-				const yLabelWidth=drawGrid(yGridNumbersAndPrecision[0],yVisibleGridNumbers,calcY,0,units,majorGridLineTest)
-				canvasContext.save()
-				canvasContext.rotate(-Math.PI/2)
-				canvasContext.translate(-height,0)
-				if (frequencyLogScale) {
-					const calcX=v=>width*(v-logFrequencyArrayLinearLimit0)/(logFrequencyArrayLinearLimit1-logFrequencyArrayLinearLimit0)
-					const xGridNumbersAndPrecision=getGridNumbers(logFrequencyArrayLinearLimit0,logFrequencyArrayLinearLimit1)
-					const xVisibleGridNumbers=formatNumbers(xGridNumbersAndPrecision[0].map(n=>Math.pow(10,n)),0)
-					drawGrid(xGridNumbersAndPrecision[0],xVisibleGridNumbers,calcX,fontOffset+yLabelWidth,' '+i18n('units.hertz.a'),v=>false)
-				} else {
-					const calcX=v=>width*(v-frequencyArray[0])/(frequencyArray[width-1]-frequencyArray[0])
-					const xGridNumbersAndPrecision=getGridNumbers(frequencyArray[0],frequencyArray[width-1])
-					const xVisibleGridNumbers=formatNumbers(...xGridNumbersAndPrecision)
-					drawGrid(xGridNumbersAndPrecision[0],xVisibleGridNumbers,calcX,fontOffset+yLabelWidth,' '+i18n('units.hertz.a'),v=>false)
+				const drawYGrid=()=>{
+					const yGridNumbersAndPrecision=getGridNumbers(min,max)
+					const yVisibleGridNumbers=formatNumbers(...yGridNumbersAndPrecision)
+					return drawGrid(yGridNumbersAndPrecision[0],yVisibleGridNumbers,calcY,0,units,majorGridLineTest)
 				}
-				canvasContext.restore()
-				canvasContext.save()
-				canvasContext.translate(0.5,0.5)
-				canvasContext.strokeStyle='#F00'
-				canvasContext.beginPath()
-				for (let i=0;i<width;i++) {
-					const x=i
-					const y=calcY(array[i])
-					if (i==0) {
-						canvasContext.moveTo(x,y)
+				const drawXGrid=(yLabelWidth)=>{
+					canvasContext.save()
+					canvasContext.rotate(-Math.PI/2)
+					canvasContext.translate(-height,0)
+					let calcX,xGridNumbersAndPrecision,xVisibleGridNumbers
+					if (frequencyLogScale) {
+						calcX=v=>width*(v-logFrequencyArrayLinearLimit0)/(logFrequencyArrayLinearLimit1-logFrequencyArrayLinearLimit0)
+						xGridNumbersAndPrecision=getGridNumbers(logFrequencyArrayLinearLimit0,logFrequencyArrayLinearLimit1)
+						xVisibleGridNumbers=formatNumbers(xGridNumbersAndPrecision[0].map(n=>Math.pow(10,n)),0)
 					} else {
-						canvasContext.lineTo(x,y)
+						calcX=v=>width*(v-frequencyArray[0])/(frequencyArray[width-1]-frequencyArray[0])
+						xGridNumbersAndPrecision=getGridNumbers(frequencyArray[0],frequencyArray[width-1])
+						xVisibleGridNumbers=formatNumbers(...xGridNumbersAndPrecision)
 					}
+					drawGrid(xGridNumbersAndPrecision[0],xVisibleGridNumbers,calcX,fontOffset+yLabelWidth,' '+i18n('units.hertz.a'),v=>false)
+					canvasContext.restore()
 				}
-				canvasContext.stroke()
-				canvasContext.restore()
+				const drawGraph=()=>{
+					canvasContext.save()
+					canvasContext.translate(0.5,0.5) // aim at centers of pixels
+					canvasContext.strokeStyle='#F00'
+					canvasContext.beginPath()
+					for (let i=0;i<width;i++) {
+						const x=i
+						const y=calcY(array[i])
+						if (i==0) {
+							canvasContext.moveTo(x,y)
+						} else {
+							canvasContext.lineTo(x,y)
+						}
+					}
+					canvasContext.stroke()
+					canvasContext.restore()
+				}
+				canvasContext.clearRect(0,0,width,height)
+				const yLabelWidth=drawYGrid()
+				drawXGrid(yLabelWidth)
+				drawGraph()
 			}
 			if (magnitudeLogScale) {
 				plotResponse(magnitudeCanvasContext,magnitudeArray,' '+i18n('units.decibel.a'),0,1,-100,v=>v==0)
