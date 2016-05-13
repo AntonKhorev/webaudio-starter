@@ -28,6 +28,47 @@ class FilterOptionOutput extends GroupOptionOutput {
 		let magnitudeCanvasContext, phaseCanvasContext // TODO remove loitering on hide - but have to cancel update
 		let magnitudeLogScale=true, frequencyLogScale=false
 		const updatePlots=(filterNodes)=>{
+			const removeNans=array=>{
+				const interpolate=(i0,i1)=>{
+					const hasStartValue=i0>=0
+					const hasEndValue=i1<array.length
+					let v0,v1
+					if (!hasStartValue && !hasEndValue) {
+						v0=v1=0
+					} else {
+						if (hasStartValue) {
+							v0=array[i0]
+						} else {
+							v0=array[i1]
+						}
+						if (hasEndValue) {
+							v1=array[i1]
+						} else {
+							v1=array[i0]
+						}
+					}
+					for (let i=i0+1;i<i1;i++) {
+						const x=(i-i0)/(i1-i0)
+						array[i]=mix(v0,v1,x)
+					}
+				}
+				let nanStart=-1
+				for (let i=0;i<array.length;i++) {
+					if (!isFinite(array[i])) {
+						if (nanStart<0) {
+							nanStart=i
+						}
+					} else {
+						if (nanStart>=0) {
+							interpolate(nanStart-1,i)
+							nanStart=-1
+						}
+					}
+				}
+				if (nanStart>=0) {
+					interpolate(nanStart-1,array.length)
+				}
+			}
 			const frequencyArray=(frequencyLogScale
 				? logFrequencyArray
 				: linearFrequencyArray
@@ -40,6 +81,8 @@ class FilterOptionOutput extends GroupOptionOutput {
 			}
 			filterNodes.forEach(filterNode=>{
 				filterNode.getFrequencyResponse(frequencyArray,magnitudeArray0,phaseArray0)
+				removeNans(magnitudeArray0)
+				removeNans(phaseArray0)
 				for (let i=0;i<magnitudeArray.length;i++) {
 					magnitudeArray[i]*=magnitudeArray0[i]
 				}
