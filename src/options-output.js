@@ -43,7 +43,7 @@ class IIRFilterCoefsOptionOutput extends ArrayOptionOutput {
 	updateArrayEntryLabels() {
 		this.$entries.children().each(function(i){
 			const c=$(this).data('option').name
-			$(this).find('label').html(`${c}<sub>${i}</sub>:`)
+			$(this).find('label').addClass('short').html(`${c}<sub>${i}</sub>:`)
 		})
 	}
 }
