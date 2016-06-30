@@ -13,10 +13,10 @@ class Destination extends Feature {
 	}
 	requestFeatureContext(featureContext) {
 		if (!featureContext.audioProcessing) return
-		if (this.options.compressor || this.options.waveform) {
+		if (this.options.compressor || this.options.waveform || this.options.frequencies) {
 			featureContext.audioContext=true
 		}
-		if (this.options.waveform) {
+		if (this.options.waveform || this.options.frequencies) {
 			featureContext.canvas=true
 		}
 	}
@@ -34,7 +34,7 @@ class Destination extends Feature {
 		const a=JsLines.b()
 		if (featureContext.audioProcessing && featureContext.audioContext) {
 			if (this.options.compressor) {
-				let nextNodeJsName=(this.options.waveform ? 'analyserNode' : 'ctx.destination')
+				let nextNodeJsName=((this.options.waveform || this.options.frequencies) ? 'analyserNode' : 'ctx.destination')
 				a(
 					RefLines.parse("// "+i18n('comment.destination.compressor')),
 					"var compressorNode=ctx.createDynamicsCompressor();",
@@ -56,9 +56,17 @@ class Destination extends Feature {
 				}
 				prevNodeJsNames=['compressorNode']
 			}
-			if (this.options.waveform) {
+			if (this.options.waveform || this.options.frequencies) {
+				let comment
+				if (!this.options.frequencies) {
+					comment='waveform'
+				} else if (!this.options.waveform) {
+					comment='frequencies'
+				} else {
+					comment='waveform+frequencies'
+				}
 				a(
-					RefLines.parse("// "+i18n('comment.destination.waveform')),
+					RefLines.parse("// "+i18n('comment.destination.'+comment)),
 					"var analyserNode=ctx.createAnalyser();",
 					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(analyserNode);"),
 					"analyserNode.fftSize=1024;",
@@ -76,21 +84,28 @@ class Destination extends Feature {
 	}
 	getJsLoopVisLines(featureContext,i18n) {
 		const a=JsLines.b()
-		if (featureContext.audioProcessing && this.options.waveform) {
-			a(
-				"analyserNode.getByteTimeDomainData(analyserData);",
-				"canvasContext.beginPath();",
-				"for (var i=0;i<analyserData.length;i++) {",
-				"	var x=i*canvas.width/analyserData.length;",
-				"	var y=analyserData[i]*canvas.height/255;",
-				"	if (i==0) {",
-				"		canvasContext.moveTo(x,y);",
-				"	} else {",
-				"		canvasContext.lineTo(x,y);",
-				"	}",
-				"}",
-				"canvasContext.stroke();"
-			)
+		if (featureContext.audioProcessing) {
+			if (this.options.waveform) {
+				a(
+					"analyserNode.getByteTimeDomainData(analyserData);",
+					"canvasContext.beginPath();",
+					"for (var i=0;i<analyserData.length;i++) {",
+					"	var x=i*canvas.width/analyserData.length;",
+					"	var y=analyserData[i]*canvas.height/255;",
+					"	if (i==0) {",
+					"		canvasContext.moveTo(x,y);",
+					"	} else {",
+					"		canvasContext.lineTo(x,y);",
+					"	}",
+					"}",
+					"canvasContext.stroke();"
+				)
+			}
+			if (this.options.frequencies) {
+				a(
+					"// TODO frequencies visualization"
+				)
+			}
 		}
 		return a.e()
 	}

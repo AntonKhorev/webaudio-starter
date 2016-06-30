@@ -44,7 +44,7 @@ const langStrings={
 		'options.destination': "Destination",
 		'options.destination.compressor': "Add dynamics compressor before the destination",
 		'options.destination.compressor.enable': "Enable dynamics compressor",
-		'options.destination.waveform': "Add waveform visualization",
+		'options.destination.{waveform,frequencies}': "Add {} visualization",
 
 		'options.canvas': "Canvas",
 		'options.canvas.{width,height}': "Canvas {}",
@@ -90,7 +90,7 @@ const langStrings={
 		'comment.filters.equalizer.single': "create equalizer as a [peaking][peaking] [biquad filter node][biquad]",
 		'comment.destination': "connect last node to [destination][destination]",
 		'comment.destination.compressor': "create [dynamics compressor node][compressor]",
-		'comment.destination.waveform': "create [analyser node][analyser] for waveform visualization",
+		'comment.destination.{waveform,frequencies,waveform+frequencies}': "create [analyser node][analyser] for {waveform,frequencies,waveform and frequencies} visualization",
 
 		'units.pixel.a': "px",
 		'units.pixel.{1,2}': "pixel{,s}",
@@ -147,7 +147,7 @@ const langStrings={
 		'options.destination': "Выход",
 		'options.destination.compressor': "Добавить компрессор перед выходом",
 		'options.destination.compressor.enable': "Включить компрессор",
-		'options.destination.waveform': "Добавить визуализацию формы волны",
+		'options.destination.{waveform,frequencies}': "Добавить визуализацию {формы волны,частот}",
 
 		'options.canvas': "Элемент <code>canvas</code>",
 		'options.canvas.{width,height}': "{Ширина,Высота} элемента <code>canvas</code>",
@@ -193,7 +193,7 @@ const langStrings={
 		'comment.filters.equalizer.single': "создаём эквалайзер в виде [peaking][peaking] [биквадратичного фильтра][biquad]",
 		'comment.destination': "соединяем последний узел с [выходом][destination]",
 		'comment.destination.compressor': "создаём [узел компрессора][compressor]",
-		'comment.destination.waveform': "создаём [узел анализатора][analyser] для визуализации формы волны",
+		'comment.destination.{waveform,frequencies,waveform+frequencies}': "создаём [узел анализатора][analyser] для визуализации {формы волны,частот,формы волны и частот}",
 
 		'units.pixel.a': "px",
 		'units.pixel.{1,2,5}': "пиксел{ь,я,ей}",
