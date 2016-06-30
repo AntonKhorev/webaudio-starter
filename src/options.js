@@ -59,6 +59,10 @@ class Options extends BaseOptions {
 				['Checkbox','compressor'], // Firefox compresses automatically?
 				['Checkbox','waveform'],
 				['Checkbox','frequencies'],
+				['Int','logFftSize',[5,12],8,{
+					visibilityData: {'destination.waveform':[true],'destination.frequencies':[true]},
+					visibilityDataLogic: 'or',
+				}],
 			]],
 			['Group','canvas',[
 				['Int','width',[1,1920],300,{ unit: 'pixel' }],

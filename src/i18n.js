@@ -45,6 +45,7 @@ const langStrings={
 		'options.destination.compressor': "Add dynamics compressor before the destination",
 		'options.destination.compressor.enable': "Enable dynamics compressor",
 		'options.destination.{waveform,frequencies}': "Add {} visualization",
+		'options.destination.logFftSize': "FFT size (power of 2)",
 
 		'options.canvas': "Canvas",
 		'options.canvas.{width,height}': "Canvas {}",
@@ -148,6 +149,7 @@ const langStrings={
 		'options.destination.compressor': "Добавить компрессор перед выходом",
 		'options.destination.compressor.enable': "Включить компрессор",
 		'options.destination.{waveform,frequencies}': "Добавить визуализацию {формы волны,частот}",
+		'options.destination.logFftSize': "Размер БПФ (степень 2)",
 
 		'options.canvas': "Элемент <code>canvas</code>",
 		'options.canvas.{width,height}': "{Ширина,Высота} элемента <code>canvas</code>",

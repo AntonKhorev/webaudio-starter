@@ -68,9 +68,12 @@ class Destination extends Feature {
 				a(
 					RefLines.parse("// "+i18n('comment.destination.'+comment)),
 					"var analyserNode=ctx.createAnalyser();",
-					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(analyserNode);"),
-					"analyserNode.fftSize=1024;",
-					//"analyserNode.fftSize=256;", // TODO
+					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(analyserNode);")
+				)
+				if (this.options.logFftSize!=11) { // default FFT size is 2048
+					a("analyserNode.fftSize="+(Math.pow(2,this.options.logFftSize))+";")
+				}
+				a(
 					"var analyserData=new Uint8Array(analyserNode.frequencyBinCount);",
 					""
 				)
