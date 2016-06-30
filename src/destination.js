@@ -70,6 +70,7 @@ class Destination extends Feature {
 					"var analyserNode=ctx.createAnalyser();",
 					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(analyserNode);"),
 					"analyserNode.fftSize=1024;",
+					//"analyserNode.fftSize=256;", // TODO
 					"var analyserData=new Uint8Array(analyserNode.frequencyBinCount);",
 					""
 				)
@@ -91,7 +92,7 @@ class Destination extends Feature {
 					"canvasContext.beginPath();",
 					"for (var i=0;i<analyserData.length;i++) {",
 					"	var x=i*canvas.width/analyserData.length;",
-					"	var y=analyserData[i]*canvas.height/255;",
+					"	var y=analyserData[i]*canvas.height/256;",
 					"	if (i==0) {",
 					"		canvasContext.moveTo(x,y);",
 					"	} else {",
@@ -103,7 +104,14 @@ class Destination extends Feature {
 			}
 			if (this.options.frequencies) {
 				a(
-					"// TODO frequencies visualization"
+					"analyserNode.getByteFrequencyData(analyserData);",
+					"var barWidth=canvas.width/analyserData.length*0.8;",
+					"for (var i=0;i<analyserData.length;i++) {",
+					"	var x=i*canvas.width/analyserData.length;",
+					"	canvasContext.fillStyle='rgb('+(analyserData[i]+100)+',50,50)';",
+					"	var barHeight=analyserData[i]*canvas.height/256;",
+					"	canvasContext.fillRect(x,canvas.height-barHeight,barWidth,barHeight);",
+					"}"
 				)
 			}
 		}
