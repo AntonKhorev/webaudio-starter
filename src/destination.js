@@ -111,11 +111,16 @@ class Destination extends Feature {
 				)
 			}
 			if (this.options.frequencies.enabled) {
+				let nBars="analyserData.length"
+				if (this.options.frequencies.cutoff!=100) {
+					a("var nBars=Math.floor(analyserData.length*"+(this.options.frequencies.cutoff/100).toFixed(2)+");")
+					nBars="nBars"
+				}
 				a(
+					"var barWidth=canvas.width/"+nBars+"*0.8;",
 					"analyserNode.getByteFrequencyData(analyserData);",
-					"var barWidth=canvas.width/analyserData.length*0.8;",
-					"for (var i=0;i<analyserData.length;i++) {",
-					"	var x=i*canvas.width/analyserData.length;",
+					"for (var i=0;i<"+nBars+";i++) {",
+					"	var x=i*canvas.width/"+nBars+";",
 					"	canvasContext.fillStyle='rgb('+(analyserData[i]+100)+',50,50)';",
 					"	var barHeight=analyserData[i]*canvas.height/256;",
 					"	canvasContext.fillRect(x,canvas.height-barHeight,barWidth,barHeight);",

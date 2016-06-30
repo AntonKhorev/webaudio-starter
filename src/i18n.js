@@ -52,6 +52,7 @@ const langStrings={
 		'options.destination.waveform.width': "Waveform line width",
 		'options.destination.waveform.color': "Waveform line color",
 		'options.destination.waveform.color.{r,g,b,a}': "Waveform line {red,green,blue,opacity}",
+		'options.destination.frequencies.cutoff': "Limit plot to a fraction of low frequences",
 		'options.destination.logFftSize': "FFT size (power of 2)",
 
 		'options.canvas': "Canvas",
@@ -161,6 +162,7 @@ const langStrings={
 		'options.destination.waveform.width': "Ширина линии волны",
 		'options.destination.waveform.color': "Цвет линии волны",
 		'options.destination.waveform.color.{r,g,b,a}': "{Красный ,Зелёный ,Синий ,Альфа-}канал линии волны",
+		'options.destination.frequencies.cutoff': "Ограничить рисование долей низких частот",
 		'options.destination.logFftSize': "Размер БПФ (степень 2)",
 
 		'options.canvas': "Элемент <code>canvas</code>",

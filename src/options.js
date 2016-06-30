@@ -74,6 +74,10 @@ class Options extends BaseOptions {
 				]],
 				['Group','frequencies',[
 					['Checkbox','enabled'],
+					['Int','cutoff',[10,100],100,{
+						unit: '%',
+						visibilityData: {'destination.frequencies.enabled':[true]},
+					}],
 				]],
 				['Int','logFftSize',[5,12],8,{
 					visibilityData: {'destination.waveform.enabled':[true],'destination.frequencies.enabled':[true]},
