@@ -59,6 +59,8 @@ const langStrings={
 		'options.canvas.background.color': "Background fill color",
 		'options.canvas.background.color.{r,g,b,a}': "Background fill {red,green,blue,opacity (blur)}",
 
+		'options-info.destination.logFftSize': "[[Fast Fourier transform]] size for the waveform/frequency visualization. Use a larger size to get finer details of the waveform and thinner frequency bars.",
+
 		'options-output.input': "Editable",
 		'options-output.range': "with range",
 		'options-output.filter.frequencyResponse': "Frequency response",
@@ -163,6 +165,8 @@ const langStrings={
 		'options.canvas.background.color': "Цвет фона",
 		'options.canvas.background.color.{r,g,b,a}': "{Красный ,Зелёный ,Синий ,Альфа-}канал фона",
 
+		'options-info.destination.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]] для визуализаций формы волны и частот. Больший размер даёт более детализированную форму волны и более тонкие полосы частот.",
+
 		'options-output.input': "Значение изменяемо",
 		'options-output.range': "в диапазоне",
 		'options-output.filter.frequencyResponse': "Частотная характеристика",
@@ -221,7 +225,7 @@ strings=i18nLinkFilter(strings)
 for (let lang in langStrings) {
 	let strings=langStrings[lang]
 	strings=require('crnx-base/i18n-expand-curly')(strings)
-	//strings=require('crnx-base/i18n-link-wikipedia')(lang)(strings)
+	strings=require('crnx-base/i18n-link-wikipedia')(lang)(strings)
 	strings=require('crnx-base/options-output-i18n')(lang)(strings)
 	strings=require('crnx-base/code-output-i18n')(lang)(strings)
 	langStrings[lang]=strings
