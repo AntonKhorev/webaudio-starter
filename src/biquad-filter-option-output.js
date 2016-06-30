@@ -1,5 +1,6 @@
 'use strict'
 
+const writeTip=require('crnx-base/tip')
 const FilterOptionOutput=require('./filter-option-output')
 
 class BiquadFilterOptionOutput extends FilterOptionOutput {
@@ -120,7 +121,9 @@ class BiquadFilterOptionOutput extends FilterOptionOutput {
 				$cloneUi=$("<span>").append(
 					writeCloneButton(false),
 					" ",
-					writeCloneButton(true)
+					writeCloneButton(true),
+					" ",
+					writeTip('info',i18n('options-output.filter.biquad.clone.info'))
 				)
 			)
 		)

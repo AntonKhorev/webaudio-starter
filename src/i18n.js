@@ -1,5 +1,9 @@
 'use strict'
 
+const webaudioSpec='https://webaudio.github.io/web-audio-api/'
+const webaudioIssue=n=>`<a href='https://github.com/WebAudio/web-audio-api/issues/${n}'>${n}</a>`
+const webaudioDetect='https://github.com/GoogleChrome/web-audio-samples/wiki/Detection-of-lowpass-BiquadFilter-implementation'
+
 const langStrings={
 	en:{
 		'options.sources': "Sources",
@@ -57,9 +61,10 @@ const langStrings={
 		'options.canvas.background.type': "Background type",
 		'options.canvas.background.type.{clear,filled}': "{}",
 		'options.canvas.background.color': "Background fill color",
-		'options.canvas.background.color.{r,g,b,a}': "Background fill {red,green,blue,opacity (blur)}",
+		'options.canvas.background.color.{r,g,b,a}': "Background fill {red,green,blue,opacity}",
 
 		'options-info.destination.logFftSize': "[[Fast Fourier transform]] size for the waveform/frequency visualization. Use a larger size to get finer details of the waveform and thinner frequency bars.",
+		'options-info.canvas.background.color.a': "Lower opacity values lead to a blur effect.",
 
 		'options-output.input': "Editable",
 		'options-output.range': "with range",
@@ -72,6 +77,7 @@ const langStrings={
 		'options-output.filter.nodeError': "Error creating filter node. Your browser likely doesn't support this filter type.",
 		'options-output.filter.biquad.clone': "Clone as IIR filter",
 		'options-output.filter.biquad.clone.{pre,post}': "Clone with {}-2016-04-15 coefficients",
+		'options-output.filter.biquad.clone.info': `<a href='${webaudioSpec}'>The API specification</a> was self-contradictory and implementations weren't following it. Additionally, it was discovered that filter coefficient formulas need to be changed to accomodate a wider range of lowpass and highpass filters. See Web Audio API issues ${webaudioIssue(769)}, ${webaudioIssue(771)} and ${webaudioIssue(791)} for details. A possible method to check if an implementation has switched to the updated formulas is offered <a href='${webaudioDetect}'>here</a>.`,
 		'options-output.show': "Show",
 		'options-output.hide': "Hide",
 
@@ -166,6 +172,7 @@ const langStrings={
 		'options.canvas.background.color.{r,g,b,a}': "{Красный ,Зелёный ,Синий ,Альфа-}канал фона",
 
 		'options-info.destination.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]] для визуализаций формы волны и частот. Больший размер даёт более детализированную форму волны и более тонкие полосы частот.",
+		'options-info.canvas.background.color.a': "Низкие значения альфа-канала приводят к эффекту размывания.",
 
 		'options-output.input': "Значение изменяемо",
 		'options-output.range': "в диапазоне",
@@ -178,6 +185,7 @@ const langStrings={
 		'options-output.filter.nodeError': "Ошибка создания узла фильтра. Вероятно, браузер не поддерживает данный тип фильтров.",
 		'options-output.filter.biquad.clone': "Клонировать в виде БИХ-фильтра",
 		'options-output.filter.biquad.clone.{pre,post}': "Клонировать с коэффициентами по версиям {до,после} 2016-04-15",
+		'options-output.filter.biquad.clone.info': `<a href='${webaudioSpec}'>Спецификация API</a> была противоречива и реализации ей не следовали. Также было обнаружено, что формулы для коэффициентов фильтров должны быть изменены, чтобы стало возможно задавать некоторые фильтры низких и высоких частот, которые ранее задать было невозможно. Подробности можно узнать из Web Audio API issues ${webaudioIssue(769)}, ${webaudioIssue(771)} и ${webaudioIssue(791)}. Возможный метод обнаружения, перешла ли реализация на новые формулы, приводится <a href='${webaudioDetect}'>здесь</a>.`,
 		'options-output.show': "Показать",
 		'options-output.hide': "Скрыть",
 

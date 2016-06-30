@@ -1,6 +1,6 @@
 'use strict'
 
-const writeTip=require('crnx-base/tip.js')
+const writeTip=require('crnx-base/tip')
 const BaseCodeOutput=require('crnx-base/code-output')
 
 class CodeOutput extends BaseCodeOutput {
