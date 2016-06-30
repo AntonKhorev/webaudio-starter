@@ -5,6 +5,7 @@ const JsLines=require('crnx-base/js-lines')
 const NoseWrapLines=require('crnx-base/nose-wrap-lines')
 const RefLines=require('crnx-base/ref-lines')
 const Feature=require('./feature')
+const Canvas=require('./canvas')
 
 class Destination extends Feature {
 	constructor(options) {
@@ -13,10 +14,10 @@ class Destination extends Feature {
 	}
 	requestFeatureContext(featureContext) {
 		if (!featureContext.audioProcessing) return
-		if (this.options.compressor || this.options.waveform || this.options.frequencies) {
+		if (this.options.compressor || this.options.waveform.enabled || this.options.frequencies.enabled) {
 			featureContext.audioContext=true
 		}
-		if (this.options.waveform || this.options.frequencies) {
+		if (this.options.waveform.enabled || this.options.frequencies.enabled) {
 			featureContext.canvas=true
 		}
 	}
@@ -25,7 +26,7 @@ class Destination extends Feature {
 		if (featureContext.audioProcessing && this.options.compressor) {
 			a(
 				"<input id=my.compressor type=checkbox checked>",
-				Lines.html`<label for=my.compressor>${i18n('options.destination.compressor.enable')}</label>`
+				Lines.html`<label for=my.compressor>${i18n('label.destination.compressor')}</label>`
 			)
 		}
 		return a.e()
@@ -34,7 +35,7 @@ class Destination extends Feature {
 		const a=JsLines.b()
 		if (featureContext.audioProcessing && featureContext.audioContext) {
 			if (this.options.compressor) {
-				let nextNodeJsName=((this.options.waveform || this.options.frequencies) ? 'analyserNode' : 'ctx.destination')
+				let nextNodeJsName=((this.options.waveform.enabled || this.options.frequencies.enabled) ? 'analyserNode' : 'ctx.destination')
 				a(
 					RefLines.parse("// "+i18n('comment.destination.compressor')),
 					"var compressorNode=ctx.createDynamicsCompressor();",
@@ -56,11 +57,11 @@ class Destination extends Feature {
 				}
 				prevNodeJsNames=['compressorNode']
 			}
-			if (this.options.waveform || this.options.frequencies) {
+			if (this.options.waveform.enabled || this.options.frequencies.enabled) {
 				let comment
-				if (!this.options.frequencies) {
+				if (!this.options.frequencies.enabled) {
 					comment='waveform'
-				} else if (!this.options.waveform) {
+				} else if (!this.options.waveform.enabled) {
 					comment='frequencies'
 				} else {
 					comment='waveform+frequencies'
@@ -89,8 +90,12 @@ class Destination extends Feature {
 	getJsLoopVisLines(featureContext,i18n) {
 		const a=JsLines.b()
 		if (featureContext.audioProcessing) {
-			if (this.options.waveform) {
+			if (this.options.waveform.enabled) {
+				if (this.options.waveform.width!=1.0) {
+					a("canvasContext.lineWidth="+this.options.waveform.width+";")
+				}
 				a(
+					Canvas.getStyleLines('strokeStyle',this.options.waveform.color),
 					"analyserNode.getByteTimeDomainData(analyserData);",
 					"canvasContext.beginPath();",
 					"for (var i=0;i<analyserData.length;i++) {",
@@ -105,7 +110,7 @@ class Destination extends Feature {
 					"canvasContext.stroke();"
 				)
 			}
-			if (this.options.frequencies) {
+			if (this.options.frequencies.enabled) {
 				a(
 					"analyserNode.getByteFrequencyData(analyserData);",
 					"var barWidth=canvas.width/analyserData.length*0.8;",

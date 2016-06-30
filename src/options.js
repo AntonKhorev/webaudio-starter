@@ -57,25 +57,32 @@ class Options extends BaseOptions {
 			],'filter'],
 			['Group','destination',[
 				['Checkbox','compressor'], // Firefox compresses automatically?
-				['Checkbox','waveform'],
-				['Checkbox','frequencies'],
+				['Group','waveform',[
+					['Checkbox','enabled'],
+					['Float','width',[0,10],1,{
+						unit: 'pixel',
+						visibilityData: {'destination.waveform.enabled':[true]},
+					}],
+					['Group','color',[
+						['Int','r',[0,100],0,{ unit: '%' }],
+						['Int','g',[0,100],0,{ unit: '%' }],
+						['Int','b',[0,100],0,{ unit: '%' }],
+						['Int','a',[0,100],100,{ unit: '%' }],
+					],{
+						visibilityData: {'destination.waveform.enabled':[true]},
+					}],
+				]],
+				['Group','frequencies',[
+					['Checkbox','enabled'],
+				]],
 				['Int','logFftSize',[5,12],8,{
-					visibilityData: {'destination.waveform':[true],'destination.frequencies':[true]},
+					visibilityData: {'destination.waveform.enabled':[true],'destination.frequencies.enabled':[true]},
 					visibilityDataLogic: 'or',
 				}],
 			]],
 			['Group','canvas',[
 				['Int','width',[1,1920],300,{ unit: 'pixel' }],
 				['Int','height',[1,1080],100,{ unit: 'pixel' }],
-				['Group','line',[
-					['Float','width',[0,10],1,{ unit: 'pixel' }],
-					['Group','color',[
-						['Int','r',[0,100],0,{ unit: '%' }],
-						['Int','g',[0,100],0,{ unit: '%' }],
-						['Int','b',[0,100],0,{ unit: '%' }],
-						['Int','a',[0,100],100,{ unit: '%' }],
-					]],
-				]],
 				['Group','background',[
 					['Select','type',['clear','filled']],
 					['Group','color',[
@@ -88,7 +95,7 @@ class Options extends BaseOptions {
 					}],
 				]],
 			],{
-				visibilityData: {'destination.waveform':[true],'destination.frequencies':[true]},
+				visibilityData: {'destination.waveform.enabled':[true],'destination.frequencies.enabled':[true]},
 				visibilityDataLogic: 'or',
 			}],
 		]

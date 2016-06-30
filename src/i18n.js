@@ -47,16 +47,15 @@ const langStrings={
 
 		'options.destination': "Destination",
 		'options.destination.compressor': "Add dynamics compressor before the destination",
-		'options.destination.compressor.enable': "Enable dynamics compressor",
-		'options.destination.{waveform,frequencies}': "Add {} visualization",
+		'options.destination.{waveform,frequencies}': "{Waveform,Frequencies} visualization",
+		'options.destination.{waveform,frequencies}.enabled': "Enable {} visualization",
+		'options.destination.waveform.width': "Waveform line width",
+		'options.destination.waveform.color': "Waveform line color",
+		'options.destination.waveform.color.{r,g,b,a}': "Waveform line {red,green,blue,opacity}",
 		'options.destination.logFftSize': "FFT size (power of 2)",
 
 		'options.canvas': "Canvas",
 		'options.canvas.{width,height}': "Canvas {}",
-		'options.canvas.line': "Waveform line",
-		'options.canvas.line.width': "Waveform line width",
-		'options.canvas.line.color': "Waveform line color",
-		'options.canvas.line.color.{r,g,b,a}': "Waveform line {red,green,blue,opacity}",
 		'options.canvas.background': "Background",
 		'options.canvas.background.type': "Background type",
 		'options.canvas.background.type.{clear,filled}': "{}",
@@ -85,6 +84,8 @@ const langStrings={
 		'code-output.warning.interesting': "You need at least one source and some processing enabled to get interesting JavaScript code",
 
 		'code.title': "Web Audio API example — generated code",
+
+		'label.destination.compressor': "Enable dynamics compressor",
 
 		'comment.context': "create [audio context][context]",
 		'comment.sources.audio': "create [audio source node][source]",
@@ -155,16 +156,15 @@ const langStrings={
 
 		'options.destination': "Выход",
 		'options.destination.compressor': "Добавить компрессор перед выходом",
-		'options.destination.compressor.enable': "Включить компрессор",
-		'options.destination.{waveform,frequencies}': "Добавить визуализацию {формы волны,частот}",
+		'options.destination.{waveform,frequencies}': "Визуализация {формы волны,частот}",
+		'options.destination.{waveform,frequencies}.enabled': "Включить визуализацию {формы волны,частот}",
+		'options.destination.waveform.width': "Ширина линии волны",
+		'options.destination.waveform.color': "Цвет линии волны",
+		'options.destination.waveform.color.{r,g,b,a}': "{Красный ,Зелёный ,Синий ,Альфа-}канал линии волны",
 		'options.destination.logFftSize': "Размер БПФ (степень 2)",
 
 		'options.canvas': "Элемент <code>canvas</code>",
 		'options.canvas.{width,height}': "{Ширина,Высота} элемента <code>canvas</code>",
-		'options.canvas.line': "Линия волны",
-		'options.canvas.line.width': "Ширина линии волны",
-		'options.canvas.line.color': "Цвет линии волны",
-		'options.canvas.line.color.{r,g,b,a}': "{Красный ,Зелёный ,Синий ,Альфа-}канал линии волны",
 		'options.canvas.background': "Фон",
 		'options.canvas.background.type': "Тип фона",
 		'options.canvas.background.type.{clear,filled}': "{прозрачный,закрашенный}",
@@ -193,6 +193,8 @@ const langStrings={
 		'code-output.warning.interesting': "Для нетривиального JavaScript-кода нужно включить по крайней мере один источник и последующую обработку звука",
 
 		'code.title': "Пример использования Web Audio API — сгенерированный код",
+
+		'label.destination.compressor': "Включить компрессор",
 
 		'comment.context': "создаём [аудио-контекст][context]",
 		'comment.sources.audio': "создаём [узел источника аудио][source]",
