@@ -55,6 +55,9 @@ const langStrings={
 		'options.destination.frequencies.cutoff': "Limit plot to a fraction of low frequences",
 		'options.destination.frequencies.base': "Frequency bars extend from",
 		'options.destination.frequencies.base.{bottom,middle}': "{} of canvas",
+		'options.destination.frequencies.coloring': "Frequency bars coloring",
+		'options.destination.frequencies.coloring.component': "with single color component",
+		'options.destination.frequencies.coloring.spectral': "spectral",
 		'options.destination.logFftSize': "FFT size (power of 2)",
 
 		'options.canvas': "Canvas",
@@ -167,6 +170,9 @@ const langStrings={
 		'options.destination.frequencies.cutoff': "Ограничить рисование долей низких частот",
 		'options.destination.frequencies.base': "Полосы частот растут от",
 		'options.destination.frequencies.base.{bottom,middle}': "{низа,середины} элемента <code>canvas</code>",
+		'options.destination.frequencies.coloring': "Раскраска полос частот",
+		'options.destination.frequencies.coloring.component': "одним цветовым каналом",
+		'options.destination.frequencies.coloring.spectral': "спектральная",
 		'options.destination.logFftSize': "Размер БПФ (степень 2)",
 
 		'options.canvas': "Элемент <code>canvas</code>",

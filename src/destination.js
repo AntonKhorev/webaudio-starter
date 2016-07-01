@@ -120,12 +120,16 @@ class Destination extends Feature {
 					? "canvas.height-barHeight"
 					: "(canvas.height-barHeight)/2"
 				)
+				const fillStyle=(this.options.frequencies.coloring=='component'
+					? "'rgb('+(analyserData[i]+100)+',50,50)'"
+					: "'hsl('+Math.round(255-analyserData[i])+',100%,50%)'"
+				)
 				a(
 					"var barWidth=canvas.width/"+nBars+"*0.8;",
 					"analyserNode.getByteFrequencyData(analyserData);",
 					"for (var i=0;i<"+nBars+";i++) {",
 					"	var x=i*canvas.width/"+nBars+";",
-					"	canvasContext.fillStyle='rgb('+(analyserData[i]+100)+',50,50)';",
+					"	canvasContext.fillStyle="+fillStyle+";",
 					"	var barHeight=analyserData[i]*canvas.height/256;",
 					"	canvasContext.fillRect(x,"+y+",barWidth,barHeight);",
 					"}"
