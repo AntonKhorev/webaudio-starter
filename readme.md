@@ -21,3 +21,4 @@ Includes examples adapted from [*HTML5 Part 2: Advanced Techniques for Designing
 * [Live video coding: animating a waveform](http://jsbin.com/sequtas/edit)
 * [2D real time visualizations: waveforms / Audio player with waveform visualization](http://jsbin.com/wigucu/edit)
 * [2D real time visualization: frequencies / First typical example](http://jsbin.com/vemaho/edit)
+* [2D real time visualization: frequencies / Another example: achieving more impressive frequency visualization](http://jsbin.com/fagadu/edit)

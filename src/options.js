@@ -78,6 +78,9 @@ class Options extends BaseOptions {
 						unit: '%',
 						visibilityData: {'destination.frequencies.enabled':[true]},
 					}],
+					['Select','base',['bottom','middle'],{
+						visibilityData: {'destination.frequencies.enabled':[true]},
+					}],
 				]],
 				['Int','logFftSize',[5,12],8,{
 					visibilityData: {'destination.waveform.enabled':[true],'destination.frequencies.enabled':[true]},

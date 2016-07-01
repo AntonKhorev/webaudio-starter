@@ -116,6 +116,10 @@ class Destination extends Feature {
 					a("var nBars=Math.floor(analyserData.length*"+(this.options.frequencies.cutoff/100).toFixed(2)+");")
 					nBars="nBars"
 				}
+				const y=(this.options.frequencies.base=='bottom'
+					? "canvas.height-barHeight"
+					: "(canvas.height-barHeight)/2"
+				)
 				a(
 					"var barWidth=canvas.width/"+nBars+"*0.8;",
 					"analyserNode.getByteFrequencyData(analyserData);",
@@ -123,7 +127,7 @@ class Destination extends Feature {
 					"	var x=i*canvas.width/"+nBars+";",
 					"	canvasContext.fillStyle='rgb('+(analyserData[i]+100)+',50,50)';",
 					"	var barHeight=analyserData[i]*canvas.height/256;",
-					"	canvasContext.fillRect(x,canvas.height-barHeight,barWidth,barHeight);",
+					"	canvasContext.fillRect(x,"+y+",barWidth,barHeight);",
 					"}"
 				)
 			}
