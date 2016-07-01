@@ -89,6 +89,7 @@ class Destination extends Feature {
 	}
 	getJsLoopVisLines(featureContext,i18n) {
 		const a=JsLines.b()
+		const outline=true // TODO option
 		if (featureContext.audioProcessing) {
 			if (this.options.frequencies.enabled) { // will alter fill color
 				a("canvasContext.save();")
@@ -134,9 +135,28 @@ class Destination extends Feature {
 					"	var x=i*canvas.width/"+nBars+";",
 					"	canvasContext.fillStyle="+fillStyle+";",
 					"	var barHeight=analyserData[i]*canvas.height/256;",
-					"	canvasContext.fillRect(x,"+y+",barWidth,barHeight);",
+					"	var y="+y+";",
+					"	canvasContext.fillRect(x,y,barWidth,barHeight);",
 					"}"
 				)
+				if (outline) {
+					a(
+						"canvasContext.beginPath();",
+						"for (var i=0;i<"+nBars+";i++) {",
+						"	var x=i*canvas.width/"+nBars+";",
+						"	var barHeight=analyserData[i]*canvas.height/256;",
+						"	var y="+y+";",
+						"	if (i==0) {",
+						"		canvasContext.moveTo(0,y);",
+						"	}",
+						"	canvasContext.lineTo(x+barWidth/2,y);",
+                                                "	if (i==nBars-1) {",
+						"		canvasContext.lineTo(canvas.width,y);",
+						"	}",
+						"}",
+						"canvasContext.stroke();"
+					)
+				}
 			}
 			if (this.options.frequencies.enabled) { // altered fill color
 				a("canvasContext.restore();")
