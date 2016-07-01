@@ -93,30 +93,6 @@ class Destination extends Feature {
 			if (this.options.frequencies.enabled) { // will alter fill color
 				a("canvasContext.save();")
 			}
-			if (this.options.waveform.enabled) {
-				if (this.options.waveform.width!=1.0) {
-					a("canvasContext.lineWidth="+this.options.waveform.width+";")
-				}
-				a(
-					Canvas.getStyleLines('strokeStyle',this.options.waveform.color),
-					"analyserNode.getByteTimeDomainData(analyserData);",
-					"canvasContext.beginPath();",
-					"for (var i=0;i<analyserData.length;i++) {",
-					"	var x=i*canvas.width/analyserData.length;",
-					"	var y=analyserData[i]*canvas.height/256;",
-					"	if (i==0) {",
-					"		canvasContext.moveTo(x,y);",
-					"	} else {",
-					"		canvasContext.lineTo(x,y);",
-					"	}",
-					"}",
-					"canvasContext.stroke();"
-				)
-			}
-			if (this.options.waveform.enabled && this.options.frequencies.enabled && this.options.frequencies.outline.enabled) { // will alter stroke style
-				a("canvasContext.restore();")
-				a("canvasContext.save();")
-			}
 			if (this.options.frequencies.enabled) {
 				let nBars="analyserData.length"
 				if (this.options.frequencies.cutoff!=100) {
@@ -174,6 +150,30 @@ class Destination extends Feature {
 					}
 					a("canvasContext.stroke();")
 				}
+			}
+			if (this.options.waveform.enabled && this.options.frequencies.enabled) { // will alter stroke style
+				a("canvasContext.restore();")
+				a("canvasContext.save();")
+			}
+			if (this.options.waveform.enabled) {
+				if (this.options.waveform.width!=1.0) {
+					a("canvasContext.lineWidth="+this.options.waveform.width+";")
+				}
+				a(
+					Canvas.getStyleLines('strokeStyle',this.options.waveform.color),
+					"analyserNode.getByteTimeDomainData(analyserData);",
+					"canvasContext.beginPath();",
+					"for (var i=0;i<analyserData.length;i++) {",
+					"	var x=i*canvas.width/analyserData.length;",
+					"	var y=analyserData[i]*canvas.height/256;",
+					"	if (i==0) {",
+					"		canvasContext.moveTo(x,y);",
+					"	} else {",
+					"		canvasContext.lineTo(x,y);",
+					"	}",
+					"}",
+					"canvasContext.stroke();"
+				)
 			}
 			if (this.options.frequencies.enabled) { // altered fill color
 				a("canvasContext.restore();")
