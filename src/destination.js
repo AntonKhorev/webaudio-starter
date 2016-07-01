@@ -90,6 +90,9 @@ class Destination extends Feature {
 	getJsLoopVisLines(featureContext,i18n) {
 		const a=JsLines.b()
 		if (featureContext.audioProcessing) {
+			if (this.options.frequencies.enabled) { // will alter fill color
+				a("canvasContext.save();")
+			}
 			if (this.options.waveform.enabled) {
 				if (this.options.waveform.width!=1.0) {
 					a("canvasContext.lineWidth="+this.options.waveform.width+";")
@@ -134,6 +137,9 @@ class Destination extends Feature {
 					"	canvasContext.fillRect(x,"+y+",barWidth,barHeight);",
 					"}"
 				)
+			}
+			if (this.options.frequencies.enabled) { // altered fill color
+				a("canvasContext.restore();")
 			}
 		}
 		return a.e()
