@@ -140,8 +140,7 @@ class Destination extends Feature {
 					"}"
 				)
 				if (outline) {
-					a(
-						"canvasContext.beginPath();",
+					const writeOutline=y=>JsLines.bae(
 						"for (var i=0;i<"+nBars+";i++) {",
 						"	var x=i*canvas.width/"+nBars+";",
 						"	var barHeight=analyserData[i]*canvas.height/256;",
@@ -150,12 +149,23 @@ class Destination extends Feature {
 						"		canvasContext.moveTo(0,y);",
 						"	}",
 						"	canvasContext.lineTo(x+barWidth/2,y);",
-                                                "	if (i==nBars-1) {",
+						"	if (i=="+nBars+"-1) {",
 						"		canvasContext.lineTo(canvas.width,y);",
 						"	}",
-						"}",
-						"canvasContext.stroke();"
+						"}"
 					)
+					a("canvasContext.beginPath();")
+					if (this.options.frequencies.base=='bottom') {
+						a(writeOutline(y))
+					} else {
+						a(NoseWrapLines.b(
+							JsLines.bae(";[-1,+1].forEach(function(aboveOrBelow){"),
+							JsLines.bae("});")
+						).ae(
+							writeOutline("(canvas.height+aboveOrBelow*barHeight)/2")
+						))
+					}
+					a("canvasContext.stroke();")
 				}
 			}
 			if (this.options.frequencies.enabled) { // altered fill color
