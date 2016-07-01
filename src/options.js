@@ -84,6 +84,9 @@ class Options extends BaseOptions {
 					['Select','coloring',['component','spectral'],{
 						visibilityData: {'destination.frequencies.enabled':[true]},
 					}],
+					['Select','coloringInput',['amplitude','frequency'],{
+						visibilityData: {'destination.frequencies.enabled':[true]},
+					}],
 					['Group','outline',[
 						['Checkbox','enabled'],
 						['Float','width',[0,10],1,{

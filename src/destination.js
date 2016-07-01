@@ -103,9 +103,13 @@ class Destination extends Feature {
 					? "canvas.height-barHeight"
 					: "(canvas.height-barHeight)/2"
 				)
+				const colorInput=(this.options.frequencies.coloringInput=='amplitude'
+					? "analyserData[i]"
+					: "Math.round(i*255/"+nBars+")"
+				)
 				const fillStyle=(this.options.frequencies.coloring=='component'
-					? "'rgb('+(analyserData[i]+100)+',50,50)'"
-					: "'hsl('+Math.round(255-analyserData[i])+',100%,50%)'"
+					? "'rgb('+("+colorInput+"+100)+',50,50)'"
+					: "'hsl('+(255-"+colorInput+")+',100%,50%)'"
 				)
 				a(
 					"var barWidth=canvas.width/"+nBars+"*0.8;",
