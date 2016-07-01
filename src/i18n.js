@@ -4,6 +4,9 @@ const webaudioSpec='https://webaudio.github.io/web-audio-api/'
 const webaudioIssue=n=>`<a href='https://github.com/WebAudio/web-audio-api/issues/${n}'>${n}</a>`
 const webaudioDetect='https://github.com/GoogleChrome/web-audio-samples/wiki/Detection-of-lowpass-BiquadFilter-implementation'
 
+const enColors="{<span style='color:#800'>red</span>,<span style='color:#080'>green</span>,<span style='color:#008'>blue</span>,opacity}"
+const ruColors="{<span style='color:#800'>Красный</span> ,<span style='color:#080'>Зелёный</span> ,<span style='color:#008'>Синий</span> ,Альфа-}канал"
+
 const langStrings={
 	en:{
 		'options.sources': "Sources",
@@ -51,7 +54,7 @@ const langStrings={
 		'options.destination.{waveform,frequencies}.enabled': "Enable {} visualization",
 		'options.destination.waveform.width': "Waveform line width",
 		'options.destination.waveform.color': "Waveform line color",
-		'options.destination.waveform.color.{r,g,b,a}': "Waveform line {red,green,blue,opacity}",
+		'options.destination.waveform.color.{r,g,b,a}': `Waveform line ${enColors}`,
 		'options.destination.frequencies.cutoff': "Limit plot to a fraction of low frequences",
 		'options.destination.frequencies.base': "Frequency bars extend from",
 		'options.destination.frequencies.base.{bottom,middle}': "{} of canvas",
@@ -62,7 +65,7 @@ const langStrings={
 		'options.destination.frequencies.outline.enabled': "Enable frequency bars outline",
 		'options.destination.frequencies.outline.width': "Frequency bars outline width",
 		'options.destination.frequencies.outline.color': "Frequency bars outline color",
-		'options.destination.frequencies.outline.color.{r,g,b,a}': "Frequency bars outline {red,green,blue,opacity}",
+		'options.destination.frequencies.outline.color.{r,g,b,a}': `Frequency bars outline ${enColors}`,
 		'options.destination.logFftSize': "FFT size (power of 2)",
 
 		'options.canvas': "Canvas",
@@ -71,7 +74,7 @@ const langStrings={
 		'options.canvas.background.type': "Background type",
 		'options.canvas.background.type.{clear,filled}': "{}",
 		'options.canvas.background.color': "Background fill color",
-		'options.canvas.background.color.{r,g,b,a}': "Background fill {red,green,blue,opacity}",
+		'options.canvas.background.color.{r,g,b,a}': `Background fill ${enColors}`,
 
 		'options-info.destination.logFftSize': "[[Fast Fourier transform]] size for the waveform/frequency visualization. Use a larger size to get finer details of the waveform and thinner frequency bars.",
 		'options-info.canvas.background.color.a': "Lower opacity values lead to a blur effect.",
@@ -171,7 +174,7 @@ const langStrings={
 		'options.destination.{waveform,frequencies}.enabled': "Включить визуализацию {формы волны,частот}",
 		'options.destination.waveform.width': "Ширина линии волны",
 		'options.destination.waveform.color': "Цвет линии волны",
-		'options.destination.waveform.color.{r,g,b,a}': "{Красный ,Зелёный ,Синий ,Альфа-}канал линии волны",
+		'options.destination.waveform.color.{r,g,b,a}': `${ruColors} линии волны`,
 		'options.destination.frequencies.cutoff': "Ограничить рисование долей низких частот",
 		'options.destination.frequencies.base': "Полосы частот растут от",
 		'options.destination.frequencies.base.{bottom,middle}': "{низа,середины} элемента <code>canvas</code>",
@@ -182,7 +185,7 @@ const langStrings={
 		'options.destination.frequencies.outline.enabled': "Включить рисование контура частот",
 		'options.destination.frequencies.outline.width': "Ширина контура частот",
 		'options.destination.frequencies.outline.color': "Цвет контура частот",
-		'options.destination.frequencies.outline.color.{r,g,b,a}': "{Красный ,Зелёный ,Синий ,Альфа-}канал контура частот",
+		'options.destination.frequencies.outline.color.{r,g,b,a}': `${ruColors} контура частот`,
 		'options.destination.logFftSize': "Размер БПФ (степень 2)",
 
 		'options.canvas': "Элемент <code>canvas</code>",
@@ -191,7 +194,7 @@ const langStrings={
 		'options.canvas.background.type': "Тип фона",
 		'options.canvas.background.type.{clear,filled}': "{прозрачный,закрашенный}",
 		'options.canvas.background.color': "Цвет фона",
-		'options.canvas.background.color.{r,g,b,a}': "{Красный ,Зелёный ,Синий ,Альфа-}канал фона",
+		'options.canvas.background.color.{r,g,b,a}': `${ruColors} фона`,
 
 		'options-info.destination.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]] для визуализаций формы волны и частот. Больший размер даёт более детализированную форму волны и более тонкие полосы частот.",
 		'options-info.canvas.background.color.a': "Низкие значения альфа-канала приводят к эффекту размывания.",
