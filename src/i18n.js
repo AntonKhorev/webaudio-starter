@@ -58,6 +58,11 @@ const langStrings={
 		'options.destination.frequencies.coloring': "Frequency bars coloring",
 		'options.destination.frequencies.coloring.component': "with single color component",
 		'options.destination.frequencies.coloring.spectral': "spectral",
+		'options.destination.frequencies.outline': "Frequency bars outline",
+		'options.destination.frequencies.outline.enabled': "Enable frequency bars outline",
+		'options.destination.frequencies.outline.width': "Frequency bars outline width",
+		'options.destination.frequencies.outline.color': "Frequency bars outline color",
+		'options.destination.frequencies.outline.color.{r,g,b,a}': "Frequency bars outline {red,green,blue,opacity}",
 		'options.destination.logFftSize': "FFT size (power of 2)",
 
 		'options.canvas': "Canvas",
@@ -173,6 +178,11 @@ const langStrings={
 		'options.destination.frequencies.coloring': "Раскраска полос частот",
 		'options.destination.frequencies.coloring.component': "одним цветовым каналом",
 		'options.destination.frequencies.coloring.spectral': "спектральная",
+		'options.destination.frequencies.outline': "Контур полос частот",
+		'options.destination.frequencies.outline.enabled': "Включить рисование контура частот",
+		'options.destination.frequencies.outline.width': "Ширина контура частот",
+		'options.destination.frequencies.outline.color': "Цвет контура частот",
+		'options.destination.frequencies.outline.color.{r,g,b,a}': "{Красный ,Зелёный ,Синий ,Альфа-}канал контура частот",
 		'options.destination.logFftSize': "Размер БПФ (степень 2)",
 
 		'options.canvas': "Элемент <code>canvas</code>",

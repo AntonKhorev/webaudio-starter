@@ -84,6 +84,23 @@ class Options extends BaseOptions {
 					['Select','coloring',['component','spectral'],{
 						visibilityData: {'destination.frequencies.enabled':[true]},
 					}],
+					['Group','outline',[
+						['Checkbox','enabled'],
+						['Float','width',[0,10],1,{
+							unit: 'pixel',
+							visibilityData: {'destination.frequencies.outline.enabled':[true]},
+						}],
+						['Group','color',[
+							['Int','r',[0,100],0,{ unit: '%' }],
+							['Int','g',[0,100],0,{ unit: '%' }],
+							['Int','b',[0,100],0,{ unit: '%' }],
+							['Int','a',[0,100],100,{ unit: '%' }],
+						],{
+							visibilityData: {'destination.frequencies.outline.enabled':[true]},
+						}],
+					],{
+						visibilityData: {'destination.frequencies.enabled':[true]},
+					}]
 				]],
 				['Int','logFftSize',[5,12],8,{
 					visibilityData: {'destination.waveform.enabled':[true],'destination.frequencies.enabled':[true]},

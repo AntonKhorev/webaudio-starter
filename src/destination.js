@@ -89,7 +89,6 @@ class Destination extends Feature {
 	}
 	getJsLoopVisLines(featureContext,i18n) {
 		const a=JsLines.b()
-		const outline=true // TODO option
 		if (featureContext.audioProcessing) {
 			if (this.options.frequencies.enabled) { // will alter fill color
 				a("canvasContext.save();")
@@ -113,6 +112,10 @@ class Destination extends Feature {
 					"}",
 					"canvasContext.stroke();"
 				)
+			}
+			if (this.options.waveform.enabled && this.options.frequencies.enabled && this.options.frequencies.outline.enabled) { // will alter stroke style
+				a("canvasContext.restore();")
+				a("canvasContext.save();")
 			}
 			if (this.options.frequencies.enabled) {
 				let nBars="analyserData.length"
@@ -139,7 +142,7 @@ class Destination extends Feature {
 					"	canvasContext.fillRect(x,y,barWidth,barHeight);",
 					"}"
 				)
-				if (outline) {
+				if (this.options.frequencies.outline.enabled) {
 					const writeOutline=y=>JsLines.bae(
 						"for (var i=0;i<"+nBars+";i++) {",
 						"	var x=i*canvas.width/"+nBars+";",
@@ -154,6 +157,10 @@ class Destination extends Feature {
 						"	}",
 						"}"
 					)
+					if (this.options.frequencies.outline.width!=1.0) {
+						a("canvasContext.lineWidth="+this.options.frequencies.outline.width+";")
+					}
+					a(Canvas.getStyleLines('strokeStyle',this.options.frequencies.outline.color))
 					a("canvasContext.beginPath();")
 					if (this.options.frequencies.base=='bottom') {
 						a(writeOutline(y))
