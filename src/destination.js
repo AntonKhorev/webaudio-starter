@@ -20,6 +20,15 @@ class Destination extends Feature {
 		if (this.options.waveform.enabled || this.options.frequencies.enabled) {
 			featureContext.canvas=true
 		}
+		if (featureContext.connectSampleToJsNames===undefined) {
+			if (this.options.compressor) {
+				featureContext.connectSampleToJsNames=["compressorNode"]
+			} else if (this.options.waveform.enabled || this.options.frequencies.enabled) {
+				featureContext.connectSampleToJsNames=["analyserNode"]
+			} else {
+				featureContext.connectSampleToJsNames=["ctx.destination"]
+			}
+		}
 	}
 	getHtmlLines(featureContext,i18n) {
 		const a=NoseWrapLines.b("<div>","</div>")

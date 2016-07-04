@@ -77,7 +77,9 @@ const sourceClasses={
 				"	button.onclick=function(){",
 				"		var bufferSourceNode=ctx.createBufferSource();",
 				"		bufferSourceNode.buffer=buffer;",
-				"		bufferSourceNode.connect(ctx.destination);", // TODO connect to first filter
+				...featureContext.connectSampleToJsNames.map(
+					nodeJsName=>"		bufferSourceNode.connect("+nodeJsName+");"
+				),
 				"		bufferSourceNode.start();",
 				"	}",
 				"	button.disabled=false;",

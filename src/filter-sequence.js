@@ -490,6 +490,9 @@ class FilterSequence extends CollectionFeature {
 			if (!entry.skipNode) {
 				featureContext.audioContext=true
 				entry.requestFeatureContext(featureContext)
+				if (featureContext.connectSampleToJsNames===undefined) {
+					featureContext.connectSampleToJsNames=entry.nodeJsNames
+				}
 			}
 		})
 	}

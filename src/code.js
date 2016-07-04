@@ -29,6 +29,7 @@ class Code extends BaseWebCode {
 		// possible feature context flags:
 		//	loader = Loader has to provide loadSample() function
 		//	loaderOnError = loadSample() caller has to pass the error handler
+		//	connectSampleToJsNames = this is a hack: array of strings to connect samples to
 		//	TODO the rest
 		this.features.forEach(feature=>{
 			feature.requestFeatureContext(this.featureContext)
