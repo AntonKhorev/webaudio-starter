@@ -16,10 +16,7 @@ class Loader extends Feature {
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		if (!featureContext.loader) return JsLines.be()
-		const a=WrapLines.b(
-			JsLines.bae("function loadSample(url,onDecode"+(this.options.errors!='none' ? ",onError" : "")+") {"),
-			JsLines.bae("}")
-		)
+		const a=JsLines.b()
 		a(
 			"var xhr=new XMLHttpRequest();",
 			"xhr.open('GET',url);", // TODO html escape
@@ -50,7 +47,10 @@ class Loader extends Feature {
 		a(
 			"xhr.send();"
 		)
-		return a.e()
+		return WrapLines.b(
+			JsLines.bae("function loadSample(url,onDecode"+(this.options.errors!='none' ? ",onError" : "")+") {"),
+			JsLines.bae("}")
+		).ae(a.e())
 	}
 }
 
