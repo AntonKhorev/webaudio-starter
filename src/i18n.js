@@ -12,7 +12,11 @@ const langStrings={
 		'options.sources': "Sources",
 		'options.sources.{audio,video}': "{Audio,Video} element",
 		'options.sources.{audio,video}.add': "Add {} element",
-		'options.sources.{audio,video}.url': "Source URL",
+		'options.sources.sample': "Sample",
+		'options.sources.sample.add': "Add sample",
+		'options.sources.sample.buffer.loading': "Loading and decoding the sample",
+		'options.sources.sample.buffer.error': "Error while loading the sample",
+		'options.sources.{audio,video,sample}.url': "Source URL",
 		'options.sources.video.{width,height}': "Player {}",
 
 		'options.filters': "Filters",
@@ -107,11 +111,13 @@ const langStrings={
 
 		'code.title': "Web Audio API example — generated code",
 
+		'label.sources.sample.play': "Play sample",
 		'label.destination.compressor': "Enable dynamics compressor",
 
 		'comment.context': "create [audio context][context]",
 		'comment.sources.audio': "create [audio source node][source]",
 		'comment.sources.video': "create [video source node][source]",
+		'comment.sources.sample': "load sample",
 		'comment.filters.gain': "create [gain node][gain]",
 		'comment.filters.panner': "create [stereo panner node][panner]",
 		'comment.filters.biquad': "create [biquad filter node][biquad]",
@@ -135,7 +141,11 @@ const langStrings={
 		'options.sources': "Источники",
 		'options.sources.{audio,video}': "Элемент <code>{}</code>",
 		'options.sources.{audio,video}.add': "Добавить элемент <code>{}</code>",
-		'options.sources.{audio,video}.url': "URL источника",
+		'options.sources.sample': "Сэмпл",
+		'options.sources.sample.add': "Добавить сэмпл",
+		'options.sources.sample.buffer.loading': "Идёт загрузка и декодирование сэмпла",
+		'options.sources.sample.buffer.error': "Ошибка загрузки сэмпла",
+		'options.sources.{audio,video,sample}.url': "URL источника",
 		'options.sources.video.{width,height}': "{Ширина,Высота} проигрывателя",
 
 		'options.filters': "Фильтры",
@@ -235,11 +245,13 @@ const langStrings={
 
 		'code.title': "Пример использования Web Audio API — сгенерированный код",
 
+		'label.sources.sample.play': "Играть сэмпл",
 		'label.destination.compressor': "Включить компрессор",
 
 		'comment.context': "создаём [аудио-контекст][context]",
 		'comment.sources.audio': "создаём [узел источника аудио][source]",
 		'comment.sources.video': "создаём [узел источника видео][source]",
+		'comment.sources.sample': "загружаем сэмпл",
 		'comment.filters.gain': "создаём [узел усилителя][gain]",
 		'comment.filters.panner': "создаём [узел панорамирования][panner]",
 		'comment.filters.biquad': "создаём [узел биквадратичного фильтра][biquad]",

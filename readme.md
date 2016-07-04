@@ -6,8 +6,6 @@
 
 ## References
 
-Default sound URLs are for sound files from [Web Audio Playground](http://webaudioplayground.appspot.com/).
-
 Includes examples adapted from [*HTML5 Part 2: Advanced Techniques for Designing HTML5 Apps* MOOC](https://www.edx.org/course/html5-part-2-advanced-techniques-w3cx-html5-2x) offered by W3C:
 
 * [Working with streamed content: the MediaSourceElement node](http://jsbin.com/mifaqa/edit)
@@ -22,3 +20,6 @@ Includes examples adapted from [*HTML5 Part 2: Advanced Techniques for Designing
 * [2D real time visualizations: waveforms / Audio player with waveform visualization](http://jsbin.com/wigucu/edit)
 * [2D real time visualization: frequencies / First typical example](http://jsbin.com/vemaho/edit)
 * [2D real time visualization: frequencies / Another example: achieving more impressive frequency visualization](http://jsbin.com/fagadu/edit)
+* [Working with sound samples loaded in memory](http://jsbin.com/gesetu/edit)
+
+Some of the default sound URLs are for sound files from [Web Audio Playground](http://webaudioplayground.appspot.com/).

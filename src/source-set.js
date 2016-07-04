@@ -31,7 +31,7 @@ class Source {
 			this.getElementHtmlLines(featureContext,i18n)
 		)
 	}
-	getJsInitLines(i18n) {
+	getJsInitLines(featureContext,i18n) {
 		return JsLines.bae(
 			RefLines.parse("// "+i18n('comment.sources.'+this.type)),
 			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
@@ -59,6 +59,44 @@ const sourceClasses={
 			)
 		}
 	},
+	sample: class extends Source {
+		get type() { return 'sample' }
+		getElementHtmlLines(featureContext,i18n) {
+			const messageHtmlName=this.elementHtmlName+'.buffer'
+			return Lines.bae(
+				Lines.html`<button id=${this.elementHtmlName} disabled>${i18n('label.sources.sample.play')}</button> <span id=${messageHtmlName}>${i18n('options.sources.sample.buffer.loading')}</span>`
+			)
+		}
+		getJsInitLines(featureContext,i18n) {
+			const messageHtmlName=this.elementHtmlName+'.buffer'
+			const a=JsLines.b()
+			a(
+				RefLines.parse("// "+i18n('comment.sources.'+this.type)),
+				"loadSample('"+this.options.url+"',function(buffer){",
+				"	var button=document.getElementById('"+this.elementHtmlName+"');",
+				"	button.onclick=function(){",
+				"		var bufferSourceNode=ctx.createBufferSource();",
+				"		bufferSourceNode.buffer=buffer;",
+				"		bufferSourceNode.connect(ctx.destination);", // TODO connect to first filter
+				"		bufferSourceNode.start();",
+				"	}",
+				"	button.disabled=false;",
+				"	document.getElementById('"+messageHtmlName+"').textContent='';",
+				"}"
+			)
+			if (featureContext.loaderOnError) {
+				a.t(
+					",function(){",
+					"	document.getElementById('"+messageHtmlName+"').textContent='"+i18n('options.sources.sample.buffer.error')+"';",
+					"}"
+				)
+			}
+			a.t(
+				");"
+			)
+			return a.e()
+		}
+	},
 }
 
 class SourceSet extends CollectionFeature {
@@ -69,11 +107,15 @@ class SourceSet extends CollectionFeature {
 		if (this.entries.length>0) {
 			featureContext.audioProcessing=true
 		}
+		if (this.entries.some(entry=>entry.type=='sample')) {
+			featureContext.audioContext=true
+			featureContext.loader=true
+		}
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		const a=InterleaveLines.b()
 		if (featureContext.audioContext) {
-			a(...this.entries.map(entry=>entry.getJsInitLines(i18n)))
+			a(...this.entries.map(entry=>entry.getJsInitLines(featureContext,i18n)))
 		}
 		return a.e()
 	}

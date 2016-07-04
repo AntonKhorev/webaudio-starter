@@ -8,12 +8,10 @@ class Options extends BaseOptions {
 			['Array','sources',[
 				['Group','audio',[
 					['Text','url',[
-						// original w3c mooc - is down now
-						/*
+						// original w3c mooc
 						'http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3',
 						'http://mainline.i3s.unice.fr/mooc/drums.mp3',
 						'http://mainline.i3s.unice.fr/mooc/LaSueur.mp3',
-						*/
 						// Web Audio Playground via RawGit
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/bass.ogg',
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/drums.ogg',
@@ -30,6 +28,12 @@ class Options extends BaseOptions {
 					['Int','width',[1,1920],320,{ unit: 'pixel' }],
 					['Int','height',[1,1080],240,{ unit: 'pixel' }],
 				]],
+				['Group','sample',[
+					['Text','url',[
+						'http://mainline.i3s.unice.fr/mooc/shoot1.mp3',
+						'http://mainline.i3s.unice.fr/mooc/shoot2.mp3',
+					]],
+				]],
 			],'source'],
 			['Filters','filters',[
 				['Group','gain',[
@@ -45,10 +49,8 @@ class Options extends BaseOptions {
 				['Group','convolver',[
 					['LiveFloat','reverb',[0,1]],
 					['Text','url',[
-						// original w3c mooc - is down now
-						/*
+						// original w3c mooc
 						'http://mainline.i3s.unice.fr/mooc/Scala-Milan-Opera-Hall.wav',
-						*/
 						// Web Audio Playground via RawGit
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/irHall.ogg',
 					]],
