@@ -31,6 +31,7 @@ class Code extends BaseWebCode {
 		//	loaderOnError = loadSample() caller has to pass the error handler
 		//	setConnectSampleToJsNames = have a node(s) to connect samples to (some filters like equaliser may not save a refernce to it otherwise)
 		//	connectSampleToJsNames = this is a hack: array of strings to connect samples to
+		//	connectSampleToCompressor = this is a hack
 		//	TODO the rest
 		this.features.forEach(feature=>{
 			feature.requestFeatureContext(this.featureContext)

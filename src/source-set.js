@@ -76,10 +76,26 @@ const sourceClasses={
 				"	var button=document.getElementById('"+this.elementHtmlName+"');",
 				"	button.onclick=function(){",
 				"		var bufferSourceNode=ctx.createBufferSource();",
-				"		bufferSourceNode.buffer=buffer;",
-				...featureContext.connectSampleToJsNames.map(
-					nodeJsName=>"		bufferSourceNode.connect("+nodeJsName+");"
-				),
+				"		bufferSourceNode.buffer=buffer;"
+			)
+			if (featureContext.connectSampleToCompressor) {
+				a(
+					"		if (document.getElementById('my.compressor').checked) {",
+					"			bufferSourceNode.connect(compressorNode);",
+					"		} else {",
+					...featureContext.connectSampleToJsNames.map(
+						nodeJsName=>"			bufferSourceNode.connect("+nodeJsName+");"
+					),
+					"		}"
+				)
+			} else {
+				a(
+					...featureContext.connectSampleToJsNames.map(
+						nodeJsName=>"		bufferSourceNode.connect("+nodeJsName+");"
+					)
+				)
+			}
+			a(
 				"		bufferSourceNode.start();",
 				"	}",
 				"	button.disabled=false;",

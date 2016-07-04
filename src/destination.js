@@ -23,8 +23,9 @@ class Destination extends Feature {
 		}
 		if (featureContext.connectSampleToJsNames===undefined) {
 			if (this.options.compressor) {
-				featureContext.connectSampleToJsNames=["compressorNode"]
-			} else if (this.options.waveform.enabled || this.options.frequencies.enabled) {
+				featureContext.connectSampleToCompressor=true
+			}
+			if (this.options.waveform.enabled || this.options.frequencies.enabled) {
 				featureContext.connectSampleToJsNames=["analyserNode"]
 			} else {
 				featureContext.connectSampleToJsNames=["ctx.destination"]
