@@ -78,6 +78,12 @@ const langStrings={
 		'options.canvas.background.color': "Background fill color",
 		'options.canvas.background.color.{r,g,b,a}': `Background fill ${enColors}`,
 
+		'options.loader': "Sample loader",
+		'options.loader.errors': "Error handling",
+		'options.loader.errors.none': "disabled",
+		'options.loader.errors.network': "network errors",
+		'options.loader.errors.http': "network and HTTP errors",
+
 		'options-info.destination.logFftSize': "[[Fast Fourier transform]] size for the waveform/frequency visualization. Use a larger size to get finer details of the waveform and thinner frequency bars.",
 		'options-info.canvas.background.color.a': "Lower opacity values lead to a blur effect.",
 
@@ -199,6 +205,12 @@ const langStrings={
 		'options.canvas.background.type.{clear,filled}': "{прозрачный,закрашенный}",
 		'options.canvas.background.color': "Цвет фона",
 		'options.canvas.background.color.{r,g,b,a}': `${ruColors} фона`,
+
+		'options.loader': "Загрузчик сэмплов",
+		'options.loader.errors': "Обработка ошибок загрузки",
+		'options.loader.errors.none': "отключена",
+		'options.loader.errors.network': "для сетевых ошибок",
+		'options.loader.errors.http': "для сетевых ошибок и ошибок HTTP",
 
 		'options-info.destination.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]] для визуализаций формы волны и частот. Больший размер даёт более детализированную форму волны и более тонкие полосы частот.",
 		'options-info.canvas.background.color.a': "Низкие значения альфа-канала приводят к эффекту размывания.",

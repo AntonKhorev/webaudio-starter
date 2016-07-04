@@ -1,6 +1,7 @@
 'use strict'
 
 const AudioContext=require('./audio-context')
+const Loader=require('./loader')
 const SourceSet=require('./source-set')
 const FilterSequence=require('./filter-sequence')
 const Destination=require('./destination')
@@ -19,11 +20,15 @@ class Code extends BaseWebCode {
 		this.featureContext={}
 		this.features=[
 			new AudioContext,
+			new Loader(options.loader),
 			new SourceSet(options.sources),
 			new FilterSequence(options.filters),
 			new Destination(options.destination),
 			new Canvas(options.canvas),
 		]
+		// possible feature context flags:
+		//	loader = request loadSample() of Loader feature
+		//	TODO the rest
 		this.features.forEach(feature=>{
 			feature.requestFeatureContext(this.featureContext)
 		})

@@ -128,6 +128,9 @@ class Options extends BaseOptions {
 				visibilityData: {'destination.waveform.enabled':[true],'destination.frequencies.enabled':[true]},
 				visibilityDataLogic: 'or',
 			}],
+			['Group','loader',[
+				['Select','errors',['none','network','http']],
+			]], // TODO visibility depending on sources and filters
 		]
 	}
 	get optionClasses() {

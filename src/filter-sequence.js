@@ -261,6 +261,10 @@ const filterClasses={
 				}
 			]
 		}
+		requestFeatureContext(featureContext) {
+			super.requestFeatureContext(featureContext)
+			featureContext.loader=true
+		}
 		get dryGainNodeJsName() {
 			return camelCase(this.type+this.nSuffix+'.dry.gain.node')
 		}
@@ -306,23 +310,12 @@ const filterClasses={
 				}
 			}
 			a(
-				"var xhr=new XMLHttpRequest();",
-				"xhr.open('GET','"+this.options.url+"');", // TODO html escape
-				"xhr.responseType='arraybuffer';",
-				"xhr.onload=function(){",
-				"	if (this.status==200) {", // TODO we are checking status here, but what if <audio>'s status is an error?
-				"		ctx.decodeAudioData(this.response,function(buffer){",
-				"			"+this.nodeJsName+".buffer=buffer;",
-				"			document.getElementById('"+messageHtmlName+"').textContent='';",
-				"		});",
-				"	} else {",
-				"		this.onerror();",
-				"	}",
-				"};",
-				"xhr.onerror=function(){",
+				"loadSample('"+this.options.url+"',function(buffer){", // TODO html escape
+				"	"+this.nodeJsName+".buffer=buffer;",
+				"	document.getElementById('"+messageHtmlName+"').textContent='';",
+				"},function(){",
 				"	document.getElementById('"+messageHtmlName+"').textContent='"+i18n('options.filters.convolver.buffer.error')+"';",
-				"};",
-				"xhr.send();"
+				"});"
 			)
 			return a.e()
 		}
@@ -354,7 +347,7 @@ const filterClasses={
 			}).filter(fo=>(fo.option.input!=false || fo.option.value!=0))
 		}
 		requestFeatureContext(featureContext) {
-			if (!this.allGainsConstant) {
+			if (!this.allGainsConstant) { // TODO this check is likely not needed, this.allGainsConstant is not set
 				featureContext.alignedInputs=true
 			}
 		}
