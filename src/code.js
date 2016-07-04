@@ -27,7 +27,8 @@ class Code extends BaseWebCode {
 			new Canvas(options.canvas),
 		]
 		// possible feature context flags:
-		//	loader = request loadSample() of Loader feature
+		//	loader = Loader has to provide loadSample() function
+		//	loaderOnError = loadSample() caller has to pass the error handler
 		//	TODO the rest
 		this.features.forEach(feature=>{
 			feature.requestFeatureContext(this.featureContext)

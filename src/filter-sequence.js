@@ -100,7 +100,7 @@ class Filter {
 			)
 		)
 	}
-	getJsInitLines(i18n,prevNodeJsNames) {
+	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		return JsLines.bae(
 			RefLines.parse("// "+i18n('comment.filters.'+this.type)),
 			"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
@@ -120,9 +120,9 @@ class Filter {
 }
 
 class SinglePathFilter extends Filter {
-	getJsInitLines(i18n,prevNodeJsNames) {
+	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		return Lines.bae(
-			super.getJsInitLines(i18n,prevNodeJsNames),
+			super.getJsInitLines(featureContext,i18n,prevNodeJsNames),
 			...this.nodeProperties.map(property=>{
 				if (property.skip) {
 					return Lines.be()
@@ -237,7 +237,7 @@ const filterClasses={
 		get nodeProperties() {
 			return []
 		}
-		getJsInitLines(i18n,prevNodeJsNames) {
+		getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 			return JsLines.bae(
 				RefLines.parse("// "+i18n('comment.filters.'+this.type)),
 				"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"(["+this.options.feedforward.entries+"],["+this.options.feedback.entries+"]);",
@@ -274,7 +274,7 @@ const filterClasses={
 		get skipNode() {
 			return this.options.reverb==0 && !this.options.reverb.input
 		}
-		getJsInitLines(i18n,prevNodeJsNames) {
+		getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 			const messageHtmlName=this.getPropertyInputHtmlName('buffer')
 			const a=JsLines.b()
 			if (this.options.reverb.input || this.options.reverb!=1) {
@@ -313,9 +313,17 @@ const filterClasses={
 				"loadSample('"+this.options.url+"',function(buffer){", // TODO html escape
 				"	"+this.nodeJsName+".buffer=buffer;",
 				"	document.getElementById('"+messageHtmlName+"').textContent='';",
-				"},function(){",
-				"	document.getElementById('"+messageHtmlName+"').textContent='"+i18n('options.filters.convolver.buffer.error')+"';",
-				"});"
+				"}"
+			)
+			if (featureContext.loaderOnError) {
+				a.t(
+					",function(){",
+					"	document.getElementById('"+messageHtmlName+"').textContent='"+i18n('options.filters.convolver.buffer.error')+"';",
+					"}"
+				)
+			}
+			a.t(
+				");"
 			)
 			return a.e()
 		}
@@ -354,7 +362,7 @@ const filterClasses={
 		get skipNode() {
 			return this.affectedFreqsAndOptions.length==0
 		}
-		getJsInitLines(i18n,prevNodeJsNames) {
+		getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 			const singleFreq=this.affectedFreqsAndOptions.length==1
 			const allGainsConstant=this.affectedFreqsAndOptions.every(fo=>fo.option.input==false)
 			const noGainsConstant=this.affectedFreqsAndOptions.every(fo=>fo.option.input==true)
@@ -492,7 +500,7 @@ class FilterSequence extends CollectionFeature {
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		if (!featureContext.audioProcessing) return Lines.be()
 		return InterleaveLines.bae(...this.entries.filter(entry=>!entry.skipNode).map(entry=>{
-			const lines=entry.getJsInitLines(i18n,prevNodeJsNames)
+			const lines=entry.getJsInitLines(featureContext,i18n,prevNodeJsNames)
 			prevNodeJsNames=entry.nodeJsNames
 			return lines
 		}))

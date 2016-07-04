@@ -9,25 +9,48 @@ class Loader extends Feature {
 		super()
 		this.options=options
 	}
+	requestFeatureContext(featureContext) {
+		if (this.options.errors!='none') {
+			featureContext.loaderOnError=true
+		}
+	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		if (!featureContext.loader) return JsLines.be()
-		return WrapLines.b(
-			JsLines.bae("function loadSample(url,onDecode,onError) {"),
+		const a=WrapLines.b(
+			JsLines.bae("function loadSample(url,onDecode"+(this.options.errors!='none' ? ",onError" : "")+") {"),
 			JsLines.bae("}")
-		).ae(
+		)
+		a(
 			"var xhr=new XMLHttpRequest();",
 			"xhr.open('GET',url);", // TODO html escape
 			"xhr.responseType='arraybuffer';",
-			"xhr.onload=function(){",
-			"	if (this.status==200) {", // TODO we are checking status here, but what if <audio>'s status is an error?
-			"		ctx.decodeAudioData(this.response,onDecode);",
-			"	} else {",
-			"		this.onerror();",
-			"	}",
-			"};",
-			"xhr.onerror=onError;",
+			"xhr.onload=function(){"
+		)
+		if (this.options.errors=='http') {
+			a(
+				"	if (this.status==200) {",
+				"		ctx.decodeAudioData(this.response,onDecode);", // TODO decoding error handling
+				"	} else {",
+				"		this.onerror();",
+				"	}"
+			)
+		} else {
+			a(
+				"	ctx.decodeAudioData(this.response,onDecode);"
+			)
+		}
+		a(
+			"};"
+		)
+		if (this.options.errors!='none') {
+			a(
+				"xhr.onerror=onError;"
+			)
+		}
+		a(
 			"xhr.send();"
 		)
+		return a.e()
 	}
 }
 
