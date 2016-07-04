@@ -372,6 +372,16 @@ const filterClasses={
 		get skipNode() {
 			return this.affectedFreqsAndOptions.length==0
 		}
+		get connectToNodeJsName() {
+			if (this.affectedFreqsAndOptions.length==1) {
+				return this.nodeJsName
+			} else {
+				return camelCase('connect.to.'+this.type+this.nSuffix+'.node')
+			}
+		}
+		get connectToNodeJsNames() {
+			return [this.connectToNodeJsName]
+		}
 		getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 			const singleFreq=this.affectedFreqsAndOptions.length==1
 			const allGainsConstant=this.affectedFreqsAndOptions.every(fo=>fo.option.input==false)
@@ -414,6 +424,13 @@ const filterClasses={
 					a("var ")
 				}
 				a.t(nodeJsName+"=ctx."+this.ctxCreateMethodName+"();")
+				if (featureContext.setConnectSampleToJsNames && !singleFreq) {
+					a(
+						"if ("+this.connectToNodeJsName+"===undefined) {",
+						"	"+this.connectToNodeJsName+"="+nodeJsName+";",
+						"}"
+					)
+				}
 				if (singleFreq) {
 					a(
 						...prevNodeJsNames.map(
@@ -475,6 +492,9 @@ const filterClasses={
 					a("var prevNode="+prevNodeJsNames[0]+";")
 				} else {
 					a("var prevNodes=["+prevNodeJsNames.join()+"];")
+				}
+				if (featureContext.setConnectSampleToJsNames) {
+					a("var "+this.connectToNodeJsName+";")
 				}
 				a(
 					"var "+this.nodeJsName+";",
