@@ -120,8 +120,16 @@ class SourceSet extends CollectionFeature {
 		return a.e()
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {
+		const nodeJsNames=[]
 		if (featureContext.audioContext) {
-			return this.entries.map(entry=>entry.nodeJsName)
+			this.entries.forEach(entry=>{
+				if (entry.type!='sample') {
+					nodeJsNames.push(entry.nodeJsName)
+				}
+			})
+		}
+		if (nodeJsNames.length>0) {
+			return nodeJsNames
 		} else {
 			return prevNodeJsNames
 		}

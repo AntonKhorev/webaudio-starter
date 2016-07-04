@@ -81,7 +81,7 @@ class Code extends BaseWebCode {
 		)
 	}
 	get scriptLines() {
-		let prevNodeJsNames
+		let prevNodeJsNames=[]
 		return InterleaveLines.bae(
 			...this.features.map(feature=>{
 				const lines=feature.getJsInitLines(this.featureContext,this.i18n,prevNodeJsNames)
