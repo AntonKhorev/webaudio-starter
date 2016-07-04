@@ -112,6 +112,9 @@ class Filter {
 	get nodeJsNames() {
 		return [this.nodeJsName]
 	}
+	get connectToNodeJsNames() {
+		return this.nodeJsNames
+	}
 	// }
 	// abstract:
 	// get type()
@@ -334,6 +337,13 @@ const filterClasses={
 				return [this.nodeJsName]
 			}
 		}
+		get connectToNodeJsNames() {
+			if (this.options.reverb.input || this.options.reverb!=1) {
+				return [this.nodeJsName,this.dryGainNodeJsName]
+			} else {
+				return [this.nodeJsName]
+			}
+		}
 	},
 	equalizer: class extends Filter {
 		get type()                { return 'equalizer' }
@@ -491,7 +501,7 @@ class FilterSequence extends CollectionFeature {
 				featureContext.audioContext=true
 				entry.requestFeatureContext(featureContext)
 				if (featureContext.connectSampleToJsNames===undefined) {
-					featureContext.connectSampleToJsNames=entry.nodeJsNames
+					featureContext.connectSampleToJsNames=entry.connectToNodeJsNames
 				}
 			}
 		})

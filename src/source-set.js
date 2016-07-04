@@ -112,6 +112,7 @@ class SourceSet extends CollectionFeature {
 		if (this.entries.some(entry=>entry.type=='sample')) {
 			featureContext.audioContext=true
 			featureContext.loader=true
+			featureContext.setConnectSampleToJsNames=true
 		}
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
