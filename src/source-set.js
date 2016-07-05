@@ -78,40 +78,54 @@ const sourceClasses={
 				}
 			}
 			const getSampleLines=(startOptions)=>{
+				const randomValue=(baseOption,randomOption)=>{
+					const numbers={}
+					numbers.base=baseOption
+					if (randomOption>0) {
+						numbers.random=randomOption
+					}
+					const fmt=formatNumbers.js(numbers)
+					let value=fmt.base
+					if (randomOption>0) {
+						value+="+Math.random()"+fmtMul(fmt.random)
+					}
+					return value
+				}
 				const a=JsLines.b()
+				let lastNodeName="bufferSourceNode"
 				a(
 					"var bufferSourceNode=ctx.createBufferSource();",
 					"bufferSourceNode.buffer=buffer;"
 				)
+				if (this.options.pitch!=1 || this.options.randomPitch>0) {
+					a(
+						"bufferSourceNode.playbackRate.value="+randomValue(this.options.pitch,this.options.randomPitch)+";"
+					)
+				}
+				if (this.options.gain!=1 || this.options.randomGain>0) {
+					lastNodeName="bufferSourceGainNode"
+					a(
+						"var bufferSourceGainNode=ctx.createGain();",
+						"bufferSourceNode.connect(bufferSourceGainNode);",
+						"bufferSourceGainNode.gain.value="+randomValue(this.options.gain,this.options.randomGain)+";"
+					)
+				}
 				if (featureContext.connectSampleToCompressor) {
 					a(
 						"if (document.getElementById('my.compressor').checked) {",
-						"	bufferSourceNode.connect(compressorNode);",
+						"	"+lastNodeName+".connect(compressorNode);",
 						"} else {",
 						...featureContext.connectSampleToJsNames.map(
-							nodeJsName=>"	bufferSourceNode.connect("+nodeJsName+");"
+							nodeJsName=>"	"+lastNodeName+".connect("+nodeJsName+");"
 						),
 						"}"
 					)
 				} else {
 					a(
 						...featureContext.connectSampleToJsNames.map(
-							nodeJsName=>"bufferSourceNode.connect("+nodeJsName+");"
+							nodeJsName=>lastNodeName+".connect("+nodeJsName+");"
 						)
 					)
-				}
-				if (this.options.pitch!=1 || this.options.randomPitch>0) {
-					const numbers={}
-					numbers.base=this.options.pitch
-					if (this.options.randomPitch>0) {
-						numbers.random=this.options.randomPitch
-					}
-					const fmt=formatNumbers.js(numbers)
-					let value=fmt.base
-					if (this.options.randomPitch>0) {
-						value+="+Math.random()"+fmtMul(fmt.random)
-					}
-					a("bufferSourceNode.playbackRate.value="+value+";")
 				}
 				a(
 					"bufferSourceNode.start("+startOptions+");"
