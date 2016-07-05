@@ -71,6 +71,13 @@ const sourceClasses={
 		}
 		getJsInitLines(featureContext,i18n) {
 			const messageHtmlName=this.elementHtmlName+'.buffer'
+			const fmtMul=(fmtNum)=>{
+				if (fmtNum==1) {
+					return ""
+				} else {
+					return "*"+fmtNum
+				}
+			}
 			const getSampleLines=(startOptions)=>{
 				const a=JsLines.b()
 				a(
@@ -95,7 +102,7 @@ const sourceClasses={
 					)
 				}
 				if (this.options.randomPitch>0) {
-					a("bufferSourceNode.playbackRate.value=1+Math.random()*"+formatNumber.js(this.options.randomPitch)+";")
+					a("bufferSourceNode.playbackRate.value=1+Math.random()"+fmtMul(formatNumber.js(this.options.randomPitch))+";")
 				}
 				a(
 
@@ -114,10 +121,10 @@ const sourceClasses={
 				}
 				const fmt=formatNumbers.js(numbers)
 				if (this.options.repeat!=1) {
-					startOptions+="+i*"+fmt.interval
+					startOptions+="+i"+fmtMul(fmt.interval)
 				}
 				if (this.options.randomShift>0) {
-					startOptions+="+Math.random()*"+fmt.randomShift
+					startOptions+="+Math.random()"+fmtMul(fmt.randomShift)
 				}
 				if (startOptions.length>0) {
 					startOptions="ctx.currentTime"+startOptions
