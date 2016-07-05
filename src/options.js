@@ -35,6 +35,7 @@ class Options extends BaseOptions {
 					]],
 					['Int','repeat',[1,20]],
 					['Float','interval',[0,1],0.1,{ unit: 'second' }],
+					['Float','randomShift',[0,1],{ unit: 'second' }],
 				]],
 			],'source'],
 			['Filters','filters',[

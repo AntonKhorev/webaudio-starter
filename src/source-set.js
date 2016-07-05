@@ -1,7 +1,7 @@
 'use strict'
 
 const camelCase=require('crnx-base/fake-lodash/camelcase')
-const formatNumber=require('crnx-base/format-number')
+const formatNumbers=require('crnx-base/format-numbers')
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
 const WrapLines=require('crnx-base/wrap-lines')
@@ -102,11 +102,21 @@ const sourceClasses={
 				if (this.options.repeat==1) {
 					return getSampleLines("")
 				} else {
+					const numbers={}
+					numbers.interval=this.options.interval
+					if (this.options.randomShift>0) {
+						numbers.randomShift=this.options.randomShift
+					}
+					const fmt=formatNumbers(numbers)
+					let startOptions="ctx.currentTime+i*"+fmt.interval
+					if (this.options.randomShift>0) {
+						startOptions+="+Math.random()*"+fmt.randomShift
+					}
 					return WrapLines.b(
 						JsLines.bae("for (var i=0;i<"+this.options.repeat+";i++) {"),
 						JsLines.bae("}")
 					).ae(
-						getSampleLines("ctx.currentTime+i*"+formatNumber.js(this.options.interval))
+						getSampleLines(startOptions)
 					)
 				}
 			}

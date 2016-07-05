@@ -18,6 +18,7 @@ const langStrings={
 		'options.sources.sample.buffer.error': "Error while loading the sample",
 		'options.sources.sample.repeat': "Repeat sample",
 		'options.sources.sample.interval': "Interval between repeats",
+		'options.sources.sample.randomShift': "Random shift of a start time",
 		'options.sources.{audio,video,sample}.url': "Source URL",
 		'options.sources.video.{width,height}': "Player {}",
 
@@ -151,6 +152,7 @@ const langStrings={
 		'options.sources.sample.buffer.error': "Ошибка загрузки сэмпла",
 		'options.sources.sample.repeat': "Повторить сэмпл",
 		'options.sources.sample.interval': "Интервал между повторами",
+		'options.sources.sample.randomShift': "Случайный сдвиг начала проигрывания",
 		'options.sources.{audio,video,sample}.url': "URL источника",
 		'options.sources.video.{width,height}': "{Ширина,Высота} проигрывателя",
 
