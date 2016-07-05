@@ -19,6 +19,7 @@ const langStrings={
 		'options.sources.sample.repeat': "Repeat sample",
 		'options.sources.sample.interval': "Interval between repeats",
 		'options.sources.sample.randomShift': "Random shift of a start time",
+		'options.sources.sample.randomPitch': "Random pitch",
 		'options.sources.{audio,video,sample}.url': "Source URL",
 		'options.sources.video.{width,height}': "Player {}",
 
@@ -153,6 +154,7 @@ const langStrings={
 		'options.sources.sample.repeat': "Повторить сэмпл",
 		'options.sources.sample.interval': "Интервал между повторами",
 		'options.sources.sample.randomShift': "Случайный сдвиг начала проигрывания",
+		'options.sources.sample.randomPitch': "Случайная высота",
 		'options.sources.{audio,video,sample}.url': "URL источника",
 		'options.sources.video.{width,height}': "{Ширина,Высота} проигрывателя",
 

@@ -1,6 +1,7 @@
 'use strict'
 
 const camelCase=require('crnx-base/fake-lodash/camelcase')
+const formatNumber=require('crnx-base/format-number')
 const formatNumbers=require('crnx-base/format-numbers')
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
@@ -93,7 +94,11 @@ const sourceClasses={
 						)
 					)
 				}
+				if (this.options.randomPitch>0) {
+					a("bufferSourceNode.playbackRate.value=1+Math.random()*"+formatNumber.js(this.options.randomPitch)+";")
+				}
 				a(
+
 					"bufferSourceNode.start("+startOptions+");"
 				)
 				return a.e()
