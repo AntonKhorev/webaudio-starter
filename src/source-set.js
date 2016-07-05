@@ -69,50 +69,76 @@ const sourceClasses={
 		}
 		getJsInitLines(featureContext,i18n) {
 			const messageHtmlName=this.elementHtmlName+'.buffer'
-			const a=JsLines.b()
-			a(
-				RefLines.parse("// "+i18n('comment.sources.'+this.type)),
-				"loadSample('"+this.options.url+"',function(buffer){",
-				"	var button=document.getElementById('"+this.elementHtmlName+"');",
-				"	button.onclick=function(){",
-				"		var bufferSourceNode=ctx.createBufferSource();",
-				"		bufferSourceNode.buffer=buffer;"
-			)
-			if (featureContext.connectSampleToCompressor) {
+			const getOnClickLines=()=>{
+				const a=JsLines.b()
 				a(
-					"		if (document.getElementById('my.compressor').checked) {",
-					"			bufferSourceNode.connect(compressorNode);",
-					"		} else {",
-					...featureContext.connectSampleToJsNames.map(
-						nodeJsName=>"			bufferSourceNode.connect("+nodeJsName+");"
-					),
-					"		}"
+					"var bufferSourceNode=ctx.createBufferSource();",
+					"bufferSourceNode.buffer=buffer;"
+				)
+				if (featureContext.connectSampleToCompressor) {
+					a(
+						"if (document.getElementById('my.compressor').checked) {",
+						"	bufferSourceNode.connect(compressorNode);",
+						"} else {",
+						...featureContext.connectSampleToJsNames.map(
+							nodeJsName=>"	bufferSourceNode.connect("+nodeJsName+");"
+						),
+						"}"
+					)
+				} else {
+					a(
+						...featureContext.connectSampleToJsNames.map(
+							nodeJsName=>"bufferSourceNode.connect("+nodeJsName+");"
+						)
+					)
+				}
+				a(
+					"bufferSourceNode.start();"
+				)
+				return a.e()
+			}
+			const getOnDecodeLines=()=>{
+				const a=JsLines.b()
+				a(
+					"var button=document.getElementById('"+this.elementHtmlName+"');"
+				)
+				a(WrapLines.b(
+					JsLines.bae("button.onclick=function(){"),
+					JsLines.bae("};")
+				).ae(
+					getOnClickLines()
+				))
+				a(
+					"button.disabled=false;",
+					"document.getElementById('"+messageHtmlName+"').textContent='';"
+				)
+				return a.e()
+			}
+			const getOnErrorLines=()=>{
+				return JsLines.bae(
+					"document.getElementById('"+messageHtmlName+"').textContent='"+i18n('options.sources.sample.buffer.error')+"';"
+				)
+			}
+			const leadLines=JsLines.bae(
+				RefLines.parse("// "+i18n('comment.sources.'+this.type)),
+				"loadSample('"+this.options.url+"',function(buffer){"
+			)
+			const midLines=JsLines.bae(
+				"},function(){"
+			)
+			const endLines=JsLines.bae(
+				"});"
+			)
+			if (!featureContext.loaderOnError) {
+				return WrapLines.b(leadLines,endLines).ae(
+					getOnDecodeLines()
 				)
 			} else {
-				a(
-					...featureContext.connectSampleToJsNames.map(
-						nodeJsName=>"		bufferSourceNode.connect("+nodeJsName+");"
-					)
+				return WrapLines.b(leadLines,midLines,endLines).ae(
+					getOnDecodeLines(),
+					getOnErrorLines()
 				)
 			}
-			a(
-				"		bufferSourceNode.start();",
-				"	}",
-				"	button.disabled=false;",
-				"	document.getElementById('"+messageHtmlName+"').textContent='';",
-				"}"
-			)
-			if (featureContext.loaderOnError) {
-				a.t(
-					",function(){",
-					"	document.getElementById('"+messageHtmlName+"').textContent='"+i18n('options.sources.sample.buffer.error')+"';",
-					"}"
-				)
-			}
-			a.t(
-				");"
-			)
-			return a.e()
 		}
 	},
 }

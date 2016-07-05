@@ -16,6 +16,8 @@ const langStrings={
 		'options.sources.sample.add': "Add sample",
 		'options.sources.sample.buffer.loading': "Loading and decoding the sample",
 		'options.sources.sample.buffer.error': "Error while loading the sample",
+		'options.sources.sample.repeat': "Repeat sample",
+		'options.sources.sample.interval': "Interval between repeats",
 		'options.sources.{audio,video,sample}.url': "Source URL",
 		'options.sources.video.{width,height}': "Player {}",
 
@@ -136,6 +138,8 @@ const langStrings={
 		'units.hertz.{1,2}': "Hertz",
 		'units.decibel.a': "dB",
 		'units.decibel.{1,2}': "decibel{,s}",
+		'units.second.a': "s",
+		'units.second.{1,2}': "second{,s}",
 	},
 	ru:{
 		'options.sources': "Источники",
@@ -145,6 +149,8 @@ const langStrings={
 		'options.sources.sample.add': "Добавить сэмпл",
 		'options.sources.sample.buffer.loading': "Идёт загрузка и декодирование сэмпла",
 		'options.sources.sample.buffer.error': "Ошибка загрузки сэмпла",
+		'options.sources.sample.repeat': "Повторить сэмпл",
+		'options.sources.sample.interval': "Интервал между повторами",
 		'options.sources.{audio,video,sample}.url': "URL источника",
 		'options.sources.video.{width,height}': "{Ширина,Высота} проигрывателя",
 
@@ -270,6 +276,8 @@ const langStrings={
 		'units.hertz.{1,2,5}': "Герц{,а,}",
 		'units.decibel.a': "дБ",
 		'units.decibel.{1,2,5}': "децибел{,а,ов}",
+		'units.second.a': "с",
+		'units.second.{1,2,5}': "секунд{а,ы,}",
 	},
 }
 

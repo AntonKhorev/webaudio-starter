@@ -33,6 +33,8 @@ class Options extends BaseOptions {
 						'http://mainline.i3s.unice.fr/mooc/shoot1.mp3',
 						'http://mainline.i3s.unice.fr/mooc/shoot2.mp3',
 					]],
+					['Int','repeat',[1,20]],
+					['Float','interval',[0,1],0.1,{ unit: 'second' }],
 				]],
 			],'source'],
 			['Filters','filters',[
