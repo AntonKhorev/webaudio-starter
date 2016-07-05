@@ -99,19 +99,28 @@ const sourceClasses={
 				return a.e()
 			}
 			const getOnClickLines=()=>{
-				if (this.options.repeat==1) {
-					return getSampleLines("")
-				} else {
-					const numbers={}
+				let startOptions=""
+				const numbers={}
+				if (this.options.repeat!=1) {
 					numbers.interval=this.options.interval
-					if (this.options.randomShift>0) {
-						numbers.randomShift=this.options.randomShift
-					}
-					const fmt=formatNumbers(numbers)
-					let startOptions="ctx.currentTime+i*"+fmt.interval
-					if (this.options.randomShift>0) {
-						startOptions+="+Math.random()*"+fmt.randomShift
-					}
+				}
+				if (this.options.randomShift>0) {
+					numbers.randomShift=this.options.randomShift
+				}
+				const fmt=formatNumbers.js(numbers)
+				if (this.options.repeat!=1) {
+					startOptions+="+i*"+fmt.interval
+				}
+				if (this.options.randomShift>0) {
+					startOptions+="+Math.random()*"+fmt.randomShift
+				}
+				if (startOptions.length>0) {
+					startOptions="ctx.currentTime"+startOptions
+				}
+				if (this.options.repeat==1) {
+					return getSampleLines(startOptions)
+				} else {
+
 					return WrapLines.b(
 						JsLines.bae("for (var i=0;i<"+this.options.repeat+";i++) {"),
 						JsLines.bae("}")
