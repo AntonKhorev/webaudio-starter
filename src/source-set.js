@@ -1,6 +1,7 @@
 'use strict'
 
 const camelCase=require('crnx-base/fake-lodash/camelcase')
+const formatNumber=require('crnx-base/format-number')
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
 const WrapLines=require('crnx-base/wrap-lines')
@@ -69,7 +70,7 @@ const sourceClasses={
 		}
 		getJsInitLines(featureContext,i18n) {
 			const messageHtmlName=this.elementHtmlName+'.buffer'
-			const getOnClickLines=()=>{
+			const getSampleLines=(startOptions)=>{
 				const a=JsLines.b()
 				a(
 					"var bufferSourceNode=ctx.createBufferSource();",
@@ -93,9 +94,21 @@ const sourceClasses={
 					)
 				}
 				a(
-					"bufferSourceNode.start();"
+					"bufferSourceNode.start("+startOptions+");"
 				)
 				return a.e()
+			}
+			const getOnClickLines=()=>{
+				if (this.options.repeat==1) {
+					return getSampleLines("")
+				} else {
+					return WrapLines.b(
+						JsLines.bae("for (var i=0;i<"+this.options.repeat+";i++) {"),
+						JsLines.bae("}")
+					).ae(
+						getSampleLines("ctx.currentTime+i*"+formatNumber.js(this.options.interval))
+					)
+				}
 			}
 			const getOnDecodeLines=()=>{
 				const a=JsLines.b()
