@@ -36,7 +36,10 @@ class Options extends BaseOptions {
 					['Int','repeat',[1,20]],
 					['Float','interval',[0,1],0.1,{ unit: 'second' }],
 					['Float','randomShift',[0,1],{ unit: 'second' }],
+					['Float','pitch',[0,2],1],
 					['Float','randomPitch',[0,1]],
+					['Float','gain',[0,2],1],
+					['Float','randomGain',[0,1]],
 				]],
 			],'source'],
 			['Filters','filters',[
