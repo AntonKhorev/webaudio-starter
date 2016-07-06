@@ -99,7 +99,7 @@ const langStrings={
 		'options.loader.errors.network': "network errors",
 		'options.loader.errors.http': "network and HTTP errors",
 
-		'options-info.destination.analyser.logFftSize': "[[Fast Fourier transform]] size for the waveform/frequency visualization. Use a larger size to get finer details of the waveform and thinner frequency bars.",
+		'options-info.destination.analyser.logFftSize': "[[Fast Fourier transform]] size for the waveform/frequency visualization. Use a larger size to get a wider time window for the waveform and thinner frequency bars.",
 		'options-info.canvas.background.color.a': "Lower opacity values lead to a blur effect.",
 
 		'options-output.input': "Editable",
@@ -246,7 +246,7 @@ const langStrings={
 		'options.loader.errors.network': "для сетевых ошибок",
 		'options.loader.errors.http': "для сетевых ошибок и ошибок HTTP",
 
-		'options-info.destination.analyser.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]] для визуализаций формы волны и частот. Больший размер даёт более детализированную форму волны и более тонкие полосы частот.",
+		'options-info.destination.analyser.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]] для визуализаций формы волны и частот. Больший размер даёт более широкое окно для формы волны и более тонкие полосы частот.",
 		'options-info.canvas.background.color.a': "Низкие значения альфа-канала приводят к эффекту размывания.",
 
 		'options-output.input': "Значение изменяемо",
