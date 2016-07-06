@@ -15,14 +15,14 @@ class Destination extends Feature {
 	}
 	requestFeatureContext(featureContext) {
 		if (!featureContext.audioProcessing) return
-		if (this.options.compressor || this.options.waveform.enabled || this.options.frequencies.enabled) {
+		if (this.options.compressor.enabled || this.options.waveform.enabled || this.options.frequencies.enabled) {
 			featureContext.audioContext=true
 		}
 		if (this.options.waveform.enabled || this.options.frequencies.enabled) {
 			featureContext.canvas=true
 		}
 		if (featureContext.connectSampleToJsNames===undefined) {
-			if (this.options.compressor) {
+			if (this.options.compressor.enabled) {
 				featureContext.connectSampleToCompressor=true
 			}
 			if (this.options.waveform.enabled || this.options.frequencies.enabled) {
@@ -34,7 +34,7 @@ class Destination extends Feature {
 	}
 	getHtmlLines(featureContext,i18n) {
 		const a=NoseWrapLines.b("<div>","</div>")
-		if (featureContext.audioProcessing && this.options.compressor) {
+		if (featureContext.audioProcessing && this.options.compressor.enabled) {
 			a(
 				"<input id=my.compressor type=checkbox checked>",
 				Lines.html`<label for=my.compressor>${i18n('label.destination.compressor')}</label>`
@@ -81,8 +81,8 @@ class Destination extends Feature {
 				"var analyserNode=ctx.createAnalyser();",
 				...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(analyserNode);")
 			)
-			if (this.options.logFftSize!=11) { // default FFT size is 2048
-				a("analyserNode.fftSize="+(Math.pow(2,this.options.logFftSize))+";")
+			if (this.options.analyser.logFftSize!=11) { // default FFT size is 2048
+				a("analyserNode.fftSize="+(Math.pow(2,this.options.analyser.logFftSize))+";")
 			}
 			a(
 				"var analyserData=new Uint8Array(analyserNode.frequencyBinCount);"
@@ -101,7 +101,7 @@ class Destination extends Feature {
 		}
 		const a=InterleaveLines.b()
 		if (featureContext.audioProcessing && featureContext.audioContext) {
-			if (this.options.compressor) {
+			if (this.options.compressor.enabled) {
 				a(getCompressorLines())
 				prevNodeJsNames=['compressorNode']
 			}

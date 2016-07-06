@@ -60,7 +60,8 @@ const langStrings={
 		'options.filters.equalizer.gain{60,170,350,1000,3500,10000}': "{} Hz gain",
 
 		'options.destination': "Destination",
-		'options.destination.compressor': "Add dynamics compressor before the destination",
+		'options.destination.compressor': "Dynamics compressor",
+		'options.destination.compressor.enabled': "Add dynamics compressor before the destination",
 		'options.destination.{waveform,frequencies}': "{Waveform,Frequencies} visualization",
 		'options.destination.{waveform,frequencies}.enabled': "Enable {} visualization",
 		'options.destination.waveform.width': "Waveform line width",
@@ -79,7 +80,10 @@ const langStrings={
 		'options.destination.frequencies.outline.width': "Frequency bars outline width",
 		'options.destination.frequencies.outline.color': "Frequency bars outline color",
 		'options.destination.frequencies.outline.color.{r,g,b,a}': `Frequency bars outline ${enColors}`,
-		'options.destination.logFftSize': "FFT size (power of 2)",
+		'options.destination.volume': "Volume meter",
+		'options.destination.volume.enabled': "Enable volume meter",
+		'options.destination.analyser': "Analyser",
+		'options.destination.analyser.logFftSize': "FFT size (power of 2)",
 
 		'options.canvas': "Canvas",
 		'options.canvas.{width,height}': "Canvas {}",
@@ -95,7 +99,7 @@ const langStrings={
 		'options.loader.errors.network': "network errors",
 		'options.loader.errors.http': "network and HTTP errors",
 
-		'options-info.destination.logFftSize': "[[Fast Fourier transform]] size for the waveform/frequency visualization. Use a larger size to get finer details of the waveform and thinner frequency bars.",
+		'options-info.destination.analyser.logFftSize': "[[Fast Fourier transform]] size for the waveform/frequency visualization. Use a larger size to get finer details of the waveform and thinner frequency bars.",
 		'options-info.canvas.background.color.a': "Lower opacity values lead to a blur effect.",
 
 		'options-output.input': "Editable",
@@ -203,7 +207,8 @@ const langStrings={
 		'options.filters.equalizer.gain{60,170,350,1000,3500,10000}': "Усиление частоты {} Гц",
 
 		'options.destination': "Выход",
-		'options.destination.compressor': "Добавить компрессор перед выходом",
+		'options.destination.compressor': "Компрессор",
+		'options.destination.compressor.enabled': "Добавить компрессор перед выходом",
 		'options.destination.{waveform,frequencies}': "Визуализация {формы волны,частот}",
 		'options.destination.{waveform,frequencies}.enabled': "Включить визуализацию {формы волны,частот}",
 		'options.destination.waveform.width': "Ширина линии волны",
@@ -222,7 +227,10 @@ const langStrings={
 		'options.destination.frequencies.outline.width': "Ширина контура частот",
 		'options.destination.frequencies.outline.color': "Цвет контура частот",
 		'options.destination.frequencies.outline.color.{r,g,b,a}': `${ruColors} контура частот`,
-		'options.destination.logFftSize': "Размер БПФ (степень 2)",
+		'options.destination.volume': "Индикатор громкости",
+		'options.destination.volume.enabled': "Включить индикатор громкости",
+		'options.destination.analyser': "Анализатор",
+		'options.destination.analyser.logFftSize': "Размер БПФ (степень 2)",
 
 		'options.canvas': "Элемент <code>canvas</code>",
 		'options.canvas.{width,height}': "{Ширина,Высота} элемента <code>canvas</code>",
@@ -238,7 +246,7 @@ const langStrings={
 		'options.loader.errors.network': "для сетевых ошибок",
 		'options.loader.errors.http': "для сетевых ошибок и ошибок HTTP",
 
-		'options-info.destination.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]] для визуализаций формы волны и частот. Больший размер даёт более детализированную форму волны и более тонкие полосы частот.",
+		'options-info.destination.analyser.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]] для визуализаций формы волны и частот. Больший размер даёт более детализированную форму волны и более тонкие полосы частот.",
 		'options-info.canvas.background.color.a': "Низкие значения альфа-канала приводят к эффекту размывания.",
 
 		'options-output.input': "Значение изменяемо",

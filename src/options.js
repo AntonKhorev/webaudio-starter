@@ -65,7 +65,9 @@ class Options extends BaseOptions {
 				['EqualizerFilter','equalizer'],
 			],'filter'],
 			['Group','destination',[
-				['Checkbox','compressor'], // Firefox compresses automatically?
+				['Group','compressor',[
+					['Checkbox','enabled'], // Firefox compresses automatically?
+				]],
 				['Group','waveform',[
 					['Checkbox','enabled'],
 					['Float','width',[0,10],1,{
@@ -114,8 +116,13 @@ class Options extends BaseOptions {
 						visibilityData: {'destination.frequencies.enabled':[true]},
 					}]
 				]],
-				['Int','logFftSize',[5,12],8,{
-					visibilityData: {'destination.waveform.enabled':[true],'destination.frequencies.enabled':[true]},
+				['Group','volume',[
+					['Checkbox','enabled'],
+				]],
+				['Group','analyser',[
+					['Int','logFftSize',[5,12],8],
+				],{
+					visibilityData: {'destination.waveform.enabled':[true],'destination.frequencies.enabled':[true],'destination.volume.enabled':[true]},
 					visibilityDataLogic: 'or',
 				}],
 			]],
