@@ -15,17 +15,17 @@ class Destination extends Feature {
 	}
 	requestFeatureContext(featureContext) {
 		if (!featureContext.audioProcessing) return
-		if (this.options.compressor.enabled || this.options.waveform.enabled || this.options.frequencies.enabled) {
+		if (this.options.compressor.enabled || this.options.waveform.enabled || this.options.frequencies.enabled || this.options.volume.enabled) {
 			featureContext.audioContext=true
 		}
-		if (this.options.waveform.enabled || this.options.frequencies.enabled) {
+		if (this.options.waveform.enabled || this.options.frequencies.enabled || this.options.volume.enabled) {
 			featureContext.canvas=true
 		}
 		if (featureContext.connectSampleToJsNames===undefined) {
 			if (this.options.compressor.enabled) {
 				featureContext.connectSampleToCompressor=true
 			}
-			if (this.options.waveform.enabled || this.options.frequencies.enabled) {
+			if (this.options.waveform.enabled || this.options.frequencies.enabled || this.options.volume.enabled) {
 				featureContext.connectSampleToJsNames=["analyserNode"]
 			} else {
 				featureContext.connectSampleToJsNames=["ctx.destination"]
@@ -45,7 +45,7 @@ class Destination extends Feature {
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		const getCompressorLines=()=>{
 			const a=JsLines.b()
-			let nextNodeJsName=((this.options.waveform.enabled || this.options.frequencies.enabled) ? 'analyserNode' : 'ctx.destination')
+			let nextNodeJsName=((this.options.waveform.enabled || this.options.frequencies.enabled || this.options.volume.enabled) ? 'analyserNode' : 'ctx.destination')
 			a(
 				RefLines.parse("// "+i18n('comment.destination.compressor')),
 				"var compressorNode=ctx.createDynamicsCompressor();",
@@ -105,7 +105,7 @@ class Destination extends Feature {
 				a(getCompressorLines())
 				prevNodeJsNames=['compressorNode']
 			}
-			if (this.options.waveform.enabled || this.options.frequencies.enabled) {
+			if (this.options.waveform.enabled || this.options.frequencies.enabled || this.options.volume.enabled) {
 				a(getAnalyserLines())
 				prevNodeJsNames=['analyserNode']
 			}
@@ -114,100 +114,117 @@ class Destination extends Feature {
 		return a.e()
 	}
 	getJsLoopVisLines(featureContext,i18n) {
+		if (!featureContext.audioProcessing) return Lines.be()
+		const pushAll=(this.options.frequencies.enabled || this.options.volume.enabled) // when fill style is altered
+		const pushEach=(this.options.frequencies.enabled && this.options.frequencies.outline.enabled && this.options.waveform.enabled) // when stroke style is altered in two different places
 		const a=JsLines.b()
-		if (featureContext.audioProcessing) {
-			if (this.options.frequencies.enabled) { // will alter fill color
-				a("canvasContext.save();")
+		if (pushAll || pushEach) {
+			a("canvasContext.save();")
+		}
+		if (this.options.volume.enabled) {
+			a(
+				"analyserNode.getByteFrequencyData(analyserData);", // TODO reuse in frequencies
+				"var sumAmplitudes=0;",
+				"for (var i=0;i<analyserData.length;i++) {",
+				"	sumAmplitudes+=analyserData[i];",
+				"}",
+				"var meanAmplitude=sumAmplitudes/analyserData.length",
+				"var barHeight=meanAmplitude*canvas.height/256;",
+				"canvasContext.fillRect(0,canvas.height-barHeight,25,barHeight);"
+			)
+		}
+		if (pushEach) {
+			a("canvasContext.restore();")
+			a("canvasContext.save();")
+		}
+		if (this.options.frequencies.enabled) {
+			let nBars="analyserData.length"
+			if (this.options.frequencies.cutoff!=100) {
+				a("var nBars=Math.floor(analyserData.length*"+(this.options.frequencies.cutoff/100).toFixed(2)+");")
+				nBars="nBars"
 			}
-			if (this.options.frequencies.enabled) {
-				let nBars="analyserData.length"
-				if (this.options.frequencies.cutoff!=100) {
-					a("var nBars=Math.floor(analyserData.length*"+(this.options.frequencies.cutoff/100).toFixed(2)+");")
-					nBars="nBars"
-				}
-				const y=(this.options.frequencies.base=='bottom'
-					? "canvas.height-barHeight"
-					: "(canvas.height-barHeight)/2"
-				)
-				const colorInput=(this.options.frequencies.coloringInput=='amplitude'
-					? "analyserData[i]"
-					: "Math.round(i*255/"+nBars+")"
-				)
-				const fillStyle=(this.options.frequencies.coloring=='component'
-					? "'rgb('+("+colorInput+"+100)+',50,50)'"
-					: "'hsl('+(255-"+colorInput+")+',100%,50%)'"
-				)
-				a(
-					"var barWidth=canvas.width/"+nBars+"*0.8;",
-					"analyserNode.getByteFrequencyData(analyserData);",
+			const y=(this.options.frequencies.base=='bottom'
+				? "canvas.height-barHeight"
+				: "(canvas.height-barHeight)/2"
+			)
+			const colorInput=(this.options.frequencies.coloringInput=='amplitude'
+				? "analyserData[i]"
+				: "Math.round(i*255/"+nBars+")"
+			)
+			const fillStyle=(this.options.frequencies.coloring=='component'
+				? "'rgb('+("+colorInput+"+100)+',50,50)'"
+				: "'hsl('+(255-"+colorInput+")+',100%,50%)'"
+			)
+			a(
+				"var barWidth=canvas.width/"+nBars+"*0.8;",
+				"analyserNode.getByteFrequencyData(analyserData);",
+				"for (var i=0;i<"+nBars+";i++) {",
+				"	var x=i*canvas.width/"+nBars+";",
+				"	canvasContext.fillStyle="+fillStyle+";",
+				"	var barHeight=analyserData[i]*canvas.height/256;",
+				"	var y="+y+";",
+				"	canvasContext.fillRect(x,y,barWidth,barHeight);",
+				"}"
+			)
+			if (this.options.frequencies.outline.enabled) {
+				const writeOutline=y=>JsLines.bae(
 					"for (var i=0;i<"+nBars+";i++) {",
 					"	var x=i*canvas.width/"+nBars+";",
-					"	canvasContext.fillStyle="+fillStyle+";",
 					"	var barHeight=analyserData[i]*canvas.height/256;",
 					"	var y="+y+";",
-					"	canvasContext.fillRect(x,y,barWidth,barHeight);",
+					"	if (i==0) {",
+					"		canvasContext.moveTo(0,y);",
+					"	}",
+					"	canvasContext.lineTo(x+barWidth/2,y);",
+					"	if (i=="+nBars+"-1) {",
+					"		canvasContext.lineTo(canvas.width,y);",
+					"	}",
 					"}"
 				)
-				if (this.options.frequencies.outline.enabled) {
-					const writeOutline=y=>JsLines.bae(
-						"for (var i=0;i<"+nBars+";i++) {",
-						"	var x=i*canvas.width/"+nBars+";",
-						"	var barHeight=analyserData[i]*canvas.height/256;",
-						"	var y="+y+";",
-						"	if (i==0) {",
-						"		canvasContext.moveTo(0,y);",
-						"	}",
-						"	canvasContext.lineTo(x+barWidth/2,y);",
-						"	if (i=="+nBars+"-1) {",
-						"		canvasContext.lineTo(canvas.width,y);",
-						"	}",
-						"}"
-					)
-					if (this.options.frequencies.outline.width!=1.0) {
-						a("canvasContext.lineWidth="+this.options.frequencies.outline.width+";")
-					}
-					a(Canvas.getStyleLines('strokeStyle',this.options.frequencies.outline.color))
-					a("canvasContext.beginPath();")
-					if (this.options.frequencies.base=='bottom') {
-						a(writeOutline(y))
-					} else {
-						a(NoseWrapLines.b(
-							JsLines.bae(";[-1,+1].forEach(function(aboveOrBelow){"),
-							JsLines.bae("});")
-						).ae(
-							writeOutline("(canvas.height+aboveOrBelow*barHeight)/2")
-						))
-					}
-					a("canvasContext.stroke();")
+				if (this.options.frequencies.outline.width!=1.0) {
+					a("canvasContext.lineWidth="+this.options.frequencies.outline.width+";")
 				}
-			}
-			if (this.options.waveform.enabled && this.options.frequencies.enabled) { // will alter stroke style
-				a("canvasContext.restore();")
-				a("canvasContext.save();")
-			}
-			if (this.options.waveform.enabled) {
-				if (this.options.waveform.width!=1.0) {
-					a("canvasContext.lineWidth="+this.options.waveform.width+";")
+				a(Canvas.getStyleLines('strokeStyle',this.options.frequencies.outline.color))
+				a("canvasContext.beginPath();")
+				if (this.options.frequencies.base=='bottom') {
+					a(writeOutline(y))
+				} else {
+					a(NoseWrapLines.b(
+						JsLines.bae(";[-1,+1].forEach(function(aboveOrBelow){"),
+						JsLines.bae("});")
+					).ae(
+						writeOutline("(canvas.height+aboveOrBelow*barHeight)/2")
+					))
 				}
-				a(
-					Canvas.getStyleLines('strokeStyle',this.options.waveform.color),
-					"analyserNode.getByteTimeDomainData(analyserData);",
-					"canvasContext.beginPath();",
-					"for (var i=0;i<analyserData.length;i++) {",
-					"	var x=i*canvas.width/analyserData.length;",
-					"	var y=analyserData[i]*canvas.height/256;",
-					"	if (i==0) {",
-					"		canvasContext.moveTo(x,y);",
-					"	} else {",
-					"		canvasContext.lineTo(x,y);",
-					"	}",
-					"}",
-					"canvasContext.stroke();"
-				)
+				a("canvasContext.stroke();")
 			}
-			if (this.options.frequencies.enabled) { // altered fill color
-				a("canvasContext.restore();")
+		}
+		if (pushEach) {
+			a("canvasContext.restore();")
+			a("canvasContext.save();")
+		}
+		if (this.options.waveform.enabled) {
+			if (this.options.waveform.width!=1.0) {
+				a("canvasContext.lineWidth="+this.options.waveform.width+";")
 			}
+			a(
+				Canvas.getStyleLines('strokeStyle',this.options.waveform.color),
+				"analyserNode.getByteTimeDomainData(analyserData);",
+				"canvasContext.beginPath();",
+				"for (var i=0;i<analyserData.length;i++) {",
+				"	var x=i*canvas.width/analyserData.length;",
+				"	var y=analyserData[i]*canvas.height/256;",
+				"	if (i==0) {",
+				"		canvasContext.moveTo(x,y);",
+				"	} else {",
+				"		canvasContext.lineTo(x,y);",
+				"	}",
+				"}",
+				"canvasContext.stroke();"
+			)
+		}
+		if (pushAll || pushEach) { // altered fill color
+			a("canvasContext.restore();")
 		}
 		return a.e()
 	}

@@ -141,7 +141,7 @@ class Options extends BaseOptions {
 					}],
 				]],
 			],{
-				visibilityData: {'destination.waveform.enabled':[true],'destination.frequencies.enabled':[true]},
+				visibilityData: {'destination.waveform.enabled':[true],'destination.frequencies.enabled':[true],'destination.volume.enabled':[true]},
 				visibilityDataLogic: 'or',
 			}],
 			['Group','loader',[
