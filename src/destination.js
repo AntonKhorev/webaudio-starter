@@ -21,6 +21,9 @@ class Destination extends Feature {
 		if (this.options.waveform.enabled || this.options.frequencies.enabled || this.options.volume.enabled) {
 			featureContext.canvas=true
 		}
+		if (this.options.volume.enabled) {
+			featureContext.canvasVolumeGradient=true
+		}
 		if (featureContext.connectSampleToJsNames===undefined) {
 			if (this.options.compressor.enabled) {
 				featureContext.connectSampleToCompressor=true
@@ -130,6 +133,7 @@ class Destination extends Feature {
 				"}",
 				"var meanAmplitude=sumAmplitudes/analyserData.length",
 				"var barHeight=meanAmplitude*canvas.height/256;",
+				"canvasContext.fillStyle=canvasVolumeGradient;",
 				"canvasContext.fillRect(0,canvas.height-barHeight,25,barHeight);"
 			)
 		}

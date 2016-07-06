@@ -42,6 +42,15 @@ class Canvas extends Feature {
 				"var canvasContext=canvas.getContext('2d');"
 			)
 		}
+		if (featureContext.canvasVolumeGradient) {
+			a(
+				"var canvasVolumeGradient=canvasContext.createLinearGradient(0,0,0,canvas.height);",
+				"canvasVolumeGradient.addColorStop(1.00,'#000');",
+				"canvasVolumeGradient.addColorStop(0.75,'#F00');",
+				"canvasVolumeGradient.addColorStop(0.25,'#FF0');",
+				"canvasVolumeGradient.addColorStop(0.00,'#FFF');"
+			)
+		}
 		return a.e()
 	}
 	getJsLoopPreLines(featureContext,i18n) {
