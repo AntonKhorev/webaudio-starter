@@ -139,7 +139,8 @@ const langStrings={
 		'comment.filters.equalizer.single': "create equalizer as a [peaking][peaking] [biquad filter node][biquad]",
 		'comment.destination': "connect last node to [destination][destination]",
 		'comment.destination.compressor': "create [dynamics compressor node][compressor]",
-		'comment.destination.{waveform,frequencies,waveform+frequencies}': "create [analyser node][analyser] for {waveform,frequencies,waveform and frequencies} visualization",
+		'comment.destination.analyser': "create [analyser node][analyser]",
+		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "create [analyser node][analyser] for {waveform,frequencies,waveform and frequencies} visualization",
 
 		'units.pixel.a': "px",
 		'units.pixel.{1,2}': "pixel{,s}",
@@ -286,7 +287,8 @@ const langStrings={
 		'comment.filters.equalizer.single': "создаём эквалайзер в виде [peaking][peaking] [биквадратичного фильтра][biquad]",
 		'comment.destination': "соединяем последний узел с [выходом][destination]",
 		'comment.destination.compressor': "создаём [узел компрессора][compressor]",
-		'comment.destination.{waveform,frequencies,waveform+frequencies}': "создаём [узел анализатора][analyser] для визуализации {формы волны,частот,формы волны и частот}",
+		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "создаём [узел анализатора][analyser]",
+		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "создаём [узел анализатора][analyser] для визуализации {формы волны,частот,формы волны и частот}",
 
 		'units.pixel.a': "px",
 		'units.pixel.{1,2,5}': "пиксел{ь,я,ей}",

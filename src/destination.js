@@ -68,16 +68,16 @@ class Destination extends Feature {
 		}
 		const getAnalyserLines=()=>{
 			const a=JsLines.b()
-			let comment
-			if (!this.options.frequencies.enabled) {
-				comment='waveform'
-			} else if (!this.options.waveform.enabled) {
-				comment='frequencies'
-			} else {
-				comment='waveform+frequencies'
+			let comment=''
+			if (this.options.waveform.enabled && !this.options.frequencies.enabled) {
+				comment='.waveform'
+			} else if (!this.options.waveform.enabled && this.options.frequencies.enabled) {
+				comment='.frequencies'
+			} else if (this.options.waveform.enabled && this.options.frequencies.enabled) {
+				comment='.waveform+frequencies'
 			}
 			a(
-				RefLines.parse("// "+i18n('comment.destination.'+comment)),
+				RefLines.parse("// "+i18n('comment.destination.analyser'+comment)),
 				"var analyserNode=ctx.createAnalyser();",
 				...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(analyserNode);")
 			)
