@@ -2,6 +2,7 @@
 
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
+const WrapLines=require('crnx-base/wrap-lines')
 const NoseWrapLines=require('crnx-base/nose-wrap-lines')
 const InterleaveLines=require('crnx-base/interleave-lines')
 const RefLines=require('crnx-base/ref-lines')
@@ -116,32 +117,43 @@ class Destination extends Feature {
 		}
 		return a.e()
 	}
-	getJsLoopVisLines(featureContext,i18n) {
+	get pushContextForEach() { // when stroke style is altered in two different places
+		return this.options.frequencies.enabled && this.options.frequencies.outline.enabled && this.options.waveform.enabled
+	}
+	get pushContextForAll() { // when fill style is altered and not pushing for each
+		return !this.pushContextForEach && (this.options.frequencies.enabled || this.options.volume.enabled)
+	}
+	getJsLoopPreLines(featureContext,i18n) {
 		if (!featureContext.audioProcessing) return Lines.be()
-		const pushAll=(this.options.frequencies.enabled || this.options.volume.enabled) // when fill style is altered
-		const pushEach=(this.options.frequencies.enabled && this.options.frequencies.outline.enabled && this.options.waveform.enabled) // when stroke style is altered in two different places
-		const a=JsLines.b()
-		if (pushAll || pushEach) {
-			a("canvasContext.save();")
+		const getEnterFunctionLines=()=>{
+			if (this.pushContextForEach) {
+				return JsLines.bae("canvasContext.save();")
+			} else {
+				return Lines.be()
+			}
 		}
-		if (this.options.volume.enabled) {
-			a(
+		const getExitFunctionLines=()=>{
+			if (this.pushContextForEach) {
+				return JsLines.bae("canvasContext.restore();")
+			} else {
+				return Lines.be()
+			}
+		}
+		const getVisualizeVolumeLines=()=>{
+			return JsLines.bae(
 				"analyserNode.getByteFrequencyData(analyserData);", // TODO reuse in frequencies
 				"var sumAmplitudes=0;",
 				"for (var i=0;i<analyserData.length;i++) {",
 				"	sumAmplitudes+=analyserData[i];",
 				"}",
-				"var meanAmplitude=sumAmplitudes/analyserData.length",
+				"var meanAmplitude=sumAmplitudes/analyserData.length;",
 				"var barHeight=meanAmplitude*canvas.height/256;",
 				"canvasContext.fillStyle=canvasVolumeGradient;",
 				"canvasContext.fillRect(0,canvas.height-barHeight,25,barHeight);"
 			)
 		}
-		if (pushEach) {
-			a("canvasContext.restore();")
-			a("canvasContext.save();")
-		}
-		if (this.options.frequencies.enabled) {
+		const getVisualizeFrequenciesLines=()=>{
+			const a=JsLines.b()
 			let nBars="analyserData.length"
 			if (this.options.frequencies.cutoff!=100) {
 				a("var nBars=Math.floor(analyserData.length*"+(this.options.frequencies.cutoff/100).toFixed(2)+");")
@@ -193,7 +205,7 @@ class Destination extends Feature {
 				if (this.options.frequencies.base=='bottom') {
 					a(writeOutline(y))
 				} else {
-					a(NoseWrapLines.b(
+					a(WrapLines.b(
 						JsLines.bae(";[-1,+1].forEach(function(aboveOrBelow){"),
 						JsLines.bae("});")
 					).ae(
@@ -202,12 +214,10 @@ class Destination extends Feature {
 				}
 				a("canvasContext.stroke();")
 			}
+			return a.e()
 		}
-		if (pushEach) {
-			a("canvasContext.restore();")
-			a("canvasContext.save();")
-		}
-		if (this.options.waveform.enabled) {
+		const getVisualizeWaveformLines=()=>{
+			const a=JsLines.b()
 			if (this.options.waveform.width!=1.0) {
 				a("canvasContext.lineWidth="+this.options.waveform.width+";")
 			}
@@ -226,8 +236,46 @@ class Destination extends Feature {
 				"}",
 				"canvasContext.stroke();"
 			)
+			return a.e()
 		}
-		if (pushAll || pushEach) { // altered fill color
+		return JsLines.bae(...[
+			[this.options.volume.enabled,'visualizeVolume',getVisualizeVolumeLines],
+			[this.options.frequencies.enabled,'visualizeFrequencies',getVisualizeFrequenciesLines],
+			[this.options.waveform.enabled,'visualizeWaveform',getVisualizeWaveformLines],
+		].map(conditionAndNameAndFn=>{
+			const condition=conditionAndNameAndFn[0]
+			const name=conditionAndNameAndFn[1]
+			const fn=conditionAndNameAndFn[2]
+			if (condition) {
+				return WrapLines.b(
+					JsLines.bae("function "+name+"() {"),
+					JsLines.bae("}")
+				).ae(
+					getEnterFunctionLines(),
+					fn(),
+					getExitFunctionLines()
+				)
+			} else {
+				return Lines.be()
+			}
+		}))
+	}
+	getJsLoopVisLines(featureContext,i18n) {
+		if (!featureContext.audioProcessing) return Lines.be()
+		const a=JsLines.b()
+		if (this.pushContextForAll) {
+			a("canvasContext.save();")
+		}
+		if (this.options.volume.enabled) {
+			a("visualizeVolume();")
+		}
+		if (this.options.frequencies.enabled) {
+			a("visualizeFrequencies();")
+		}
+		if (this.options.waveform.enabled) {
+			a("visualizeWaveform();")
+		}
+		if (this.pushContextForAll) {
 			a("canvasContext.restore();")
 		}
 		return a.e()
