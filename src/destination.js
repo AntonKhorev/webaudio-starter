@@ -14,6 +14,12 @@ class Destination extends Feature {
 		super()
 		this.options=options
 	}
+	get useDirectAnalyser() {
+		return this.options.waveform.enabled || this.options.frequencies.enabled || (this.options.volume.enabled && !this.options.volume.stereo)
+	}
+	get useSplitAnalyser() {
+		return this.options.volume.enabled && this.options.volume.stereo
+	}
 	requestFeatureContext(featureContext) {
 		if (!featureContext.audioProcessing) return
 		if (this.options.compressor.enabled || this.options.waveform.enabled || this.options.frequencies.enabled || this.options.volume.enabled) {
@@ -29,9 +35,14 @@ class Destination extends Feature {
 			if (this.options.compressor.enabled) {
 				featureContext.connectSampleToCompressor=true
 			}
-			if (this.options.waveform.enabled || this.options.frequencies.enabled || this.options.volume.enabled) {
-				featureContext.connectSampleToJsNames=["analyserNode"]
-			} else {
+			featureContext.connectSampleToJsNames=[]
+			if (this.useDirectAnalyser) {
+				featureContext.connectSampleToJsNames.push("analyserNode")
+			}
+			if (this.useSplitAnalyser) {
+				featureContext.connectSampleToJsNames.push("channelSplitterNode")
+			}
+			if (featureContext.connectSampleToJsNames.length==0) {
 				featureContext.connectSampleToJsNames=["ctx.destination"]
 			}
 		}
@@ -47,6 +58,18 @@ class Destination extends Feature {
 		return a.e()
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
+		const getAnalyserNodeLines=(jsName,prevNodeJsNames,connectArgs)=>{
+			if (connectArgs===undefined) connectArgs=""
+			const a=JsLines.b()
+			a(
+				"var "+jsName+"=ctx.createAnalyser();",
+				...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect("+jsName+connectArgs+");")
+			)
+			if (this.options.analyser.logFftSize!=11) { // default FFT size is 2048
+				a(jsName+".fftSize="+(Math.pow(2,this.options.analyser.logFftSize))+";")
+			}
+			return a.e()
+		}
 		const getCompressorLines=()=>{
 			const a=JsLines.b()
 			let nextNodeJsName=((this.options.waveform.enabled || this.options.frequencies.enabled || this.options.volume.enabled) ? 'analyserNode' : 'ctx.destination')
@@ -55,7 +78,7 @@ class Destination extends Feature {
 				"var compressorNode=ctx.createDynamicsCompressor();",
 				...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(compressorNode);")
 			)
-			if (prevNodeJsNames.length>0) { // TODO make this affect sample playback
+			if (prevNodeJsNames.length>0) {
 				a(
 					"document.getElementById('my.compressor').onchange=function(){",
 					"	if (this.checked) {",
@@ -70,7 +93,7 @@ class Destination extends Feature {
 			}
 			return a.e()
 		}
-		const getAnalyserLines=()=>{
+		const getDirectAnalyserLines=()=>{
 			const a=JsLines.b()
 			let comment=''
 			if (this.options.waveform.enabled && !this.options.frequencies.enabled) {
@@ -82,15 +105,23 @@ class Destination extends Feature {
 			}
 			a(
 				RefLines.parse("// "+i18n('comment.destination.analyser'+comment)),
-				"var analyserNode=ctx.createAnalyser();",
-				...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(analyserNode);")
-			)
-			if (this.options.analyser.logFftSize!=11) { // default FFT size is 2048
-				a("analyserNode.fftSize="+(Math.pow(2,this.options.analyser.logFftSize))+";")
-			}
-			a(
+				getAnalyserNodeLines("analyserNode",prevNodeJsNames),
 				"var analyserData=new Uint8Array(analyserNode.frequencyBinCount);"
 			)
+			return a.e()
+		}
+		const getSplitAnalyserLines=()=>{
+			const a=JsLines.b()
+			a(
+				RefLines.parse("// "+i18n('comment.destination.analyser.split')),
+				"var channelSplitterNode=ctx.createChannelSplitter();",
+				...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(channelSplitterNode);"),
+				getAnalyserNodeLines("leftAnalyserNode",["channelSplitterNode"],",0,0"),
+				getAnalyserNodeLines("rightAnalyserNode",["channelSplitterNode"],",1,0")
+			)
+			if (!this.useDirectAnalyser) { // need to create analyserData once
+				a("var analyserData=new Uint8Array(leftAnalyserNode.frequencyBinCount);")
+			}
 			return a.e()
 		}
 		const getDestinationLines=()=>{
@@ -109,9 +140,17 @@ class Destination extends Feature {
 				a(getCompressorLines())
 				prevNodeJsNames=['compressorNode']
 			}
-			if (this.options.waveform.enabled || this.options.frequencies.enabled || this.options.volume.enabled) {
-				a(getAnalyserLines())
-				prevNodeJsNames=['analyserNode']
+			if (this.useDirectAnalyser || this.useSplitAnalyser) {
+				if (this.useDirectAnalyser) {
+					a(getDirectAnalyserLines())
+				}
+				if (this.useSplitAnalyser) {
+					a(getSplitAnalyserLines())
+				}
+				if (this.useDirectAnalyser) {
+					prevNodeJsNames=['analyserNode']
+				}
+				// split analyser doesn't change prevNodeJsNames b/c its output is not connected to anything
 			}
 			a(getDestinationLines())
 		}
@@ -140,17 +179,29 @@ class Destination extends Feature {
 			}
 		}
 		const getVisualizeVolumeLines=()=>{
-			return JsLines.bae(
-				"analyserNode.getByteFrequencyData(analyserData);", // TODO reuse in frequencies
-				"var sumAmplitudes=0;",
-				"for (var i=0;i<analyserData.length;i++) {",
-				"	sumAmplitudes+=analyserData[i];",
-				"}",
-				"var meanAmplitude=sumAmplitudes/analyserData.length;",
-				"var barHeight=meanAmplitude*canvas.height/256;",
-				"canvasContext.fillStyle=canvasVolumeGradient;",
-				"canvasContext.fillRect(0,canvas.height-barHeight,25,barHeight);"
-			)
+			const getVolumeMeterLines=(analyserNodeJsName,xOffset)=>{
+				return JsLines.bae(
+					analyserNodeJsName+".getByteFrequencyData(analyserData);", // TODO reuse in frequencies when in non-stereo mode
+					"var sumAmplitudes=0;",
+					"for (var i=0;i<analyserData.length;i++) {",
+					"	sumAmplitudes+=analyserData[i];",
+					"}",
+					"var meanAmplitude=sumAmplitudes/analyserData.length;",
+					"var barHeight=meanAmplitude*canvas.height/256;",
+					"canvasContext.fillStyle=canvasVolumeGradient;",
+					"canvasContext.fillRect("+xOffset+",canvas.height-barHeight,25,barHeight);"
+				)
+			}
+			if (!this.options.volume.stereo) {
+				return getVolumeMeterLines("analyserNode","0")
+			} else {
+				return WrapLines.b(
+					JsLines.bae(";[leftAnalyserNode,rightAnalyserNode].forEach(function(channelAnalyserNode,channelNumber){"),
+					JsLines.bae("});")
+				).ae(
+					getVolumeMeterLines("channelAnalyserNode","channelNumber*26")
+				)
+			}
 		}
 		const getVisualizeFrequenciesLines=()=>{
 			const a=JsLines.b()

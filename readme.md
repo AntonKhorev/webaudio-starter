@@ -21,6 +21,7 @@ Includes examples adapted from [*HTML5 Part 2: Advanced Techniques for Designing
 * [2D real time visualization: frequencies / First typical example](http://jsbin.com/vemaho/edit)
 * [2D real time visualization: frequencies / Another example: achieving more impressive frequency visualization](http://jsbin.com/fagadu/edit)
 * [Animate volume meters / Add a single volume meter to the audio player](http://jsbin.com/kazuzed/edit)
+* [Animate volume meters / Draw two volume meters, one for each stereo channel](http://jsbin.com/vejocav/edit)
 * [Working with sound samples loaded in memory](http://jsbin.com/gesetu/edit)
 
 Some of the default sound URLs are for sound files from [Web Audio Playground](http://webaudioplayground.appspot.com/).

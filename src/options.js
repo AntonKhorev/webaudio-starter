@@ -118,6 +118,9 @@ class Options extends BaseOptions {
 				]],
 				['Group','volume',[
 					['Checkbox','enabled'],
+					['Checkbox','stereo',{
+						visibilityData: {'destination.volume.enabled':[true]},
+					}],
 				]],
 				['Group','analyser',[
 					['Int','logFftSize',[5,12],8],

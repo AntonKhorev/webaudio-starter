@@ -82,6 +82,7 @@ const langStrings={
 		'options.destination.frequencies.outline.color.{r,g,b,a}': `Frequency bars outline ${enColors}`,
 		'options.destination.volume': "Volume meter",
 		'options.destination.volume.enabled': "Enable volume meter",
+		'options.destination.volume.stereo': "Meters for left and right stereo channels",
 		'options.destination.analyser': "Analyser",
 		'options.destination.analyser.logFftSize': "FFT size (power of 2)",
 
@@ -141,6 +142,7 @@ const langStrings={
 		'comment.destination.compressor': "create [dynamics compressor node][compressor]",
 		'comment.destination.analyser': "create [analyser node][analyser]",
 		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "create [analyser node][analyser] for {waveform,frequencies,waveform and frequencies} visualization",
+		'comment.destination.analyser.split': "create [channel splitter node][splitter] connected to two [analyser nodes][analyser]",
 
 		'units.pixel.a': "px",
 		'units.pixel.{1,2}': "pixel{,s}",
@@ -230,6 +232,7 @@ const langStrings={
 		'options.destination.frequencies.outline.color.{r,g,b,a}': `${ruColors} контура частот`,
 		'options.destination.volume': "Индикатор громкости",
 		'options.destination.volume.enabled': "Включить индикатор громкости",
+		'options.destination.volume.stereo': "Отдельные индикаторы для левого и правого каналов",
 		'options.destination.analyser': "Анализатор",
 		'options.destination.analyser.logFftSize': "Размер БПФ (степень 2)",
 
@@ -289,6 +292,7 @@ const langStrings={
 		'comment.destination.compressor': "создаём [узел компрессора][compressor]",
 		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "создаём [узел анализатора][analyser]",
 		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "создаём [узел анализатора][analyser] для визуализации {формы волны,частот,формы волны и частот}",
+		'comment.destination.analyser.split': "создаём [узел разделения каналов][splitter], соединённый с двумя [узлами анализатора][analyser]",
 
 		'units.pixel.a': "px",
 		'units.pixel.{1,2,5}': "пиксел{ь,я,ей}",

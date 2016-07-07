@@ -18,6 +18,7 @@ class CodeOutput extends BaseCodeOutput {
 			destination: 'https://www.w3.org/TR/webaudio/#AudioDestinationNode',
 			compressor:  'https://www.w3.org/TR/webaudio/#the-dynamicscompressornode-interface',
 			analyser:    'https://www.w3.org/TR/webaudio/#the-analysernode-interface',
+			splitter:    'https://www.w3.org/TR/webaudio/#the-channelsplitternode-interface',
 			buffer:      'https://www.w3.org/TR/webaudio/#AudioBufferSourceNode',
 		}
 		return formatting
