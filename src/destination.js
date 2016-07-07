@@ -277,7 +277,7 @@ class Destination extends Feature {
 				"analyserNode.getByteTimeDomainData(analyserData);",
 				"canvasContext.beginPath();",
 				"for (var i=0;i<analyserData.length;i++) {",
-				"	var x=i*canvas.width/analyserData.length;",
+				"	var x=i*canvas.width/(analyserData.length-1);",
 				"	var y=analyserData[i]*canvas.height/256;",
 				"	if (i==0) {",
 				"		canvasContext.moveTo(x,y);",
