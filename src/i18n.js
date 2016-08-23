@@ -290,7 +290,7 @@ const langStrings={
 		'comment.filters.equalizer.single': "создаём эквалайзер в виде [peaking][peaking] [биквадратичного фильтра][biquad]",
 		'comment.destination': "соединяем последний узел с [выходом][destination]",
 		'comment.destination.compressor': "создаём [узел компрессора][compressor]",
-		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "создаём [узел анализатора][analyser]",
+		'comment.destination.analyser': "создаём [узел анализатора][analyser]",
 		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "создаём [узел анализатора][analyser] для визуализации {формы волны,частот,формы волны и частот}",
 		'comment.destination.analyser.split': "создаём [узел разделения каналов][splitter], соединённый с двумя [узлами анализатора][analyser]",
 
