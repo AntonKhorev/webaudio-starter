@@ -17,7 +17,6 @@ let logFrequencyArrayLinearLimit0,logFrequencyArrayLinearLimit1
 let magnitudeArray,phaseArray
 let magnitudeArray0,phaseArray0
 
-const log10=x=>Math.log(x)/Math.LN10
 const mix=(a,b,x)=>a*(1-x)+b*x
 
 class FilterOptionOutput extends GroupOptionOutput {
@@ -79,7 +78,7 @@ class FilterOptionOutput extends GroupOptionOutput {
 			for (let i=0;i<phaseArray.length;i++) {
 				phaseArray[i]=0
 			}
-			filterNodes.forEach(filterNode=>{
+			for (const filterNode of filterNodes) {
 				filterNode.getFrequencyResponse(frequencyArray,magnitudeArray0,phaseArray0)
 				removeNans(magnitudeArray0)
 				removeNans(phaseArray0)
@@ -89,10 +88,10 @@ class FilterOptionOutput extends GroupOptionOutput {
 				for (let i=0;i<phaseArray.length;i++) {
 					phaseArray[i]+=phaseArray0[i]
 				}
-			})
+			}
 			if (magnitudeLogScale) {
 				for (let i=0;i<width;i++) { // convert to decibels
-					magnitudeArray[i]=20*Math.log(magnitudeArray[i])/Math.LN10
+					magnitudeArray[i]=20*Math.log10(magnitudeArray[i])
 				}
 			}
 			function wrap(v,maxAbs) {
@@ -126,16 +125,16 @@ class FilterOptionOutput extends GroupOptionOutput {
 				)
 				const calcY=v=>height*(1-(v-min)/(max-min))
 				const getGridNumbers=(min,max)=>{
-					const numLogs=Math.log(max-min)-Math.log(maxNGridLines)
+					const numLogs=Math.log10(max-min)-Math.log10(maxNGridLines)
 					let k
 					let p=Infinity
-					;[1,2,5].forEach(tk=>{
-						const tp=Math.ceil((numLogs-Math.log(tk))/Math.LN10)
+					for (const tk of [1,2,5]) {
+						const tp=Math.ceil(numLogs-Math.log10(tk))
 						if (tp<p) {
 							p=tp
 							k=tk
 						}
-					})
+					}
 					const dv=k*Math.pow(10,p)
 					const v0=Math.ceil(min/dv)*dv
 					const numbers=[]
@@ -315,8 +314,8 @@ class FilterOptionOutput extends GroupOptionOutput {
 			magnitudeArray0=new Float32Array(width)
 			phaseArray0=new Float32Array(width)
 			const maxFrequency=audioContext.sampleRate/2
-			const log10minFrequency=log10(minFrequencyInLogMode)
-			const log10maxFrequency=log10(maxFrequency)
+			const log10minFrequency=Math.log10(minFrequencyInLogMode)
+			const log10maxFrequency=Math.log10(maxFrequency)
 			for (let i=0;i<width;i++) {
 				const x=(i+0.5)/width
 				linearFrequencyArray[i]=maxFrequency*x

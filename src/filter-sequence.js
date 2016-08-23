@@ -516,7 +516,7 @@ class FilterSequence extends CollectionFeature {
 	}
 	requestFeatureContext(featureContext) {
 		if (!featureContext.audioProcessing) return
-		this.entries.forEach(entry=>{
+		for (const entry of this.entries) {
 			if (!entry.skipNode) {
 				featureContext.audioContext=true
 				entry.requestFeatureContext(featureContext)
@@ -524,7 +524,7 @@ class FilterSequence extends CollectionFeature {
 					featureContext.connectSampleToJsNames=entry.connectToNodeJsNames
 				}
 			}
-		})
+		}
 	}
 	getHtmlLines(featureContext,i18n) {
 		if (!featureContext.audioProcessing) return Lines.be()
@@ -540,11 +540,11 @@ class FilterSequence extends CollectionFeature {
 	}
 	getNodeJsNames(featureContext,prevNodeJsNames) {
 		if (!featureContext.audioProcessing) return prevNodeJsNames
-		this.entries.forEach(entry=>{
+		for (const entry of this.entries) {
 			if (!entry.skipNode) {
 				prevNodeJsNames=entry.nodeJsNames
 			}
-		})
+		}
 		return prevNodeJsNames
 	}
 }

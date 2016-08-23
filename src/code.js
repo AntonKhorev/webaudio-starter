@@ -34,9 +34,9 @@ class Code extends BaseWebCode {
 		//	connectSampleToCompressor = this is a hack
 		//	canvasVolumeGradient = Canvas has to create canvasVolumeGradient
 		//	TODO the rest
-		this.features.forEach(feature=>{
+		for (const feature of this.features) {
 			feature.requestFeatureContext(this.featureContext)
-		})
+		}
 		this.isInteresting=!!this.featureContext.audioContext
 	}
 	get basename() {
