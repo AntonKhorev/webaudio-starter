@@ -105,8 +105,7 @@ const sourceClasses={
 				if (this.options.gain!=1 || this.options.randomGain>0) {
 					lastNodeName="bufferSourceGainNode"
 					a(
-						"var bufferSourceGainNode=ctx.createGain();",
-						"bufferSourceNode.connect(bufferSourceGainNode);",
+						"var bufferSourceGainNode=bufferSourceNode.connect(ctx.createGain());",
 						"bufferSourceGainNode.gain.value="+randomValue(this.options.gain,this.options.randomGain)+";"
 					)
 				}

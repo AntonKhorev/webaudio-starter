@@ -101,13 +101,18 @@ class Filter {
 		)
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
-		return JsLines.bae(
-			RefLines.parse("// "+i18n('comment.filters.'+this.type)),
-			"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
-			...prevNodeJsNames.map(
+		const a=JsLines.b()
+		a(RefLines.parse("// "+i18n('comment.filters.'+this.type)))
+		if (prevNodeJsNames.length==1) {
+			const prevNodeJsName=prevNodeJsNames[0]
+			a("var "+this.nodeJsName+"="+prevNodeJsName+".connect(ctx."+this.ctxCreateMethodName+"());")
+		} else {
+			a("var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();")
+			a(...prevNodeJsNames.map(
 				prevNodeJsName=>prevNodeJsName+".connect("+this.nodeJsName+");"
-			)
-		)
+			))
+		}
+		return a.e()
 	}
 	get nodeJsNames() {
 		return [this.nodeJsName]
