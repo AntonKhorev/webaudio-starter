@@ -410,35 +410,28 @@ const filterClasses={
 				if (!(noGainsConstant || singleFreq)) {
 					a("var freq=freqData[0], gain=freqData[1];")
 				}
-				if (allGainsConstant && !singleFreq) {
-					a("")
+				let connectors,connector
+				if (singleFreq) {
+					connectors=prevNodeJsNames
 				} else {
-					a("var ")
+					if (prevNodeJsNames.length==1) {
+						connectors=["prevNode"]
+					} else {
+						connectors="prevNodes"
+						connector="prevNode"
+					}
 				}
-				a.t(nodeJsName+"=ctx."+this.ctxCreateMethodName+"();")
+				a(Feature.getJsConnectAssignLines(
+					((allGainsConstant && !singleFreq) ? "" : "var"),nodeJsName,
+					"ctx."+this.ctxCreateMethodName+"()",
+					connectors,connector
+				))
 				if (featureContext.setConnectSampleToJsNames && !singleFreq) {
 					a(
 						"if ("+this.connectToNodeJsName+"===undefined) {",
 						"	"+this.connectToNodeJsName+"="+nodeJsName+";",
 						"}"
 					)
-				}
-				if (singleFreq) {
-					a(
-						...prevNodeJsNames.map(
-							prevNodeJsName=>prevNodeJsName+".connect("+nodeJsName+");"
-						)
-					)
-				} else {
-					if (prevNodeJsNames.length==1) {
-						a("prevNode.connect("+nodeJsName+");")
-					} else {
-						a(
-							"prevNodes.forEach(function(prevNode){",
-							"	prevNode.connect("+nodeJsName+");",
-							"});"
-						)
-					}
 				}
 				a(
 					nodeJsName+".type='peaking';",
