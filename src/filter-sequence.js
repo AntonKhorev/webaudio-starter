@@ -9,6 +9,7 @@ const NoseWrapLines=require('crnx-base/nose-wrap-lines')
 const InterleaveLines=require('crnx-base/interleave-lines')
 const RefLines=require('crnx-base/ref-lines')
 const Option=require('./option-classes')
+const Feature=require('./feature')
 const CollectionFeature=require('./collection-feature')
 
 class Filter {
@@ -101,18 +102,10 @@ class Filter {
 		)
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
-		const a=JsLines.b()
-		a(RefLines.parse("// "+i18n('comment.filters.'+this.type)))
-		if (prevNodeJsNames.length==1) {
-			const prevNodeJsName=prevNodeJsNames[0]
-			a("var "+this.nodeJsName+"="+prevNodeJsName+".connect(ctx."+this.ctxCreateMethodName+"());")
-		} else {
-			a("var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();")
-			a(...prevNodeJsNames.map(
-				prevNodeJsName=>prevNodeJsName+".connect("+this.nodeJsName+");"
-			))
-		}
-		return a.e()
+		return JsLines.bae(
+			RefLines.parse("// "+i18n('comment.filters.'+this.type)),
+			Feature.getJsConnectDeclarationLines(this.nodeJsName,"ctx."+this.ctxCreateMethodName+"()",prevNodeJsNames)
+		)
 	}
 	get nodeJsNames() {
 		return [this.nodeJsName]
@@ -248,9 +241,10 @@ const filterClasses={
 		getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 			return JsLines.bae(
 				RefLines.parse("// "+i18n('comment.filters.'+this.type)),
-				"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"(["+this.options.feedforward.entries+"],["+this.options.feedback.entries+"]);",
-				...prevNodeJsNames.map(
-					prevNodeJsName=>prevNodeJsName+".connect("+this.nodeJsName+");"
+				Feature.getJsConnectDeclarationLines(
+					this.nodeJsName,
+					"ctx."+this.ctxCreateMethodName+"(["+this.options.feedforward.entries+"],["+this.options.feedback.entries+"])",
+					prevNodeJsNames
 				)
 			)
 		}
@@ -291,19 +285,12 @@ const filterClasses={
 				a(RefLines.parse("// "+i18n('comment.filters.'+this.type+'.single')))
 			}
 			a(
-				"var "+this.nodeJsName+"=ctx."+this.ctxCreateMethodName+"();",
-				...prevNodeJsNames.map(
-					prevNodeJsName=>prevNodeJsName+".connect("+this.nodeJsName+");"
-				)
+				Feature.getJsConnectDeclarationLines(this.nodeJsName,"ctx."+this.ctxCreateMethodName+"()",prevNodeJsNames)
 			)
 			if (this.options.reverb.input || this.options.reverb!=1) {
 				a(
-					"var "+this.wetGainNodeJsName+"=ctx.createGain();",
-					this.nodeJsName+".connect("+this.wetGainNodeJsName+");",
-					"var "+this.dryGainNodeJsName+"=ctx.createGain();",
-					...prevNodeJsNames.map(
-						prevNodeJsName=>prevNodeJsName+".connect("+this.dryGainNodeJsName+");"
-					)
+					Feature.getJsConnectDeclarationLines(this.wetGainNodeJsName,"ctx.createGain()",[this.nodeJsName]),
+					Feature.getJsConnectDeclarationLines(this.dryGainNodeJsName,"ctx.createGain()",prevNodeJsNames)
 				)
 				if (this.options.reverb.input) {
 					const inputHtmlName=this.getPropertyInputHtmlName('reverb')
