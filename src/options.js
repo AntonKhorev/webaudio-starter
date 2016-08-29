@@ -151,8 +151,11 @@ class Options extends BaseOptions {
 				['Select','errors',['none','network','http']],
 			]], // TODO visibility depending on sources and filters
 			['Group','api',[
-				['Checkbox','noVendorPrefix'],
-				['Checkbox','connectReturnValue'],
+				['Checkbox','noVendorPrefix'], // won't work on Safari
+				['Checkbox','connectReturnValue'], // won't work on Safari as long as this is the interface:
+					// https://trac.webkit.org/browser/trunk/Source/WebCore/Modules/webaudio/AudioNode.idl
+					// https://trac.webkit.org/browser/trunk/Source/WebCore/Modules/webaudio/AudioNode.h
+					// (github mirror) https://github.com/WebKit/webkit/blob/66e68cd8d7bf4ea1cf52f31ed9cb242f83ea5b57/Source/WebCore/Modules/webaudio/AudioNode.h
 			]],
 		]
 	}
