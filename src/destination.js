@@ -110,8 +110,8 @@ class Destination extends Feature {
 			a(
 				RefLines.parse("// "+i18n('comment.destination.analyser.split')),
 				featureContext.getJsConnectAssignLines("var","channelSplitterNode","ctx.createChannelSplitter()",prevNodeJsNames),
-				getAnalyserNodeLines("leftAnalyserNode",["channelSplitterNode"],"0,0"),
-				getAnalyserNodeLines("rightAnalyserNode",["channelSplitterNode"],"1,0")
+				getAnalyserNodeLines("leftAnalyserNode",["channelSplitterNode"],"0"),
+				getAnalyserNodeLines("rightAnalyserNode",["channelSplitterNode"],"1")
 			)
 			if (!this.useDirectAnalyser) { // need to create analyserData once
 				a("var analyserData=new Uint8Array(leftAnalyserNode.frequencyBinCount);")
