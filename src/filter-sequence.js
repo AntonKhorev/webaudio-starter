@@ -409,7 +409,7 @@ const filterClasses={
 				if (!(noGainsConstant || singleFreq)) {
 					a("var freq=freqData[0], gain=freqData[1];")
 				}
-				let connectors,connector
+				let connectors
 				if (singleFreq) {
 					connectors=prevNodeJsNames
 				} else {
@@ -417,13 +417,12 @@ const filterClasses={
 						connectors=["prevNode"]
 					} else {
 						connectors="prevNodes"
-						connector="prevNode"
 					}
 				}
 				a(featureContext.getJsConnectAssignLines(
 					((allGainsConstant && !singleFreq) ? "" : "var"),nodeJsName,
 					"ctx."+this.ctxCreateMethodName+"()",
-					connectors,connector
+					connectors
 				))
 				if (featureContext.setConnectSampleToJsNames && !singleFreq) {
 					a(

@@ -59,14 +59,10 @@ class Destination extends Feature {
 	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		const getAnalyserNodeLines=(jsName,prevNodeJsNames,connectArgs)=>{
-			if (connectArgs===undefined) connectArgs=""
 			const a=JsLines.b()
-			a(
-				"var "+jsName+"=ctx.createAnalyser();",
-				...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect("+jsName+connectArgs+");")
-			)
+			a(featureContext.getJsConnectAssignLines("var",jsName,"ctx.createAnalyser()",prevNodeJsNames,connectArgs))
 			if (this.options.analyser.logFftSize!=11) { // default FFT size is 2048
-				a(jsName+".fftSize="+(Math.pow(2,this.options.analyser.logFftSize))+";")
+				a(jsName+".fftSize="+(1<<this.options.analyser.logFftSize)+";")
 			}
 			return a.e()
 		}
@@ -75,8 +71,7 @@ class Destination extends Feature {
 			let nextNodeJsName=((this.options.waveform.enabled || this.options.frequencies.enabled || this.options.volume.enabled) ? 'analyserNode' : 'ctx.destination')
 			a(
 				RefLines.parse("// "+i18n('comment.destination.compressor')),
-				"var compressorNode=ctx.createDynamicsCompressor();",
-				...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(compressorNode);")
+				featureContext.getJsConnectAssignLines("var","compressorNode","ctx.createDynamicsCompressor()",prevNodeJsNames)
 			)
 			if (prevNodeJsNames.length>0) {
 				a(
@@ -114,10 +109,9 @@ class Destination extends Feature {
 			const a=JsLines.b()
 			a(
 				RefLines.parse("// "+i18n('comment.destination.analyser.split')),
-				"var channelSplitterNode=ctx.createChannelSplitter();",
-				...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(channelSplitterNode);"),
-				getAnalyserNodeLines("leftAnalyserNode",["channelSplitterNode"],",0,0"),
-				getAnalyserNodeLines("rightAnalyserNode",["channelSplitterNode"],",1,0")
+				featureContext.getJsConnectAssignLines("var","channelSplitterNode","ctx.createChannelSplitter()",prevNodeJsNames),
+				getAnalyserNodeLines("leftAnalyserNode",["channelSplitterNode"],"0,0"),
+				getAnalyserNodeLines("rightAnalyserNode",["channelSplitterNode"],"1,0")
 			)
 			if (!this.useDirectAnalyser) { // need to create analyserData once
 				a("var analyserData=new Uint8Array(leftAnalyserNode.frequencyBinCount);")
