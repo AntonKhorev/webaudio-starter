@@ -9,7 +9,6 @@ const NoseWrapLines=require('crnx-base/nose-wrap-lines')
 const InterleaveLines=require('crnx-base/interleave-lines')
 const RefLines=require('crnx-base/ref-lines')
 const Option=require('./option-classes')
-const Feature=require('./feature')
 const CollectionFeature=require('./collection-feature')
 
 class Filter {
@@ -104,7 +103,7 @@ class Filter {
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		return JsLines.bae(
 			RefLines.parse("// "+i18n('comment.filters.'+this.type)),
-			Feature.getJsConnectAssignLines("var",this.nodeJsName,"ctx."+this.ctxCreateMethodName+"()",prevNodeJsNames)
+			featureContext.getJsConnectAssignLines("var",this.nodeJsName,"ctx."+this.ctxCreateMethodName+"()",prevNodeJsNames)
 		)
 	}
 	get nodeJsNames() {
@@ -241,7 +240,7 @@ const filterClasses={
 		getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 			return JsLines.bae(
 				RefLines.parse("// "+i18n('comment.filters.'+this.type)),
-				Feature.getJsConnectAssignLines(
+				featureContext.getJsConnectAssignLines(
 					"var",this.nodeJsName,
 					"ctx."+this.ctxCreateMethodName+"(["+this.options.feedforward.entries+"],["+this.options.feedback.entries+"])",
 					prevNodeJsNames
@@ -285,12 +284,12 @@ const filterClasses={
 				a(RefLines.parse("// "+i18n('comment.filters.'+this.type+'.single')))
 			}
 			a(
-				Feature.getJsConnectAssignLines("var",this.nodeJsName,"ctx."+this.ctxCreateMethodName+"()",prevNodeJsNames)
+				featureContext.getJsConnectAssignLines("var",this.nodeJsName,"ctx."+this.ctxCreateMethodName+"()",prevNodeJsNames)
 			)
 			if (this.options.reverb.input || this.options.reverb!=1) {
 				a(
-					Feature.getJsConnectAssignLines("var",this.wetGainNodeJsName,"ctx.createGain()",[this.nodeJsName]),
-					Feature.getJsConnectAssignLines("var",this.dryGainNodeJsName,"ctx.createGain()",prevNodeJsNames)
+					featureContext.getJsConnectAssignLines("var",this.wetGainNodeJsName,"ctx.createGain()",[this.nodeJsName]),
+					featureContext.getJsConnectAssignLines("var",this.dryGainNodeJsName,"ctx.createGain()",prevNodeJsNames)
 				)
 				if (this.options.reverb.input) {
 					const inputHtmlName=this.getPropertyInputHtmlName('reverb')
@@ -421,7 +420,7 @@ const filterClasses={
 						connector="prevNode"
 					}
 				}
-				a(Feature.getJsConnectAssignLines(
+				a(featureContext.getJsConnectAssignLines(
 					((allGainsConstant && !singleFreq) ? "" : "var"),nodeJsName,
 					"ctx."+this.ctxCreateMethodName+"()",
 					connectors,connector

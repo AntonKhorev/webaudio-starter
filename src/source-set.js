@@ -7,7 +7,6 @@ const JsLines=require('crnx-base/js-lines')
 const WrapLines=require('crnx-base/wrap-lines')
 const InterleaveLines=require('crnx-base/interleave-lines')
 const RefLines=require('crnx-base/ref-lines')
-const Feature=require('./feature')
 const CollectionFeature=require('./collection-feature')
 
 class Source {
@@ -106,7 +105,7 @@ const sourceClasses={
 				if (this.options.gain!=1 || this.options.randomGain>0) {
 					lastNodeName="bufferSourceGainNode"
 					a(
-						Feature.getJsConnectAssignLines("var","bufferSourceGainNode","ctx.createGain()",["bufferSourceNode"]),
+						featureContext.getJsConnectAssignLines("var","bufferSourceGainNode","ctx.createGain()",["bufferSourceNode"]),
 						"bufferSourceGainNode.gain.value="+randomValue(this.options.gain,this.options.randomGain)+";"
 					)
 				}
