@@ -150,6 +150,10 @@ class Options extends BaseOptions {
 			['Group','loader',[
 				['Select','errors',['none','network','http']],
 			]], // TODO visibility depending on sources and filters
+			['Group','api',[
+				['Checkbox','noVendorPrefix'],
+				['Checkbox','connectReturnValue'],
+			]],
 		]
 	}
 	get optionClasses() {

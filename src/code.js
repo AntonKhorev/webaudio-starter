@@ -19,7 +19,7 @@ class Code extends BaseWebCode {
 		this.i18n=i18n
 		this.featureContext={}
 		this.features=[
-			new AudioContext,
+			new AudioContext(options.api),
 			new Loader(options.loader),
 			new SourceSet(options.sources),
 			new FilterSequence(options.filters),
@@ -27,13 +27,16 @@ class Code extends BaseWebCode {
 			new Canvas(options.canvas),
 		]
 		// possible feature context flags:
+		//	audioContext = AudioContext has to assign the audio context to var ctx
+		//	canvasVolumeGradient = Canvas has to create canvasVolumeGradient
+		//	connectSampleToCompressor = this is a hack
+		//	connectSampleToJsNames = this is a hack: array of strings to connect samples to
 		//	loader = Loader has to provide loadSample() function
 		//	loaderOnError = loadSample() caller has to pass the error handler
 		//	setConnectSampleToJsNames = have a node(s) to connect samples to (some filters like equaliser may not save a refernce to it otherwise)
-		//	connectSampleToJsNames = this is a hack: array of strings to connect samples to
-		//	connectSampleToCompressor = this is a hack
-		//	canvasVolumeGradient = Canvas has to create canvasVolumeGradient
 		//	TODO the rest
+		// helpers:
+		//	getJsConnectAssignLines = set by AudioContext
 		for (const feature of this.features) {
 			feature.requestFeatureContext(this.featureContext)
 		}

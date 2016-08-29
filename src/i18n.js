@@ -100,6 +100,10 @@ const langStrings={
 		'options.loader.errors.network': "network errors",
 		'options.loader.errors.http': "network and HTTP errors",
 
+		'options.api': "Web Audio API support",
+		'options.api.noVendorPrefix': "Can create an audio context without a vendor prefix",
+		'options.api.connectReturnValue': "Can use a return value of <code>AudioNode.connect()</code>",
+
 		'options-info.destination.analyser.logFftSize': "[[Fast Fourier transform]] size for the waveform/frequency visualization. Use a larger size to get a wider time window for the waveform and thinner frequency bars.",
 		'options-info.canvas.background.color.a': "Lower opacity values lead to a blur effect.",
 
@@ -249,6 +253,10 @@ const langStrings={
 		'options.loader.errors.none': "отключена",
 		'options.loader.errors.network': "для сетевых ошибок",
 		'options.loader.errors.http': "для сетевых ошибок и ошибок HTTP",
+
+		'options.api': "Поддержка Web Audio API",
+		'options.api.noVendorPrefix': "Можно создавать аудио-контекст без префиксов производителей",
+		'options.api.connectReturnValue': "Можно использовать значение, возвращаемое <code>AudioNode.connect()</code>",
 
 		'options-info.destination.analyser.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]] для визуализаций формы волны и частот. Больший размер даёт более широкое окно для формы волны и более тонкие полосы частот.",
 		'options-info.canvas.background.color.a': "Низкие значения альфа-канала приводят к эффекту размывания.",
