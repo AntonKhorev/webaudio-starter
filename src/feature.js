@@ -44,9 +44,6 @@ class Feature {
 		}
 		return a.e()
 	}
-	static getJsConnectDeclarationLines(nodeJsName,nodeJsValue,prevNodeJsNames) { // TODO remove
-		return Feature.getJsConnectAssignLines("var",nodeJsName,nodeJsValue,prevNodeJsNames)
-	}
 }
 
 module.exports=Feature

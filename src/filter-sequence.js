@@ -104,7 +104,7 @@ class Filter {
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		return JsLines.bae(
 			RefLines.parse("// "+i18n('comment.filters.'+this.type)),
-			Feature.getJsConnectDeclarationLines(this.nodeJsName,"ctx."+this.ctxCreateMethodName+"()",prevNodeJsNames)
+			Feature.getJsConnectAssignLines("var",this.nodeJsName,"ctx."+this.ctxCreateMethodName+"()",prevNodeJsNames)
 		)
 	}
 	get nodeJsNames() {
@@ -241,8 +241,8 @@ const filterClasses={
 		getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 			return JsLines.bae(
 				RefLines.parse("// "+i18n('comment.filters.'+this.type)),
-				Feature.getJsConnectDeclarationLines(
-					this.nodeJsName,
+				Feature.getJsConnectAssignLines(
+					"var",this.nodeJsName,
 					"ctx."+this.ctxCreateMethodName+"(["+this.options.feedforward.entries+"],["+this.options.feedback.entries+"])",
 					prevNodeJsNames
 				)
@@ -285,12 +285,12 @@ const filterClasses={
 				a(RefLines.parse("// "+i18n('comment.filters.'+this.type+'.single')))
 			}
 			a(
-				Feature.getJsConnectDeclarationLines(this.nodeJsName,"ctx."+this.ctxCreateMethodName+"()",prevNodeJsNames)
+				Feature.getJsConnectAssignLines("var",this.nodeJsName,"ctx."+this.ctxCreateMethodName+"()",prevNodeJsNames)
 			)
 			if (this.options.reverb.input || this.options.reverb!=1) {
 				a(
-					Feature.getJsConnectDeclarationLines(this.wetGainNodeJsName,"ctx.createGain()",[this.nodeJsName]),
-					Feature.getJsConnectDeclarationLines(this.dryGainNodeJsName,"ctx.createGain()",prevNodeJsNames)
+					Feature.getJsConnectAssignLines("var",this.wetGainNodeJsName,"ctx.createGain()",[this.nodeJsName]),
+					Feature.getJsConnectAssignLines("var",this.dryGainNodeJsName,"ctx.createGain()",prevNodeJsNames)
 				)
 				if (this.options.reverb.input) {
 					const inputHtmlName=this.getPropertyInputHtmlName('reverb')
