@@ -20,10 +20,12 @@
 		.graph {
 			@grid-size: 32px;
 			@node-width: 6;
+			position: relative;
 			background: #FFD;
 			font-size: 14px;
 			font-family: sans-serif;
 			.node {
+				position: absolute;
 				width: @grid-size*@node-width;
 				background: #DDF;
 				text-align: center;
