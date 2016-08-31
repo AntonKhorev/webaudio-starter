@@ -10,6 +10,7 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 		const gridHeight=15
 		const nodeWidth=6
 		let $lines,$nodes
+		let moving=true
 		let $movedNode=null
 		let movedX1,movedY1,movedX2,movedY2
 		let isAnimated=false
@@ -48,18 +49,25 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 			$movedNode=$node
 			movedX1=ev.pageX
 			movedY1=ev.pageY
+			moving=true
+			return false
 		})
 		let $node1,$node2,$line // temp vars
 		const animate=()=>{
 			isAnimated=false
-			const pos=$movedNode.position()
-			$movedNode.css({
-				left: pos.left+movedX2-movedX1,
-				top: pos.top+movedY2-movedY1,
-			})
-			movedX1=movedX2
-			movedY1=movedY2
-			updateConnectionLine($line,$node1,$node2)
+			if ($movedNode) {
+				const pos=$movedNode.position()
+				$movedNode.css({
+					left: pos.left+movedX2-movedX1,
+					top: pos.top+movedY2-movedY1,
+				})
+				movedX1=movedX2
+				movedY1=movedY2
+				updateConnectionLine($line,$node1,$node2)
+			}
+			if (!moving) {
+				$movedNode=null
+			}
 		}
 		this.$output.find('legend').after(
 			$("<div class='graph'>").height(gridSize*gridHeight).append(
@@ -68,7 +76,7 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 					$node1=writeNode('options.sources',2,5),
 					$node2=writeNode('options.destination',12,6)
 				).mousemove(function(ev){
-					if (!$movedNode) return
+					if (!moving) return
 					movedX2=ev.pageX
 					movedY2=ev.pageY
 					if (!isAnimated) {
@@ -76,7 +84,7 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 						requestAnimationFrame(animate)
 					}
 				}).mouseup(function(){
-					$movedNode=null
+					moving=false
 				})
 			)
 		)
