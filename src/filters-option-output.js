@@ -75,18 +75,18 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 				$nodes=$("<div class='nodes'>").append(
 					$node1=writeNode('options.sources',2,5),
 					$node2=writeNode('options.destination',12,6)
-				).mousemove(function(ev){
-					if (!moving) return
-					movedX2=ev.pageX
-					movedY2=ev.pageY
-					if (!isAnimated) {
-						isAnimated=true
-						requestAnimationFrame(animate)
-					}
-				}).mouseup(function(){
-					moving=false
-				})
-			)
+				)
+			).mousemove(function(ev){
+				if (!moving) return
+				movedX2=ev.pageX
+				movedY2=ev.pageY
+				if (!isAnimated) {
+					isAnimated=true
+					requestAnimationFrame(animate)
+				}
+			}).mouseup(function(){
+				moving=false
+			})
 		)
 		$lines.append($line=writeConnectionLine(2,5,12,6))
 	}
