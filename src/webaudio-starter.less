@@ -22,8 +22,15 @@
 			@node-width: 6;
 			position: relative;
 			background: #FFD;
+			overflow: hidden;
 			font-size: 14px;
 			font-family: sans-serif;
+			svg {
+				display: block;
+				position: relative;
+				width: 100%;
+				height: 100%;
+			}
 			.node {
 				position: absolute;
 				width: @grid-size*@node-width;
