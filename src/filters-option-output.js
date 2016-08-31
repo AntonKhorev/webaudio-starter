@@ -11,7 +11,8 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 		const nodeWidth=6
 		let $lines,$nodes
 		let $movedNode=null
-		let movedX,movedY
+		let movedX1,movedY1,movedX2,movedY2
+		let isAnimated=false
 		const writeConnectionLine=(gx1,gy1,gx2,gy2)=>{
 			const writeLine=(x1,y1,x2,y2)=>$(
 				document.createElementNS("http://www.w3.org/2000/svg","line")
@@ -45,10 +46,21 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 			const $node=$(this)
 			$nodes.append($node)
 			$movedNode=$node
-			movedX=ev.pageX
-			movedY=ev.pageY
+			movedX1=ev.pageX
+			movedY1=ev.pageY
 		})
 		let $node1,$node2,$line // temp vars
+		const animate=()=>{
+			isAnimated=false
+			const pos=$movedNode.position()
+			$movedNode.css({
+				left: pos.left+movedX2-movedX1,
+				top: pos.top+movedY2-movedY1,
+			})
+			movedX1=movedX2
+			movedY1=movedY2
+			updateConnectionLine($line,$node1,$node2)
+		}
 		this.$output.find('legend').after(
 			$("<div class='graph'>").height(gridSize*gridHeight).append(
 				$lines=$("<svg xmlns='http://www.w3.org/2000/svg' version='1.1'></svg>"),
@@ -57,16 +69,12 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 					$node2=writeNode('options.destination',12,6)
 				).mousemove(function(ev){
 					if (!$movedNode) return
-					const dx=ev.pageX-movedX
-					const dy=ev.pageY-movedY
-					const pos=$movedNode.position()
-					$movedNode.css({
-						left: pos.left+dx,
-						top: pos.top+dy,
-					})
-					movedX+=dx
-					movedY+=dy
-					updateConnectionLine($line,$node1,$node2)
+					movedX2=ev.pageX
+					movedY2=ev.pageY
+					if (!isAnimated) {
+						isAnimated=true
+						requestAnimationFrame(animate)
+					}
 				}).mouseup(function(){
 					$movedNode=null
 				})
