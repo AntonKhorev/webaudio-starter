@@ -30,7 +30,7 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 			movedX=ev.pageX
 			movedY=ev.pageY
 		})
-		this.$output.prepend(
+		this.$output.find('legend').after(
 			$("<div class='graph'>").height(gridSize*gridHeight).append(
 				$lines=$("<svg xmlns='http://www.w3.org/2000/svg' version='1.1'></svg>").append(
 					writeLine(100,100,400,200)
