@@ -17,5 +17,20 @@
 				margin: 0;
 			}
 		}
+		.graph {
+			@grid-size: 32px;
+			@node-width: 6;
+			background: #FFD;
+			font-size: 14px;
+			font-family: sans-serif;
+			.node {
+				width: @grid-size*@node-width;
+				background: #DDF;
+				text-align: center;
+				.node-section {
+					height: @grid-size;
+				}
+			}
+		}
 	}
 }

@@ -3,30 +3,10 @@
 const Option=require('./option-classes')
 const BaseOptionsOutput=require('crnx-base/options-output')
 const ArrayOptionOutput=require('crnx-base/array-option-output')
+const FiltersOptionOutput=require('./filters-option-output')
 const BiquadFilterOptionOutput=require('./biquad-filter-option-output')
 const IIRFilterOptionOutput=require('./iir-filter-option-output')
 const EqualizerFilterOptionOutput=require('./equalizer-filter-option-output')
-
-class FiltersOptionOutput extends ArrayOptionOutput {
-	writeDraggableSubOption(subOption,writeOption,i18n) {
-		const $subOutput=super.writeDraggableSubOption(subOption,writeOption,i18n)
-		const This=this
-		if (subOption instanceof Option.BiquadFilter) {
-			$subOutput.find('button.clone').click(function(){
-				const $button=$(this)
-				const coefs=$button.data('coefs')
-				if (coefs) {
-					const entry=This.option.makeEntry('iir',coefs)
-					This.$entries.append(
-						This.writeDraggableSubOption(entry,writeOption,i18n)
-					)
-					This.updateArrayEntries()
-				}
-			})
-		}
-		return $subOutput
-	}
-}
 
 class IIRFilterCoefsOptionOutput extends ArrayOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
