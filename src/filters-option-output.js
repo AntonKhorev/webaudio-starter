@@ -8,21 +8,39 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 		super(option,writeOption,i18n,generateId)
 		const gridSize=32
 		const gridHeight=15
+		const nodeWidth=6
 		let $lines,$nodes
 		let $movedNode=null
 		let movedX,movedY
-		//const animations=new Map // can jQuery animations do it?
-		const writeLine=(x1,y1,x2,y2)=>$(
-			document.createElementNS("http://www.w3.org/2000/svg","line")
-		).attr({stroke:'#000',x1,y1,x2,y2})
-		const writeNode=(nodeName,x,y)=>$("<div class='node'>").append(
+		const writeConnectionLine=(gx1,gy1,gx2,gy2)=>{
+			const writeLine=(x1,y1,x2,y2)=>$(
+				document.createElementNS("http://www.w3.org/2000/svg","line")
+			).attr({stroke:'#000',x1,y1,x2,y2})
+			return writeLine(
+				(gx1+nodeWidth)*gridSize,
+				(gy1+1.5)*gridSize,
+				gx2*gridSize,
+				(gy2+1.5)*gridSize
+			)
+		}
+		const updateConnectionLine=($line,$node1,$node2)=>{
+			const pos1=$node1.position()
+			const pos2=$node2.position()
+			$line.attr({
+				x1: pos1.left+$node1.width(),
+				y1: pos1.top+gridSize*1.5,
+				x2: pos2.left,
+				y2: pos2.top+gridSize*1.5
+			})
+		}
+		const writeNode=(nodeName,gx,gy)=>$("<div class='node'>").append(
 			$("<div class='node-section node-section-head'>").html(
 				i18n(nodeName)
 			),
 			$("<div class='node-section'>")
 		).css({
-			left: x*gridSize,
-			top: y*gridSize,
+			left: gx*gridSize,
+			top: gy*gridSize,
 		}).mousedown(function(ev){
 			const $node=$(this)
 			$nodes.append($node)
@@ -30,14 +48,13 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 			movedX=ev.pageX
 			movedY=ev.pageY
 		})
+		let $node1,$node2,$line // temp vars
 		this.$output.find('legend').after(
 			$("<div class='graph'>").height(gridSize*gridHeight).append(
-				$lines=$("<svg xmlns='http://www.w3.org/2000/svg' version='1.1'></svg>").append(
-					writeLine(100,100,400,200)
-				),
+				$lines=$("<svg xmlns='http://www.w3.org/2000/svg' version='1.1'></svg>"),
 				$nodes=$("<div class='nodes'>").append(
-					writeNode('options.sources',2,5),
-					writeNode('options.destination',12,6)
+					$node1=writeNode('options.sources',2,5),
+					$node2=writeNode('options.destination',12,6)
 				).mousemove(function(ev){
 					if (!$movedNode) return
 					const dx=ev.pageX-movedX
@@ -49,11 +66,13 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 					})
 					movedX+=dx
 					movedY+=dy
+					updateConnectionLine($line,$node1,$node2)
 				}).mouseup(function(){
 					$movedNode=null
 				})
 			)
 		)
+		$lines.append($line=writeConnectionLine(2,5,12,6))
 	}
 	writeDraggableSubOption(subOption,writeOption,i18n) {
 		const $subOutput=super.writeDraggableSubOption(subOption,writeOption,i18n)
