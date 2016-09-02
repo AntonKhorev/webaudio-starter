@@ -235,4 +235,7 @@ Option.EqualizerFilter = class extends Option.Group {
 Option.Filters = class extends Option.Array {
 }
 
+Option.Graph = class extends Option.Array {
+}
+
 module.exports=Option
