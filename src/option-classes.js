@@ -235,7 +235,41 @@ Option.EqualizerFilter = class extends Option.Group {
 Option.Filters = class extends Option.Array {
 }
 
-Option.Graph = class extends Option.Array {
+Option.Graph = class extends Option.Collection {
+	populateEntries(datas,entries) {
+		const subtracts=Array(entries.length)
+		let sub=0
+		for (let i=0;i<entries.length;i++) {
+			sub+=!entries[i]
+			subtracts[i]=sub
+		}
+		this._nodes=[]
+		for (let i=0;i<entries.length;i++) {
+			const data=datas[i]
+			const entry=entries[i]
+			if (!entry) continue
+			const node={ entry, next:[], x:0, y:0 }
+			if (data.x!==undefined) node.x=data.x
+			if (data.y!==undefined) node.y=data.y
+			if (data.next!==undefined) {
+				let next=data.next
+				if (!Array.isArray(next)) next=[next]
+				for (let j of next) {
+					j=parseInt(j)
+					if (!entries[j]) continue
+					node.next.push(j-subtracts[j])
+				}
+			}
+			this._nodes.push(node)
+		}
+	}
+	get nodes() {
+		return this._nodes
+	}
+	set nodes(nodes) {
+		this._nodes=nodes
+		this.update()
+	}
 }
 
 module.exports=Option
