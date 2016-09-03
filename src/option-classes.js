@@ -263,6 +263,21 @@ Option.Graph = class extends Option.Collection {
 			this._nodes.push(node)
 		}
 	}
+	map(fn) {
+		return this._nodes.map(fn)
+	}
+	getEntryFromElement(node) {
+		return node.entry
+	}
+	setElementExportData(node,data) {
+		if (node.next.length>1) {
+			data.next=node.next
+		} else if (node.next.length==1) {
+			data.next=node.next[0]
+		}
+		data.x=node.x
+		data.y=node.y
+	}
 	get nodes() {
 		return this._nodes
 	}

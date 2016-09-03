@@ -68,4 +68,21 @@ describe("Option.Graph",()=>{
 		assert.deepEqual(n0.next,[1])
 		assert.equal(n1.entry.name,'angle')
 	})
+	it("exports data",()=>{
+		const options=new TestOptions
+		const graphEntry=options.root.entries[0]
+		const e0=graphEntry.makeEntry('angle')
+		e0.value=42
+		const e1=graphEntry.makeEntry('lod')
+		graphEntry.nodes=[
+			{entry:e0,next:[],x:2,y:4},
+			{entry:e1,next:[0],x:7,y:8},
+		]
+		assert.deepEqual(options.export(),{
+			filters: [
+				{type:'angle',x:2,y:4,value:42},
+				{next:0,x:7,y:8},
+			],
+		})
+	})
 })
