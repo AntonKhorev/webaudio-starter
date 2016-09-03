@@ -236,6 +236,9 @@ Option.Filters = class extends Option.Array {
 }
 
 Option.Graph = class extends Option.Collection {
+	getElementsPropertyName() {
+		return 'nodes'
+	}
 	populateEntries(datas,entries) {
 		const subtracts=Array(entries.length)
 		let sub=0
@@ -263,9 +266,6 @@ Option.Graph = class extends Option.Collection {
 			this._nodes.push(node)
 		}
 	}
-	map(fn) {
-		return this._nodes.map(fn)
-	}
 	getEntryFromElement(node) {
 		return node.entry
 	}
@@ -277,6 +277,9 @@ Option.Graph = class extends Option.Collection {
 		}
 		data.x=node.x
 		data.y=node.y
+	}
+	setElementFixData(node,fixed) {
+		fixed.next=node.next
 	}
 	get nodes() {
 		return this._nodes

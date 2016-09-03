@@ -85,4 +85,23 @@ describe("Option.Graph",()=>{
 			],
 		})
 	})
+	it("fixes data",()=>{
+		const options=new TestOptions
+		const graphEntry=options.root.entries[0]
+		const e0=graphEntry.makeEntry('angle')
+		e0.value=42
+		const e1=graphEntry.makeEntry('lod')
+		graphEntry.nodes=[
+			{entry:e0,next:[],x:2,y:4},
+			{entry:e1,next:[0],x:7,y:8},
+		]
+		const fixed=options.fix()
+		assert.equal(fixed.filters.nodes.length,2)
+		assert.equal(fixed.filters.nodes[0].type,'angle')
+		assert.equal(fixed.filters.nodes[0].value,42)
+		assert.deepEqual(fixed.filters.nodes[0].next,[])
+		assert.equal(fixed.filters.nodes[1].type,'lod')
+		assert.equal(fixed.filters.nodes[1].value,6)
+		assert.deepEqual(fixed.filters.nodes[1].next,[0])
+	})
 })
