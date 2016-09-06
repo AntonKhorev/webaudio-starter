@@ -18,6 +18,7 @@ class Options extends BaseOptions {
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/guitar.ogg',
 					]],
 				]],
+				/*
 				['Group','video',[
 					['Text','url',[
 						'http://mainline.i3s.unice.fr/mooc/elephants-dream-medium.webm',
@@ -61,8 +62,10 @@ class Options extends BaseOptions {
 					]],
 				]],
 				['EqualizerFilter','equalizer'],
+				*/
 				['Group','destination',[]],
 			],'nodeType'],
+			/*
 			['Group','destination',[
 				['Group','compressor',[
 					['Checkbox','enabled'], // Firefox compresses automatically?
@@ -128,6 +131,7 @@ class Options extends BaseOptions {
 					visibilityDataLogic: 'or',
 				}],
 			]],
+			*/
 			['Group','canvas',[
 				['Int','width',[1,1920],300,{ unit: 'pixel' }],
 				['Int','height',[1,1080],100,{ unit: 'pixel' }],
@@ -142,10 +146,10 @@ class Options extends BaseOptions {
 						visibilityData: {'canvas.background.type':['filled']}
 					}],
 				]],
-			],{
+			]/*,{
 				visibilityData: {'destination.waveform.enabled':[true],'destination.frequencies.enabled':[true],'destination.volume.enabled':[true]},
 				visibilityDataLogic: 'or',
-			}],
+			}*/],
 			['Group','loader',[
 				['Select','errors',['none','network','http']],
 			]], // TODO visibility depending on sources and filters

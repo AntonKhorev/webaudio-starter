@@ -3,7 +3,7 @@
 const Option=require('./option-classes')
 const BaseOptionsOutput=require('crnx-base/options-output')
 const ArrayOptionOutput=require('crnx-base/array-option-output')
-const FiltersOptionOutput=require('./filters-option-output')
+const GraphOptionOutput=require('./graph-option-output')
 const BiquadFilterOptionOutput=require('./biquad-filter-option-output')
 const IIRFilterOptionOutput=require('./iir-filter-option-output')
 const EqualizerFilterOptionOutput=require('./equalizer-filter-option-output')
@@ -125,8 +125,8 @@ class OptionsOutput extends BaseOptionsOutput {
 		optionClassWriters.set(Option.EqualizerFilter,function(){
 			return new EqualizerFilterOptionOutput(...arguments).$output
 		})
-		optionClassWriters.set(Option.Filters,function(){
-			return new FiltersOptionOutput(...arguments).$output
+		optionClassWriters.set(Option.Graph,function(){
+			return new GraphOptionOutput(...arguments).$output
 		})
 	}
 }

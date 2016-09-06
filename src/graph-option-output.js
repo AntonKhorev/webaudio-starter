@@ -2,16 +2,17 @@
 
 const Option=require('./option-classes')
 
-class FiltersOptionOutput { // TODO extend GraphOptionOutput
+class GraphOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		const gridSize=32
 		const gridHeight=15
 		const nodeWidth=6
-		let $lines,$nodes
 		let moving=true
 		let $movedNode=null
 		let movedX1,movedY1,movedX2,movedY2
 		let isAnimated=false
+		const $lines=$("<svg xmlns='http://www.w3.org/2000/svg' version='1.1'></svg>")
+		const $nodes=$("<div class='nodes'>") // TODO populate with default/imported entries
 		const writeConnectionLine=(gx1,gy1,gx2,gy2)=>{
 			const writeLine=(x1,y1,x2,y2)=>$(
 				document.createElementNS("http://www.w3.org/2000/svg","line")
@@ -49,8 +50,8 @@ class FiltersOptionOutput { // TODO extend GraphOptionOutput
 			movedY1=ev.pageY
 			moving=true
 			return false
+			// TODO instead of outer scope state vars, install mouse handlers
 		})
-		let $node1,$node2,$line // temp vars
 		const animate=()=>{
 			isAnimated=false
 			if ($movedNode) {
@@ -61,7 +62,7 @@ class FiltersOptionOutput { // TODO extend GraphOptionOutput
 				})
 				movedX1=movedX2
 				movedY1=movedY2
-				updateConnectionLine($line,$node1,$node2)
+				//updateConnectionLine($line,$node1,$node2)
 			}
 			if (!moving) {
 				$movedNode=null
@@ -87,12 +88,7 @@ class FiltersOptionOutput { // TODO extend GraphOptionOutput
 		this.$output=option.$=$("<fieldset>").append(
 			"<legend>"+i18n('options.'+option.fullName)+"</legend>",
 			$("<div class='graph'>").height(gridSize*gridHeight).append(
-				$lines=$("<svg xmlns='http://www.w3.org/2000/svg' version='1.1'></svg>"),
-				//$nodes=$("<div class='nodes'>").append(
-				//	$node1=writeNode('options.sources',2,5),
-				//	$node2=writeNode('options.destination',12,6)
-				//)
-				$nodes // TODO populate with default/imported entries
+				$lines,$nodes
 			).mousemove(function(ev){
 				if (!moving) return
 				movedX2=ev.pageX
@@ -106,7 +102,7 @@ class FiltersOptionOutput { // TODO extend GraphOptionOutput
 			}),
 			$buttons
 		)
-		$lines.append($line=writeConnectionLine(2,5,12,6))
+		//$lines.append($line=writeConnectionLine(2,5,12,6))
 	}
 	// make clone button work
 	/*
@@ -131,4 +127,4 @@ class FiltersOptionOutput { // TODO extend GraphOptionOutput
 	*/
 }
 
-module.exports=FiltersOptionOutput
+module.exports=GraphOptionOutput
