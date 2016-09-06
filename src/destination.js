@@ -1,3 +1,5 @@
+// TODO remove this module
+
 'use strict'
 
 const Lines=require('crnx-base/lines')

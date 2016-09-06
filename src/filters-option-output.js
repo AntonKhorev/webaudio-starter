@@ -1,11 +1,9 @@
 'use strict'
 
 const Option=require('./option-classes')
-const ArrayOptionOutput=require('crnx-base/array-option-output')
 
-class FiltersOptionOutput extends ArrayOptionOutput {
+class FiltersOptionOutput { // TODO extend GraphOptionOutput
 	constructor(option,writeOption,i18n,generateId) {
-		super(option,writeOption,i18n,generateId)
 		const gridSize=32
 		const gridHeight=15
 		const nodeWidth=6
@@ -69,13 +67,32 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 				$movedNode=null
 			}
 		}
-		this.$output.find('legend').after(
+		// { copypasted from array-option-output
+		const $buttons=$("<div class='buttons'>")
+		option.availableTypes.forEach((type,i)=>{
+			if (i) $buttons.append(" ")
+			$buttons.append(
+				$("<button type='button'>").html(
+					i18n('options.'+option.fullName+'.'+type+'.add')
+				).click(()=>{
+					const subOption=option.makeEntry(type)
+					$nodes.append(
+						writeNode('options.'+subOption.fullName,0,0)
+					)
+					// TODO update option.nodes
+				})
+			)
+		})
+		// }
+		this.$output=option.$=$("<fieldset>").append(
+			"<legend>"+i18n('options.'+option.fullName)+"</legend>",
 			$("<div class='graph'>").height(gridSize*gridHeight).append(
 				$lines=$("<svg xmlns='http://www.w3.org/2000/svg' version='1.1'></svg>"),
-				$nodes=$("<div class='nodes'>").append(
-					$node1=writeNode('options.sources',2,5),
-					$node2=writeNode('options.destination',12,6)
-				)
+				//$nodes=$("<div class='nodes'>").append(
+				//	$node1=writeNode('options.sources',2,5),
+				//	$node2=writeNode('options.destination',12,6)
+				//)
+				$nodes // TODO populate with default/imported entries
 			).mousemove(function(ev){
 				if (!moving) return
 				movedX2=ev.pageX
@@ -86,10 +103,13 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 				}
 			}).mouseup(function(){
 				moving=false
-			})
+			}),
+			$buttons
 		)
 		$lines.append($line=writeConnectionLine(2,5,12,6))
 	}
+	// make clone button work
+	/*
 	writeDraggableSubOption(subOption,writeOption,i18n) {
 		const $subOutput=super.writeDraggableSubOption(subOption,writeOption,i18n)
 		const This=this
@@ -108,6 +128,7 @@ class FiltersOptionOutput extends ArrayOptionOutput {
 		}
 		return $subOutput
 	}
+	*/
 }
 
 module.exports=FiltersOptionOutput

@@ -5,7 +5,7 @@ const BaseOptions=require('crnx-base/options')
 class Options extends BaseOptions {
 	get entriesDescription() {
 		return [
-			['Array','sources',[
+			['Graph','graph',[
 				['Group','audio',[
 					['Text','url',[
 						// original w3c mooc
@@ -41,8 +41,6 @@ class Options extends BaseOptions {
 					['Float','gain',[0,2],1],
 					['Float','randomGain',[0,1]],
 				]],
-			],'source'],
-			['Filters','filters',[
 				['Group','gain',[
 					['LiveFloat','gain',[0,10],1,{
 						defaultMax: 1,
@@ -63,7 +61,8 @@ class Options extends BaseOptions {
 					]],
 				]],
 				['EqualizerFilter','equalizer'],
-			],'filter'],
+				['Group','destination',[]],
+			],'nodeType'],
 			['Group','destination',[
 				['Group','compressor',[
 					['Checkbox','enabled'], // Firefox compresses automatically?

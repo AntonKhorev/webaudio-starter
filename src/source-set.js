@@ -1,3 +1,5 @@
+// TODO remove this module
+
 'use strict'
 
 const camelCase=require('crnx-base/fake-lodash/camelcase')
@@ -46,11 +48,6 @@ class Source {
 const sourceClasses={
 	audio: class extends Source {
 		get type() { return 'audio' }
-		getElementHtmlLines(featureContext,i18n) {
-			return Lines.bae(
-				Lines.html`<audio src=${this.options.url} id=${this.elementHtmlName} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></audio>`
-			)
-		}
 	},
 	video: class extends Source {
 		get type() { return 'video' }

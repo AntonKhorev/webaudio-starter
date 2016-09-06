@@ -47,16 +47,31 @@ describe("Code",()=>{
 	afterEach(()=>{
 		WebAudioTestAPI.unuse()
 	})
-	it("ignores gain node with default gain",()=>{
+	it("makes simplest possible sound output",()=>{
 		const ctx=getAudioContext({
-			sources: [
+			graph: [
 				{
-					source: 'audio',
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'destination',
 				}
 			],
-			filters: [
+		})
+		assert.strictEqual(ctx,undefined)
+	})
+	/*
+	it("ignores gain node with default gain",()=>{
+		const ctx=getAudioContext({
+			graph: [
 				{
-					filter: 'gain',
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'gain',
+					next: 2,
+				},{
+					nodeType: 'destination',
 				}
 			],
 		})
@@ -64,15 +79,16 @@ describe("Code",()=>{
 	})
 	it("adds gain node",()=>{
 		const ctx=getAudioContext({
-			sources: [
+			graph: [
 				{
-					source: 'audio',
-				}
-			],
-			filters: [
-				{
-					filter: 'gain',
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'gain',
 					gain: 0.5,
+					next: 2,
+				},{
+					nodeType: 'destination',
 				}
 			],
 		})
@@ -97,17 +113,18 @@ describe("Code",()=>{
 	})
 	it("adds gain node with input",()=>{
 		const ctx=getAudioContext({
-			sources: [
+			graph: [
 				{
-					source: 'audio',
-				}
-			],
-			filters: [
-				{
-					filter: 'gain',
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'gain',
 					gain: {
 						input: true,
 					},
+					next: 2,
+				},{
+					nodeType: 'destination',
 				}
 			],
 		})
@@ -132,15 +149,16 @@ describe("Code",()=>{
 	})
 	it("adds panner node",()=>{
 		const ctx=getAudioContext({
-			sources: [
+			graph: [
 				{
-					source: 'audio',
-				}
-			],
-			filters: [
-				{
-					filter: 'panner',
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'panner',
 					pan: 1,
+					next: 2,
+				},{
+					nodeType: 'destination',
 				}
 			],
 		})
@@ -165,17 +183,18 @@ describe("Code",()=>{
 	})
 	it("adds equalizer with 1 input",()=>{
 		const ctx=getAudioContext({
-			sources: [
+			graph: [
 				{
-					source: 'audio',
-				}
-			],
-			filters: [
-				{
-					filter: 'equalizer',
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'equalizer',
 					gain60: {
 						input: true,
 					},
+					next: 2,
+				},{
+					nodeType: 'destination',
 				}
 			],
 		})
@@ -213,20 +232,21 @@ describe("Code",()=>{
 	})
 	it("adds equalizer with 2 inputs",()=>{
 		const ctx=getAudioContext({
-			sources: [
+			graph: [
 				{
-					source: 'audio',
-				}
-			],
-			filters: [
-				{
-					filter: 'equalizer',
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'equalizer',
 					gain60: {
 						input: true,
 					},
 					gain170: {
 						input: true,
 					},
+					next: 2,
+				},{
+					nodeType: 'destination',
 				}
 			],
 		})
@@ -284,4 +304,5 @@ describe("Code",()=>{
 			]
 		})
 	})
+	*/
 })

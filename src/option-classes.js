@@ -232,9 +232,6 @@ Option.EqualizerFilter = class extends Option.Group {
 	}
 }
 
-Option.Filters = class extends Option.Array {
-}
-
 Option.Graph = class extends Option.Collection {
 	getElementsPropertyName() {
 		return 'nodes'
@@ -288,6 +285,9 @@ Option.Graph = class extends Option.Collection {
 		this._nodes=nodes
 		this.update()
 	}
+}
+
+Option.Filters = class extends Option.Graph {
 }
 
 module.exports=Option

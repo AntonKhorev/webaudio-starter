@@ -39,7 +39,7 @@ class AudioContext extends Feature {
 			return a.e()
 		}
 	}
-	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
+	getJsInitLines(featureContext,i18n) {
 		const a=JsLines.b()
 		if (featureContext.audioContext) {
 			a(RefLines.parse("// "+i18n('comment.context')))

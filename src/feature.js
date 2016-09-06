@@ -8,7 +8,7 @@ class Feature {
 	getHtmlLines(featureContext,i18n) {
 		return Lines.be()
 	}
-	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
+	getJsInitLines(featureContext,i18n) {
 		return Lines.be()
 	}
 	getJsLoopPreLines(featureContext,i18n) {
@@ -16,9 +16,6 @@ class Feature {
 	}
 	getJsLoopVisLines(featureContext,i18n) {
 		return Lines.be()
-	}
-	getNodeJsNames(featureContext,prevNodeJsNames) {
-		return prevNodeJsNames
 	}
 }
 

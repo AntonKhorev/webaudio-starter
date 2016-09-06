@@ -1,3 +1,5 @@
+// TODO remove this module
+
 'use strict'
 
 const camelCase=require('crnx-base/fake-lodash/camelcase')
@@ -494,6 +496,9 @@ const filterClasses={
 }
 
 class FilterSequence extends CollectionFeature {
+	constructor(entryOptions) {
+		super({entries:entryOptions.nodes})
+	}
 	getEntryClass(entryOption) {
 		return filterClasses[entryOption.filter]
 	}

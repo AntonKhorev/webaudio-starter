@@ -2,9 +2,7 @@
 
 const AudioContext=require('./audio-context')
 const Loader=require('./loader')
-const SourceSet=require('./source-set')
-const FilterSequence=require('./filter-sequence')
-const Destination=require('./destination')
+const AudioGraph=require('./audio-graph')
 const Canvas=require('./canvas')
 
 const Lines=require('crnx-base/lines')
@@ -21,22 +19,22 @@ class Code extends BaseWebCode {
 		this.features=[
 			new AudioContext(options.api),
 			new Loader(options.loader),
-			new SourceSet(options.sources),
-			new FilterSequence(options.filters),
-			new Destination(options.destination),
+			new AudioGraph(options.graph),
 			new Canvas(options.canvas),
 		]
 		// possible feature context flags:
 		//	audioContext = AudioContext has to assign the audio context to var ctx
-		//	canvasVolumeGradient = Canvas has to create canvasVolumeGradient
-		//	connectSampleToCompressor = this is a hack
-		//	connectSampleToJsNames = this is a hack: array of strings to connect samples to
+		//	canvas = Canvas has to output <canvas> element and create var canvas and var canvasContext
+		//	canvasVolumeGradient = Canvas has to create var canvasVolumeGradient
 		//	loader = Loader has to provide loadSample() function
 		//	loaderOnError = loadSample() caller has to pass the error handler
-		//	setConnectSampleToJsNames = have a node(s) to connect samples to (some filters like equaliser may not save a refernce to it otherwise)
-		//	TODO the rest
 		// helpers:
 		//	getJsConnectAssignLines = set by AudioContext
+		// TODO these are the old flags, delete them:
+		//	connectSampleToCompressor = this is a hack (TODO don't need it now b/c it's internall business of graph)
+		//	connectSampleToJsNames = this is a hack: array of strings to connect samples to
+		//	setConnectSampleToJsNames = have a node(s) to connect samples to (some filters like equaliser may not save a refernce to it otherwise)
+		//	TODO the rest
 		for (const feature of this.features) {
 			feature.requestFeatureContext(this.featureContext)
 		}
@@ -88,13 +86,8 @@ class Code extends BaseWebCode {
 		)
 	}
 	get scriptLines() {
-		let prevNodeJsNames=[]
 		return InterleaveLines.bae(
-			...this.features.map(feature=>{
-				const lines=feature.getJsInitLines(this.featureContext,this.i18n,prevNodeJsNames)
-				prevNodeJsNames=feature.getNodeJsNames(this.featureContext,prevNodeJsNames)
-				return lines
-			}),
+			...this.features.map(feature=>feature.getJsInitLines(this.featureContext,this.i18n)),
 			NoseWrapLines.b(
 				JsLines.bae(
 					"function visualize() {"
