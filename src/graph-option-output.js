@@ -13,7 +13,7 @@ class GraphOptionsOutput extends BaseOptionsOutput {
 class GraphOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		const gridSize=32
-		const gridHeight=15
+		const graphHeight=15
 		const nodeWidth=6
 		const $lines=$("<svg xmlns='http://www.w3.org/2000/svg' version='1.1'></svg>")
 		const $nodes=$("<div class='nodes'>") // TODO populate with default/imported entries
@@ -39,7 +39,8 @@ class GraphOptionOutput {
 			})
 		}
 		const addNode=(nodeOption,gx0,gy0)=>{
-			let animationRequestId=null
+			let dragAnimationId=null
+			let snapAnimationId=null
 			const $node=$("<div class='node'>").append(
 				$("<div class='node-section node-section-head'>").append(
 					i18n('options.'+nodeOption.fullName)+' ',
@@ -48,8 +49,8 @@ class GraphOptionOutput {
 					).mousedown(function(){
 						return false // block $node.mousedown()
 					}).click(function(){
-						cancelAnimationFrame(animationRequestId)
-						animationRequestId=null
+						cancelAnimationFrame(dragAnimationId)
+						cancelAnimationFrame(snapAnimationId)
 						$node.remove()
 						// TODO update option.nodes
 					})
@@ -59,29 +60,59 @@ class GraphOptionOutput {
 				left: gx0*gridSize,
 				top: gy0*gridSize,
 			}).mousedown(function(ev){
-				let x1=ev.pageX
-				let y1=ev.pageY
-				let x2,y2
-				const animate=()=>{
-					animationRequestId=null
-					const pos=$node.position()
-					$node.css({
-						left: pos.left+x2-x1,
-						top: pos.top+y2-y1,
-					})
-					x1=x2
-					y1=y2
-				}
+				cancelAnimationFrame(snapAnimationId)
+				let dragX1=ev.pageX
+				let dragY1=ev.pageY
 				const handlers={
 					mouseup() { // IE doesn't receive this event when the button is released outside the window
+						cancelAnimationFrame(dragAnimationId)
+						dragAnimationId=null
 						$(document).off(handlers)
-						// TODO request snap animation
+						const pos=$node.position()
+						const snapX1=pos.left
+						const snapY1=pos.top
+						let gx=Math.round(snapX1/gridSize)
+						if (gx<0) gx=0
+						let gy=Math.round(snapY1/gridSize)
+						if (gy<0) gy=0
+						if (gy>graphHeight-2) gy=graphHeight-2
+						// TODO store new grid positions, update options
+						const snapX2=gx*gridSize
+						const snapY2=gy*gridSize
+						const snapDuration=150
+						const snapStartTime=performance.now()
+						const snapAnimationHandler=time=>{
+							const t=time-snapStartTime
+							if (t>=snapDuration) {
+								$node.css({
+									left: snapX2,
+									top:  snapY2,
+								})
+								snapAnimationId=null
+							} else {
+								$node.css({
+									left: snapX1+(snapX2-snapX1)*t/snapDuration,
+									top:  snapY1+(snapY2-snapY1)*t/snapDuration,
+								})
+								snapAnimationId=requestAnimationFrame(snapAnimationHandler)
+							}
+						}
+						snapAnimationId=requestAnimationFrame(snapAnimationHandler)
 					},
 					mousemove(ev) {
-						x2=ev.pageX
-						y2=ev.pageY
-						if (animationRequestId==null) {
-							animationRequestId=requestAnimationFrame(animate)
+						const dragX2=ev.pageX
+						const dragY2=ev.pageY
+						if (dragAnimationId==null) {
+							dragAnimationId=requestAnimationFrame(()=>{
+								const pos=$node.position()
+								$node.css({
+									left: pos.left+dragX2-dragX1,
+									top: pos.top+dragY2-dragY1,
+								})
+								dragX1=dragX2
+								dragY1=dragY2
+								dragAnimationId=null
+							})
 						}
 					},
 				}
@@ -108,7 +139,7 @@ class GraphOptionOutput {
 		// }
 		this.$output=option.$=$("<fieldset>").append(
 			"<legend>"+i18n('options.'+option.fullName)+"</legend>",
-			$("<div class='graph'>").height(gridSize*gridHeight).append(
+			$("<div class='graph'>").height(gridSize*graphHeight).append(
 				$lines,$nodes
 			),
 			$buttons
