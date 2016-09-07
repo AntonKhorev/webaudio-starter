@@ -1,6 +1,14 @@
 'use strict'
 
+const BaseOptionsOutput=require('crnx-base/options-output')
 const Option=require('./option-classes')
+
+class GraphOptionsOutput extends BaseOptionsOutput {
+	setOptionClassWriters(optionClassWriters) {
+		// intentionally not calling super here
+		// TODO
+	}
+}
 
 class GraphOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
@@ -30,43 +38,53 @@ class GraphOptionOutput {
 				y2: pos2.top+gridSize*1.5
 			})
 		}
-		const writeNode=(nodeName,gx,gy)=>$("<div class='node'>").append(
-			$("<div class='node-section node-section-head'>").html(
-				i18n(nodeName)
-			),
-			$("<div class='node-section'>")
-		).css({
-			left: gx*gridSize,
-			top: gy*gridSize,
-		}).mousedown(function(ev){
-			const $node=$(this)
-			let x1=ev.pageX
-			let y1=ev.pageY
-			let x2,y2
-			let animated=false
-			const animate=()=>{
-				animated=false
-				const pos=$node.position() // TODO what if it's deleted?
-				$node.css({
-					left: pos.left+x2-x1,
-					top: pos.top+y2-y1,
-				})
-				x1=x2
-				y1=y2
-			}
-			$nodes.append($node).mousemove(function(ev){
-				x2=ev.pageX
-				y2=ev.pageY
-				if (!animated) {
-					animated=true
-					requestAnimationFrame(animate)
+		const addNode=(nodeOption,gx,gy)=>{
+			const $node=$("<div class='node'>").append(
+				$("<div class='node-section node-section-head'>").append(
+					i18n('options.'+nodeOption.fullName)+' ',
+					$("<button class='delete' title='"+i18n('options-output.delete.tip')+"'>").append(
+						"<span>"+i18n('options-output.delete')+"</span>"
+					).click(function(){ // TODO fix: mousedown with return false prevents thst from working right
+						$node.remove()
+						// TODO update option.nodes
+						// TODO cancel animations
+					})
+				),
+				$("<div class='node-section'>")
+			).css({
+				left: gx*gridSize,
+				top: gy*gridSize,
+			}).mousedown(function(ev){
+				let x1=ev.pageX
+				let y1=ev.pageY
+				let x2,y2
+				let animated=false
+				const animate=()=>{
+					animated=false
+					const pos=$node.position() // TODO what if it's deleted?
+					$node.css({
+						left: pos.left+x2-x1,
+						top: pos.top+y2-y1,
+					})
+					x1=x2
+					y1=y2
 				}
-			}).mouseup(function(){
-				$nodes.off('mousemove mouseup')
-				// TODO request snap animation
+				$nodes.append($node).mousemove(function(ev){
+					x2=ev.pageX
+					y2=ev.pageY
+					if (!animated) {
+						animated=true
+						requestAnimationFrame(animate)
+					}
+				}).mouseup(function(){
+					$nodes.off('mousemove mouseup')
+					// TODO request snap animation
+				})
+				return false
 			})
-			return false
-		})
+			$nodes.append($node)
+			// TODO update option.nodes
+		}
 		// { copypasted from array-option-output
 		const $buttons=$("<div class='buttons'>")
 		option.availableTypes.forEach((type,i)=>{
@@ -75,11 +93,8 @@ class GraphOptionOutput {
 				$("<button type='button'>").html(
 					i18n('options.'+option.fullName+'.'+type+'.add')
 				).click(()=>{
-					const subOption=option.makeEntry(type)
-					$nodes.append(
-						writeNode('options.'+subOption.fullName,0,0)
-					)
-					// TODO update option.nodes
+					const nodeOption=option.makeEntry(type)
+					addNode(nodeOption,0,0)
 				})
 			)
 		})
