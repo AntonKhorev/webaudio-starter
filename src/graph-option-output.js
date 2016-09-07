@@ -73,23 +73,20 @@ class GraphOptionOutput {
 					y1=y2
 				}
 				const handlers={
-					mouseup: function(){
-						$nodes.off(handlers)
+					mouseup() { // IE doesn't receive this event when the button is released outside the window
+						$(document).off(handlers)
 						// TODO request snap animation
 					},
-					mousemove: function(ev){
-						if (ev.buttons&1) {
-							x2=ev.pageX
-							y2=ev.pageY
-							if (animationRequestId==null) {
-								animationRequestId=requestAnimationFrame(animate)
-							}
-						} else {
-							handlers.mouseup()
+					mousemove(ev) {
+						x2=ev.pageX
+						y2=ev.pageY
+						if (animationRequestId==null) {
+							animationRequestId=requestAnimationFrame(animate)
 						}
 					},
 				}
-				$nodes.append($node).on(handlers)
+				$nodes.append($node)
+				$(document).on(handlers)
 				return false
 			})
 			$nodes.append($node)
