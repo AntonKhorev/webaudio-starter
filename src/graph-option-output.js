@@ -44,7 +44,9 @@ class GraphOptionOutput {
 					i18n('options.'+nodeOption.fullName)+' ',
 					$("<button class='delete' title='"+i18n('options-output.delete.tip')+"'>").append(
 						"<span>"+i18n('options-output.delete')+"</span>"
-					).click(function(){ // TODO fix: mousedown with return false prevents thst from working right
+					).mousedown(function(){
+						return false // block $node.mousedown()
+					}).click(function(){
 						$node.remove()
 						// TODO update option.nodes
 						// TODO cancel animations
