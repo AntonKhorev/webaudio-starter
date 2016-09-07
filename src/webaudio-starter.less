@@ -44,6 +44,7 @@
 					border: none;
 					.node-section {
 						height: @grid-size;
+						line-height: @grid-size;
 						text-align: center;
 					}
 					legend {
@@ -66,16 +67,17 @@
 							}
 							position: absolute;
 							display: block;
-							width: @grid-size;
-							height: @grid-size;
-							right: 0;
+							width: @grid-size/2;
+							height: @grid-size/2;
+							right: @grid-size/4;
+							top: @grid-size/4;
 							padding: 0;
 							border: none;
 							background-color: transparent;
 							background-repeat: no-repeat;
-							.cross-icon(@grid-size,#444);
+							.cross-icon(@grid-size/2,#444);
 							&:hover {
-								.cross-icon(@grid-size,#C44);
+								.cross-icon(@grid-size/2,#C44);
 								&:active {
 									background-position: 0 1px;
 								}
