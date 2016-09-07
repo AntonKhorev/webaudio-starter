@@ -39,9 +39,15 @@ class GraphOptionOutput {
 				y2: pos2.top+gridSize*1.5
 			})
 		}
+		const updateNodeSequence=()=>{
+			$nodes.children().each(function(i){
+				const $node=$(this)
+				$node.find('.number').text(i)
+			})
+			// TODO update option.nodes
+		}
 		const addNode=(nodeOption,gx0,gy0)=>{
 			const id=generateId()
-			const number=$nodes.children().length
 			let dragAnimationId=null
 			let snapAnimationId=null
 			const writePort=(thisDirection,thatDirection)=>$(`<div class='node-port node-port-${thisDirection}'>`).append(
@@ -58,7 +64,7 @@ class GraphOptionOutput {
 				$("<legend class='node-section'>").append(
 					i18n('options.'+nodeOption.fullName),
 					" ",
-					`<span class='number-mark'>#<span class='number'>${number}</span></span>`
+					`<span class='number-mark'>#<span class='number'></span></span>`
 				),
 				$("<div class='node-head-controls'>").append(
 					// TODO top-left burger button for keyboard movement
@@ -70,7 +76,7 @@ class GraphOptionOutput {
 						cancelAnimationFrame(dragAnimationId)
 						cancelAnimationFrame(snapAnimationId)
 						$node.remove()
-						// TODO update option.nodes
+						updateNodeSequence()
 					})
 				),
 				$("<div class='node-section node-ports'>").append(
@@ -145,7 +151,7 @@ class GraphOptionOutput {
 				ev.preventDefault() // prevent text selection
 			}).css('z-index',++maxZIndex)
 			$nodes.append($node)
-			// TODO update option.nodes
+			updateNodeSequence()
 		}
 		// { copypasted from array-option-output
 		const $buttons=$("<div class='buttons'>")
