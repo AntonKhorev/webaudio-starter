@@ -17,6 +17,7 @@ class GraphOptionOutput {
 		const nodeWidth=6
 		const $lines=$("<svg xmlns='http://www.w3.org/2000/svg' version='1.1'></svg>")
 		const $nodes=$("<div class='nodes'>") // TODO populate with default/imported entries
+		let maxZIndex=0
 		const writeConnectionLine=(gx1,gy1,gx2,gy2)=>{
 			const writeLine=(x1,y1,x2,y2)=>$(
 				document.createElementNS("http://www.w3.org/2000/svg","line")
@@ -39,18 +40,32 @@ class GraphOptionOutput {
 			})
 		}
 		const addNode=(nodeOption,gx0,gy0)=>{
+			const id=generateId()
+			const number=$nodes.children().length
 			let dragAnimationId=null
 			let snapAnimationId=null
-			const $node=$("<fieldset class='node'>").append(
+			const writePort=(thisDirection,thatDirection)=>$(`<div class='node-port node-port-${thisDirection}'>`).append(
+				$("<div class='node-port-controls'>").append(
+					`<span>${thisDirection} connected to:</span>`, // TODO i18n
+					$("<ul>"),
+					// TODO <select> with all nodes
+					$(`<button title='connect ${thisDirection} to ${thatDirection}'>`).append( // TODO i18n
+						"<span>Connect</span>"
+					)
+				)
+			)
+			const $node=$(`<fieldset id='${id}' class='node'>`).append(
 				$("<legend class='node-section'>").append(
-					i18n('options.'+nodeOption.fullName)
+					i18n('options.'+nodeOption.fullName),
+					" ",
+					`<span class='number-mark'>#<span class='number'>${number}</span></span>`
 				),
-				$("<div class='node-section node-head-controls'>").append(
+				$("<div class='node-head-controls'>").append(
 					// TODO top-left burger button for keyboard movement
 					$("<button class='delete' title='"+i18n('options-output.delete.tip')+"'>").append(
 						"<span>"+i18n('options-output.delete')+"</span>"
 					).mousedown(function(ev){
-						ev.stopPropagation() // block $node.mousedown()
+						ev.stopPropagation() // prevent $node.mousedown()
 					}).click(function(){
 						cancelAnimationFrame(dragAnimationId)
 						cancelAnimationFrame(snapAnimationId)
@@ -58,10 +73,10 @@ class GraphOptionOutput {
 						// TODO update option.nodes
 					})
 				),
-				$("<div class='node-section'>").append(
-					// TODO input port
-					'audio signal' // TODO i18n
-					// TODO output port
+				$("<div class='node-section node-ports'>").append(
+					'audio signal ', // TODO i18n
+					writePort('input','output'),
+					writePort('output','input')
 				)
 			).css({
 				left: gx0*gridSize,
@@ -123,10 +138,12 @@ class GraphOptionOutput {
 						}
 					},
 				}
-				$nodes.append($node)
+				if ($node.css('z-index')<maxZIndex) {
+					$node.css('z-index',++maxZIndex)
+				}
 				$(document).on(handlers)
-				ev.preventDefault() // block text selection
-			})
+				ev.preventDefault() // prevent text selection
+			}).css('z-index',++maxZIndex)
 			$nodes.append($node)
 			// TODO update option.nodes
 		}
@@ -139,17 +156,17 @@ class GraphOptionOutput {
 					i18n('options.'+option.fullName+'.'+type+'.add')
 				).click(()=>{
 					const nodeOption=option.makeEntry(type)
-					addNode(nodeOption,0,0)
+					addNode(nodeOption,1,1)
 				})
 			)
 		})
 		// }
 		this.$output=option.$=$("<fieldset>").append(
 			"<legend>"+i18n('options.'+option.fullName)+"</legend>",
+			$buttons, // TODO reorder/renumber buttons
 			$("<div class='graph'>").height(gridSize*graphHeight).append(
 				$lines,$nodes
-			),
-			$buttons
+			)
 		)
 		//$lines.append($line=writeConnectionLine(2,5,12,6))
 	}
