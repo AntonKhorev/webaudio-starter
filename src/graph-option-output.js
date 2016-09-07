@@ -72,16 +72,21 @@ class GraphOptionOutput {
 					x1=x2
 					y1=y2
 				}
-				$nodes.append($node).mousemove(function(ev){
-					x2=ev.pageX
-					y2=ev.pageY
-					if (animationRequestId==null) {
-						animationRequestId=requestAnimationFrame(animate)
-					}
-				}).mouseup(function(){
+				const endMovement=()=>{
 					$nodes.off('mousemove mouseup')
 					// TODO request snap animation
-				})
+				}
+				$nodes.append($node).mousemove(function(ev){
+					if (ev.buttons&1) {
+						x2=ev.pageX
+						y2=ev.pageY
+						if (animationRequestId==null) {
+							animationRequestId=requestAnimationFrame(animate)
+						}
+					} else {
+						endMovement()
+					}
+				}).mouseup(endMovement)
 				return false
 			})
 			$nodes.append($node)
