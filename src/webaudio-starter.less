@@ -39,9 +39,51 @@
 					position: absolute;
 					width: @grid-size*@node-width;
 					background: #DDF;
-					text-align: center;
+					margin: 0;
+					padding: 0;
+					border: none;
 					.node-section {
 						height: @grid-size;
+						text-align: center;
+					}
+					legend {
+						position: absolute;
+						//margin: 0;
+						//padding: 0 @grid-size;
+						margin: 0;
+						padding: 0;
+						left: @grid-size;
+						width: @grid-size*(@node-width - 2);
+					}
+					.node-head-controls {
+						position: relative;
+						button.delete {
+							.cross-icon(@size,@color) {
+								@s: unit(@size);
+								@a: @s/8;
+								@b: @s - @a;
+								.svg(@s,@s,"<path d='M @{a} @{a} L @{b} @{b} M @{a} @{b} L @{b} @{a}' fill='none' stroke='@{color}' stroke-width='@{a}' />");
+							}
+							position: absolute;
+							display: block;
+							width: @grid-size;
+							height: @grid-size;
+							right: 0;
+							padding: 0;
+							border: none;
+							background-color: transparent;
+							background-repeat: no-repeat;
+							.cross-icon(@grid-size,#444);
+							&:hover {
+								.cross-icon(@grid-size,#C44);
+								&:active {
+									background-position: 0 1px;
+								}
+							}
+							& > span {
+								.visually-hidden();
+							}
+						}
 					}
 				}
 			}

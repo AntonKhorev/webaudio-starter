@@ -41,9 +41,12 @@ class GraphOptionOutput {
 		const addNode=(nodeOption,gx0,gy0)=>{
 			let dragAnimationId=null
 			let snapAnimationId=null
-			const $node=$("<div class='node'>").append(
-				$("<div class='node-section node-section-head'>").append(
-					i18n('options.'+nodeOption.fullName)+' ',
+			const $node=$("<fieldset class='node'>").append(
+				$("<legend class='node-section'>").append(
+					i18n('options.'+nodeOption.fullName)
+				),
+				$("<div class='node-section node-head-controls'>").append(
+					// TODO top-left burger button for keyboard movement
 					$("<button class='delete' title='"+i18n('options-output.delete.tip')+"'>").append(
 						"<span>"+i18n('options-output.delete')+"</span>"
 					).mousedown(function(){
@@ -55,7 +58,11 @@ class GraphOptionOutput {
 						// TODO update option.nodes
 					})
 				),
-				$("<div class='node-section'>")
+				$("<div class='node-section'>").append(
+					// TODO input port
+					'audio signal' // TODO i18n
+					// TODO output port
+				)
 			).css({
 				left: gx0*gridSize,
 				top: gy0*gridSize,
