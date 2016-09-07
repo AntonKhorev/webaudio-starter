@@ -39,6 +39,7 @@ class GraphOptionOutput {
 			})
 		}
 		const addNode=(nodeOption,gx,gy)=>{
+			let animationRequestId=null
 			const $node=$("<div class='node'>").append(
 				$("<div class='node-section node-section-head'>").append(
 					i18n('options.'+nodeOption.fullName)+' ',
@@ -47,9 +48,10 @@ class GraphOptionOutput {
 					).mousedown(function(){
 						return false // block $node.mousedown()
 					}).click(function(){
+						cancelAnimationFrame(animationRequestId)
+						animationRequestId=null
 						$node.remove()
 						// TODO update option.nodes
-						// TODO cancel animations
 					})
 				),
 				$("<div class='node-section'>")
@@ -60,10 +62,9 @@ class GraphOptionOutput {
 				let x1=ev.pageX
 				let y1=ev.pageY
 				let x2,y2
-				let animated=false
 				const animate=()=>{
-					animated=false
-					const pos=$node.position() // TODO what if it's deleted?
+					animationRequestId=null
+					const pos=$node.position()
 					$node.css({
 						left: pos.left+x2-x1,
 						top: pos.top+y2-y1,
@@ -74,9 +75,8 @@ class GraphOptionOutput {
 				$nodes.append($node).mousemove(function(ev){
 					x2=ev.pageX
 					y2=ev.pageY
-					if (!animated) {
-						animated=true
-						requestAnimationFrame(animate)
+					if (animationRequestId==null) {
+						animationRequestId=requestAnimationFrame(animate)
 					}
 				}).mouseup(function(){
 					$nodes.off('mousemove mouseup')
