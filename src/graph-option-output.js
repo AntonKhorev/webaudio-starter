@@ -38,7 +38,7 @@ class GraphOptionOutput {
 				y2: pos2.top+gridSize*1.5
 			})
 		}
-		const addNode=(nodeOption,gx,gy)=>{
+		const addNode=(nodeOption,gx0,gy0)=>{
 			let animationRequestId=null
 			const $node=$("<div class='node'>").append(
 				$("<div class='node-section node-section-head'>").append(
@@ -56,8 +56,8 @@ class GraphOptionOutput {
 				),
 				$("<div class='node-section'>")
 			).css({
-				left: gx*gridSize,
-				top: gy*gridSize,
+				left: gx0*gridSize,
+				top: gy0*gridSize,
 			}).mousedown(function(ev){
 				let x1=ev.pageX
 				let y1=ev.pageY
@@ -72,21 +72,24 @@ class GraphOptionOutput {
 					x1=x2
 					y1=y2
 				}
-				const endMovement=()=>{
-					$nodes.off('mousemove mouseup')
-					// TODO request snap animation
-				}
-				$nodes.append($node).mousemove(function(ev){
-					if (ev.buttons&1) {
-						x2=ev.pageX
-						y2=ev.pageY
-						if (animationRequestId==null) {
-							animationRequestId=requestAnimationFrame(animate)
+				const handlers={
+					mouseup: function(){
+						$nodes.off(handlers)
+						// TODO request snap animation
+					},
+					mousemove: function(ev){
+						if (ev.buttons&1) {
+							x2=ev.pageX
+							y2=ev.pageY
+							if (animationRequestId==null) {
+								animationRequestId=requestAnimationFrame(animate)
+							}
+						} else {
+							handlers.mouseup()
 						}
-					} else {
-						endMovement()
-					}
-				}).mouseup(endMovement)
+					},
+				}
+				$nodes.append($node).on(handlers)
 				return false
 			})
 			$nodes.append($node)
