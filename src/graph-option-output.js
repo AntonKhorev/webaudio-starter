@@ -7,10 +7,6 @@ class GraphOptionOutput {
 		const gridSize=32
 		const gridHeight=15
 		const nodeWidth=6
-		let moving=true
-		let $movedNode=null
-		let movedX1,movedY1,movedX2,movedY2
-		let isAnimated=false
 		const $lines=$("<svg xmlns='http://www.w3.org/2000/svg' version='1.1'></svg>")
 		const $nodes=$("<div class='nodes'>") // TODO populate with default/imported entries
 		const writeConnectionLine=(gx1,gy1,gx2,gy2)=>{
@@ -44,30 +40,33 @@ class GraphOptionOutput {
 			top: gy*gridSize,
 		}).mousedown(function(ev){
 			const $node=$(this)
-			$nodes.append($node)
-			$movedNode=$node
-			movedX1=ev.pageX
-			movedY1=ev.pageY
-			moving=true
-			return false
-			// TODO instead of outer scope state vars, install mouse handlers
-		})
-		const animate=()=>{
-			isAnimated=false
-			if ($movedNode) {
-				const pos=$movedNode.position()
-				$movedNode.css({
-					left: pos.left+movedX2-movedX1,
-					top: pos.top+movedY2-movedY1,
+			let x1=ev.pageX
+			let y1=ev.pageY
+			let x2,y2
+			let animated=false
+			const animate=()=>{
+				animated=false
+				const pos=$node.position() // TODO what if it's deleted?
+				$node.css({
+					left: pos.left+x2-x1,
+					top: pos.top+y2-y1,
 				})
-				movedX1=movedX2
-				movedY1=movedY2
-				//updateConnectionLine($line,$node1,$node2)
+				x1=x2
+				y1=y2
 			}
-			if (!moving) {
-				$movedNode=null
-			}
-		}
+			$nodes.append($node).mousemove(function(ev){
+				x2=ev.pageX
+				y2=ev.pageY
+				if (!animated) {
+					animated=true
+					requestAnimationFrame(animate)
+				}
+			}).mouseup(function(){
+				$nodes.off('mousemove mouseup')
+				// TODO request snap animation
+			})
+			return false
+		})
 		// { copypasted from array-option-output
 		const $buttons=$("<div class='buttons'>")
 		option.availableTypes.forEach((type,i)=>{
@@ -89,17 +88,7 @@ class GraphOptionOutput {
 			"<legend>"+i18n('options.'+option.fullName)+"</legend>",
 			$("<div class='graph'>").height(gridSize*gridHeight).append(
 				$lines,$nodes
-			).mousemove(function(ev){
-				if (!moving) return
-				movedX2=ev.pageX
-				movedY2=ev.pageY
-				if (!isAnimated) {
-					isAnimated=true
-					requestAnimationFrame(animate)
-				}
-			}).mouseup(function(){
-				moving=false
-			}),
+			),
 			$buttons
 		)
 		//$lines.append($line=writeConnectionLine(2,5,12,6))
