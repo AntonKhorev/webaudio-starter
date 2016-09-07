@@ -49,8 +49,8 @@ class GraphOptionOutput {
 					// TODO top-left burger button for keyboard movement
 					$("<button class='delete' title='"+i18n('options-output.delete.tip')+"'>").append(
 						"<span>"+i18n('options-output.delete')+"</span>"
-					).mousedown(function(){
-						return false // block $node.mousedown()
+					).mousedown(function(ev){
+						ev.stopPropagation() // block $node.mousedown()
 					}).click(function(){
 						cancelAnimationFrame(dragAnimationId)
 						cancelAnimationFrame(snapAnimationId)
@@ -125,7 +125,7 @@ class GraphOptionOutput {
 				}
 				$nodes.append($node)
 				$(document).on(handlers)
-				return false
+				ev.preventDefault() // block text selection
 			})
 			$nodes.append($node)
 			// TODO update option.nodes
