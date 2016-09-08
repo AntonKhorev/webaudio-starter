@@ -81,7 +81,7 @@ class GraphOptionOutput {
 				const documentHandlers={
 					mouseup() {
 						$(document).off(documentHandlers)
-						$nodes.off(portHandlers,`.node-port-${thatDirection}`)
+						$nodes.children().off(nodeHandlers)
 						$line.remove()
 					},
 					mousemove(ev) {
@@ -91,13 +91,13 @@ class GraphOptionOutput {
 						$line.attr({x2,y2}) // TODO update in animation (?)
 					},
 				}
-				const portHandlers={
+				const nodeHandlers={
 					mouseup() {
 						// TODO connect nodes
 					},
 					mousemove(ev) {
-						const $thatNode=$(this).closest('fieldset.node')
-						if (!$thatNode.is($node)) {
+						const $thatNode=$(this)
+						if (!$thatNode.is($node)) { // TODO also check for and prevent loops
 							const [x2,y2]=getNodePortCoords($thatNode,thatDirection)
 							$line.attr({x2,y2}) // TODO update in animation (?)
 							ev.stopPropagation()
@@ -106,7 +106,7 @@ class GraphOptionOutput {
 				}
 				documentHandlers.mousemove(ev)
 				$(document).on(documentHandlers)
-				$nodes.on(portHandlers,`.node-port-${thatDirection}`)
+				$nodes.children().on(nodeHandlers)
 				return false // prevent $node.mousedown() and text selection
 			})
 			$node=$(`<fieldset id='${id}' class='node'>`).append(
