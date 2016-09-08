@@ -62,9 +62,36 @@ class GraphOptionOutput {
 			})
 		}
 		*/
+		const getNodeName=($node,i)=>{
+			const nodeOption=$node.data('option')
+			return i18n('options.'+nodeOption.fullName)+" #"+i
+		}
+		const getNodePortCoords=($node,dirIndex)=>{
+			const pos=$node.position()
+			const x=pos.left+gridSize/2+dirIndex*gridSize*(nodeWidth-1)
+			const y=pos.top+gridSize*1.5
+			return [x,y]
+		}
+		const disconnectNodes=($thisNode,$thatNode,dirIndex)=>{
+			// TODO
+		}
 		const connectNodes=($thisNode,$thatNode,dirIndex)=>{
-			const connectInToOut=($nodeWithOutput,$nodeWithInput)=>{
-				// TODO
+			const connectInToOut=($outNode,$inNode)=>{
+				const outIndex=$nodes.children().index($outNode)
+				const inIndex=$nodes.children().index($inNode)
+				const writeLi=($toNode,toIndex)=>$("<li>").append(
+					$("<a>").attr('href','#'+$toNode.attr('id')).append(getNodeName($toNode,toIndex)),
+					" ",
+					$("<button>Disconnect</button>").click(function(){ // TODO i18n
+						disconnectNodes($thisNode,$thatNode,dirIndex)
+					})
+				)
+				$outNode.find('.node-port-out .node-port-controls ul').append(writeLi($inNode,inIndex))
+				$inNode.find('.node-port-in .node-port-controls ul').append(writeLi($outNode,outIndex))
+				$lines.append(writeLine(
+					...getNodePortCoords($outNode,1),
+					...getNodePortCoords($inNode,0)
+				))
 			}
 			if (dirIndex) {
 				connectInToOut($thisNode,$thatNode)
@@ -75,11 +102,8 @@ class GraphOptionOutput {
 		const updateNodeSequence=()=>{
 			const $options=$nodes.children().map(function(i){
 				const $node=$(this)
-				const nodeOption=$node.data('option')
 				$node.find('.number').text(i)
-				return $(`<option value='${i}'>`).append(
-					i18n('options.'+nodeOption.fullName)+" #"+i
-				)
+				return $(`<option value='${i}'>`).append(getNodeName($node,i))
 			})
 			$nodes.children().each(function(i){
 				const $node=$(this)
@@ -104,12 +128,6 @@ class GraphOptionOutput {
 				const thisDir=dirNames[dirIndex]
 				const $select=$("<select>")
 				const $hole=$("<div class='node-port-hole'>").mousedown(function(ev){
-					const getNodePortCoords=($node,dirIndex)=>{
-						const pos=$node.position()
-						const x=pos.left+gridSize/2+dirIndex*gridSize*(nodeWidth-1)
-						const y=pos.top+gridSize*1.5
-						return [x,y]
-					}
 					const [x1,y1]=getNodePortCoords($node,dirIndex)
 					const $line=writeLine(x1,y1,x1,y1)
 					$lines.append($line)
@@ -128,17 +146,17 @@ class GraphOptionOutput {
 					}
 					const nodeHandlers={
 						mouseup() {
-							// TODO connect nodes
 							const $thatNode=$(this)
 							if (!$thatNode.is($node)) { // TODO also check for and prevent loops
 								connectNodes($node,$thatNode,dirIndex)
 							}
+							// let documentHandlers.mouseup() do the clean up
 						},
 						mousemove(ev) {
 							const $thatNode=$(this)
 							if (!$thatNode.is($node)) { // TODO also check for and prevent loops
 								const [x2,y2]=getNodePortCoords($thatNode,1-dirIndex)
-								$line.attr({x2,y2}) // TODO update in animation (?)
+								moveLine($line,x2,y2) // TODO update in animation (?)
 								ev.stopPropagation()
 							}
 						},
