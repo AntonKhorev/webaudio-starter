@@ -66,17 +66,22 @@ class GraphOptionOutput {
 					)
 				)
 			).mousedown(function(ev){
-				const pos=$node.position()
-				let x1=pos.left+gridSize/2
-				if (thisDirection=='output') {
-					x1+=gridSize*(nodeWidth-1)
+				const getNodePortCoords=($node,direction)=>{
+					const pos=$node.position()
+					let x=pos.left+gridSize/2
+					if (direction=='output') {
+						x+=gridSize*(nodeWidth-1)
+					}
+					let y=pos.top+gridSize*1.5
+					return [x,y]
 				}
-				let y1=pos.top+gridSize*1.5
+				const [x1,y1]=getNodePortCoords($node,thisDirection)
 				const $line=writeLine(x1,y1,x1,y1)
 				$lines.append($line)
-				const handlers={
+				const documentHandlers={
 					mouseup() {
-						$(document).off(handlers)
+						$(document).off(documentHandlers)
+						$nodes.off(portHandlers,`.node-port-${thatDirection}`)
 						$line.remove()
 					},
 					mousemove(ev) {
@@ -86,8 +91,22 @@ class GraphOptionOutput {
 						$line.attr({x2,y2}) // TODO update in animation (?)
 					},
 				}
-				handlers.mousemove(ev)
-				$(document).on(handlers)
+				const portHandlers={
+					mouseup() {
+						// TODO connect nodes
+					},
+					mousemove(ev) {
+						const $thatNode=$(this).closest('fieldset.node')
+						if (!$thatNode.is($node)) {
+							const [x2,y2]=getNodePortCoords($thatNode,thatDirection)
+							$line.attr({x2,y2}) // TODO update in animation (?)
+							ev.stopPropagation()
+						}
+					},
+				}
+				documentHandlers.mousemove(ev)
+				$(document).on(documentHandlers)
+				$nodes.on(portHandlers,`.node-port-${thatDirection}`)
 				return false // prevent $node.mousedown() and text selection
 			})
 			$node=$(`<fieldset id='${id}' class='node'>`).append(
