@@ -44,11 +44,36 @@ class GraphOptionOutput {
 			})
 		}
 		*/
+		const connectNodes=($thisNode,$thatNode,dirIndex)=>{
+			const connectInToOut=($nodeWithOutput,$nodeWithInput)=>{
+				// TODO
+			}
+			if (dirIndex) {
+				connectInToOut($thisNode,$thatNode)
+			} else {
+				connectInToOut($thatNode,$thisNode)
+			}
+		}
 		const updateNodeSequence=()=>{
+			const $options=$nodes.children().map(function(i){
+				const $node=$(this)
+				const nodeOption=$node.data('option')
+				$node.find('.number').text(i)
+				return $(`<option value='${i}'>`).append(
+					i18n('options.'+nodeOption.fullName)+" #"+i
+				)
+			})
 			$nodes.children().each(function(i){
 				const $node=$(this)
-				$node.find('.number').text(i)
+				const $selects=$node.find('.node-port-controls select').empty()
+				for (let j=0;j<$options.length;j++) {
+					if (j!=i) { // TODO loop checks
+						$selects.append($options[j])
+					}
+				}
 			})
+			// jquery has problems with appending several detached element at once like this:
+			// 	$nodes.find('.node-port-controls select').empty().append($options)
 			// TODO update option.nodes
 		}
 		const addNode=(nodeOption,gx0,gy0)=>{
@@ -56,60 +81,75 @@ class GraphOptionOutput {
 			const id=generateId()
 			let dragAnimationId=null
 			let snapAnimationId=null
-			const writePort=(thisDirection,thatDirection)=>$(`<div class='node-port node-port-${thisDirection}'>`).append(
-				$("<div class='node-port-controls'>").append(
-					`<span>${thisDirection} connected to:</span>`, // TODO i18n
-					$("<ul>"),
-					// TODO <select> with all nodes
-					$(`<button title='connect ${thisDirection} to ${thatDirection}'>`).append( // TODO i18n
-						"<span>Connect</span>"
+			const writePort=(dirIndex)=>{
+				const dirNames=['in','out'] // TODO i18n?
+				const thisDir=dirNames[dirIndex]
+				const $select=$("<select>")
+				const $hole=$("<div class='node-port-hole'>").mousedown(function(ev){
+					const getNodePortCoords=($node,dirIndex)=>{
+						const pos=$node.position()
+						const x=pos.left+gridSize/2+dirIndex*gridSize*(nodeWidth-1)
+						const y=pos.top+gridSize*1.5
+						return [x,y]
+					}
+					const [x1,y1]=getNodePortCoords($node,dirIndex)
+					const $line=writeLine(x1,y1,x1,y1)
+					$lines.append($line)
+					const documentHandlers={
+						mouseup() {
+							$(document).off(documentHandlers)
+							$nodes.children().off(nodeHandlers)
+							$line.remove()
+						},
+						mousemove(ev) {
+							const nodesPos=$nodes.offset()
+							const x2=ev.pageX-nodesPos.left
+							const y2=ev.pageY-nodesPos.top
+							$line.attr({x2,y2}) // TODO update in animation (?)
+						},
+					}
+					const nodeHandlers={
+						mouseup() {
+							// TODO connect nodes
+							const $thatNode=$(this)
+							if (!$thatNode.is($node)) { // TODO also check for and prevent loops
+								connectNodes($node,$thatNode,dirIndex)
+							}
+						},
+						mousemove(ev) {
+							const $thatNode=$(this)
+							if (!$thatNode.is($node)) { // TODO also check for and prevent loops
+								const [x2,y2]=getNodePortCoords($thatNode,1-dirIndex)
+								$line.attr({x2,y2}) // TODO update in animation (?)
+								ev.stopPropagation()
+							}
+						},
+					}
+					documentHandlers.mousemove(ev)
+					$(document).on(documentHandlers)
+					$nodes.children().on(nodeHandlers)
+					return false // prevent $node.mousedown() and text selection
+				})
+				return $(`<div class='node-port node-port-${thisDir}'>`).append(
+					$hole,
+					$("<div class='node-port-label'>").append(
+						`<span>audio </span>${thisDir}<span> connected to:</span>` // TODO i18n
+					),
+					$("<div class='node-port-controls'>").append(
+						$("<ul>"), // connected nodes
+						$select, // all nodes - or maybe unconnected nodes?
+						$(`<button title='connect audio ${thisDir} to selected node'>`).append( // TODO i18n
+							"<span>Connect</span>"
+						).click(function(){
+							const i=parseInt($select.val())
+							if (i in $nodes) {
+								connectNodes($node,$node[i],dirIndex)
+							}
+						})
 					)
 				)
-			).mousedown(function(ev){
-				const getNodePortCoords=($node,direction)=>{
-					const pos=$node.position()
-					let x=pos.left+gridSize/2
-					if (direction=='output') {
-						x+=gridSize*(nodeWidth-1)
-					}
-					let y=pos.top+gridSize*1.5
-					return [x,y]
-				}
-				const [x1,y1]=getNodePortCoords($node,thisDirection)
-				const $line=writeLine(x1,y1,x1,y1)
-				$lines.append($line)
-				const documentHandlers={
-					mouseup() {
-						$(document).off(documentHandlers)
-						$nodes.children().off(nodeHandlers)
-						$line.remove()
-					},
-					mousemove(ev) {
-						const nodesPos=$nodes.offset()
-						const x2=ev.pageX-nodesPos.left
-						const y2=ev.pageY-nodesPos.top
-						$line.attr({x2,y2}) // TODO update in animation (?)
-					},
-				}
-				const nodeHandlers={
-					mouseup() {
-						// TODO connect nodes
-					},
-					mousemove(ev) {
-						const $thatNode=$(this)
-						if (!$thatNode.is($node)) { // TODO also check for and prevent loops
-							const [x2,y2]=getNodePortCoords($thatNode,thatDirection)
-							$line.attr({x2,y2}) // TODO update in animation (?)
-							ev.stopPropagation()
-						}
-					},
-				}
-				documentHandlers.mousemove(ev)
-				$(document).on(documentHandlers)
-				$nodes.children().on(nodeHandlers)
-				return false // prevent $node.mousedown() and text selection
-			})
-			$node=$(`<fieldset id='${id}' class='node'>`).append(
+			}
+			$node=$(`<fieldset id='${id}' class='node'>`).data('option',nodeOption).append(
 				$("<legend class='node-section'>").append(
 					i18n('options.'+nodeOption.fullName),
 					" ",
@@ -129,9 +169,8 @@ class GraphOptionOutput {
 					})
 				),
 				$("<div class='node-section node-ports'>").append(
-					'audio signal ', // TODO i18n
-					writePort('input','output'),
-					writePort('output','input')
+					writePort(0),
+					writePort(1)
 				)
 			).css({
 				left: gx0*gridSize,

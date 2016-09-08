@@ -95,16 +95,33 @@
 						margin: 0 @grid-size;
 						.node-port {
 							position: absolute;
-							width: @grid-size/2;
-							height: @grid-size/2;
+							width: 50%;
+							height: @grid-size;
 							top: 0;
-							border: solid @grid-size/4 @node-color;
-							box-shadow: inset 0 0 3px 3px rgba(0,0,0,0.3);
-							&.node-port-input {
-								left: -@grid-size;
+							&.node-port-in {
+								left: 0;
+								text-align: left;
+								.node-port-hole {
+									left: -@grid-size;
+								}
 							}
-							&.node-port-output {
-								right: -@grid-size;
+							&.node-port-out {
+								right: 0;
+								text-align: right;
+								.node-port-hole {
+									right: -@grid-size;
+								}
+							}
+							.node-port-hole {
+								position: absolute;
+								width: @grid-size/2;
+								height: @grid-size/2;
+								top: 0;
+								border: solid @grid-size/4 @node-color;
+								box-shadow: inset 0 0 3px 3px rgba(0,0,0,0.3);
+							}
+							.node-port-label > span {
+								.visually-hidden();
 							}
 							.node-port-controls {
 								.visually-hidden();
