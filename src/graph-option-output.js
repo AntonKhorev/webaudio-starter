@@ -18,6 +18,10 @@ class GraphOptionOutput {
 		const $lines=$("<svg xmlns='http://www.w3.org/2000/svg' version='1.1'></svg>")
 		const $nodes=$("<div class='nodes'>") // TODO populate with default/imported entries
 		let maxZIndex=0
+		const writeLine=(x1,y1,x2,y2)=>$(
+			document.createElementNS("http://www.w3.org/2000/svg","line")
+		).attr({stroke:'#000','stroke-width':2,x1,y1,x2,y2})
+		/*
 		const writeConnectionLine=(gx1,gy1,gx2,gy2)=>{
 			const writeLine=(x1,y1,x2,y2)=>$(
 				document.createElementNS("http://www.w3.org/2000/svg","line")
@@ -39,6 +43,7 @@ class GraphOptionOutput {
 				y2: pos2.top+gridSize*1.5
 			})
 		}
+		*/
 		const updateNodeSequence=()=>{
 			$nodes.children().each(function(i){
 				const $node=$(this)
@@ -47,6 +52,7 @@ class GraphOptionOutput {
 			// TODO update option.nodes
 		}
 		const addNode=(nodeOption,gx0,gy0)=>{
+			let $node
 			const id=generateId()
 			let dragAnimationId=null
 			let snapAnimationId=null
@@ -59,8 +65,32 @@ class GraphOptionOutput {
 						"<span>Connect</span>"
 					)
 				)
-			)
-			const $node=$(`<fieldset id='${id}' class='node'>`).append(
+			).mousedown(function(ev){
+				const pos=$node.position()
+				let x1=pos.left+gridSize/2
+				if (thisDirection=='output') {
+					x1+=gridSize*(nodeWidth-1)
+				}
+				let y1=pos.top+gridSize*1.5
+				const $line=writeLine(x1,y1,x1,y1)
+				$lines.append($line)
+				const handlers={
+					mouseup() {
+						$(document).off(handlers)
+						$line.remove()
+					},
+					mousemove(ev) {
+						const nodesPos=$nodes.offset()
+						const x2=ev.pageX-nodesPos.left
+						const y2=ev.pageY-nodesPos.top
+						$line.attr({x2,y2}) // TODO update in animation (?)
+					},
+				}
+				handlers.mousemove(ev)
+				$(document).on(handlers)
+				return false // prevent $node.mousedown() and text selection
+			})
+			$node=$(`<fieldset id='${id}' class='node'>`).append(
 				$("<legend class='node-section'>").append(
 					i18n('options.'+nodeOption.fullName),
 					" ",
@@ -169,12 +199,11 @@ class GraphOptionOutput {
 		// }
 		this.$output=option.$=$("<fieldset>").append(
 			"<legend>"+i18n('options.'+option.fullName)+"</legend>",
-			$buttons, // TODO reorder/renumber buttons
+			$buttons, // TODO buttons for reordering/renumbering with toposort
 			$("<div class='graph'>").height(gridSize*graphHeight).append(
 				$lines,$nodes
 			)
 		)
-		//$lines.append($line=writeConnectionLine(2,5,12,6))
 	}
 	// make clone button work
 	/*
