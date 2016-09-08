@@ -35,6 +35,10 @@ class GraphOptionOutput {
 			'stroke-width': 2,
 			x1,y1,x2,y2
 		})
+		const moveLine=($line,x2,y2)=>{
+			$line.attr({x2,y2})
+			$lines.append($line.detach()) // ie bug: this is required once markers are used; see http://stackoverflow.com/questions/15693178/svg-line-markers-not-updating-when-line-moves-in-ie10
+		}
 		/*
 		const writeConnectionLine=(gx1,gy1,gx2,gy2)=>{
 			const writeLine=(x1,y1,x2,y2)=>$(
@@ -119,7 +123,7 @@ class GraphOptionOutput {
 							const nodesPos=$nodes.offset()
 							const x2=ev.pageX-nodesPos.left
 							const y2=ev.pageY-nodesPos.top
-							$line.attr({x2,y2}) // TODO update in animation (?)
+							moveLine($line,x2,y2) // TODO update in animation (?)
 						},
 					}
 					const nodeHandlers={
