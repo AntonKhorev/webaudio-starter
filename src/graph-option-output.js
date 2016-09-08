@@ -15,12 +15,26 @@ class GraphOptionOutput {
 		const gridSize=32
 		const graphHeight=15
 		const nodeWidth=6
-		const $lines=$("<svg xmlns='http://www.w3.org/2000/svg' version='1.1'></svg>")
+		const $lines=$(
+			"<svg xmlns='http://www.w3.org/2000/svg' version='1.1'>"+
+			"<defs>"+
+				"<marker id='circleMarker' markerWidth='8' markerHeight='8' refX='4' refY='4'>"+
+					"<circle cx='4' cy='4' r='2' fill='#000' />"+
+				"</marker>"+
+			"</defs>"+
+			"</svg>"
+		)
 		const $nodes=$("<div class='nodes'>") // TODO populate with default/imported entries
 		let maxZIndex=0
 		const writeLine=(x1,y1,x2,y2)=>$(
 			document.createElementNS("http://www.w3.org/2000/svg","line")
-		).attr({stroke:'#000','stroke-width':2,x1,y1,x2,y2})
+		).attr({
+			'marker-start': 'url(#circleMarker)',
+			'marker-end': 'url(#circleMarker)',
+			stroke: '#000',
+			'stroke-width': 2,
+			x1,y1,x2,y2
+		})
 		/*
 		const writeConnectionLine=(gx1,gy1,gx2,gy2)=>{
 			const writeLine=(x1,y1,x2,y2)=>$(
