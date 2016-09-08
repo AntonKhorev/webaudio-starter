@@ -101,23 +101,29 @@
 							&.node-port-in {
 								left: 0;
 								text-align: left;
-								.node-port-hole {
+								&::before, .node-port-hole {
 									left: -@grid-size;
 								}
 							}
 							&.node-port-out {
 								right: 0;
 								text-align: right;
-								.node-port-hole {
+								&::before, .node-port-hole {
 									right: -@grid-size;
 								}
 							}
-							.node-port-hole {
+							&::before, .node-port-hole {
 								position: absolute;
 								width: @grid-size/2;
 								height: @grid-size/2;
 								top: 0;
 								border: solid @grid-size/4 @node-color;
+							}
+							&::before {
+								content: '';
+							}
+							.node-port-hole {
+								border-radius: @grid-size/2;
 								box-shadow: inset 0 0 3px 3px rgba(0,0,0,0.3);
 							}
 							.node-port-label > span {
