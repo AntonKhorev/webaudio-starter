@@ -29,14 +29,14 @@ class GraphOptionOutput {
 		const writeLine=(x1,y1,x2,y2)=>$(
 			document.createElementNS("http://www.w3.org/2000/svg","line")
 		).attr({
-			'marker-start': 'url(#circleMarker)',
+			'marker-start': 'url(#circleMarker)', // TODO multiple overlaid markers look bad, scrap them
 			'marker-end': 'url(#circleMarker)',
 			stroke: '#000',
 			'stroke-width': 2,
 			x1,y1,x2,y2
 		})
-		const moveLine=($line,x2,y2)=>{
-			$line.attr({x2,y2})
+		const moveLine=($line,coords)=>{
+			$line.attr(coords)
 			$lines.append($line.detach()) // ie bug: this is required once markers are used; see http://stackoverflow.com/questions/15693178/svg-line-markers-not-updating-when-line-moves-in-ie10
 		}
 		/*
@@ -62,9 +62,10 @@ class GraphOptionOutput {
 			})
 		}
 		*/
-		const getNodeName=($node,i)=>{
+		const getNodeName=$node=>{
 			const nodeOption=$node.data('option')
-			return i18n('options.'+nodeOption.fullName)+" #"+i
+			const nodeIndex=$node.data('index')
+			return i18n('options.'+nodeOption.fullName)+" #"+nodeIndex
 		}
 		const getNodePortCoords=($node,dirIndex)=>{
 			const pos=$node.position()
@@ -77,17 +78,15 @@ class GraphOptionOutput {
 		}
 		const connectNodes=($thisNode,$thatNode,dirIndex)=>{
 			const connectInToOut=($outNode,$inNode)=>{
-				const outIndex=$nodes.children().index($outNode)
-				const inIndex=$nodes.children().index($inNode)
-				const writeLi=($toNode,toIndex)=>$("<li>").append(
-					$("<a>").attr('href','#'+$toNode.attr('id')).append(getNodeName($toNode,toIndex)),
+				const writeLi=$toNode=>$("<li>").append(
+					$("<a>").attr('href','#'+$toNode.attr('id')).append(getNodeName($toNode)),
 					" ",
 					$("<button>Disconnect</button>").click(function(){ // TODO i18n
 						disconnectNodes($thisNode,$thatNode,dirIndex)
 					})
 				)
-				$outNode.find('.node-port-out .node-port-controls ul').append(writeLi($inNode,inIndex))
-				$inNode.find('.node-port-in .node-port-controls ul').append(writeLi($outNode,outIndex))
+				$outNode.find('.node-port-out .node-port-controls ul').append(writeLi($inNode))
+				$inNode.find('.node-port-in .node-port-controls ul').append(writeLi($outNode))
 				$lines.append(writeLine(
 					...getNodePortCoords($outNode,1),
 					...getNodePortCoords($inNode,0)
@@ -102,8 +101,9 @@ class GraphOptionOutput {
 		const updateNodeSequence=()=>{
 			const $options=$nodes.children().map(function(i){
 				const $node=$(this)
+				$node.data('index',i)
 				$node.find('.number').text(i)
-				return $(`<option value='${i}'>`).append(getNodeName($node,i))
+				return $(`<option value='${i}'>`).append(getNodeName($node))
 			})
 			$nodes.children().each(function(i){
 				const $node=$(this)
@@ -141,7 +141,7 @@ class GraphOptionOutput {
 							const nodesPos=$nodes.offset()
 							const x2=ev.pageX-nodesPos.left
 							const y2=ev.pageY-nodesPos.top
-							moveLine($line,x2,y2) // TODO update in animation (?)
+							moveLine($line,{x2,y2}) // TODO update in animation (?)
 						},
 					}
 					const nodeHandlers={
@@ -156,7 +156,7 @@ class GraphOptionOutput {
 							const $thatNode=$(this)
 							if (!$thatNode.is($node)) { // TODO also check for and prevent loops
 								const [x2,y2]=getNodePortCoords($thatNode,1-dirIndex)
-								moveLine($line,x2,y2) // TODO update in animation (?)
+								moveLine($line,{x2,y2}) // TODO update in animation (?)
 								ev.stopPropagation()
 							}
 						},
