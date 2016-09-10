@@ -349,11 +349,16 @@ class GraphOptionOutput {
 		// }
 		this.$output=option.$=$("<fieldset>").append(
 			"<legend>"+i18n('options.'+option.fullName)+"</legend>",
-			$buttons, // TODO buttons for reordering/renumbering with toposort
 			$("<div class='graph'>").height(gridSize*graphHeight).append(
-				$lines,$nodes
-			)
+				$lines,$nodes,$buttons
+			) // TODO buttons for reordering/renumbering with toposort
 		)
+		/*
+		this.$output=option.$=$("<fieldset class='graph'>").append(
+			//"<legend>"+i18n('options.'+option.fullName)+"</legend>",
+			$lines,$nodes,$buttons // TODO buttons for reordering/renumbering with toposort
+		).height(gridSize*graphHeight)
+		*/
 	}
 	// make clone button work
 	/*
