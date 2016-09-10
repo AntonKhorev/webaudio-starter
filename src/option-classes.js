@@ -284,6 +284,7 @@ Option.Graph = class extends Option.Collection {
 	set nodes(nodes) {
 		this._nodes=nodes
 		this.update()
+		// additionally it's ok to update nodes[i].x and nodes[i].y directly, but not other properties
 	}
 	canConnect(i,j) {
 		return !this._nodes[i].next/*:Array*/.includes(j)
@@ -312,8 +313,5 @@ Option.TreeGraph = class extends Option.AcyclicGraph {
 	}
 }
 */
-
-Option.Filters = class extends Option.AcyclicGraph {
-}
 
 module.exports=Option

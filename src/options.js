@@ -5,7 +5,7 @@ const BaseOptions=require('crnx-base/options')
 class Options extends BaseOptions {
 	get entriesDescription() {
 		return [
-			['Graph','graph',[
+			['AcyclicGraph','graph',[
 				['Group','audio',[
 					['Text','url',[
 						// original w3c mooc
