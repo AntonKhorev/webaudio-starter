@@ -40,17 +40,6 @@ class GraphOptionOutput {
 			$lines.append($line.detach()) // ie bug: this is required once markers are used; see http://stackoverflow.com/questions/15693178/svg-line-markers-not-updating-when-line-moves-in-ie10
 		}
 		/*
-		const writeConnectionLine=(gx1,gy1,gx2,gy2)=>{
-			const writeLine=(x1,y1,x2,y2)=>$(
-				document.createElementNS("http://www.w3.org/2000/svg","line")
-			).attr({stroke:'#000',x1,y1,x2,y2})
-			return writeLine(
-				(gx1+nodeWidth)*gridSize,
-				(gy1+1.5)*gridSize,
-				gx2*gridSize,
-				(gy2+1.5)*gridSize
-			)
-		}
 		const updateConnectionLine=($line,$node1,$node2)=>{
 			const pos1=$node1.position()
 			const pos2=$node2.position()
@@ -347,12 +336,14 @@ class GraphOptionOutput {
 			)
 		})
 		// }
-		this.$output=option.$=$("<fieldset>").append(
-			"<legend>"+i18n('options.'+option.fullName)+"</legend>",
-			$("<div class='graph'>").height(gridSize*graphHeight).append(
-				$lines,$nodes,$buttons
-			) // TODO buttons for reordering/renumbering with toposort
+		const $legend=$("<legend>"+i18n('options.'+option.fullName)+"</legend>")
+		const $graph=$("<div class='graph'>").height(gridSize*graphHeight).append(
+			$lines,$nodes,$buttons // TODO buttons for reordering/renumbering with toposort
 		)
+		this.$output=option.$=$("<fieldset>").append($legend,$graph)
+		setTimeout(()=>{ // wait for rendering
+			$graph.css('margin-top',-($legend.height()/2-1)) // TODO repeat it on resize
+		})
 		/*
 		this.$output=option.$=$("<fieldset class='graph'>").append(
 			//"<legend>"+i18n('options.'+option.fullName)+"</legend>",
