@@ -73,50 +73,88 @@ class GraphOptionOutput {
 			const y=pos.top+gridSize*1.5
 			return [x,y]
 		}
+		const updateNodeSequence=()=>{
+			const $selectOptions=$nodes.children().map(function(i){
+				const $node=$(this)
+				$node.data('index',i)
+				$node.find('.number').text(i)
+				return $(`<option value='${i}'>`).append(getNodeName($node))
+			})
+			option.nodes=$.map($nodes.children(),node=>{
+				const $node=$(node)
+				const next=[]
+				$node.data('outs').forEach((line,thatNode)=>{
+					next.push($(thatNode).data('index'))
+				})
+				return {
+					entry: $node.data('option'),
+					next,
+					x: 0, // TODO real values - have to keep them in .data() too
+					y: 0,
+				}
+			})
+			$nodes.children().each(function(i){
+				const $node=$(this)
+				const writeLi=($toNode,dirIndex)=>$("<li>").append(
+					$("<a>").attr('href','#'+$toNode.attr('id')).append(getNodeName($toNode)),
+					" ",
+					$("<button>Disconnect</button>").click(function(){ // TODO i18n
+						disconnectNodes($node,$toNode,dirIndex)
+					})
+				)
+				const $inList=$node.find('.node-port-in .node-port-controls ul').empty()
+				$node.data('ins').forEach((line,thatNode)=>{
+					$inList.append(writeLi($(thatNode),0))
+				})
+				const $outList=$node.find('.node-port-out .node-port-controls ul').empty()
+				$node.data('outs').forEach((line,thatNode)=>{
+					$outList.append(writeLi($(thatNode),1))
+				})
+				const $inSelect=$node.find('.node-port-in .node-port-controls select').empty()
+				const $outSelect=$node.find('.node-port-out .node-port-controls select').empty()
+				for (let j=0;j<$selectOptions.length;j++) {
+					if (option.canConnect(j,i)) { // TODO optimize, currently it's O(n^3)
+						$inSelect.append($selectOptions[j])
+					}
+					if (option.canConnect(i,j)) {
+						$outSelect.append($selectOptions[j])
+					}
+				}
+			})
+			// jquery has problems with appending several detached element at once like this:
+			// 	$nodes.find('.node-port-controls select').empty().append($options)
+		}
 		const disconnectNodes=($thisNode,$thatNode,dirIndex)=>{
 			// TODO
 		}
 		const connectNodes=($thisNode,$thatNode,dirIndex)=>{
-			const connectInToOut=($outNode,$inNode)=>{
-				const writeLi=$toNode=>$("<li>").append(
-					$("<a>").attr('href','#'+$toNode.attr('id')).append(getNodeName($toNode)),
-					" ",
-					$("<button>Disconnect</button>").click(function(){ // TODO i18n
-						disconnectNodes($thisNode,$thatNode,dirIndex)
-					})
-				)
-				$outNode.find('.node-port-out .node-port-controls ul').append(writeLi($inNode))
-				$inNode.find('.node-port-in .node-port-controls ul').append(writeLi($outNode))
-				$lines.append(writeLine(
+			const connectInToOut=($outNode,$inNode)=>{ // add edge: $outNode -> $inNode
+				const $line=writeLine(
 					...getNodePortCoords($outNode,1),
 					...getNodePortCoords($inNode,0)
-				))
+				)
+				$lines.append($line)
+				$outNode.data('outs').set($inNode[0],$line[0])
+				$inNode.data('ins').set($outNode[0],$line[0])
 			}
 			if (dirIndex) {
 				connectInToOut($thisNode,$thatNode)
 			} else {
 				connectInToOut($thatNode,$thisNode)
 			}
+			updateNodeSequence()
 		}
-		const updateNodeSequence=()=>{
-			const $options=$nodes.children().map(function(i){
-				const $node=$(this)
-				$node.data('index',i)
-				$node.find('.number').text(i)
-				return $(`<option value='${i}'>`).append(getNodeName($node))
+		const deleteNode=($node)=>{
+			$node.data('ins').forEach((line,thatNode)=>{
+				$(thatNode).data('outs').delete($node[0])
+				$(line).remove()
 			})
-			$nodes.children().each(function(i){
-				const $node=$(this)
-				const $selects=$node.find('.node-port-controls select').empty()
-				for (let j=0;j<$options.length;j++) {
-					if (j!=i) { // TODO loop checks
-						$selects.append($options[j])
-					}
-				}
+			$node.data('outs').forEach((line,thatNode)=>{
+				$(thatNode).data('ins').delete($node[0])
+				$(line).remove()
 			})
-			// jquery has problems with appending several detached element at once like this:
-			// 	$nodes.find('.node-port-controls select').empty().append($options)
-			// TODO update option.nodes
+			$node.remove()
+			updateNodeSequence()
 		}
 		const addNode=(nodeOption,gx0,gy0)=>{
 			let $node
@@ -128,6 +166,20 @@ class GraphOptionOutput {
 				const thisDir=dirNames[dirIndex]
 				const $select=$("<select>")
 				const $hole=$("<div class='node-port-hole'>").mousedown(function(ev){
+					// {
+					// doing caching for canConnect here b/c mousemove handler better work fast
+					// TODO remove it once it's optimized in Option.AcyclicGraph
+					const fromNodeIndex=$node.data('index')
+					const canConnectToCache=Array($nodes.length)
+					const canConnectTo=toNodeIndex=>{
+						const cached=canConnectToCache[toNodeIndex]
+						if (cached!=null) return cached
+						return canConnectToCache[toNodeIndex]=(dirIndex
+							? option.canConnect(fromNodeIndex,toNodeIndex)
+							: option.canConnect(toNodeIndex,fromNodeIndex)
+						)
+					}
+					// }
 					const [x1,y1]=getNodePortCoords($node,dirIndex)
 					const $line=writeLine(x1,y1,x1,y1)
 					$lines.append($line)
@@ -147,14 +199,14 @@ class GraphOptionOutput {
 					const nodeHandlers={
 						mouseup() {
 							const $thatNode=$(this)
-							if (!$thatNode.is($node)) { // TODO also check for and prevent loops
+							if (canConnectTo($thatNode.data('index'))) {
 								connectNodes($node,$thatNode,dirIndex)
 							}
 							// let documentHandlers.mouseup() do the clean up
 						},
 						mousemove(ev) {
 							const $thatNode=$(this)
-							if (!$thatNode.is($node)) { // TODO also check for and prevent loops
+							if (canConnectTo($thatNode.data('index'))) {
 								const [x2,y2]=getNodePortCoords($thatNode,1-dirIndex)
 								moveLine($line,{x2,y2}) // TODO update in animation (?)
 								ev.stopPropagation()
@@ -173,7 +225,7 @@ class GraphOptionOutput {
 					),
 					$("<div class='node-port-controls'>").append(
 						$("<ul>"), // connected nodes
-						$select, // all nodes - or maybe unconnected nodes?
+						$select, // nodes that are possible to connect to
 						$(`<button title='connect audio ${thisDir} to selected node'>`).append( // TODO i18n
 							"<span>Connect</span>"
 						).click(function(){
@@ -185,7 +237,12 @@ class GraphOptionOutput {
 					)
 				)
 			}
-			$node=$(`<fieldset id='${id}' class='node'>`).data('option',nodeOption).append(
+			$node=$(`<fieldset id='${id}' class='node'>`).data({
+				option: nodeOption,
+				ins: new Map(), // dom element -> line dom element
+				outs: new Map(), // dom element -> line dom element
+				// also has 'index' set by updateNodeSequence()
+			}).append(
 				$("<legend class='node-section'>").append(
 					i18n('options.'+nodeOption.fullName),
 					" ",
@@ -200,8 +257,7 @@ class GraphOptionOutput {
 					}).click(function(){
 						cancelAnimationFrame(dragAnimationId)
 						cancelAnimationFrame(snapAnimationId)
-						$node.remove()
-						updateNodeSequence()
+						deleteNode($node)
 					})
 				),
 				$("<div class='node-section node-ports'>").append(
@@ -216,7 +272,7 @@ class GraphOptionOutput {
 				let dragX1=ev.pageX
 				let dragY1=ev.pageY
 				const handlers={
-					mouseup() { // IE doesn't receive this event when the button is released outside the window
+					mouseup() { // IE doesn't receive this event when the button is released outside the window (?)
 						cancelAnimationFrame(dragAnimationId)
 						dragAnimationId=null
 						$(document).off(handlers)

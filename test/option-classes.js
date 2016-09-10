@@ -104,4 +104,98 @@ describe("Option.Graph",()=>{
 		assert.equal(fixed.filters.nodes[1].value,6)
 		assert.deepEqual(fixed.filters.nodes[1].next,[0])
 	})
+	it("can connect a node to itself",()=>{
+		const options=new TestOptions({
+			filters: [
+				{type:'stuff',x:0,y:0},
+			],
+		})
+		const graphEntry=options.root.entries[0]
+		assert.equal(graphEntry.canConnect(0,0),true)
+	})
+	it("can connect two unconnected nodes",()=>{
+		const options=new TestOptions({
+			filters: [
+				{type:'stuff',x:0,y:0},
+				{type:'lod',x:10,y:0},
+			],
+		})
+		const graphEntry=options.root.entries[0]
+		assert.equal(graphEntry.canConnect(0,1),true)
+	})
+	it("can't connect two connected nodes",()=>{
+		const options=new TestOptions({
+			filters: [
+				{type:'stuff',x:0,y:0,next:1},
+				{type:'lod',x:10,y:0},
+			],
+		})
+		const graphEntry=options.root.entries[0]
+		assert.equal(graphEntry.canConnect(0,1),false)
+	})
+	it("can create a cycle",()=>{
+		const options=new TestOptions({
+			filters: [
+				{type:'stuff',x:0,y:0,next:1},
+				{type:'lod',x:10,y:0},
+			],
+		})
+		const graphEntry=options.root.entries[0]
+		assert.equal(graphEntry.canConnect(1,0),true)
+	})
+})
+
+describe("Option.AcyclicGraph",()=>{
+	class TestOptions extends Options {
+		get entriesDescription() {
+			return [
+				['AcyclicGraph','filters',[
+					['Int','lod',[0,10],6],
+					['Float','angle',[-180,180]],
+					['Group','stuff',[
+						['Checkbox','thing'],
+					]],
+				]],
+			]
+		}
+	}
+	it("can't connect a node to itself",()=>{
+		const options=new TestOptions({
+			filters: [
+				{type:'stuff',x:2,y:2},
+			],
+		})
+		const graphEntry=options.root.entries[0]
+		assert.equal(graphEntry.canConnect(0,0),false)
+	})
+	it("can connect two unconnected nodes",()=>{
+		const options=new TestOptions({
+			filters: [
+				{type:'stuff',x:0,y:0},
+				{type:'lod',x:10,y:0},
+			],
+		})
+		const graphEntry=options.root.entries[0]
+		assert.equal(graphEntry.canConnect(0,1),true)
+	})
+	it("can't connect two connected nodes",()=>{
+		const options=new TestOptions({
+			filters: [
+				{type:'stuff',x:0,y:0,next:1},
+				{type:'lod',x:10,y:0},
+			],
+		})
+		const graphEntry=options.root.entries[0]
+		assert.equal(graphEntry.canConnect(0,1),false)
+	})
+	it("can't create a cycle",()=>{
+		const options=new TestOptions({
+			filters: [
+				{type:'stuff',x:0,y:0,next:1},
+				{type:'lod',x:10,y:0},
+			],
+		})
+		const graphEntry=options.root.entries[0]
+		assert.equal(graphEntry.canConnect(1,0),false)
+	})
 })

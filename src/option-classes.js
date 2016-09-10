@@ -285,9 +285,35 @@ Option.Graph = class extends Option.Collection {
 		this._nodes=nodes
 		this.update()
 	}
+	canConnect(i,j) {
+		return !this._nodes[i].next/*:Array*/.includes(j)
+	}
 }
 
-Option.Filters = class extends Option.Graph {
+Option.AcyclicGraph = class extends Option.Graph {
+	canConnect(i,j) {
+		if (!super.canConnect(i,j)) return false
+		const visited=Array(this._nodes.length)
+		const rec=k=>{
+			if (visited[k]) return true
+			visited[k]=true
+			if (k==i) return false
+			return this._nodes[k].next.every(rec)
+		}
+		return rec(j)
+	}
+}
+
+/*
+Option.TreeGraph = class extends Option.AcyclicGraph {
+	canConnect(i,j) {
+		// if there's a root node with no input port:
+		// test for multiple inputs on any node
+	}
+}
+*/
+
+Option.Filters = class extends Option.AcyclicGraph {
 }
 
 module.exports=Option
