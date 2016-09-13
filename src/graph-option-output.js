@@ -25,6 +25,15 @@ class GraphOptionOutput {
 		)
 		const $nodes=$("<div class='nodes'>") // TODO populate with default/imported entries
 		let maxZIndex=0
+		let outputPad // can hardwire to 11 (11px)
+		const g2pCoord=(gCoord)=>{
+			if (outputPad==null) outputPad=parseInt(this.$output.css('padding-left'))
+			return outputPad+gridSize*gCoord
+		}
+		const p2gCoord=(pCoord)=>{
+			if (outputPad==null) outputPad=parseInt(this.$output.css('padding-left'))
+			return Math.round((pCoord-outputPad)/gridSize)
+		}
 		const writeLine=(x1,y1,x2,y2)=>$(
 			document.createElementNS("http://www.w3.org/2000/svg","line")
 		).attr({
@@ -253,8 +262,8 @@ class GraphOptionOutput {
 					writePort(1)
 				)
 			).css({
-				left: gx0*gridSize,
-				top: gy0*gridSize,
+				left: g2pCoord(gx0),
+				top: g2pCoord(gy0),
 			}).mousedown(function(ev){
 				cancelAnimationFrame(snapAnimationId)
 				let dragX1=ev.pageX
@@ -267,13 +276,13 @@ class GraphOptionOutput {
 						const pos=$node.position()
 						const snapX1=pos.left
 						const snapY1=pos.top
-						let gx=Math.round(snapX1/gridSize)
+						let gx=p2gCoord(snapX1)
 						if (gx<0) gx=0
-						let gy=Math.round(snapY1/gridSize)
+						let gy=p2gCoord(snapY1)
 						if (gy<0) gy=0
 						// TODO store new grid positions, update options
-						const snapX2=gx*gridSize
-						const snapY2=gy*gridSize
+						const snapX2=g2pCoord(gx)
+						const snapY2=g2pCoord(gy)
 						const snapDuration=150
 						const snapStartTime=performance.now()
 						const snapAnimationHandler=time=>{
@@ -329,7 +338,7 @@ class GraphOptionOutput {
 					i18n('options.'+option.fullName+'.'+type+'.add')
 				).click(()=>{
 					const nodeOption=option.makeEntry(type)
-					addNode(nodeOption,1,1)
+					addNode(nodeOption,0,0)
 				})
 			)
 		})
