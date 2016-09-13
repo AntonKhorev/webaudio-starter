@@ -343,17 +343,6 @@ class GraphOptionOutput {
 			$buttons, // TODO buttons for reordering/renumbering with toposort
 			$graph
 		)
-		/*
-		setTimeout(()=>{ // wait for rendering
-			$graph.css('margin-top',-($legend.height()/2-1)) // TODO repeat it on resize
-		})
-		*/
-		/*
-		this.$output=option.$=$("<fieldset class='graph'>").append(
-			//"<legend>"+i18n('options.'+option.fullName)+"</legend>",
-			$lines,$nodes,$buttons // TODO buttons for reordering/renumbering with toposort
-		).height(gridSize*graphHeight)
-		*/
 	}
 	// make clone button work
 	/*

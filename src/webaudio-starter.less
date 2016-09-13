@@ -20,30 +20,16 @@
 		.graph {
 			@grid-size: 32px;
 			@node-width: 6;
-			@background-color: #FFD;
 			@node-color: #DDF;
 
 			position: relative;
-			//background: @background-color;
-			//overflow-y: hidden;
-			//overflow-y: auto;
-			//overflow-x: auto;
 			overflow: auto;
 			height: @grid-size * 15;
 			min-height: @grid-size * 2;
 			font-size: 14px;
 			font-family: sans-serif;
-			// { expand to fieldset border - can't mess with fieldset itself b/c plans of option comparison
-			margin-left: -11px;
-			//padding-left: 11px;
+			margin-left: -11px; // expand to fieldset border - can't mess with fieldset itself b/c plans of option comparison
 			margin-right: -2px;
-			// padding-right: 2px;
-			//margin-top: -9px; // can't know it for sure, depends on <legend> height
-			//legend {
-			//	height: 1em;
-			//	margin: -0.5em 0;
-			//}
-			// }
 			border-top: groove 2px #DDD;
 			resize: vertical;
 			svg {
@@ -52,18 +38,11 @@
 				width: 100%;
 				height: 100%;
 			}
-			/*
-			.buttons {
-				position: absolute;
-				//width: 100%;
-				margin-left: 11px;
-			}
-			*/
 			.nodes {
 				position: absolute;
 				top: 0;
 				left: 0;
-				width: 100%;
+				//width: 100%;
 				//height: 100%;
 				.node {
 					position: absolute;
