@@ -338,12 +338,18 @@ class GraphOptionOutput {
 		// }
 		const $legend=$("<legend>"+i18n('options.'+option.fullName)+"</legend>")
 		const $graph=$("<div class='graph'>").height(gridSize*graphHeight).append(
-			$lines,$nodes,$buttons // TODO buttons for reordering/renumbering with toposort
+			$lines,$nodes
 		)
-		this.$output=option.$=$("<fieldset>").append($legend,$graph)
+		this.$output=option.$=$("<fieldset>").append(
+			$legend,
+			$buttons, // TODO buttons for reordering/renumbering with toposort
+			$graph
+		)
+		/*
 		setTimeout(()=>{ // wait for rendering
 			$graph.css('margin-top',-($legend.height()/2-1)) // TODO repeat it on resize
 		})
+		*/
 		/*
 		this.$output=option.$=$("<fieldset class='graph'>").append(
 			//"<legend>"+i18n('options.'+option.fullName)+"</legend>",
