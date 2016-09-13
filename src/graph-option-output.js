@@ -268,6 +268,20 @@ class GraphOptionOutput {
 				cancelAnimationFrame(snapAnimationId)
 				let dragX1=ev.pageX
 				let dragY1=ev.pageY
+				const setNodePosition=(x,y)=>{
+					$node.css({
+						left: x,
+						top: y,
+					})
+					const [x2,y2]=getNodePortCoords($node,0)
+					$node.data('ins').forEach(line=>{
+						moveLine($(line),{x2,y2})
+					})
+					const [x1,y1]=getNodePortCoords($node,1)
+					$node.data('outs').forEach(line=>{
+						moveLine($(line),{x1,y1})
+					})
+				}
 				const handlers={
 					mouseup() { // IE doesn't receive this event when the button is released outside the window (?)
 						cancelAnimationFrame(dragAnimationId)
@@ -288,16 +302,13 @@ class GraphOptionOutput {
 						const snapAnimationHandler=time=>{
 							const t=time-snapStartTime
 							if (t>=snapDuration) {
-								$node.css({
-									left: snapX2,
-									top:  snapY2,
-								})
+								setNodePosition(snapX2,snapY2)
 								snapAnimationId=null
 							} else {
-								$node.css({
-									left: snapX1+(snapX2-snapX1)*t/snapDuration,
-									top:  snapY1+(snapY2-snapY1)*t/snapDuration,
-								})
+								setNodePosition(
+									snapX1+(snapX2-snapX1)*t/snapDuration,
+									snapY1+(snapY2-snapY1)*t/snapDuration
+								)
 								snapAnimationId=requestAnimationFrame(snapAnimationHandler)
 							}
 						}
@@ -309,10 +320,10 @@ class GraphOptionOutput {
 						if (dragAnimationId==null) {
 							dragAnimationId=requestAnimationFrame(()=>{
 								const pos=$node.position()
-								$node.css({
-									left: pos.left+dragX2-dragX1,
-									top: pos.top+dragY2-dragY1,
-								})
+								setNodePosition(
+									pos.left+dragX2-dragX1,
+									pos.top +dragY2-dragY1
+								)
 								dragX1=dragX2
 								dragY1=dragY2
 								dragAnimationId=null
