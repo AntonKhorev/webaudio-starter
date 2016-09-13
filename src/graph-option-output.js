@@ -13,7 +13,6 @@ class GraphOptionsOutput extends BaseOptionsOutput {
 class GraphOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		const gridSize=32
-		const graphHeight=15
 		const nodeWidth=6
 		const $lines=$(
 			"<svg xmlns='http://www.w3.org/2000/svg' version='1.1'>"+
@@ -272,7 +271,6 @@ class GraphOptionOutput {
 						if (gx<0) gx=0
 						let gy=Math.round(snapY1/gridSize)
 						if (gy<0) gy=0
-						if (gy>graphHeight-2) gy=graphHeight-2
 						// TODO store new grid positions, update options
 						const snapX2=gx*gridSize
 						const snapY2=gy*gridSize
@@ -337,7 +335,7 @@ class GraphOptionOutput {
 		})
 		// }
 		const $legend=$("<legend>"+i18n('options.'+option.fullName)+"</legend>")
-		const $graph=$("<div class='graph'>").height(gridSize*graphHeight).append(
+		const $graph=$("<div class='graph'>").append(
 			$lines,$nodes
 		)
 		this.$output=option.$=$("<fieldset>").append(
