@@ -42,8 +42,8 @@
 				position: absolute;
 				top: 0;
 				left: 0;
-				//width: 100%;
-				//height: 100%;
+				width: 100%; // this has to be set, otherwise $node.position() will return wrong coords
+				//height: 100%; // this has to be commented out, otherwise resize on .graph will stop working on Chrome
 				.node {
 					position: absolute;
 					width: @grid-size*@node-width;
