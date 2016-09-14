@@ -363,6 +363,12 @@ class GraphOptionOutput {
 			$buttons, // TODO buttons for reordering/renumbering with toposort
 			$graph
 		)
+		const resizeAnimationHandler=()=>{ // would have done $graph.on('scroll resize',...), but there's no resize event for elements
+			$lines.width($graph[0].clientWidth+$graph.scrollLeft())
+			$lines.height($graph[0].clientHeight+$graph.scrollTop())
+			requestAnimationFrame(resizeAnimationHandler)
+		}
+		resizeAnimationHandler()
 	}
 	// make clone button work
 	/*
