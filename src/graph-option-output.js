@@ -55,18 +55,6 @@ class GraphOptionOutput {
 			$line.attr(coords)
 			$lines.append($line.detach()) // ie bug: this is required once markers are used; see http://stackoverflow.com/questions/15693178/svg-line-markers-not-updating-when-line-moves-in-ie10
 		}
-		/*
-		const updateConnectionLine=($line,$node1,$node2)=>{
-			const pos1=$node1.position()
-			const pos2=$node2.position()
-			$line.attr({
-				x1: pos1.left+$node1.width(),
-				y1: pos1.top+gridSize*1.5,
-				x2: pos2.left,
-				y2: pos2.top+gridSize*1.5
-			})
-		}
-		*/
 		const getNodeName=$node=>{
 			const nodeOption=$node.data('option')
 			const nodeIndex=$node.data('index')
@@ -130,7 +118,18 @@ class GraphOptionOutput {
 			// 	$nodes.find('.node-port-controls select').empty().append($options)
 		}
 		const disconnectNodes=($thisNode,$thatNode,dirIndex)=>{
-			// TODO
+			const disconnectInToOut=($outNode,$inNode)=>{ // remove edge: $outNode -> $inNode
+				const $line=$outNode.data('outs').get($inNode[0])
+				$outNode.data('outs').delete($inNode[0])
+				$inNode.data('ins').delete($outNode[0])
+				$line.remove()
+			}
+			if (dirIndex) {
+				disconnectInToOut($thisNode,$thatNode)
+			} else {
+				disconnectInToOut($thatNode,$thisNode)
+			}
+			updateNodeSequence()
 		}
 		const connectNodes=($thisNode,$thatNode,dirIndex)=>{
 			const connectInToOut=($outNode,$inNode)=>{ // add edge: $outNode -> $inNode
