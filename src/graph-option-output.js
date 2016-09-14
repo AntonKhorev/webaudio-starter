@@ -18,7 +18,7 @@ class GraphOptionOutput {
 			"<svg xmlns='http://www.w3.org/2000/svg' version='1.1'>"+
 			"<defs>"+
 				"<marker id='circleMarker' markerWidth='8' markerHeight='8' refX='4' refY='4'>"+
-					"<circle cx='4' cy='4' r='2' fill='#000' />"+
+					"<circle cx='4' cy='4' r='1.25' fill='#000' stroke='none' />"+
 				"</marker>"+
 			"</defs>"+
 			"</svg>"
@@ -41,6 +41,7 @@ class GraphOptionOutput {
 			'marker-end': 'url(#circleMarker)',
 			stroke: '#000',
 			'stroke-width': 2,
+			//'stroke-opacity': 0.5,
 			x1,y1,x2,y2
 		})
 		const moveLine=($line,coords)=>{
@@ -133,6 +134,13 @@ class GraphOptionOutput {
 				$lines.append($line)
 				$outNode.data('outs').set($inNode[0],$line[0])
 				$inNode.data('ins').set($outNode[0],$line[0])
+				$line.mouseover(function(){
+					$line.attr('stroke','#F00')
+				}).mouseout(function(){
+					$line.attr('stroke','#000')
+				}).click(function(){
+					disconnectNodes($thisNode,$thatNode,dirIndex)
+				})
 			}
 			if (dirIndex) {
 				connectInToOut($thisNode,$thatNode)
