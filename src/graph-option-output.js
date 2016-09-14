@@ -18,7 +18,7 @@ class GraphOptionOutput {
 			"<svg xmlns='http://www.w3.org/2000/svg' version='1.1'>"+
 			"<defs>"+
 				"<marker id='circleMarker' markerWidth='8' markerHeight='8' refX='4' refY='4'>"+
-					"<circle cx='4' cy='4' r='1.25' fill='#000' stroke='none' />"+
+					"<circle cx='4' cy='4' r='2' fill='#000' stroke='none' />"+
 				"</marker>"+
 			"</defs>"+
 			"</svg>"
@@ -34,14 +34,21 @@ class GraphOptionOutput {
 			if (outputPad==null) outputPad=parseInt(this.$output.css('padding-left'))
 			return Math.round((pCoord-outputPad)/gridSize)
 		}
-		const writeLine=(x1,y1,x2,y2)=>$(
+		const writeVisibleLine=(x1,y1,x2,y2)=>$(
 			document.createElementNS("http://www.w3.org/2000/svg","line")
 		).attr({
 			'marker-start': 'url(#circleMarker)', // TODO multiple overlaid markers look bad, scrap them
 			'marker-end': 'url(#circleMarker)',
 			stroke: '#000',
 			'stroke-width': 2,
-			//'stroke-opacity': 0.5,
+			x1,y1,x2,y2
+		})
+		const writeInvisibleLine=(x1,y1,x2,y2)=>$(
+			document.createElementNS("http://www.w3.org/2000/svg","line")
+		).attr({
+			stroke: '#000',
+			'stroke-width': 10,
+			'stroke-opacity': 0,
 			x1,y1,x2,y2
 		})
 		const moveLine=($line,coords)=>{
@@ -81,7 +88,7 @@ class GraphOptionOutput {
 			option.nodes=$.map($nodes.children(),node=>{
 				const $node=$(node)
 				const next=[]
-				$node.data('outs').forEach((line,thatNode)=>{
+				$node.data('outs').forEach(($line,thatNode)=>{
 					next.push($(thatNode).data('index'))
 				})
 				return {
@@ -101,11 +108,11 @@ class GraphOptionOutput {
 					})
 				)
 				const $inList=$node.find('.node-port-in .node-port-controls ul').empty()
-				$node.data('ins').forEach((line,thatNode)=>{
+				$node.data('ins').forEach(($line,thatNode)=>{
 					$inList.append(writeLi($(thatNode),0))
 				})
 				const $outList=$node.find('.node-port-out .node-port-controls ul').empty()
-				$node.data('outs').forEach((line,thatNode)=>{
+				$node.data('outs').forEach(($line,thatNode)=>{
 					$outList.append(writeLi($(thatNode),1))
 				})
 				const $inSelect=$node.find('.node-port-in .node-port-controls select').empty()
@@ -127,17 +134,18 @@ class GraphOptionOutput {
 		}
 		const connectNodes=($thisNode,$thatNode,dirIndex)=>{
 			const connectInToOut=($outNode,$inNode)=>{ // add edge: $outNode -> $inNode
-				const $line=writeLine(
-					...getNodePortCoords($outNode,1),
-					...getNodePortCoords($inNode,0)
-				)
+				const xy1=getNodePortCoords($outNode,1)
+				const xy2=getNodePortCoords($inNode,0)
+				const $vLine=writeVisibleLine(...xy1,...xy2)
+				const $iLine=writeInvisibleLine(...xy1,...xy2)
+				const $line=$vLine.add($iLine)
 				$lines.append($line)
-				$outNode.data('outs').set($inNode[0],$line[0])
-				$inNode.data('ins').set($outNode[0],$line[0])
-				$line.mouseover(function(){
-					$line.attr('stroke','#F00')
+				$outNode.data('outs').set($inNode[0],$line)
+				$inNode.data('ins').set($outNode[0],$line)
+				$iLine.mouseover(function(){
+					$vLine.attr('stroke','#F00')
 				}).mouseout(function(){
-					$line.attr('stroke','#000')
+					$vLine.attr('stroke','#000')
 				}).click(function(){
 					disconnectNodes($thisNode,$thatNode,dirIndex)
 				})
@@ -150,13 +158,13 @@ class GraphOptionOutput {
 			updateNodeSequence()
 		}
 		const deleteNode=($node)=>{
-			$node.data('ins').forEach((line,thatNode)=>{
+			$node.data('ins').forEach(($line,thatNode)=>{
 				$(thatNode).data('outs').delete($node[0])
-				$(line).remove()
+				$line.remove()
 			})
-			$node.data('outs').forEach((line,thatNode)=>{
+			$node.data('outs').forEach(($line,thatNode)=>{
 				$(thatNode).data('ins').delete($node[0])
-				$(line).remove()
+				$line.remove()
 			})
 			$node.remove()
 			updateNodeSequence()
@@ -186,7 +194,7 @@ class GraphOptionOutput {
 					}
 					// }
 					const [x1,y1]=getNodePortCoords($node,dirIndex)
-					const $line=writeLine(x1,y1,x1,y1)
+					const $line=writeVisibleLine(x1,y1,x1,y1)
 					$lines.append($line)
 					const documentHandlers={
 						mouseup() {
@@ -282,12 +290,12 @@ class GraphOptionOutput {
 						top: y,
 					})
 					const [x2,y2]=getNodePortCoords($node,0)
-					$node.data('ins').forEach(line=>{
-						moveLine($(line),{x2,y2})
+					$node.data('ins').forEach($line=>{
+						moveLine($line,{x2,y2})
 					})
 					const [x1,y1]=getNodePortCoords($node,1)
-					$node.data('outs').forEach(line=>{
-						moveLine($(line),{x1,y1})
+					$node.data('outs').forEach($line=>{
+						moveLine($line,{x1,y1})
 					})
 				}
 				const handlers={
