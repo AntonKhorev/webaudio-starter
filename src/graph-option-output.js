@@ -3,7 +3,17 @@
 const BaseOptionsOutput=require('crnx-base/options-output')
 const Option=require('./option-classes')
 
-class GraphGraphOptionOutput {
+class NodeOptionsOutput extends BaseOptionsOutput {
+	setOptionClassWriters(optionClassWriters) {
+		optionClassWriters.set(Option.Group,(option,writeOption,i18n,generateId)=>{
+			return option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
+				option.entries.map(writeOption)
+			)
+		})
+	}
+}
+
+class GraphOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		const gridSize=32
 		const nodeWidth=6
@@ -162,7 +172,8 @@ class GraphGraphOptionOutput {
 			updateNodeSequence()
 		}
 		const addNode=(nodeOption,gx0,gy0)=>{
-			let $node
+			const nodeOptionsOutput=new NodeOptionsOutput({root: nodeOption},generateId,i18n)
+			const $node=nodeOptionsOutput.$output
 			const id=generateId()
 			let dragAnimationId=null
 			let snapAnimationId=null
@@ -242,19 +253,23 @@ class GraphGraphOptionOutput {
 					)
 				)
 			}
-			$node=$(`<fieldset id='${id}' class='node'>`).data({
+			$node.attr({
+				id,
+			}).css({
+				left: g2pCoord(gx0),
+				top: g2pCoord(gy0),
+				'z-index': ++maxZIndex,
+			}).data({
 				option: nodeOption,
 				ins: new Map(), // dom element -> line dom element
 				outs: new Map(), // dom element -> line dom element
 				// also has 'index' set by updateNodeSequence()
-			}).append(
-				$("<legend class='node-section'>").append(
-					i18n('options.'+nodeOption.fullName),
-					" ",
-					`<span class='number-mark'>#<span class='number'></span></span>`
-				),
+			})
+			$node.children('legend').append(
+				` <span class='number-mark'>#<span class='number'></span></span>`
+			).after(
 				$("<div class='node-head-controls'>").append(
-					// TODO top-left burger button for keyboard movement
+					// TODO controls for keyboard movement
 					$("<button class='delete' title='"+i18n('options-output.delete.tip')+"'>").append(
 						"<span>"+i18n('options-output.delete')+"</span>"
 					).mousedown(function(ev){
@@ -269,10 +284,8 @@ class GraphGraphOptionOutput {
 					writePort(0),
 					writePort(1)
 				)
-			).css({
-				left: g2pCoord(gx0),
-				top: g2pCoord(gy0),
-			}).mousedown(function(ev){
+			)
+			$node.mousedown(function(ev){
 				cancelAnimationFrame(snapAnimationId)
 				let dragX1=ev.pageX
 				let dragY1=ev.pageY
@@ -344,7 +357,7 @@ class GraphGraphOptionOutput {
 				}
 				$(document).on(handlers)
 				ev.preventDefault() // prevent text selection
-			}).css('z-index',++maxZIndex)
+			})
 			$nodes.append($node)
 			updateNodeSequence()
 		}
@@ -399,22 +412,6 @@ class GraphGraphOptionOutput {
 		return $subOutput
 	}
 	*/
-}
-
-class GraphOptionsOutput extends BaseOptionsOutput {
-	setOptionClassWriters(optionClassWriters) {
-		optionClassWriters.set(Option.Graph,function(){
-			return new GraphGraphOptionOutput(...arguments).$output
-		})
-	}
-}
-
-class GraphOptionOutput {
-	constructor(option,writeOption,i18n,generateId) {
-		const rootedOption={root: option}
-		const graphOptionsOutput=new GraphOptionsOutput(rootedOption,generateId,i18n)
-		this.$output=graphOptionsOutput.$output
-	}
 }
 
 module.exports=GraphOptionOutput
