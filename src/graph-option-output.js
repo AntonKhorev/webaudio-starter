@@ -3,14 +3,7 @@
 const BaseOptionsOutput=require('crnx-base/options-output')
 const Option=require('./option-classes')
 
-class GraphOptionsOutput extends BaseOptionsOutput {
-	setOptionClassWriters(optionClassWriters) {
-		// intentionally not calling super here
-		// TODO
-	}
-}
-
-class GraphOptionOutput {
+class GraphGraphOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		const gridSize=32
 		const nodeWidth=6
@@ -406,6 +399,22 @@ class GraphOptionOutput {
 		return $subOutput
 	}
 	*/
+}
+
+class GraphOptionsOutput extends BaseOptionsOutput {
+	setOptionClassWriters(optionClassWriters) {
+		optionClassWriters.set(Option.Graph,function(){
+			return new GraphGraphOptionOutput(...arguments).$output
+		})
+	}
+}
+
+class GraphOptionOutput {
+	constructor(option,writeOption,i18n,generateId) {
+		const rootedOption={root: option}
+		const graphOptionsOutput=new GraphOptionsOutput(rootedOption,generateId,i18n)
+		this.$output=graphOptionsOutput.$output
+	}
 }
 
 module.exports=GraphOptionOutput
