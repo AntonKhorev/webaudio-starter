@@ -21,8 +21,6 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 					.val(option.value)
 					.on('input change',function(){
 						option.value=this.value
-					}).mousedown(function(ev){
-						ev.stopPropagation() // prevent $node.mousedown()
 					}),
 				" ",
 				$("<datalist id='"+listId+"'>").append(
@@ -252,7 +250,7 @@ class GraphOptionOutput {
 					documentHandlers.mousemove(ev)
 					$(document).on(documentHandlers)
 					$nodes.children().on(nodeHandlers)
-					return false // prevent $node.mousedown() and text selection
+					return false // prevent text selection
 				})
 				return $(`<div class='node-port node-port-${thisDir}'>`).append(
 					$hole,
@@ -292,9 +290,7 @@ class GraphOptionOutput {
 					// TODO controls for keyboard movement
 					$("<button class='delete' title='"+i18n('options-output.delete.tip')+"'>").append(
 						"<span>"+i18n('options-output.delete')+"</span>"
-					).mousedown(function(ev){
-						ev.stopPropagation() // prevent $node.mousedown()
-					}).click(function(){
+					).click(function(){
 						cancelAnimationFrame(dragAnimationId)
 						cancelAnimationFrame(snapAnimationId)
 						deleteNode($node)
@@ -377,6 +373,8 @@ class GraphOptionOutput {
 				}
 				$(document).on(handlers)
 				ev.preventDefault() // prevent text selection
+			}).on('mousedown','input, button',function(ev){
+				ev.stopPropagation() // don't run the handler defined above when using inputs
 			})
 			$nodes.append($node)
 			updateNodeSequence()
