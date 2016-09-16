@@ -18,7 +18,6 @@ class Options extends BaseOptions {
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/guitar.ogg',
 					]],
 				]],
-				/*
 				['Group','video',[
 					['Text','url',[
 						'http://mainline.i3s.unice.fr/mooc/elephants-dream-medium.webm',
@@ -29,6 +28,7 @@ class Options extends BaseOptions {
 					['Int','width',[1,1920],320,{ unit: 'pixel' }],
 					['Int','height',[1,1080],240,{ unit: 'pixel' }],
 				]],
+				/*
 				['Group','sample',[
 					['Text','url',[
 						'http://mainline.i3s.unice.fr/mooc/shoot1.mp3',

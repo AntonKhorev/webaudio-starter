@@ -26,8 +26,8 @@ const langStrings={
 		'options.graph.sample.randomGain': "Random gain",
 		*/
 		'options.graph.{audio,video,sample}.url': "URL",
-		/*
 		'options.graph.video.{width,height}': "Player {}",
+		/*
 		'options.graph.gain': "Gain",
 		'options.graph.gain.add': "Add gain",
 		'options.graph.gain.gain': "Gain",
@@ -181,8 +181,8 @@ const langStrings={
 		'options.graph.sample.randomGain': "Случайная громкость",
 		*/
 		'options.graph.{audio,video,sample}.url': "URL",
-		/*
 		'options.graph.video.{width,height}': "{Ширина,Высота} проигрывателя",
+		/*
 		'options.graph.gain': "Усилитель",
 		'options.graph.gain.add': "Добавить усилитель",
 		'options.graph.gain.gain': "Коэффициент усиления",

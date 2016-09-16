@@ -55,6 +55,14 @@ NodeClasses.audio = class extends Source {
 	}
 }
 
+NodeClasses.video = class extends Source {
+	getHtmlLines(featureContext,i18n) {
+		return Lines.bae(
+			Lines.html`<video src=${this.options.url} id=${this.elementHtmlName} width=${this.options.width} height=${this.options.height} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></video>`
+		)
+	}
+}
+
 NodeClasses.destination = Destination
 
 module.exports=NodeClasses

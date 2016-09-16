@@ -147,9 +147,14 @@
 			@label-width: 1.5;
 			@spacing-size: 4px;
 			position: relative;
-			& > label:first-child {
+			font-size: 12px;
+			label, input, .min, .max {
 				display: block;
 				position: absolute;
+				box-sizing: border-box;
+				font-size: 12px;
+			}
+			label.side {
 				height: @grid-size;
 				width: @label-width*@grid-size - @spacing-size;
 				text-align: right;
@@ -157,14 +162,34 @@
 					display: none;
 				}
 			}
-			input {
-				display: block;
-				position: absolute;
+			input[type="text"] {
 				height: @grid-size - 2*@spacing-size;
 				width: (@node-width - @label-width)*@grid-size - @spacing-size;
-				box-sizing: border-box;
 				top: @spacing-size;
 				left: @label-width*@grid-size;
+			}
+			label.range {
+				height: @grid-size / 2;
+				line-height: @grid-size / 2;
+				width: 100%;
+			}
+			input[type="range"] {
+				height: @grid-size / 2;
+				top: @grid-size / 2;
+				width: 100%;
+				margin: 0;
+			}
+			.min, .max {
+				height: @grid-size / 2;
+				line-height: @grid-size / 2;
+				width: @node-width*@grid-size / 2;
+			}
+			.min {
+				text-align: left;
+			}
+			.max {
+				text-align: right;
+				right: 0;
 			}
 		}
 	}

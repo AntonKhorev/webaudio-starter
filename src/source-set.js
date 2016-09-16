@@ -51,11 +51,6 @@ const sourceClasses={
 	},
 	video: class extends Source {
 		get type() { return 'video' }
-		getElementHtmlLines(featureContext,i18n) {
-			return Lines.bae(
-				Lines.html`<video src=${this.options.url} id=${this.elementHtmlName} width=${this.options.width} height=${this.options.height} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></video>`
-			)
-		}
 	},
 	sample: class extends Source {
 		get type() { return 'sample' }
