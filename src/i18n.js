@@ -24,7 +24,9 @@ const langStrings={
 		'options.graph.sample.randomPitch': "Random pitch",
 		'options.graph.sample.gain': "Gain",
 		'options.graph.sample.randomGain': "Random gain",
-		'options.graph.{audio,video,sample}.url': "Source URL",
+		*/
+		'options.graph.{audio,video,sample}.url': "URL",
+		/*
 		'options.graph.video.{width,height}': "Player {}",
 		'options.graph.gain': "Gain",
 		'options.graph.gain.add': "Add gain",
@@ -177,7 +179,9 @@ const langStrings={
 		'options.graph.sample.randomPitch': "Случайная высота",
 		'options.graph.sample.gain': "Громкость",
 		'options.graph.sample.randomGain': "Случайная громкость",
-		'options.graph.{audio,video,sample}.url': "URL источника",
+		*/
+		'options.graph.{audio,video,sample}.url': "URL",
+		/*
 		'options.graph.video.{width,height}': "{Ширина,Высота} проигрывателя",
 		'options.graph.gain': "Усилитель",
 		'options.graph.gain.add': "Добавить усилитель",

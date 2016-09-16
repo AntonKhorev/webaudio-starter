@@ -3,12 +3,32 @@
 const BaseOptionsOutput=require('crnx-base/options-output')
 const Option=require('./option-classes')
 
+// has .node-option option class name instead of .option
 class NodeOptionsOutput extends BaseOptionsOutput {
 	setOptionClassWriters(optionClassWriters) {
 		optionClassWriters.set(Option.Group,(option,writeOption,i18n,generateId)=>{
-			return option.$=$("<fieldset>").append("<legend>"+i18n('options.'+option.fullName)+"</legend>").append(
+			return option.$=$("<fieldset class='node-option'>").append(
+				"<legend>"+i18n('options.'+option.fullName)+"</legend>",
 				option.entries.map(writeOption)
 			)
+		})
+		optionClassWriters.set(Option.Text,(option,writeOption,i18n,generateId)=>{
+			const id=generateId()
+			const listId=generateId()
+			return option.$=$("<div class='node-option'>").append(
+				this.getLeadLabel(id,i18n,option),
+				$("<input type='text' id='"+id+"' list='"+listId+"' />")
+					.val(option.value)
+					.on('input change',function(){
+						option.value=this.value
+					}).mousedown(function(ev){
+						ev.stopPropagation() // prevent $node.mousedown()
+					}),
+				" ",
+				$("<datalist id='"+listId+"'>").append(
+					option.availableValues.map(availableValue=>$("<option>").text(availableValue))
+				)
+			) // TODO expand on focus
 		})
 	}
 }
@@ -280,7 +300,7 @@ class GraphOptionOutput {
 						deleteNode($node)
 					})
 				),
-				$("<div class='node-section node-ports'>").append(
+				$("<div class='node-ports'>").append(
 					writePort(0),
 					writePort(1)
 				)
@@ -379,7 +399,7 @@ class GraphOptionOutput {
 		const $graph=$("<div class='graph'>").append(
 			$lines,$nodes
 		)
-		this.$output=option.$=$("<fieldset>").append(
+		this.$output=option.$=$("<fieldset class='option'>").append(
 			$legend,
 			$buttons, // TODO buttons for reordering/renumbering with toposort
 			$graph
