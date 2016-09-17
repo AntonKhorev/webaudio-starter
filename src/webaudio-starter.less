@@ -144,19 +144,21 @@
 			}
 		}
 		div.node-option {
-			@label-width: 1.5;
+			@side-width: 1.5;
 			@spacing-size: 4px;
 			position: relative;
 			font-size: 12px;
-			label, input, .min, .max {
+			input {
 				display: block;
 				position: absolute;
 				box-sizing: border-box;
 				font-size: 12px;
 			}
 			label.side {
+				display: block;
+				position: absolute;
 				height: @grid-size;
-				width: @label-width*@grid-size - @spacing-size;
+				width: @side-width*@grid-size - @spacing-size;
 				text-align: right;
 				& + span.space {
 					display: none;
@@ -164,32 +166,49 @@
 			}
 			input[type="text"] {
 				height: @grid-size - 2*@spacing-size;
-				width: (@node-width - @label-width)*@grid-size - @spacing-size;
+				width: (@node-width - @side-width)*@grid-size - @spacing-size;
 				top: @spacing-size;
-				left: @label-width*@grid-size;
+				left: @side-width*@grid-size;
 			}
-			label.range {
+			.range-label {
+				display: block;
+				position: absolute;
 				height: @grid-size / 2;
 				line-height: @grid-size / 2;
-				width: 100%;
+				width: (@node-width - @side-width)*@grid-size - @spacing-size;
+				left: @spacing-size;
+				text-align: justify;
+				text-align-last: justify;
+				label, .min, .max {
+					display: inline-block;
+				}
+			}
+			.units {
+				display: block;
+				position: absolute;
+				height: @grid-size / 2;
+				line-height: @grid-size / 2;
+				width: @side-width*@grid-size - 2*@spacing-size;
+				right: @spacing-size;
+				text-align: left;
 			}
 			input[type="range"] {
 				height: @grid-size / 2;
 				top: @grid-size / 2;
-				width: 100%;
+				width: (@node-width - @side-width)*@grid-size - @spacing-size;
+				left: @spacing-size;
 				margin: 0;
 			}
-			.min, .max {
+			input[type="number"] {
 				height: @grid-size / 2;
 				line-height: @grid-size / 2;
-				width: @node-width*@grid-size / 2;
+				width: @side-width*@grid-size - 2*@spacing-size;
+				right: @spacing-size;
+				top: @grid-size / 2;
+				-moz-appearance: textfield;
 			}
-			.min {
-				text-align: left;
-			}
-			.max {
-				text-align: right;
-				right: 0;
+			input:invalid {
+				background: #F8A;
 			}
 		}
 	}

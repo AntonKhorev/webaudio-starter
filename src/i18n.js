@@ -181,7 +181,7 @@ const langStrings={
 		'options.graph.sample.randomGain': "Случайная громкость",
 		*/
 		'options.graph.{audio,video,sample}.url': "URL",
-		'options.graph.video.{width,height}': "{Ширина,Высота} проигрывателя",
+		'options.graph.video.{width,height}': "{Ширина,Высота}",
 		/*
 		'options.graph.gain': "Усилитель",
 		'options.graph.gain.add': "Добавить усилитель",
