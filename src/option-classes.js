@@ -314,4 +314,8 @@ Option.TreeGraph = class extends Option.AcyclicGraph {
 }
 */
 
+Option.GraphNode = class extends Option.Group {}
+Option.GraphSource = class extends Option.GraphNode {}
+Option.GraphSink = class extends Option.GraphNode {}
+
 module.exports=Option

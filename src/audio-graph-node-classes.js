@@ -63,6 +63,12 @@ NodeClasses.video = class extends Source {
 	}
 }
 
+NodeClasses.gain = class extends Node {
+}
+
+NodeClasses.panner = class extends Node {
+}
+
 NodeClasses.destination = Destination
 
 module.exports=NodeClasses

@@ -6,7 +6,7 @@ class Options extends BaseOptions {
 	get entriesDescription() {
 		return [
 			['AcyclicGraph','graph',[
-				['Group','audio',[
+				['GraphSource','audio',[
 					['Text','url',[
 						// original w3c mooc
 						'http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3',
@@ -18,7 +18,7 @@ class Options extends BaseOptions {
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/guitar.ogg',
 					]],
 				]],
-				['Group','video',[
+				['GraphSource','video',[
 					['Text','url',[
 						'http://mainline.i3s.unice.fr/mooc/elephants-dream-medium.webm',
 						'http://mainline.i3s.unice.fr/mooc/elephants-dream-medium.mp4',
@@ -42,14 +42,16 @@ class Options extends BaseOptions {
 					['Float','gain',[0,2],1],
 					['Float','randomGain',[0,1]],
 				]],
-				['Group','gain',[
+				*/
+				['GraphNode','gain',[
 					['LiveFloat','gain',[0,10],1,{
 						defaultMax: 1,
 					}],
 				]],
-				['Group','panner',[
+				['GraphNode','panner',[
 					['LiveFloat','pan',[-1,1],0],
 				]],
+				/*
 				['BiquadFilter','biquad'],
 				['IIRFilter','iir'],
 				['Group','convolver',[
@@ -63,7 +65,7 @@ class Options extends BaseOptions {
 				]],
 				['EqualizerFilter','equalizer'],
 				*/
-				['Group','destination',[]],
+				['GraphSink','destination',[]],
 			],'nodeType'],
 			/*
 			['Group','destination',[

@@ -234,9 +234,12 @@ class GraphOptionOutput {
 			const id=generateId()
 			let dragAnimationId=null
 			let snapAnimationId=null
-			const writePort=(dirIndex)=>{
+			const writePort=(dirIndex,isClosed)=>{
 				const dirNames=['in','out'] // TODO i18n?
 				const thisDir=dirNames[dirIndex]
+				if (isClosed) {
+					return $(`<div class='node-port node-port-${thisDir} node-port-closed'>`)
+				}
 				const $select=$("<select>")
 				const $hole=$("<div class='node-port-hole'>").mousedown(function(ev){
 					// {
@@ -336,8 +339,8 @@ class GraphOptionOutput {
 					})
 				),
 				$("<div class='node-ports'>").append(
-					writePort(0),
-					writePort(1)
+					writePort(0,nodeOption instanceof Option.GraphSource),
+					writePort(1,nodeOption instanceof Option.GraphSink)
 				)
 			)
 			$node.mousedown(function(ev){

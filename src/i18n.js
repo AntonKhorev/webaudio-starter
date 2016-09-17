@@ -27,13 +27,13 @@ const langStrings={
 		*/
 		'options.graph.{audio,video,sample}.url': "URL",
 		'options.graph.video.{width,height}': "Player {}",
-		/*
 		'options.graph.gain': "Gain",
 		'options.graph.gain.add': "Add gain",
 		'options.graph.gain.gain': "Gain",
 		'options.graph.panner': "Stereo panner",
 		'options.graph.panner.add': "Add stereo panner",
 		'options.graph.panner.pan': "Pan",
+		/*
 		'options.graph.biquad': "Biquad filter", // [[Digital biquad filter]]
 		'options.graph.biquad.add': "Add biquad filter",
 		'options.graph.biquad.type': "Filter type",
@@ -182,13 +182,13 @@ const langStrings={
 		*/
 		'options.graph.{audio,video,sample}.url': "URL",
 		'options.graph.video.{width,height}': "{Ширина,Высота}",
-		/*
 		'options.graph.gain': "Усилитель",
 		'options.graph.gain.add': "Добавить усилитель",
-		'options.graph.gain.gain': "Коэффициент усиления",
+		'options.graph.gain.gain': "Усиление",
 		'options.graph.panner': "Панорамирование",
 		'options.graph.panner.add': "Добавить панорамирование",
 		'options.graph.panner.pan': "Баланс",
+		/*
 		'options.graph.biquad': "Биквадратичный фильтр",
 		'options.graph.biquad.add': "Добавить биквадратичный фильтр",
 		'options.graph.biquad.type': "Тип фильтра",

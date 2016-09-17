@@ -60,7 +60,6 @@ describe("Code",()=>{
 		})
 		assert.strictEqual(ctx,undefined)
 	})
-	/*
 	it("ignores gain node with default gain",()=>{
 		const ctx=getAudioContext({
 			graph: [
@@ -181,6 +180,7 @@ describe("Code",()=>{
 			]
 		})
 	})
+	/*
 	it("adds equalizer with 1 input",()=>{
 		const ctx=getAudioContext({
 			graph: [
