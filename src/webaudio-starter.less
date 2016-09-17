@@ -194,7 +194,8 @@
 			}
 			input[type="range"] {
 				height: @grid-size / 2;
-				top: @grid-size / 2;
+				top: @grid-size / 2 - 2px; // shift up slightly
+				padding: 0;
 				width: (@node-width - @side-width)*@grid-size - @spacing-size;
 				left: @spacing-size;
 				margin: 0;
