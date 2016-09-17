@@ -170,11 +170,13 @@
 				top: @spacing-size;
 				left: @side-width*@grid-size;
 			}
+			.range-label, .units {
+				height: 12px;
+				line-height: 12px;
+			}
 			.range-label {
 				display: block;
 				position: absolute;
-				height: @grid-size / 2;
-				line-height: @grid-size / 2;
 				width: (@node-width - @side-width)*@grid-size - @spacing-size;
 				left: @spacing-size;
 				text-align: justify;
@@ -186,8 +188,6 @@
 			.units {
 				display: block;
 				position: absolute;
-				height: @grid-size / 2;
-				line-height: @grid-size / 2;
 				width: @side-width*@grid-size - 2*@spacing-size;
 				right: @spacing-size;
 				text-align: left;
@@ -202,11 +202,17 @@
 			}
 			input[type="number"] {
 				height: @grid-size / 2;
-				line-height: @grid-size / 2;
 				width: @side-width*@grid-size - 2*@spacing-size;
 				right: @spacing-size;
-				top: @grid-size / 2;
+				top: @grid-size / 2 - @spacing-size;
+				padding-top: 0;
+				padding-bottom: 0;
+				// http://stackoverflow.com/a/23374725
 				-moz-appearance: textfield;
+				&::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+					-webkit-appearance: none;
+					margin: 0;
+				}
 			}
 			input:invalid {
 				background: #F8A;
