@@ -232,6 +232,10 @@ Option.EqualizerFilter = class extends Option.Group {
 	}
 }
 
+Option.GraphNode = class extends Option.Group {}
+Option.GraphSource = class extends Option.GraphNode {}
+Option.GraphSink = class extends Option.GraphNode {}
+
 Option.Graph = class extends Option.Collection {
 	getElementsPropertyName() {
 		return 'nodes'
@@ -287,7 +291,11 @@ Option.Graph = class extends Option.Collection {
 		// additionally it's ok to update nodes[i].x and nodes[i].y directly, but not other properties
 	}
 	canConnect(i,j) {
-		return !this._nodes[i].next/*:Array*/.includes(j)
+		return !(
+			this._nodes[i].entry instanceof Option.GraphSink ||
+			this._nodes[j].entry instanceof Option.GraphSource ||
+			this._nodes[i].next/*:Array*/.includes(j)
+		)
 	}
 }
 
@@ -313,9 +321,5 @@ Option.TreeGraph = class extends Option.AcyclicGraph {
 	}
 }
 */
-
-Option.GraphNode = class extends Option.Group {}
-Option.GraphSource = class extends Option.GraphNode {}
-Option.GraphSink = class extends Option.GraphNode {}
 
 module.exports=Option
