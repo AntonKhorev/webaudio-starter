@@ -17,15 +17,17 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 			const id=generateId()
 			const listId=generateId()
 			return option.$=$("<div class='node-option'>").append(
-				$(this.getLeadLabel(id,i18n,option)).addClass('side'),
-				$("<input type='text' id='"+id+"' list='"+listId+"' />")
-					.val(option.value)
-					.on('input change',function(){
-						option.value=this.value
-					}),
-				" ",
-				$("<datalist id='"+listId+"'>").append(
-					option.availableValues.map(availableValue=>$("<option>").text(availableValue))
+				$("<span class='node-option-section'>").append(
+					$(this.getLeadLabel(id,i18n,option)).addClass('side'),
+					$("<input type='text' id='"+id+"' list='"+listId+"' />")
+						.val(option.value)
+						.on('input change',function(){
+							option.value=this.value
+						}),
+					" ",
+					$("<datalist id='"+listId+"'>").append(
+						option.availableValues.map(availableValue=>$("<option>").text(availableValue))
+					)
 				)
 			) // TODO expand on focus
 		})
@@ -51,7 +53,7 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				min: option.availableMin,
 				max: option.availableMax
 			},option.precision)
-			return option.$=$("<div class='node-option'>").append(
+			const $mainSection=$("<span class='node-option-section'>").append(
 				$("<span class='range-label'>").append(
 					"<span class='min'>"+i18n.numberWithoutUnits(fmt.min,option.unit)+"</span> ",
 					$("<label for='"+id+"'>"+i18n('options.'+option.fullName)+"</label>"),
@@ -60,11 +62,19 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				" <span class='units'>"+i18n.numberUnits(fmt.max,option.unit)+"</span> ",
 				setInputAttrsAndListeners($sliderInput,$numberInput),
 				" ",
-				setInputAttrsAndListeners($numberInput,$sliderInput)
-				//" ",
-				//$("<button type='button'>"+i18n('options-output.reset')+"</button>").click(function(){
-				//	$sliderInput.val(option.defaultValue).change()
-				//})
+				setInputAttrsAndListeners($numberInput,$sliderInput),
+				" ",
+				$("<button class='more' title='Show more options'><span>More</span></button>").click(function(){ // TODO i18n
+					$extraSection.toggle()
+				})
+			)
+			const $extraSection=$("<span class='node-option-section'>").append(
+				$("<button>"+i18n('options-output.reset')+"</button>").click(function(){
+					$sliderInput.val(option.defaultValue).change()
+				})
+			).hide()
+			return option.$=$("<div class='node-option'>").append(
+				$mainSection," ",$extraSection
 			)
 		})
 	}

@@ -51,7 +51,7 @@
 						padding: 0;
 						border: none;
 						box-shadow: 0 0 3px 3px rgba(0,0,0,0.3);
-						& > legend, & > .node-ports, & >.node-option {
+						& > legend, & > .node-ports {
 							height: @grid-size;
 							line-height: @grid-size;
 							background: @node-color;
@@ -149,8 +149,15 @@
 		div.node-option {
 			@side-width: 1.5;
 			@spacing-size: 4px;
-			position: relative;
 			font-size: 12px;
+			.node-option-section {
+				display: block;
+				position: relative;
+				height: @grid-size;
+				line-height: @grid-size;
+				background: @node-color;
+				text-align: center;
+			}
 			input {
 				display: block;
 				position: absolute;
@@ -219,6 +226,34 @@
 			}
 			input:invalid {
 				background: #F8A;
+			}
+			button.more {
+				@button-size: 10px;
+				.plus-icon(@size,@color) {
+					@s: unit(@size);
+					@h: @s/2;
+					.svg(@s,@s,"<path d='M 0 @{h} H @{s} M @{h} 0 V @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
+				}
+				position: absolute;
+				display: block;
+				width: @button-size;
+				height: @button-size;
+				right: @spacing-size;
+				top: 0;
+				padding: 0;
+				border: 0;
+				background-color: transparent;
+				background-repeat: no-repeat;
+				.plus-icon(@button-size,#444);
+				&:hover {
+					.plus-icon(@button-size,#4C4);
+					&:active {
+						background-position: 0 1px;
+					}
+				}
+				& > span {
+					.visually-hidden();
+				}
 			}
 		}
 	}
