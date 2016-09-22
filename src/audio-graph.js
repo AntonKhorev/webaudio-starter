@@ -7,15 +7,16 @@ const Feature=require('./feature')
 class AudioGraph extends Feature {
 	constructor(options) {
 		super()
-		const sourceNodes=new Set
+		//const sourceNodes=new Set
 		const destinationNode=new Node.destination
 		// create nodes
 		const indexedNodes=options.nodes.map(nodeOptions=>{
 			let node=new Node[nodeOptions.nodeType](nodeOptions)
-			if (node.isSource) {
-				sourceNodes.add(node)
-			}
-			if (node.isDestination) {
+			//if (node.isSource) {
+			//	sourceNodes.add(node)
+			//}
+			//if (node.isDestination) {
+			if (node instanceof Node.destination) {
 				node=destinationNode
 			}
 			return node
@@ -59,9 +60,13 @@ class AudioGraph extends Feature {
 			})
 		}
 		sortNodes()
+		// TODO propagate upstream/downstream effects, clean up nodes that don't have both
 	}
 	getHtmlLines(featureContext,i18n) {
 		return Lines.bae(...this.nodes.map(node=>node.getHtmlLines(featureContext,i18n)))
+	}
+	getJsInitLines(featureContext,i18n) {
+		return Lines.bae(...this.nodes.map(node=>node.getJsInitLines(featureContext,i18n)))
 	}
 }
 

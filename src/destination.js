@@ -120,16 +120,6 @@ class Destination extends Feature {
 			}
 			return a.e()
 		}
-		const getDestinationLines=()=>{
-			const a=JsLines.b()
-			if (prevNodeJsNames.length>0) {
-				a(
-					RefLines.parse("// "+i18n('comment.destination')),
-					...prevNodeJsNames.map(prevNodeJsName=>prevNodeJsName+".connect(ctx.destination);")
-				)
-			}
-			return a.e()
-		}
 		const a=InterleaveLines.b()
 		if (featureContext.audioProcessing && featureContext.audioContext) {
 			if (this.options.compressor.enabled) {

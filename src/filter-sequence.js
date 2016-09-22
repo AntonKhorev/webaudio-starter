@@ -18,18 +18,8 @@ class Filter {
 		this.options=options
 		this.n=n
 	}
-	get nSuffix() {
-		if (this.n!==undefined) {
-			return '.'+this.n
-		} else {
-			return ''
-		}
-	}
 	getPropertyOptionName(property) {
 		return 'options.filters.'+this.type+'.'+property.name
-	}
-	get nodeJsName() {
-		return camelCase(this.type+this.nSuffix+'.node')
 	}
 	getPropertyInputHtmlName(propertyName) {
 		return 'my.'+this.type+this.nSuffix+'.'+propertyName
@@ -102,12 +92,6 @@ class Filter {
 			)
 		)
 	}
-	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
-		return JsLines.bae(
-			RefLines.parse("// "+i18n('comment.filters.'+this.type)),
-			featureContext.getJsConnectAssignLines("var",this.nodeJsName,"ctx."+this.ctxCreateMethodName+"()",prevNodeJsNames)
-		)
-	}
 	get nodeJsNames() {
 		return [this.nodeJsName]
 	}
@@ -176,8 +160,6 @@ class PassiveByDefaultSinglePathFilter extends SinglePathFilter {
 
 const filterClasses={
 	gain: class extends PassiveByDefaultSinglePathFilter {
-		get type()                { return 'gain' }
-		get ctxCreateMethodName() { return 'createGain' }
 		get nodeProperties() {
 			return [
 				{
@@ -188,8 +170,6 @@ const filterClasses={
 		}
 	},
 	panner: class extends PassiveByDefaultSinglePathFilter {
-		get type()                { return 'panner' }
-		get ctxCreateMethodName() { return 'createStereoPanner' }
 		get nodeProperties() {
 			return [
 				{
