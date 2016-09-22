@@ -10,7 +10,7 @@ class AudioContext extends Feature {
 		this.options=options
 	}
 	requestFeatureContext(featureContext) {
-		featureContext.getJsConnectAssignLines=(decl,target,value,connectors,connectArgs)=>{
+		featureContext.getConnectAssignJsLines=(decl,target,value,connectors,connectArgs)=>{
 			let declTarget=target
 			if (decl!='') {
 				declTarget=decl+" "+target

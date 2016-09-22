@@ -4,13 +4,16 @@ const camelCase=require('crnx-base/fake-lodash/camelcase')
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
 const RefLines=require('crnx-base/ref-lines')
+const WrapLines=require('crnx-base/wrap-lines')
+const Feature=require('./feature')
 
 const NodeClasses={}
 
 // abstract classes (not exported)
 
-class Node {
+class Node extends Feature {
 	constructor(options) {
+		super()
 		this.options=options
 		// set/modified by graph constructor:
 		this.nextNodes=new Set
@@ -40,36 +43,9 @@ class Node {
 		})
 		return names
 	}
-	getHtmlLines(featureContext,i18n) {
-		return Lines.be()
-	}
-	getJsInitLines(featureContext,i18n) {
-		return Lines.be()
-	}
 }
 
-//class Source extends Node {
-//	get isSource() {
-//		return true
-//	}
-//}
-//
-//class Destination extends Node {
-//	get isDestination() {
-//		return true
-//	}
-//}
-
-//class Filter extends Node {
-//	get isSource() {
-//		return false
-//	}
-//	get isDestination() {
-//		return false
-//	}
-//}
-
-class SingleAudioNode extends Node { // corresponds to single web audio node
+class SingleNode extends Node { // corresponds to single web audio node
 	get nodeJsName() {
 		return camelCase(this.type+this.nSuffix+'.node')
 	}
@@ -79,43 +55,74 @@ class SingleAudioNode extends Node { // corresponds to single web audio node
 	getJsInitLines(featureContext,i18n) {
 		return JsLines.bae(
 			RefLines.parse("// "+i18n('comment.graph.'+this.type)),
-			featureContext.getJsConnectAssignLines(
-				"var",this.nodeJsName,
-				"ctx."+this.ctxCreateMethodName+"()",
-				this.getPrevNodeJsNames()
-			)
+			this.getCreateNodeJsLines(featureContext)
 		)
 	}
+	// abstract:
+	// get type()
+	// getCreateNodeJsLines(featureContext)
+}
+
+class MediaElementNode extends SingleNode {
+	get hasDownstreamEffect() { return true }
+	get elementHtmlName() {
+		return 'my.'+this.type+this.nSuffix
+	}
+	getHtmlLines(featureContext,i18n) {
+		return WrapLines.b("<div>","</div>").ae(
+			this.getElementHtmlLines(featureContext,i18n)
+		)
+	}
+	getCreateNodeJsLines(featureContext) {
+		return JsLines.bae(
+			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
+		)
+	}
+	// abstract:
+	// getElementHtmlLines()
+}
+
+class FilterNode extends SingleNode {
+	requestFeatureContext(featureContext) {
+		featureContext.audioContext=true
+	}
+	getCreateNodeJsLines(featureContext) {
+		return featureContext.getConnectAssignJsLines(
+			"var",this.nodeJsName,
+			"ctx."+this.ctxCreateMethodName+"()",
+			this.getPrevNodeJsNames()
+		)
+	}
+	// abstract:
+	// get ctxCreateMethodName()
 }
 
 // concrete classes
 
-NodeClasses.audio = class extends SingleAudioNode {
-	get hasDownstreamEffect() { return true }
+NodeClasses.audio = class extends MediaElementNode {
 	get type() { return 'audio' }
-	getHtmlLines(featureContext,i18n) {
+	getElementHtmlLines(featureContext,i18n) {
 		return Lines.bae(
 			Lines.html`<audio src=${this.options.url} id=${this.elementHtmlName} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></audio>`
 		)
 	}
 }
 
-NodeClasses.video = class extends SingleAudioNode {
-	get hasDownstreamEffect() { return true }
+NodeClasses.video = class extends MediaElementNode {
 	get type() { return 'video' }
-	getHtmlLines(featureContext,i18n) {
+	getElementHtmlLines(featureContext,i18n) {
 		return Lines.bae(
 			Lines.html`<video src=${this.options.url} id=${this.elementHtmlName} width=${this.options.width} height=${this.options.height} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></video>`
 		)
 	}
 }
 
-NodeClasses.gain = class extends SingleAudioNode {
+NodeClasses.gain = class extends FilterNode {
 	get type() { return 'gain' }
 	get ctxCreateMethodName() { return 'createGain' }
 }
 
-NodeClasses.panner = class extends SingleAudioNode {
+NodeClasses.panner = class extends FilterNode {
 	get type() { return 'panner' }
 	get ctxCreateMethodName() { return 'createStereoPanner' }
 }

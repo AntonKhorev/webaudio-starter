@@ -16,42 +16,9 @@ class Source {
 		this.options=options
 		this.n=n
 	}
-	get nSuffix() {
-		if (this.n!==undefined) {
-			return '.'+this.n
-		} else {
-			return ''
-		}
-	}
-	get elementHtmlName() {
-		return 'my.'+this.type+this.nSuffix
-	}
-	get nodeJsName() {
-		return camelCase(this.type+this.nSuffix+'.node')
-	}
-	getHtmlLines(featureContext,i18n) {
-		return WrapLines.b("<div>","</div>").ae(
-			this.getElementHtmlLines(featureContext,i18n)
-		)
-	}
-	getJsInitLines(featureContext,i18n) {
-		return JsLines.bae(
-			RefLines.parse("// "+i18n('comment.sources.'+this.type)),
-			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
-		)
-	}
-	// abstract:
-	// get type()
-	// getElementHtmlLines(featureContext,i18n)
 }
 
 const sourceClasses={
-	audio: class extends Source {
-		get type() { return 'audio' }
-	},
-	video: class extends Source {
-		get type() { return 'video' }
-	},
 	sample: class extends Source {
 		get type() { return 'sample' }
 		getElementHtmlLines(featureContext,i18n) {

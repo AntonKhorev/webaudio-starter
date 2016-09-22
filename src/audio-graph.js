@@ -2,6 +2,7 @@
 
 const Node=require('./audio-graph-node-classes')
 const Lines=require('crnx-base/lines')
+const InterleaveLines=require('crnx-base/interleave-lines')
 const Feature=require('./feature')
 
 class AudioGraph extends Feature {
@@ -28,14 +29,6 @@ class AudioGraph extends Feature {
 				indexedNodes[j].prevNodes.add(indexedNodes[i])
 			}
 		}
-		/*
-		// TODO keep only nodes that are connected to both source and (destination or analyser)
-		// 	can try to combine it with assignNumbersToNodes
-		const liveNodes=new Set
-		const liveNodesRec=(node)=>{
-		}
-		*/
-		// TODO optimize out source elements connected directly to destination
 		this.nodes=[]
 		const sortNodes=()=>{
 			const visited=new Set
@@ -61,12 +54,23 @@ class AudioGraph extends Feature {
 		}
 		sortNodes()
 		// TODO propagate upstream/downstream effects, clean up nodes that don't have both
+		// 	can try to combine it with assignNumbersToNodes
+		//		const liveNodes=new Set
+		//		const liveNodesRec=(node)=>{
+		//	then will have to assign numbers after cleaning up
+	}
+	requestFeatureContext(featureContext) {
+		for (const node of this.nodes) {
+			node.requestFeatureContext(featureContext)
+		}
 	}
 	getHtmlLines(featureContext,i18n) {
 		return Lines.bae(...this.nodes.map(node=>node.getHtmlLines(featureContext,i18n)))
 	}
 	getJsInitLines(featureContext,i18n) {
-		return Lines.bae(...this.nodes.map(node=>node.getJsInitLines(featureContext,i18n)))
+		if (featureContext.audioContext) {
+			return InterleaveLines.bae(...this.nodes.map(node=>node.getJsInitLines(featureContext,i18n)))
+		}
 	}
 }
 

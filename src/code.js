@@ -23,18 +23,16 @@ class Code extends BaseWebCode {
 			new Canvas(options.canvas),
 		]
 		// possible feature context flags:
-		//	audioContext = AudioContext has to assign the audio context to var ctx
+		//	audioContext =
+		//		AudioContext has to assign the audio context to var ctx
+		//		AudioGraph has to output the js
+		//		media elements of AudioGraph have to have crossorigin enabled
 		//	canvas = Canvas has to output <canvas> element and create var canvas and var canvasContext
 		//	canvasVolumeGradient = Canvas has to create var canvasVolumeGradient
 		//	loader = Loader has to provide loadSample() function
 		//	loaderOnError = loadSample() caller has to pass the error handler
 		// helpers:
-		//	getJsConnectAssignLines = set by AudioContext
-		// TODO these are the old flags, delete them:
-		//	connectSampleToCompressor = this is a hack (TODO don't need it now b/c it's internall business of graph)
-		//	connectSampleToJsNames = this is a hack: array of strings to connect samples to
-		//	setConnectSampleToJsNames = have a node(s) to connect samples to (some filters like equaliser may not save a refernce to it otherwise)
-		//	TODO the rest
+		//	getConnectAssignJsLines = set by AudioContext
 		for (const feature of this.features) {
 			feature.requestFeatureContext(this.featureContext)
 		}
