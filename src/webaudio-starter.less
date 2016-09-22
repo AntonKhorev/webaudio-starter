@@ -149,6 +149,7 @@
 		div.node-option {
 			@side-width: 1.5;
 			@spacing-size: 4px;
+			@more-button-size: 10px;
 			font-size: 12px;
 			.node-option-section {
 				display: block;
@@ -227,32 +228,44 @@
 			input:invalid {
 				background: #F8A;
 			}
-			button.more {
-				@button-size: 10px;
-				.plus-icon(@size,@color) {
-					@s: unit(@size);
-					@h: @s/2;
-					.svg(@s,@s,"<path d='M 0 @{h} H @{s} M @{h} 0 V @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
-				}
+			button.more, button.less {
 				position: absolute;
 				display: block;
-				width: @button-size;
-				height: @button-size;
+				width: @more-button-size;
+				height: @more-button-size;
 				right: @spacing-size;
 				top: 0;
 				padding: 0;
 				border: 0;
 				background-color: transparent;
 				background-repeat: no-repeat;
-				.plus-icon(@button-size,#444);
-				&:hover {
-					.plus-icon(@button-size,#4C4);
-					&:active {
-						background-position: 0 1px;
-					}
+				&:hover:active {
+					background-position: 0 1px;
 				}
 				& > span {
 					.visually-hidden();
+				}
+			}
+			button.more {
+				.plus-icon(@size,@color) {
+					@s: unit(@size);
+					@h: @s/2;
+					.svg(@s,@s,"<path d='M 0 @{h} H @{s} M @{h} 0 V @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
+				}
+				.plus-icon(@more-button-size,#444);
+				&:hover {
+					.plus-icon(@more-button-size,#4C4);
+				}
+			}
+			button.less {
+				.minus-icon(@size,@color) {
+					@s: unit(@size);
+					@h: @s/2;
+					.svg(@s,@s,"<path d='M 0 @{h} H @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
+				}
+				.minus-icon(@more-button-size,#444);
+				&:hover {
+					.minus-icon(@more-button-size,#C44);
 				}
 			}
 		}

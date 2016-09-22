@@ -53,6 +53,7 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				min: option.availableMin,
 				max: option.availableMax
 			},option.precision)
+			const $moreButtonText=$("<span>").html("More")
 			const $mainSection=$("<span class='node-option-section'>").append(
 				$("<span class='range-label'>").append(
 					"<span class='min'>"+i18n.numberWithoutUnits(fmt.min,option.unit)+"</span> ",
@@ -64,8 +65,17 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				" ",
 				setInputAttrsAndListeners($numberInput,$sliderInput),
 				" ",
-				$("<button class='more' title='Show more options'><span>More</span></button>").click(function(){ // TODO i18n
-					$extraSection.toggle()
+				$("<button class='more' title='Show more options'>").append($moreButtonText).click(function(){ // TODO i18n
+					const $button=$(this)
+					if ($button.hasClass('more')) {
+						$button.addClass('less').removeClass('more').attr('title',"Show less options")
+						$moreButtonText.html("Less")
+						$extraSection.show()
+					} else {
+						$button.addClass('more').removeClass('less').attr('title',"Show more options")
+						$moreButtonText.html("More")
+						$extraSection.hide()
+					}
 				})
 			)
 			const $extraSection=$("<span class='node-option-section'>").append(
