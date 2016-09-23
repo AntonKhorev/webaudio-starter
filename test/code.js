@@ -305,4 +305,50 @@ describe("Code",()=>{
 		})
 	})
 	*/
+	it("creates passive node in place of passive panner",()=>{
+		const ctx=getAudioContext({
+			graph: [
+				{
+					nodeType: 'audio',
+					next: 3,
+				},{
+					nodeType: 'audio',
+					next: 3,
+				},{
+					nodeType: 'audio',
+					next: 3,
+				},{
+					nodeType: 'panner',
+					next: [4,5,6],
+				},{
+					nodeType: 'gain',
+					gain: 0.1,
+					next: 7,
+				},{
+					nodeType: 'gain',
+					gain: 0.2,
+					next: 7,
+				},{
+					nodeType: 'gain',
+					gain: 0.3,
+					next: 7,
+				},{
+					nodeType: 'destination',
+				}
+			],
+		})
+		const graph=ctx.toJSON()
+		assert.equal(graph.name,"AudioDestinationNode")
+		assert.equal(graph.inputs.length,3)
+		assert.equal(graph.inputs[0].name,"GainNode")
+		assert.equal(graph.inputs[1].name,"GainNode")
+		assert.equal(graph.inputs[2].name,"GainNode")
+		assert.equal(graph.inputs[0].inputs.length,1)
+		assert.equal(graph.inputs[1].inputs.length,1)
+		assert.equal(graph.inputs[2].inputs.length,1)
+		assert.equal(graph.inputs[0].inputs[0].name,"GainNode")
+		assert.equal(graph.inputs[1].inputs[0].name,"GainNode")
+		assert.equal(graph.inputs[2].inputs[0].name,"GainNode")
+		assert.equal(graph.inputs[0].inputs[0].inputs.length,3)
+	})
 })

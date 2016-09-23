@@ -37,10 +37,30 @@ class Node extends Feature {
 	get upstreamEffect() {
 		return false // destination or visualization node
 	}
-	getOutputJsNames() {
+	get nInputJsNames() {
+		return 0
+	}
+	get nOutputJsNames() {
+		return 0
+	}
+	get prevNodeJsNameCount() {
+		let count=0
+		this.prevNodes.forEach(node=>{
+			count+=node.nOutputJsNames
+		})
+		return count
+	}
+	get nextNodeJsNameCount() {
+		let count=0
+		this.nextNodes.forEach(node=>{
+			count+=node.nInputJsNames
+		})
+		return count
+	}
+	getOutputJsNames() { // TODO make getter
 		return []
 	}
-	getPrevNodeJsNames() {
+	getPrevNodeJsNames() { // TODO make getter
 		const names=[]
 		this.prevNodes.forEach(node=>{
 			names.push(...node.getOutputJsNames())
@@ -50,6 +70,9 @@ class Node extends Feature {
 }
 
 class SingleNode extends Node { // corresponds to single web audio node
+	get nOutputJsNames() {
+		return 1
+	}
 	get nodeJsName() {
 		return camelCase(this.type+this.nSuffix+'.node')
 	}
@@ -68,7 +91,9 @@ class SingleNode extends Node { // corresponds to single web audio node
 }
 
 class MediaElementNode extends SingleNode {
-	get downstreamEffect() { return true }
+	get downstreamEffect() {
+		return true
+	}
 	get elementHtmlName() {
 		return 'my.'+this.type+this.nSuffix
 	}
@@ -87,6 +112,9 @@ class MediaElementNode extends SingleNode {
 }
 
 class FilterNode extends SingleNode {
+	get nInputJsNames() {
+		return 1
+	}
 	getPropertyInputHtmlName(propertyName) {
 		return 'my.'+this.type+this.nSuffix+'.'+propertyName
 	}
@@ -209,8 +237,25 @@ class PassiveByDefaultFilterNode extends FilterNode {
 
 // concrete classes
 
+NodeClasses.passive = class extends FilterNode { // special node used as summator/junction
+	get type() {
+		return 'gain'
+	}
+	get ctxCreateMethodName() {
+		return 'createGain'
+	}
+	get nodeProperties() {
+		return []
+	}
+	get passive() {
+		return true
+	}
+}
+
 NodeClasses.audio = class extends MediaElementNode {
-	get type() { return 'audio' }
+	get type() {
+		return 'audio'
+	}
 	getElementHtmlLines(featureContext,i18n) {
 		return Lines.bae(
 			Lines.html`<audio src=${this.options.url} id=${this.elementHtmlName} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></audio>`
@@ -219,7 +264,9 @@ NodeClasses.audio = class extends MediaElementNode {
 }
 
 NodeClasses.video = class extends MediaElementNode {
-	get type() { return 'video' }
+	get type() {
+		return 'video'
+	}
 	getElementHtmlLines(featureContext,i18n) {
 		return Lines.bae(
 			Lines.html`<video src=${this.options.url} id=${this.elementHtmlName} width=${this.options.width} height=${this.options.height} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></video>`
@@ -228,7 +275,12 @@ NodeClasses.video = class extends MediaElementNode {
 }
 
 NodeClasses.gain = class extends PassiveByDefaultFilterNode {
-	get type() { return 'gain' }
+	get type() {
+		return 'gain'
+	}
+	get ctxCreateMethodName() {
+		return 'createGain'
+	}
 	get nodeProperties() {
 		return [
 			{
@@ -237,11 +289,15 @@ NodeClasses.gain = class extends PassiveByDefaultFilterNode {
 			}
 		]
 	}
-	get ctxCreateMethodName() { return 'createGain' }
 }
 
 NodeClasses.panner = class extends PassiveByDefaultFilterNode {
-	get type() { return 'panner' }
+	get type() {
+		return 'panner'
+	}
+	get ctxCreateMethodName() {
+		return 'createStereoPanner'
+	}
 	get nodeProperties() {
 		return [
 			{
@@ -250,11 +306,15 @@ NodeClasses.panner = class extends PassiveByDefaultFilterNode {
 			}
 		]
 	}
-	get ctxCreateMethodName() { return 'createStereoPanner' }
 }
 
 NodeClasses.destination = class extends Node {
-	get upstreamEffect() { return true }
+	get upstreamEffect() {
+		return true
+	}
+	get nInputJsNames() {
+		return 1
+	}
 	getInitJsLines(featureContext,i18n) {
 		return JsLines.bae(
 			RefLines.parse("// "+i18n('comment.graph.destination')),

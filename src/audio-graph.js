@@ -42,18 +42,37 @@ class AudioGraph extends Feature {
 				if (!node.passive) {
 					outputNodes.push(node)
 				} else {
-					node.prevNodes.forEach(prevNode=>{
-						prevNode.nextNodes.delete(node)
-						node.nextNodes.forEach(nextNode=>{
-							prevNode.nextNodes.add(nextNode)
-						})
-					})
-					node.nextNodes.forEach(nextNode=>{
-						nextNode.prevNodes.delete(node)
+					const nInputs=node.prevNodeJsNameCount
+					const nOutputs=node.nextNodeJsNameCount
+					if (nInputs*nOutputs<=nInputs+nOutputs+1) { // is number of connections that cross-join would create acceptable?
+						// delete node, cross-join its inputs and outputs
 						node.prevNodes.forEach(prevNode=>{
-							nextNode.prevNodes.add(prevNode)
+							prevNode.nextNodes.delete(node)
+							node.nextNodes.forEach(nextNode=>{
+								prevNode.nextNodes.add(nextNode)
+							})
 						})
-					})
+						node.nextNodes.forEach(nextNode=>{
+							nextNode.prevNodes.delete(node)
+							node.prevNodes.forEach(prevNode=>{
+								nextNode.prevNodes.add(prevNode)
+							})
+						})
+					} else {
+						// replace node with passive node
+						const passiveNode=new Node.passive
+						passiveNode.prevNodes=node.prevNodes
+						passiveNode.nextNodes=node.nextNodes
+						node.prevNodes.forEach(prevNode=>{
+							prevNode.nextNodes.delete(node)
+							prevNode.nextNodes.add(passiveNode)
+						})
+						node.nextNodes.forEach(nextNode=>{
+							nextNode.prevNodes.delete(node)
+							nextNode.prevNodes.add(passiveNode)
+						})
+						outputNodes.push(passiveNode)
+					}
 				}
 			}
 			return outputNodes
