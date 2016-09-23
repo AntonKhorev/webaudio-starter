@@ -53,7 +53,7 @@ class SingleNode extends Node { // corresponds to single web audio node
 	getOutputJsNames() {
 		return [this.nodeJsName]
 	}
-	getJsInitLines(featureContext,i18n) {
+	getInitJsLines(featureContext,i18n) {
 		return JsLines.bae(
 			RefLines.parse("// "+i18n('comment.graph.'+this.type)),
 			this.getCreateNodeJsLines(featureContext)
@@ -142,9 +142,9 @@ class FilterNode extends SingleNode {
 			)
 		)
 	}
-	getJsInitLines(featureContext,i18n) {
+	getInitJsLines(featureContext,i18n) {
 		return Lines.bae(
-			super.getJsInitLines(featureContext,i18n),
+			super.getInitJsLines(featureContext,i18n),
 			...this.nodeProperties.map(property=>{
 				if (property.skip) {
 					return Lines.be()
@@ -243,7 +243,7 @@ NodeClasses.panner = class extends FilterNode {
 
 NodeClasses.destination = class extends Node {
 	get hasUpstreamEffect() { return true }
-	getJsInitLines(featureContext,i18n) {
+	getInitJsLines(featureContext,i18n) {
 		return JsLines.bae(
 			RefLines.parse("// "+i18n('comment.graph.destination')),
 			...this.getPrevNodeJsNames().map(name=>name+".connect(ctx.destination);")

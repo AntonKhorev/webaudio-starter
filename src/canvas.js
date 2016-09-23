@@ -34,7 +34,7 @@ class Canvas extends Feature {
 		}
 		return a.e()
 	}
-	getJsInitLines(featureContext,i18n) {
+	getInitJsLines(featureContext,i18n) {
 		const a=JsLines.b()
 		if (featureContext.canvas) {
 			a(
@@ -53,7 +53,7 @@ class Canvas extends Feature {
 		}
 		return a.e()
 	}
-	getJsLoopPreLines(featureContext,i18n) {
+	getPreVisJsLines(featureContext,i18n) {
 		const a=JsLines.b()
 		if (featureContext.canvas) {
 			if (this.options.background.type=='clear') {

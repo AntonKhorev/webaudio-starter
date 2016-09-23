@@ -8,13 +8,13 @@ class Feature {
 	getHtmlLines(featureContext,i18n) {
 		return Lines.be()
 	}
-	getJsInitLines(featureContext,i18n) {
+	getInitJsLines(featureContext,i18n) {
 		return Lines.be()
 	}
-	getJsLoopPreLines(featureContext,i18n) {
+	getPreVisJsLines(featureContext,i18n) {
 		return Lines.be()
 	}
-	getJsLoopVisLines(featureContext,i18n) {
+	getVisJsLines(featureContext,i18n) {
 		return Lines.be()
 	}
 }

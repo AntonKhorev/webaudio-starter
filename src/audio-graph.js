@@ -67,9 +67,9 @@ class AudioGraph extends Feature {
 	getHtmlLines(featureContext,i18n) {
 		return Lines.bae(...this.nodes.map(node=>node.getHtmlLines(featureContext,i18n)))
 	}
-	getJsInitLines(featureContext,i18n) {
+	getInitJsLines(featureContext,i18n) {
 		if (featureContext.audioContext) {
-			return InterleaveLines.bae(...this.nodes.map(node=>node.getJsInitLines(featureContext,i18n)))
+			return InterleaveLines.bae(...this.nodes.map(node=>node.getInitJsLines(featureContext,i18n)))
 		}
 	}
 }

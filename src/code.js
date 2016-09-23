@@ -85,7 +85,7 @@ class Code extends BaseWebCode {
 	}
 	get scriptLines() {
 		return InterleaveLines.bae(
-			...this.features.map(feature=>feature.getJsInitLines(this.featureContext,this.i18n)),
+			...this.features.map(feature=>feature.getInitJsLines(this.featureContext,this.i18n)),
 			NoseWrapLines.b(
 				JsLines.bae(
 					"function visualize() {"
@@ -96,8 +96,8 @@ class Code extends BaseWebCode {
 					"requestAnimationFrame(visualize);"
 				)
 			).ae(
-				...this.features.map(feature=>feature.getJsLoopPreLines(this.featureContext,this.i18n)),
-				...this.features.map(feature=>feature.getJsLoopVisLines(this.featureContext,this.i18n))
+				...this.features.map(feature=>feature.getPreVisJsLines(this.featureContext,this.i18n)),
+				...this.features.map(feature=>feature.getVisJsLines(this.featureContext,this.i18n))
 			)
 		)
 	}

@@ -14,7 +14,7 @@ class Loader extends Feature {
 			featureContext.loaderOnError=true
 		}
 	}
-	getJsInitLines(featureContext,i18n) {
+	getInitJsLines(featureContext,i18n) {
 		if (!featureContext.loader) return JsLines.be()
 		const a=JsLines.b()
 		a(
