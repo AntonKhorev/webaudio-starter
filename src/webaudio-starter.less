@@ -159,65 +159,16 @@
 				background: @node-color;
 				text-align: center;
 			}
-			input {
+			input, button {
 				display: block;
 				position: absolute;
 				box-sizing: border-box;
 				font-size: 12px;
-			}
-			label.side {
-				display: block;
-				position: absolute;
-				height: @grid-size;
-				width: @side-width*@grid-size - @spacing-size;
-				text-align: right;
-				& + span.space {
-					display: none;
+				&:invalid {
+					background: #F8A;
 				}
-			}
-			input[type="text"] {
-				height: @grid-size - 2*@spacing-size;
-				width: (@node-width - @side-width)*@grid-size - @spacing-size;
-				top: @spacing-size;
-				left: @side-width*@grid-size;
-			}
-			.range-label, .units {
-				height: 12px;
-				line-height: 12px;
-			}
-			.range-label {
-				display: block;
-				position: absolute;
-				width: (@node-width - @side-width)*@grid-size - @spacing-size;
-				left: @spacing-size;
-				text-align: justify;
-				text-align-last: justify;
-				label, .min, .max {
-					display: inline-block;
-				}
-			}
-			.units {
-				display: block;
-				position: absolute;
-				width: @side-width*@grid-size - 2*@spacing-size;
-				right: @spacing-size;
-				text-align: left;
-			}
-			input[type="range"] {
-				height: @grid-size / 2;
-				top: @grid-size / 2 - 2px; // shift up slightly
-				padding: 0;
-				width: (@node-width - @side-width)*@grid-size - @spacing-size;
-				left: @spacing-size;
-				margin: 0;
 			}
 			input[type="number"] {
-				height: @grid-size / 2;
-				width: @side-width*@grid-size - 2*@spacing-size;
-				right: @spacing-size;
-				top: @grid-size / 2 - @spacing-size;
-				padding-top: 0;
-				padding-bottom: 0;
 				// http://stackoverflow.com/a/23374725
 				-moz-appearance: textfield;
 				&::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
@@ -225,65 +176,156 @@
 					margin: 0;
 				}
 			}
-			input:invalid {
-				background: #F8A;
-			}
-			button.more, button.less {
-				position: absolute;
-				display: block;
-				width: @more-button-size;
-				height: @more-button-size;
-				right: @spacing-size;
-				top: 0;
-				padding: 0;
-				border: 0;
-				background-color: transparent;
-				background-repeat: no-repeat;
-				&:hover:active {
-					background-position: 0 1px;
+			.node-option-section-text {
+				label.side {
+					display: block;
+					position: absolute;
+					height: @grid-size;
+					width: @side-width*@grid-size - @spacing-size;
+					text-align: right;
+					& + span.space {
+						display: none;
+					}
 				}
-				& > span {
-					.visually-hidden();
+				input[type="text"] {
+					height: @grid-size - 2*@spacing-size;
+					width: (@node-width - @side-width)*@grid-size - @spacing-size;
+					top: @spacing-size;
+					left: @side-width*@grid-size;
 				}
 			}
-			button.more {
-				.plus-icon(@size,@color) {
-					@s: unit(@size);
-					@h: @s/2;
-					.svg(@s,@s,"<path d='M 0 @{h} H @{s} M @{h} 0 V @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
+			.node-option-section-number {
+				.range-label, .units {
+					height: 12px;
+					line-height: 12px;
 				}
-				.plus-icon(@more-button-size,#444);
-				&:hover {
-					.plus-icon(@more-button-size,#4C4);
+				.range-label {
+					display: block;
+					position: absolute;
+					width: (@node-width - @side-width)*@grid-size - @spacing-size;
+					left: @spacing-size;
+					text-align: justify;
+					text-align-last: justify;
+					label, .min, .max {
+						display: inline-block;
+					}
+				}
+				.units {
+					display: block;
+					position: absolute;
+					width: @side-width*@grid-size - 2*@spacing-size;
+					right: @spacing-size;
+					text-align: left;
+				}
+				input[type="range"] {
+					height: @grid-size / 2;
+					top: @grid-size / 2 - 2px; // shift up slightly
+					padding: 0;
+					width: (@node-width - @side-width)*@grid-size - @spacing-size;
+					left: @spacing-size;
+					margin: 0;
+				}
+				input[type="number"] {
+					height: @grid-size / 2;
+					width: @side-width*@grid-size - 2*@spacing-size;
+					right: @spacing-size;
+					top: @grid-size / 2 - @spacing-size;
+					padding-top: 0;
+					padding-bottom: 0;
+				}
+				button.more, button.less {
+					width: @more-button-size;
+					height: @more-button-size;
+					right: @spacing-size;
+					top: 0;
+					padding: 0;
+					border: 0;
+					background-color: transparent;
+					background-repeat: no-repeat;
+					&:hover:active {
+						background-position: 0 1px;
+					}
+					& > span {
+						.visually-hidden();
+					}
+				}
+				button.more {
+					.plus-icon(@size,@color) {
+						@s: unit(@size);
+						@h: @s/2;
+						.svg(@s,@s,"<path d='M 0 @{h} H @{s} M @{h} 0 V @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
+					}
+					.plus-icon(@more-button-size,#444);
+					&:hover {
+						.plus-icon(@more-button-size,#4C4);
+					}
+				}
+				button.less {
+					.minus-icon(@size,@color) {
+						@s: unit(@size);
+						@h: @s/2;
+						.svg(@s,@s,"<path d='M 0 @{h} H @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
+					}
+					.minus-icon(@more-button-size,#444);
+					&:hover {
+						.minus-icon(@more-button-size,#C44);
+					}
 				}
 			}
-			button.less {
-				.minus-icon(@size,@color) {
-					@s: unit(@size);
-					@h: @s/2;
-					.svg(@s,@s,"<path d='M 0 @{h} H @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
+			.node-option-section-extra {
+				button.reset {
+					height: @grid-size - 2*@spacing-size;
+					width: @side-width*@grid-size - 2*@spacing-size;
+					right: @spacing-size;
+					top: @spacing-size;
+					padding: 0;
+					line-height: @grid-size - 2*@spacing-size;
+					border: outset 1px #444;
+					&:hover:active {
+						border: inset 1px #444;
+					}
 				}
-				.minus-icon(@more-button-size,#444);
-				&:hover {
-					.minus-icon(@more-button-size,#C44);
+				// { LiveNumber
+				input[type="checkbox"] {
+					height: @grid-size;
+					width: @grid-size;
+					line-height: @grid-size;
+					margin: 0;
 				}
+				.editable-top {
+					display: block;
+					position: absolute;
+					top: 0;
+					left: @grid-size;
+					height: 12px;
+					line-height: 12px;
+					width: (@node-width - @side-width - 1)*@grid-size;
+					text-align: left;
+				}
+				input[type="number"] {
+					height: @grid-size / 2;
+					width: 1.5*@grid-size;
+					padding-top: 0;
+					padding-bottom: 0;
+					bottom: @spacing-size;
+					&.min {
+						left: @grid-size;
+					}
+					&.max {
+						right: @side-width*@grid-size;
+					}
+				}
+				.dots {
+					display: block;
+					position: absolute;
+					height: @grid-size / 2;
+					line-height: @grid-size / 2;
+					width: (@node-width - @side-width - 4)*@grid-size;
+					left: 2.5*@grid-size;
+					bottom: @spacing-size;
+				}
+				// } LiveNumber
 			}
-			button.reset {
-				position: absolute;
-				display: block;
-				height: @grid-size - 2*@spacing-size;
-				width: @side-width*@grid-size - 2*@spacing-size;
-				right: @spacing-size;
-				top: @spacing-size;
-				padding: 0;
-				line-height: @grid-size - 2*@spacing-size;
-				border: outset 1px #444;
-				&:hover:active {
-					border: inset 1px #444;
-				}
-			}
-			// { LiveNumber
-			// } LiveNumber
 		}
 	}
 }

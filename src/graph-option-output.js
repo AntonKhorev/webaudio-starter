@@ -17,8 +17,8 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 			const id=generateId()
 			const listId=generateId()
 			return option.$=$("<div class='node-option'>").append(
-				$("<span class='node-option-section'>").append(
-					$(this.getLeadLabel(id,i18n,option)).addClass('side'),
+				$("<span class='node-option-section node-option-section-text'>").append(
+					$(this.getLeadLabel(id,i18n,option)),
 					$("<input type='text' id='"+id+"' list='"+listId+"' />")
 						.val(option.value)
 						.on('input change',function(){
@@ -55,7 +55,7 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				max: option.availableMax
 			},option.precision)
 			const $moreButtonText=$("<span>").html("More")
-			const $mainSection=$("<span class='node-option-section'>").append(
+			const $mainSection=$("<span class='node-option-section node-option-section-number'>").append(
 				$("<span class='range-label'>").append(
 					"<span class='min'>"+i18n.numberWithoutUnits(fmt.min,option.unit)+"</span> ",
 					$("<label for='"+id+"'>"+i18n('options.'+option.fullName)+"</label>"),
@@ -79,7 +79,7 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 					}
 				})
 			)
-			const $extraSection=$("<span class='node-option-section'>").append(
+			const $extraSection=$("<span class='node-option-section node-option-section-extra'>").append(
 				$("<button class='reset'>"+i18n('options-output.reset')+"</button>").click(function(){
 					$sliderInput.val(option.defaultValue).change()
 				})
@@ -95,7 +95,7 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				max: option.availableMax,
 				step: Math.pow(0.1,p).toFixed(p),
 			}
-			const writeMinMaxInput=minOrMax=>$("<input type='number' required>")
+			const writeMinMaxInput=minOrMax=>$("<input type='number' class='"+minOrMax+"' required>")
 				.attr(inputAttrs)
 				.val(option[minOrMax])
 				.on('input change',function(){
@@ -112,7 +112,7 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 			const $rangeMaxInput=writeMinMaxInput('max')
 			const $rangeSpan1=$("<span>"+i18n('options-output.range')+"</span>")
 			const $rangeSpan2=$("<span class='editable-bottom'>").append(
-				$rangeMinInput," .. ",$rangeMaxInput
+				$rangeMinInput," <span class='dots'>..</span> ",$rangeMaxInput
 			)
 			option.$range=$rangeSpan1.add($rangeSpan2)
 			$output.find('button.reset').before(
