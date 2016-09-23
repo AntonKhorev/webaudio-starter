@@ -36,15 +36,6 @@ class Filter {
 	}
 }
 
-class PassiveByDefaultSinglePathFilter extends SinglePathFilter {
-	get skipNode() {
-		return this.nodeProperties.every(property=>{
-			const option=this.options[property.name]
-			return option.value==option.defaultValue && !option.input
-		})
-	}
-}
-
 const filterClasses={
 	biquad: class extends SinglePathFilter {
 		get type()                { return 'biquad' }

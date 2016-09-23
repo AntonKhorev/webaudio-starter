@@ -28,10 +28,13 @@ class Node extends Feature {
 			return ''
 		}
 	}
-	get hasDownstreamEffect() {
+	get passive() {
+		return false
+	}
+	get downstreamEffect() {
 		return false // source node
 	}
-	get hasUpstreamEffect() {
+	get upstreamEffect() {
 		return false // destination or visualization node
 	}
 	getOutputJsNames() {
@@ -65,7 +68,7 @@ class SingleNode extends Node { // corresponds to single web audio node
 }
 
 class MediaElementNode extends SingleNode {
-	get hasDownstreamEffect() { return true }
+	get downstreamEffect() { return true }
 	get elementHtmlName() {
 		return 'my.'+this.type+this.nSuffix
 	}
@@ -195,6 +198,15 @@ class FilterNode extends SingleNode {
 	// get ctxCreateMethodName()
 }
 
+class PassiveByDefaultFilterNode extends FilterNode {
+	get passive() {
+		return this.nodeProperties.every(property=>{
+			const option=this.options[property.name]
+			return option.value==option.defaultValue && !option.input
+		})
+	}
+}
+
 // concrete classes
 
 NodeClasses.audio = class extends MediaElementNode {
@@ -215,7 +227,7 @@ NodeClasses.video = class extends MediaElementNode {
 	}
 }
 
-NodeClasses.gain = class extends FilterNode {
+NodeClasses.gain = class extends PassiveByDefaultFilterNode {
 	get type() { return 'gain' }
 	get nodeProperties() {
 		return [
@@ -228,7 +240,7 @@ NodeClasses.gain = class extends FilterNode {
 	get ctxCreateMethodName() { return 'createGain' }
 }
 
-NodeClasses.panner = class extends FilterNode {
+NodeClasses.panner = class extends PassiveByDefaultFilterNode {
 	get type() { return 'panner' }
 	get nodeProperties() {
 		return [
@@ -242,7 +254,7 @@ NodeClasses.panner = class extends FilterNode {
 }
 
 NodeClasses.destination = class extends Node {
-	get hasUpstreamEffect() { return true }
+	get upstreamEffect() { return true }
 	getInitJsLines(featureContext,i18n) {
 		return JsLines.bae(
 			RefLines.parse("// "+i18n('comment.graph.destination')),

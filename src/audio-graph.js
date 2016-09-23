@@ -8,29 +8,31 @@ const Feature=require('./feature')
 class AudioGraph extends Feature {
 	constructor(options) {
 		super()
-		//const sourceNodes=new Set
-		const destinationNode=new Node.destination
-		// create nodes
-		const indexedNodes=options.nodes.map(nodeOptions=>{
-			let node=new Node[nodeOptions.nodeType](nodeOptions)
-			//if (node.isSource) {
-			//	sourceNodes.add(node)
-			//}
-			//if (node.isDestination) {
-			if (node instanceof Node.destination) {
-				node=destinationNode
-			}
-			return node
-		})
-		// connect nodes
-		for (let i=0;i<options.nodes.length;i++) {
-			for (const j of options.nodes[i].next) {
-				indexedNodes[i].nextNodes.add(indexedNodes[j])
-				indexedNodes[j].prevNodes.add(indexedNodes[i])
+		const createNodes=()=>{ // returns "indexed" nodes = nodes in order of the indexes used by options to represent graph edges
+			const destinationNode=new Node.destination
+			return options.nodes.map(nodeOptions=>{
+				let node=new Node[nodeOptions.nodeType](nodeOptions)
+				if (node instanceof Node.destination) {
+					node=destinationNode
+				}
+				return node
+			})
+		}
+		const connectNodes=(indexedNodes)=>{
+			for (let i=0;i<options.nodes.length;i++) {
+				for (const j of options.nodes[i].next) {
+					indexedNodes[i].nextNodes.add(indexedNodes[j])
+					indexedNodes[j].prevNodes.add(indexedNodes[i])
+				}
 			}
 		}
-		this.nodes=[]
-		const sortNodes=()=>{
+		// TODO propagate upstream/downstream effects, clean up nodes that don't have both
+		// 	can try to combine it with assignNumbersToNodes
+		//		const liveNodes=new Set
+		//		const liveNodesRec=(node)=>{
+		//	then will have to assign numbers after cleaning up
+		const sortNodes=(indexedNodes)=>{
+			const sortedNodes=[]
 			const visited=new Set
 			const classCounts=new Map
 			const classLastNodes=new Map
@@ -43,21 +45,19 @@ class AudioGraph extends Feature {
 				classCounts.set(proto,n)
 				classLastNodes.set(proto,node)
 				node.n=n
-				this.nodes.push(node)
+				sortedNodes.push(node)
 			}
-			rec(destinationNode)
+			indexedNodes.forEach(rec)
 			classCounts.forEach((n,proto)=>{
 				if (n==1) {
 					delete classLastNodes.get(proto).n
 				}
 			})
+			return sortedNodes
 		}
-		sortNodes()
-		// TODO propagate upstream/downstream effects, clean up nodes that don't have both
-		// 	can try to combine it with assignNumbersToNodes
-		//		const liveNodes=new Set
-		//		const liveNodesRec=(node)=>{
-		//	then will have to assign numbers after cleaning up
+		const indexedNodes=createNodes()
+		connectNodes(indexedNodes)
+		this.nodes=sortNodes(indexedNodes)
 	}
 	requestFeatureContext(featureContext) {
 		for (const node of this.nodes) {
