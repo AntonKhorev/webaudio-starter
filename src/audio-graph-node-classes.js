@@ -1,10 +1,11 @@
 'use strict'
 
 const camelCase=require('crnx-base/fake-lodash/camelcase')
+const formatNumbers=require('crnx-base/format-numbers')
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
+const NoseWrapLines=require('crnx-base/nose-wrap-lines')
 const RefLines=require('crnx-base/ref-lines')
-const WrapLines=require('crnx-base/wrap-lines')
 const Feature=require('./feature')
 
 const NodeClasses={}
@@ -69,7 +70,7 @@ class MediaElementNode extends SingleNode {
 		return 'my.'+this.type+this.nSuffix
 	}
 	getHtmlLines(featureContext,i18n) {
-		return WrapLines.b("<div>","</div>").ae(
+		return NoseWrapLines.b("<div>","</div>").ae(
 			this.getElementHtmlLines(featureContext,i18n)
 		)
 	}
@@ -83,8 +84,62 @@ class MediaElementNode extends SingleNode {
 }
 
 class FilterNode extends SingleNode {
+	getPropertyInputHtmlName(propertyName) {
+		return 'my.'+this.type+this.nSuffix+'.'+propertyName
+	}
+	getPropertyInputJsName(propertyName) {
+		return camelCase(this.type+this.nSuffix+'.'+propertyName+'.input')
+	}
 	requestFeatureContext(featureContext) {
 		featureContext.audioContext=true
+	}
+	getHtmlLines(featureContext,i18n) {
+		const getPropertyHtmlLines=(property)=>{
+			if (property.skip) {
+				return Lines.be()
+			}
+			const option=this.options[property.name]
+			const inputHtmlName=this.getPropertyInputHtmlName(property.name)
+			const a=Lines.b()
+			if (property.type=='range' && option.input) {
+				const p=option.precision
+				const fmtAttrs=formatNumbers.html({ min:option.min, max:option.max, value:option.value },p)
+				const fmtLabels=formatNumbers({ min:option.min, max:option.max },p)
+				const minMax=n=>i18n.numberWithUnits(n,option.unit,(a,e)=>Lines.html`<abbr title=${e}>`+a+`</abbr>`)
+				a(
+					Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}:</label>`,
+					"<span class=min>"+minMax(fmtLabels.min)+"</span>",
+					Lines.html`<input id=${inputHtmlName} type=range value=${fmtAttrs.value} min=${fmtAttrs.min} max=${fmtAttrs.max} step=${p?Math.pow(0.1,p).toFixed(p):false}>`,
+					"<span class=max>"+minMax(fmtLabels.max)+"</span>"
+				)
+			} else if (property.type=='select' && option.input) {
+				a(
+					Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}:</label>`,
+					WrapLines.b(
+						Lines.html`<select id=${inputHtmlName}>`,`</select>`
+					).ae(
+						...option.availableValues.map(value=>{
+							const title=i18n('options.graph.'+this.type+'.'+property.name+'.'+value)
+							return Lines.html`<option selected=${option.value==value} value=${value!=title && value}>${title}</option>`
+						})
+					)
+				)
+			} else if (property.type=='xhr') {
+				a(
+					Lines.html`<span id=${inputHtmlName}>${i18n(this.getPropertyOptionName(property)+'.loading')}</span>`
+				)
+			}
+			return a.e()
+		}
+		return Lines.bae(
+			...this.nodeProperties.map(
+				property=>NoseWrapLines.b(
+					"<div>","</div>"
+				).ae(
+					getPropertyHtmlLines(property)
+				)
+			)
+		)
 	}
 	getCreateNodeJsLines(featureContext) {
 		return featureContext.getConnectAssignJsLines(
@@ -94,6 +149,7 @@ class FilterNode extends SingleNode {
 		)
 	}
 	// abstract:
+	// get nodeProperties()
 	// get ctxCreateMethodName()
 }
 
@@ -119,11 +175,27 @@ NodeClasses.video = class extends MediaElementNode {
 
 NodeClasses.gain = class extends FilterNode {
 	get type() { return 'gain' }
+	get nodeProperties() {
+		return [
+			{
+				name:'gain',
+				type:'range',
+			}
+		]
+	}
 	get ctxCreateMethodName() { return 'createGain' }
 }
 
 NodeClasses.panner = class extends FilterNode {
 	get type() { return 'panner' }
+	get nodeProperties() {
+		return [
+			{
+				name:'pan',
+				type:'range',
+			}
+		]
+	}
 	get ctxCreateMethodName() { return 'createStereoPanner' }
 }
 

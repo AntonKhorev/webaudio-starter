@@ -268,6 +268,22 @@
 					.minus-icon(@more-button-size,#C44);
 				}
 			}
+			button.reset {
+				position: absolute;
+				display: block;
+				height: @grid-size - 2*@spacing-size;
+				width: @side-width*@grid-size - 2*@spacing-size;
+				right: @spacing-size;
+				top: @spacing-size;
+				padding: 0;
+				line-height: @grid-size - 2*@spacing-size;
+				border: outset 1px #444;
+				&:hover:active {
+					border: inset 1px #444;
+				}
+			}
+			// { LiveNumber
+			// } LiveNumber
 		}
 	}
 }

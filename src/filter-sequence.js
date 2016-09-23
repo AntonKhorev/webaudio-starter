@@ -18,15 +18,6 @@ class Filter {
 		this.options=options
 		this.n=n
 	}
-	getPropertyOptionName(property) {
-		return 'options.filters.'+this.type+'.'+property.name
-	}
-	getPropertyInputHtmlName(propertyName) {
-		return 'my.'+this.type+this.nSuffix+'.'+propertyName
-	}
-	getPropertyInputJsName(propertyName) {
-		return camelCase(this.type+this.nSuffix+'.'+propertyName+'.input')
-	}
 	requestFeatureContext(featureContext) {
 		const hasRangeInputs=this.nodeProperties.some(property=>{
 			if (property.type=='range') {
@@ -40,69 +31,9 @@ class Filter {
 			featureContext.alignedInputs=true
 		}
 	}
-	getHtmlPropertyLines(i18n,property) {
-		if (property.skip) {
-			return Lines.be()
-		}
-		const option=this.options[property.name]
-		const inputHtmlName=this.getPropertyInputHtmlName(property.name)
-		const a=Lines.b()
-		if (property.type=='range' && option.input) {
-			const p=option.precision
-			const fmtAttrs=formatNumbers.html({ min:option.min, max:option.max, value:option.value },p)
-			const fmtLabels=formatNumbers({ min:option.min, max:option.max },p)
-			const minMax=n=>i18n.numberWithUnits(n,option.unit,(a,e)=>Lines.html`<abbr title=${e}>`+a+`</abbr>`)
-			a(
-				Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}:</label>`,
-				"<span class=min>"+minMax(fmtLabels.min)+"</span>",
-				Lines.html`<input id=${inputHtmlName} type=range value=${fmtAttrs.value} min=${fmtAttrs.min} max=${fmtAttrs.max} step=${p?Math.pow(0.1,p).toFixed(p):false}>`,
-				"<span class=max>"+minMax(fmtLabels.max)+"</span>"
-			)
-		} else if (property.type=='select' && option.input) {
-			a(
-				Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}:</label>`,
-				WrapLines.b(
-					Lines.html`<select id=${inputHtmlName}>`,`</select>`
-				).ae(
-					...option.availableValues.map(value=>{
-						const title=i18n(this.getPropertyOptionName(property)+'.'+value)
-						return Lines.html`<option selected=${option.value==value} value=${value!=title && value}>${title}</option>`
-					})
-				)
-			)
-		} else if (property.type=='xhr') {
-			a(
-				Lines.html`<span id=${inputHtmlName}>${i18n(this.getPropertyOptionName(property)+'.loading')}</span>`
-			)
-		}
-		return a.e()
-	}
 	get skipNode() {
 		return false
 	}
-	// { not called if skipNode is set
-	getHtmlLines(featureContext,i18n) {
-		return Lines.bae(
-			...this.nodeProperties.map(
-				property=>NoseWrapLines.b(
-					"<div>","</div>"
-				).ae(
-					this.getHtmlPropertyLines(i18n,property)
-				)
-			)
-		)
-	}
-	get nodeJsNames() {
-		return [this.nodeJsName]
-	}
-	get connectToNodeJsNames() {
-		return this.nodeJsNames
-	}
-	// }
-	// abstract:
-	// get type()
-	// get ctxCreateMethodName()
-	// get nodeProperties()
 }
 
 class SinglePathFilter extends Filter {
@@ -159,26 +90,6 @@ class PassiveByDefaultSinglePathFilter extends SinglePathFilter {
 }
 
 const filterClasses={
-	gain: class extends PassiveByDefaultSinglePathFilter {
-		get nodeProperties() {
-			return [
-				{
-					name:'gain',
-					type:'range',
-				}
-			]
-		}
-	},
-	panner: class extends PassiveByDefaultSinglePathFilter {
-		get nodeProperties() {
-			return [
-				{
-					name:'pan',
-					type:'range',
-				}
-			];
-		}
-	},
 	biquad: class extends SinglePathFilter {
 		get type()                { return 'biquad' }
 		get ctxCreateMethodName() { return 'createBiquadFilter' }

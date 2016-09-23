@@ -31,14 +31,15 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				)
 			) // TODO expand on focus
 		})
-		optionClassWriters.set(Option.Number,(option,writeOption,i18n,generateId)=>{ // TODO fix mostly copypaste from crnx-base
+		optionClassWriters.set(Option.Number,(option,writeOption,i18n,generateId)=>{
 			const p=option.precision
-			const setInputAttrs=$input=>$input.attr({
+			const inputAttrs={
 				min: option.availableMin,
 				max: option.availableMax,
 				step: Math.pow(0.1,p).toFixed(p),
-			})
-			const setInputAttrsAndListeners=($input,$that)=>setInputAttrs($input)
+			}
+			const setInputAttrsAndListeners=($input,$that)=>$input
+				.attr(inputAttrs)
 				.val(option.value)
 				.on('input change',function(){
 					if (this.checkValidity()) {
@@ -79,13 +80,57 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				})
 			)
 			const $extraSection=$("<span class='node-option-section'>").append(
-				$("<button>"+i18n('options-output.reset')+"</button>").click(function(){
+				$("<button class='reset'>"+i18n('options-output.reset')+"</button>").click(function(){
 					$sliderInput.val(option.defaultValue).change()
 				})
 			).hide()
 			return option.$=$("<div class='node-option'>").append(
 				$mainSection," ",$extraSection
 			)
+		})
+		optionClassWriters.set(Option.LiveNumber,(option,writeOption,i18n,generateId)=>{
+			const p=option.precision
+			const inputAttrs={
+				min: option.availableMin,
+				max: option.availableMax,
+				step: Math.pow(0.1,p).toFixed(p),
+			}
+			const writeMinMaxInput=minOrMax=>$("<input type='number' required>")
+				.attr(inputAttrs)
+				.val(option[minOrMax])
+				.on('input change',function(){
+					if (this.checkValidity()) {
+						option[minOrMax]=parseFloat(this.value)
+					}
+				})
+			const $output=optionClassWriters.get(Option.Number)(option,writeOption,i18n,generateId)
+			const id=generateId()
+			const $inputCheckbox=$("<input type='checkbox' class='editable' id='"+id+"'>").prop('checked',option.input).change(function(){
+				option.input=$(this).prop('checked')
+			})
+			const $rangeMinInput=writeMinMaxInput('min')
+			const $rangeMaxInput=writeMinMaxInput('max')
+			const $rangeSpan1=$("<span>"+i18n('options-output.range')+"</span>")
+			const $rangeSpan2=$("<span class='editable-bottom'>").append(
+				$rangeMinInput," .. ",$rangeMaxInput
+			)
+			option.$range=$rangeSpan1.add($rangeSpan2)
+			$output.find('button.reset').before(
+				$inputCheckbox,
+				" ",
+				$("<span class='editable-top'>").append(
+					"<label for='"+id+"'>"+i18n('options-output.input')+"</label> ",
+					$rangeSpan1
+				),
+				" ",
+				$rangeSpan2,
+				" "
+			).click(function(){
+				$inputCheckbox.prop('checked',false).change()
+				$rangeMinInput.val(option.defaultMin).change()
+				$rangeMaxInput.val(option.defaultMax).change()
+			})
+			return $output
 		})
 	}
 }
