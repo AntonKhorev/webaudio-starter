@@ -100,6 +100,7 @@ class FilterNode extends SingleNode {
 			}
 			const option=this.options[property.name]
 			const inputHtmlName=this.getPropertyInputHtmlName(property.name)
+			const propertyOptionName='options.graph.'+this.type+'.'+property.name
 			const a=Lines.b()
 			if (property.type=='range' && option.input) {
 				const p=option.precision
@@ -107,19 +108,19 @@ class FilterNode extends SingleNode {
 				const fmtLabels=formatNumbers({ min:option.min, max:option.max },p)
 				const minMax=n=>i18n.numberWithUnits(n,option.unit,(a,e)=>Lines.html`<abbr title=${e}>`+a+`</abbr>`)
 				a(
-					Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}:</label>`,
+					Lines.html`<label for=${inputHtmlName}>${i18n(propertyOptionName)}:</label>`,
 					"<span class=min>"+minMax(fmtLabels.min)+"</span>",
 					Lines.html`<input id=${inputHtmlName} type=range value=${fmtAttrs.value} min=${fmtAttrs.min} max=${fmtAttrs.max} step=${p?Math.pow(0.1,p).toFixed(p):false}>`,
 					"<span class=max>"+minMax(fmtLabels.max)+"</span>"
 				)
 			} else if (property.type=='select' && option.input) {
 				a(
-					Lines.html`<label for=${inputHtmlName}>${i18n(this.getPropertyOptionName(property))}:</label>`,
+					Lines.html`<label for=${inputHtmlName}>${i18n(propertyOptionName)}:</label>`,
 					WrapLines.b(
 						Lines.html`<select id=${inputHtmlName}>`,`</select>`
 					).ae(
 						...option.availableValues.map(value=>{
-							const title=i18n('options.graph.'+this.type+'.'+property.name+'.'+value)
+							const title=i18n(propertyOptionName+'.'+value)
 							return Lines.html`<option selected=${option.value==value} value=${value!=title && value}>${title}</option>`
 						})
 					)
@@ -139,6 +140,47 @@ class FilterNode extends SingleNode {
 					getPropertyHtmlLines(property)
 				)
 			)
+		)
+	}
+	getJsInitLines(featureContext,i18n) {
+		return Lines.bae(
+			super.getJsInitLines(featureContext,i18n),
+			...this.nodeProperties.map(property=>{
+				if (property.skip) {
+					return Lines.be()
+				}
+				const option=this.options[property.name]
+				const nodePropertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")
+				const a=JsLines.b()
+				if (option.input) {
+					const inputJsName=this.getPropertyInputJsName(property.name)
+					const inputHtmlName=this.getPropertyInputHtmlName(property.name)
+					let value=inputJsName+".value"
+					if (property.fn) {
+						value=property.fn(value)
+					}
+					const eventProp=(property.type=='range'?'oninput':'onchange')
+					a(
+						"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
+						// was for IE11 compat (but IE11 has no Web Audio): (property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
+						";("+inputJsName+"."+eventProp+"=function(){",
+						"	"+nodePropertyJsName+"="+value+";",
+						"})();"
+					)
+				} else if (option.value!=option.defaultValue) {
+					let value=option.value
+					if (property.type=='select') {
+						value="'"+value+"'"
+					}
+					if (property.fn) {
+						value=property.fn(value)
+					}
+					a(
+						nodePropertyJsName+"="+value+";"
+					)
+				}
+				return a.e()
+			})
 		)
 	}
 	getCreateNodeJsLines(featureContext) {

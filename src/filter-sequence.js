@@ -36,50 +36,6 @@ class Filter {
 	}
 }
 
-class SinglePathFilter extends Filter {
-	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
-		return Lines.bae(
-			super.getJsInitLines(featureContext,i18n,prevNodeJsNames),
-			...this.nodeProperties.map(property=>{
-				if (property.skip) {
-					return Lines.be()
-				}
-				const option=this.options[property.name]
-				const nodePropertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")
-				const a=JsLines.b()
-				if (option.input) {
-					const inputJsName=this.getPropertyInputJsName(property.name)
-					const inputHtmlName=this.getPropertyInputHtmlName(property.name)
-					let value=inputJsName+".value"
-					if (property.fn) {
-						value=property.fn(value)
-					}
-					const eventProp=(property.type=='range'?'oninput':'onchange')
-					a(
-						"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
-						// was for IE11 compat (but IE11 has no Web Audio): (property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
-						";("+inputJsName+"."+eventProp+"=function(){",
-						"	"+nodePropertyJsName+"="+value+";",
-						"})();"
-					)
-				} else if (option.value!=option.defaultValue) {
-					let value=option.value
-					if (property.type=='select') {
-						value="'"+value+"'"
-					}
-					if (property.fn) {
-						value=property.fn(value)
-					}
-					a(
-						nodePropertyJsName+"="+value+";"
-					)
-				}
-				return a.e()
-			})
-		)
-	}
-}
-
 class PassiveByDefaultSinglePathFilter extends SinglePathFilter {
 	get skipNode() {
 		return this.nodeProperties.every(property=>{
