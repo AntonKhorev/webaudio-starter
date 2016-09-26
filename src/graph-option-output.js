@@ -231,7 +231,7 @@ class GraphOptionOutput {
 				const $inSelect=$node.find('.node-port-in .node-port-controls select').empty()
 				const $outSelect=$node.find('.node-port-out .node-port-controls select').empty()
 				for (let j=0;j<$selectOptions.length;j++) {
-					if (option.canConnect(j,i)) { // TODO optimize, currently it's O(n^3)
+					if (option.canConnect(j,i)) {
 						$inSelect.append($selectOptions[j])
 					}
 					if (option.canConnect(i,j)) {
@@ -307,20 +307,14 @@ class GraphOptionOutput {
 				}
 				const $select=$("<select>")
 				const $hole=$("<div class='node-port-hole'>").mousedown(function(ev){
-					// {
-					// doing caching for canConnect here b/c mousemove handler better work fast
-					// TODO remove it once it's optimized in Option.AcyclicGraph
 					const fromNodeIndex=$node.data('index')
-					const canConnectToCache=Array($nodes.length)
-					const canConnectTo=toNodeIndex=>{
-						const cached=canConnectToCache[toNodeIndex]
-						if (cached!=null) return cached
-						return canConnectToCache[toNodeIndex]=(dirIndex
+					const canConnectTo=($thatNode)=>{
+						const toNodeIndex=$thatNode.data('index')
+						return (dirIndex
 							? option.canConnect(fromNodeIndex,toNodeIndex)
 							: option.canConnect(toNodeIndex,fromNodeIndex)
 						)
 					}
-					// }
 					const [x1,y1]=getNodePortCoords($node,dirIndex)
 					const $line=writeVisibleLine(x1,y1,x1,y1)
 					$lines.append($line)
@@ -340,14 +334,14 @@ class GraphOptionOutput {
 					const nodeHandlers={
 						mouseup() {
 							const $thatNode=$(this)
-							if (canConnectTo($thatNode.data('index'))) {
+							if (canConnectTo($thatNode)) {
 								connectNodes($node,$thatNode,dirIndex)
 							}
 							// let documentHandlers.mouseup() do the clean up
 						},
 						mousemove(ev) {
 							const $thatNode=$(this)
-							if (canConnectTo($thatNode.data('index'))) {
+							if (canConnectTo($thatNode)) {
 								const [x2,y2]=getNodePortCoords($thatNode,1-dirIndex)
 								moveLine($line,{x2,y2}) // TODO update in animation (?)
 								ev.stopPropagation()
