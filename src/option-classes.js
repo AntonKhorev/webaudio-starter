@@ -283,6 +283,19 @@ Option.Graph = class extends Option.Collection {
 	setElementFixData(node,fixed) {
 		fixed.next=node.next
 	}
+	storeNodes(nodes) {
+		this._nodes=nodes.map(node=>({entry:node.entry, next:[], x:node.x, y:node.y}))
+		this.resetNodeConnectionData()
+		for (let i=0;i<nodes.length;i++) {
+			for (const j of nodes[i].next) {
+				this.connectNodes(i,j)
+			}
+		}
+	}
+	// introduced protected:
+	resetNodeConnectionData() {}
+	addConnectionData(i,j) {}
+	// introduced public:
 	get nodes() {
 		return this._nodes
 	}
@@ -291,37 +304,37 @@ Option.Graph = class extends Option.Collection {
 		this.update()
 		// additionally it's ok to update nodes[i].x and nodes[i].y directly, but not other properties
 	}
-	storeNodes(nodes) {
-		// TODO clear cached connection data
-		this._nodes=nodes.map(node=>({entry:node.entry, next:[], x:node.x, y:node.y}))
-		for (let i=0;i<nodes.length;i++) {
-			for (const j of nodes[i].next) { // don't do nodes[i].next.filter() - have to sequentially update this._nodes[i].next
-				if (this.canConnect(i,j)) {
-					this._nodes[i].next.push(j)
-				}
-			}
-		}
-	}
-	canConnect(i,j) {
+	canConnect(i,j) { // TODO rename to canConnectNodes
 		return !(
 			this._nodes[i].entry instanceof Option.GraphSink ||
 			this._nodes[j].entry instanceof Option.GraphSource ||
 			this._nodes[i].next/*:Array*/.includes(j)
 		)
 	}
+	connectNodes(i,j) {
+		if (this.canConnect(i,j)) {
+			this._nodes[i].next.push(j)
+			this.addConnectionData(i,j)
+		}
+	}
 }
 
 Option.AcyclicGraph = class extends Option.Graph {
+	resetNodeConnectionData() {
+		const width=this._nodes.length
+		this._connectivityMatrix=new Int8Array(width*width)
+	}
+	addConnectionData(i,j) {
+		const width=this._nodes.length
+		this._connectivityMatrix[i*width+j]=1
+		for (let k=0;k<width;k++) {
+			this._connectivityMatrix[i*width+k]|=this._connectivityMatrix[j*width+k]
+		}
+	}
 	canConnect(i,j) {
 		if (!super.canConnect(i,j)) return false
-		const visited=Array(this._nodes.length)
-		const rec=k=>{
-			if (visited[k]) return true
-			visited[k]=true
-			if (k==i) return false
-			return this._nodes[k].next.every(rec)
-		}
-		return rec(j)
+		const width=this._nodes.length
+		return i!=j && !this._connectivityMatrix[j*width+i]
 	}
 }
 
