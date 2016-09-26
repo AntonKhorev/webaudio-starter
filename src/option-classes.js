@@ -247,7 +247,7 @@ Option.Graph = class extends Option.Collection {
 			sub+=!entries[i]
 			subtracts[i]=sub
 		}
-		this._nodes=[]
+		const nodes=[]
 		for (let i=0;i<entries.length;i++) {
 			const data=datas[i]
 			const entry=entries[i]
@@ -264,8 +264,9 @@ Option.Graph = class extends Option.Collection {
 					node.next.push(j-subtracts[j])
 				}
 			}
-			this._nodes.push(node)
+			nodes.push(node)
 		}
+		this.storeNodes(nodes)
 	}
 	getEntryFromElement(node) {
 		return node.entry
@@ -286,9 +287,20 @@ Option.Graph = class extends Option.Collection {
 		return this._nodes
 	}
 	set nodes(nodes) {
-		this._nodes=nodes
+		this.storeNodes(nodes)
 		this.update()
 		// additionally it's ok to update nodes[i].x and nodes[i].y directly, but not other properties
+	}
+	storeNodes(nodes) {
+		// TODO clear cached connection data
+		this._nodes=nodes.map(node=>({entry:node.entry, next:[], x:node.x, y:node.y}))
+		for (let i=0;i<nodes.length;i++) {
+			for (const j of nodes[i].next) { // don't do nodes[i].next.filter() - have to sequentially update this._nodes[i].next
+				if (this.canConnect(i,j)) {
+					this._nodes[i].next.push(j)
+				}
+			}
+		}
 	}
 	canConnect(i,j) {
 		return !(

@@ -151,7 +151,7 @@ describe("Option.Graph",()=>{
 		const graphEntry=options.root.entries[0]
 		assert.equal(graphEntry.canConnect(1,0),true)
 	})
-	it("can't connect to source",()=>{
+	it("can't connect to a source",()=>{
 		const options=new TestOptions({
 			filters: [
 				{type:'stuff',x:0,y:0},
@@ -161,7 +161,7 @@ describe("Option.Graph",()=>{
 		const graphEntry=options.root.entries[0]
 		assert.equal(graphEntry.canConnect(0,1),false)
 	})
-	it("can't connect sink to anything",()=>{
+	it("can't connect a sink to anything",()=>{
 		const options=new TestOptions({
 			filters: [
 				{type:'stuff',x:0,y:0},
@@ -170,6 +170,27 @@ describe("Option.Graph",()=>{
 		})
 		const graphEntry=options.root.entries[0]
 		assert.equal(graphEntry.canConnect(1,0),false)
+	})
+	it("doesn't connnect to a source when asked by import data",()=>{
+		const options=new TestOptions({
+			filters: [
+				{type:'stuff',x:0,y:0,next:1},
+				{type:'src',x:10,y:0},
+			],
+		})
+		const graphEntry=options.root.entries[0]
+		assert.deepEqual(graphEntry.nodes[0].next,[])
+	})
+	it("doesn't connnect to a source when asked by editing",()=>{
+		const options=new TestOptions
+		const graphEntry=options.root.entries[0]
+		const e0=graphEntry.makeEntry('stuff')
+		const e1=graphEntry.makeEntry('src')
+		graphEntry.nodes=[
+			{entry:e0,next:[1],x:2,y:4},
+			{entry:e1,next:[],x:7,y:8},
+		]
+		assert.deepEqual(graphEntry.nodes[0].next,[])
 	})
 })
 
@@ -219,5 +240,17 @@ describe("Option.AcyclicGraph",()=>{
 		})
 		const graphEntry=options.root.entries[0]
 		assert.equal(graphEntry.canConnect(1,0),false)
+	})
+	it("doesn't create a cycle when asked by editing",()=>{
+		const options=new TestOptions
+		const graphEntry=options.root.entries[0]
+		const e0=graphEntry.makeEntry('stuff')
+		const e1=graphEntry.makeEntry('mesh')
+		graphEntry.nodes=[
+			{entry:e0,next:[1],x:2,y:4},
+			{entry:e1,next:[0],x:7,y:8},
+		]
+		assert.deepEqual(graphEntry.nodes[0].next,[1])
+		assert.deepEqual(graphEntry.nodes[1].next,[])
 	})
 })
