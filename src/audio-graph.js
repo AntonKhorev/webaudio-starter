@@ -8,6 +8,32 @@ const Feature=require('./feature')
 class AudioGraph extends Feature {
 	constructor(options) {
 		super()
+		const replaceNode=(oldNode,newNode)=>{
+			newNode.prevNodes=oldNode.prevNodes
+			newNode.nextNodes=oldNode.nextNodes
+			oldNode.prevNodes.forEach(prevNode=>{
+				prevNode.nextNodes.delete(oldNode)
+				prevNode.nextNodes.add(newNode)
+			})
+			oldNode.nextNodes.forEach(nextNode=>{
+				nextNode.prevNodes.delete(oldNode)
+				nextNode.prevNodes.add(newNode)
+			})
+		}
+		const deleteNode=(node)=>{
+			node.prevNodes.forEach(prevNode=>{
+				prevNode.nextNodes.delete(node)
+				node.nextNodes.forEach(nextNode=>{
+					prevNode.nextNodes.add(nextNode)
+				})
+			})
+			node.nextNodes.forEach(nextNode=>{
+				nextNode.prevNodes.delete(node)
+				node.prevNodes.forEach(prevNode=>{
+					nextNode.prevNodes.add(prevNode)
+				})
+			})
+		}
 		const createNodes=()=>{
 			const distinctNodes=new Set()
 			const destinationNode=new Node.destination
@@ -32,11 +58,6 @@ class AudioGraph extends Feature {
 			return outputNodes
 		}
 		// TODO gain = 0 breaks, have to do before effect propagation
-		// TODO propagate upstream/downstream effects, clean up nodes that don't have both
-		// 	can try to combine it with assignNumbersToNodes
-		//		const liveNodes=new Set
-		//		const liveNodesRec=(node)=>{
-		//	then will have to assign numbers after cleaning up
 		const removePassiveNodes=(inputNodes)=>{
 			const outputNodes=[]
 			for (const node of inputNodes) {
@@ -58,37 +79,41 @@ class AudioGraph extends Feature {
 						return parallel
 					}
 					if (removingWouldCreateTooManyConnections() || hasDirectParallelConnections()) {
-						// replace node with junction node
 						const junctionNode=new Node.junction
-						junctionNode.prevNodes=node.prevNodes
-						junctionNode.nextNodes=node.nextNodes
-						node.prevNodes.forEach(prevNode=>{
-							prevNode.nextNodes.delete(node)
-							prevNode.nextNodes.add(junctionNode)
-						})
-						node.nextNodes.forEach(nextNode=>{
-							nextNode.prevNodes.delete(node)
-							nextNode.prevNodes.add(junctionNode)
-						})
+						replaceNode(node,junctionNode)
 						outputNodes.push(junctionNode)
 					} else {
-						// delete node, cross-join its inputs and outputs
-						node.prevNodes.forEach(prevNode=>{
-							prevNode.nextNodes.delete(node)
-							node.nextNodes.forEach(nextNode=>{
-								prevNode.nextNodes.add(nextNode)
-							})
-						})
-						node.nextNodes.forEach(nextNode=>{
-							nextNode.prevNodes.delete(node)
-							node.prevNodes.forEach(prevNode=>{
-								nextNode.prevNodes.add(prevNode)
-							})
-						})
+						deleteNode(node)
 					}
 				}
 			}
 			return outputNodes
+		}
+		const removeUnaffectedNodes=(inputNodes)=>{
+			const propagateEffect=(effectPropertyName,nodesPropertyName)=>{
+				const visited=new Set
+				const rec=(node)=>{
+					if (visited.has(node)) return
+					visited.add(node)
+					node[nodesPropertyName].forEach(rec)
+				}
+				for (const node of inputNodes) {
+					if (node[effectPropertyName]) {
+						rec(node)
+					}
+				}
+				return visited
+			}
+			const visitedDownstream=propagateEffect('downstreamEffect','nextNodes')
+			const visitedUpstream=propagateEffect('upstreamEffect','prevNodes')
+			return inputNodes.filter(node=>{
+				if (visitedDownstream.has(node) && visitedUpstream.has(node)) {
+					return true
+				} else {
+					deleteNode(node)
+					return false
+				}
+			})
 		}
 		const sortNodes=(inputNodes)=>{
 			const outputNodes=[]
@@ -115,7 +140,7 @@ class AudioGraph extends Feature {
 			return outputNodes
 		}
 		const createdNodes=createNodes()
-		const filteredNodes=removePassiveNodes(createdNodes)
+		const filteredNodes=removeUnaffectedNodes(removePassiveNodes(createdNodes))
 		this.nodes=sortNodes(filteredNodes)
 	}
 	requestFeatureContext(featureContext) {

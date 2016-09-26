@@ -13,7 +13,7 @@ const Code=require('../src/code')
 WebAudioTestAPI.setState('AudioContext#createStereoPanner','enabled')
 
 describe("Code",()=>{
-	function getAudioContext(optionsData) {
+	function getSandbox(optionsData) {
 		const options=new Options(optionsData)
 		const code=new Code(options.fix(),i18n)
 		const sections=code.extractSections({html:'body',css:'paste',js:'paste'})
@@ -39,7 +39,7 @@ describe("Code",()=>{
 			sections.js.get().join("\n"),
 			sandbox
 		)
-		return sandbox.ctx
+		return sandbox
 	}
 	beforeEach(()=>{
 		WebAudioTestAPI.use()
@@ -48,7 +48,7 @@ describe("Code",()=>{
 		WebAudioTestAPI.unuse()
 	})
 	it("makes simplest possible sound output",()=>{
-		const ctx=getAudioContext({
+		const ctx=getSandbox({
 			graph: [
 				{
 					nodeType: 'audio',
@@ -57,11 +57,11 @@ describe("Code",()=>{
 					nodeType: 'destination',
 				}
 			],
-		})
+		}).ctx
 		assert.strictEqual(ctx,undefined)
 	})
 	it("ignores gain node with default gain",()=>{
-		const ctx=getAudioContext({
+		const ctx=getSandbox({
 			graph: [
 				{
 					nodeType: 'audio',
@@ -73,11 +73,11 @@ describe("Code",()=>{
 					nodeType: 'destination',
 				}
 			],
-		})
+		}).ctx
 		assert.strictEqual(ctx,undefined)
 	})
 	it("adds gain node",()=>{
-		const ctx=getAudioContext({
+		const ctx=getSandbox({
 			graph: [
 				{
 					nodeType: 'audio',
@@ -90,7 +90,7 @@ describe("Code",()=>{
 					nodeType: 'destination',
 				}
 			],
-		})
+		}).ctx
 		assert.deepEqual(ctx.toJSON(),{
 			"name": "AudioDestinationNode",
 			"inputs": [
@@ -111,7 +111,7 @@ describe("Code",()=>{
 		})
 	})
 	it("adds gain node with input",()=>{
-		const ctx=getAudioContext({
+		const ctx=getSandbox({
 			graph: [
 				{
 					nodeType: 'audio',
@@ -126,7 +126,7 @@ describe("Code",()=>{
 					nodeType: 'destination',
 				}
 			],
-		})
+		}).ctx
 		assert.deepEqual(ctx.toJSON(),{
 			"name": "AudioDestinationNode",
 			"inputs": [
@@ -147,7 +147,7 @@ describe("Code",()=>{
 		})
 	})
 	it("adds panner node",()=>{
-		const ctx=getAudioContext({
+		const ctx=getSandbox({
 			graph: [
 				{
 					nodeType: 'audio',
@@ -160,7 +160,7 @@ describe("Code",()=>{
 					nodeType: 'destination',
 				}
 			],
-		})
+		}).ctx
 		assert.deepEqual(ctx.toJSON(),{
 			"name": "AudioDestinationNode",
 			"inputs": [
@@ -182,7 +182,7 @@ describe("Code",()=>{
 	})
 	/*
 	it("adds equalizer with 1 input",()=>{
-		const ctx=getAudioContext({
+		const ctx=getSandbox({
 			graph: [
 				{
 					nodeType: 'audio',
@@ -197,7 +197,7 @@ describe("Code",()=>{
 					nodeType: 'destination',
 				}
 			],
-		})
+		}).ctx
 		assert.deepEqual(ctx.toJSON(),{
 			"name": "AudioDestinationNode",
 			"inputs": [
@@ -231,7 +231,7 @@ describe("Code",()=>{
 		})
 	})
 	it("adds equalizer with 2 inputs",()=>{
-		const ctx=getAudioContext({
+		const ctx=getSandbox({
 			graph: [
 				{
 					nodeType: 'audio',
@@ -249,7 +249,7 @@ describe("Code",()=>{
 					nodeType: 'destination',
 				}
 			],
-		})
+		}).ctx
 		assert.deepEqual(ctx.toJSON(),{
 			"name": "AudioDestinationNode",
 			"inputs": [
@@ -306,7 +306,7 @@ describe("Code",()=>{
 	})
 	*/
 	it("removes passive panner",()=>{
-		const ctx=getAudioContext({
+		const ctx=getSandbox({
 			graph: [
 				{
 					nodeType: 'audio',
@@ -329,7 +329,7 @@ describe("Code",()=>{
 					nodeType: 'destination',
 				}
 			],
-		})
+		}).ctx
 		const graph=ctx.toJSON()
 		assert.equal(graph.name,"AudioDestinationNode")
 		assert.equal(graph.inputs.length,2)
@@ -343,7 +343,7 @@ describe("Code",()=>{
 		assert.equal(graph.inputs[1].inputs[1].name,"MediaElementAudioSourceNode")
 	})
 	it("creates junction node in place of passive panner because too many inputs/outputs",()=>{
-		const ctx=getAudioContext({
+		const ctx=getSandbox({
 			graph: [
 				{
 					nodeType: 'audio',
@@ -373,7 +373,7 @@ describe("Code",()=>{
 					nodeType: 'destination',
 				}
 			],
-		})
+		}).ctx
 		const graph=ctx.toJSON()
 		assert.equal(graph.name,"AudioDestinationNode")
 		assert.equal(graph.inputs.length,3)
@@ -389,7 +389,7 @@ describe("Code",()=>{
 		assert.equal(graph.inputs[0].inputs[0].inputs.length,3)
 	})
 	it("creates junction node in place of passive panner because its inputs have parallel connections to its outputs",()=>{
-		const ctx=getAudioContext({
+		const ctx=getSandbox({
 			graph: [
 				{
 					nodeType: 'audio',
@@ -401,7 +401,7 @@ describe("Code",()=>{
 					nodeType: 'destination',
 				}
 			],
-		})
+		}).ctx
 		const graph=ctx.toJSON()
 		assert.equal(graph.name,"AudioDestinationNode")
 		assert.equal(graph.inputs.length,2)
@@ -409,5 +409,46 @@ describe("Code",()=>{
 			[graph.inputs[0].name,graph.inputs[1].name].sort(),
 			["GainNode","MediaElementAudioSourceNode"]
 		)
+	})
+	it("removes panner node because it is not affected by inputs",()=>{
+		const sandbox=getSandbox({
+			graph: [
+				{
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'gain',
+					gain: { input: true },
+					next: 3,
+				},{
+					nodeType: 'panner',
+					pan: { input: true },
+					next: 3,
+				},{
+					nodeType: 'destination',
+				}
+			],
+		})
+		assert.strictEqual(sandbox.pannerNode,undefined)
+	})
+	it("removes panner node because it is not affected by outputs",()=>{
+		const sandbox=getSandbox({
+			graph: [
+				{
+					nodeType: 'audio',
+					next: [1,2],
+				},{
+					nodeType: 'gain',
+					gain: { input: true },
+					next: 3,
+				},{
+					nodeType: 'panner',
+					pan: { input: true },
+				},{
+					nodeType: 'destination',
+				}
+			],
+		})
+		assert.strictEqual(sandbox.pannerNode,undefined)
 	})
 })
