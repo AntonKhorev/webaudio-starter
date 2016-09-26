@@ -304,7 +304,7 @@ Option.Graph = class extends Option.Collection {
 		this.update()
 		// additionally it's ok to update nodes[i].x and nodes[i].y directly, but not other properties
 	}
-	canConnect(i,j) { // TODO rename to canConnectNodes
+	canConnectNodes(i,j) {
 		return !(
 			this._nodes[i].entry instanceof Option.GraphSink ||
 			this._nodes[j].entry instanceof Option.GraphSource ||
@@ -312,7 +312,7 @@ Option.Graph = class extends Option.Collection {
 		)
 	}
 	connectNodes(i,j) {
-		if (this.canConnect(i,j)) {
+		if (this.canConnectNodes(i,j)) {
 			this._nodes[i].next.push(j)
 			this.addConnectionData(i,j)
 		}
@@ -331,8 +331,8 @@ Option.AcyclicGraph = class extends Option.Graph {
 			this._connectivityMatrix[i*width+k]|=this._connectivityMatrix[j*width+k]
 		}
 	}
-	canConnect(i,j) {
-		if (!super.canConnect(i,j)) return false
+	canConnectNodes(i,j) {
+		if (!super.canConnectNodes(i,j)) return false
 		const width=this._nodes.length
 		return i!=j && !this._connectivityMatrix[j*width+i]
 	}
@@ -340,7 +340,7 @@ Option.AcyclicGraph = class extends Option.Graph {
 
 /*
 Option.TreeGraph = class extends Option.AcyclicGraph {
-	canConnect(i,j) {
+	canConnectNodes(i,j) {
 		// if there's a root node with no input port:
 		// test for multiple inputs on any node
 	}

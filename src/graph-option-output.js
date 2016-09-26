@@ -231,10 +231,10 @@ class GraphOptionOutput {
 				const $inSelect=$node.find('.node-port-in .node-port-controls select').empty()
 				const $outSelect=$node.find('.node-port-out .node-port-controls select').empty()
 				for (let j=0;j<$selectOptions.length;j++) {
-					if (option.canConnect(j,i)) {
+					if (option.canConnectNodes(j,i)) {
 						$inSelect.append($selectOptions[j])
 					}
-					if (option.canConnect(i,j)) {
+					if (option.canConnectNodes(i,j)) {
 						$outSelect.append($selectOptions[j])
 					}
 				}
@@ -311,8 +311,8 @@ class GraphOptionOutput {
 					const canConnectTo=($thatNode)=>{
 						const toNodeIndex=$thatNode.data('index')
 						return (dirIndex
-							? option.canConnect(fromNodeIndex,toNodeIndex)
-							: option.canConnect(toNodeIndex,fromNodeIndex)
+							? option.canConnectNodes(fromNodeIndex,toNodeIndex)
+							: option.canConnectNodes(toNodeIndex,fromNodeIndex)
 						)
 					}
 					const [x1,y1]=getNodePortCoords($node,dirIndex)

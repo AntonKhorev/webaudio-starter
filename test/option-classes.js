@@ -119,7 +119,7 @@ describe("Option.Graph",()=>{
 			],
 		})
 		const graphEntry=options.root.entries[0]
-		assert.equal(graphEntry.canConnect(0,0),true)
+		assert.equal(graphEntry.canConnectNodes(0,0),true)
 	})
 	it("can connect two unconnected nodes",()=>{
 		const options=new TestOptions({
@@ -129,7 +129,7 @@ describe("Option.Graph",()=>{
 			],
 		})
 		const graphEntry=options.root.entries[0]
-		assert.equal(graphEntry.canConnect(0,1),true)
+		assert.equal(graphEntry.canConnectNodes(0,1),true)
 	})
 	it("can't connect two connected nodes",()=>{
 		const options=new TestOptions({
@@ -139,7 +139,7 @@ describe("Option.Graph",()=>{
 			],
 		})
 		const graphEntry=options.root.entries[0]
-		assert.equal(graphEntry.canConnect(0,1),false)
+		assert.equal(graphEntry.canConnectNodes(0,1),false)
 	})
 	it("can create a cycle",()=>{
 		const options=new TestOptions({
@@ -149,7 +149,7 @@ describe("Option.Graph",()=>{
 			],
 		})
 		const graphEntry=options.root.entries[0]
-		assert.equal(graphEntry.canConnect(1,0),true)
+		assert.equal(graphEntry.canConnectNodes(1,0),true)
 	})
 	it("can't connect to a source",()=>{
 		const options=new TestOptions({
@@ -159,7 +159,7 @@ describe("Option.Graph",()=>{
 			],
 		})
 		const graphEntry=options.root.entries[0]
-		assert.equal(graphEntry.canConnect(0,1),false)
+		assert.equal(graphEntry.canConnectNodes(0,1),false)
 	})
 	it("can't connect a sink to anything",()=>{
 		const options=new TestOptions({
@@ -169,7 +169,7 @@ describe("Option.Graph",()=>{
 			],
 		})
 		const graphEntry=options.root.entries[0]
-		assert.equal(graphEntry.canConnect(1,0),false)
+		assert.equal(graphEntry.canConnectNodes(1,0),false)
 	})
 	it("doesn't connnect to a source when asked by import data",()=>{
 		const options=new TestOptions({
@@ -209,7 +209,7 @@ describe("Option.AcyclicGraph",()=>{
 			],
 		})
 		const graphEntry=options.root.entries[0]
-		assert.equal(graphEntry.canConnect(0,0),false)
+		assert.equal(graphEntry.canConnectNodes(0,0),false)
 	})
 	it("can connect two unconnected nodes",()=>{
 		const options=new TestOptions({
@@ -219,7 +219,7 @@ describe("Option.AcyclicGraph",()=>{
 			],
 		})
 		const graphEntry=options.root.entries[0]
-		assert.equal(graphEntry.canConnect(0,1),true)
+		assert.equal(graphEntry.canConnectNodes(0,1),true)
 	})
 	it("can't connect two connected nodes",()=>{
 		const options=new TestOptions({
@@ -229,7 +229,7 @@ describe("Option.AcyclicGraph",()=>{
 			],
 		})
 		const graphEntry=options.root.entries[0]
-		assert.equal(graphEntry.canConnect(0,1),false)
+		assert.equal(graphEntry.canConnectNodes(0,1),false)
 	})
 	it("can't create a cycle",()=>{
 		const options=new TestOptions({
@@ -239,7 +239,7 @@ describe("Option.AcyclicGraph",()=>{
 			],
 		})
 		const graphEntry=options.root.entries[0]
-		assert.equal(graphEntry.canConnect(1,0),false)
+		assert.equal(graphEntry.canConnectNodes(1,0),false)
 	})
 	it("doesn't create a cycle when asked by editing",()=>{
 		const options=new TestOptions
