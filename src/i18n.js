@@ -155,7 +155,7 @@ const langStrings={
 		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "create [analyser node][analyser] for {waveform,frequencies,waveform and frequencies} visualization",
 		'comment.destination.analyser.split': "create [channel splitter node][splitter] connected to two [analyser nodes][analyser]",
 		*/
-		'comment.graph.destination': "connect last node to [destination][destination]",
+		'comment.graph.destination': "connect to [destination][destination]",
 
 		'units.pixel.a': "px",
 		'units.pixel.{1,2}': "pixel{,s}",
@@ -318,7 +318,7 @@ const langStrings={
 		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "создаём [узел анализатора][analyser] для визуализации {формы волны,частот,формы волны и частот}",
 		'comment.destination.analyser.split': "создаём [узел разделения каналов][splitter], соединённый с двумя [узлами анализатора][analyser]",
 		*/
-		'comment.graph.destination': "соединяем последний узел с [выходом][destination]",
+		'comment.graph.destination': "соединяем с [выходом][destination]",
 
 		'units.pixel.a': "px",
 		'units.pixel.{1,2,5}': "пиксел{ь,я,ей}",

@@ -43,23 +43,21 @@ class AudioGraph extends Feature {
 				if (!node.passive) {
 					outputNodes.push(node)
 				} else {
-					const nInputs=node.prevNodeJsNameCount
-					const nOutputs=node.nextNodeJsNameCount
-					if (nInputs*nOutputs<=nInputs+nOutputs+1) { // is number of connections that cross-join would create acceptable?
-						// delete node, cross-join its inputs and outputs
+					const removingWouldCreateTooManyConnections=()=>{
+						const nInputs=node.prevNodeJsNameCount
+						const nOutputs=node.nextNodeJsNameCount
+						return nInputs*nOutputs>nInputs+nOutputs+1
+					}
+					const hasDirectParallelConnections=()=>{
+						let parallel=false
 						node.prevNodes.forEach(prevNode=>{
-							prevNode.nextNodes.delete(node)
-							node.nextNodes.forEach(nextNode=>{
-								prevNode.nextNodes.add(nextNode)
+							prevNode.nextNodes.forEach(prevNextNode=>{
+								parallel=parallel||node.nextNodes.has(prevNextNode)
 							})
 						})
-						node.nextNodes.forEach(nextNode=>{
-							nextNode.prevNodes.delete(node)
-							node.prevNodes.forEach(prevNode=>{
-								nextNode.prevNodes.add(prevNode)
-							})
-						})
-					} else {
+						return parallel
+					}
+					if (removingWouldCreateTooManyConnections() || hasDirectParallelConnections()) {
 						// replace node with junction node
 						const junctionNode=new Node.junction
 						junctionNode.prevNodes=node.prevNodes
@@ -73,6 +71,20 @@ class AudioGraph extends Feature {
 							nextNode.prevNodes.add(junctionNode)
 						})
 						outputNodes.push(junctionNode)
+					} else {
+						// delete node, cross-join its inputs and outputs
+						node.prevNodes.forEach(prevNode=>{
+							prevNode.nextNodes.delete(node)
+							node.nextNodes.forEach(nextNode=>{
+								prevNode.nextNodes.add(nextNode)
+							})
+						})
+						node.nextNodes.forEach(nextNode=>{
+							nextNode.prevNodes.delete(node)
+							node.prevNodes.forEach(prevNode=>{
+								nextNode.prevNodes.add(prevNode)
+							})
+						})
 					}
 				}
 			}

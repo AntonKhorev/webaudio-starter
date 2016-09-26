@@ -305,7 +305,44 @@ describe("Code",()=>{
 		})
 	})
 	*/
-	it("creates passive node in place of passive panner",()=>{
+	it("removes passive panner",()=>{
+		const ctx=getAudioContext({
+			graph: [
+				{
+					nodeType: 'audio',
+					next: 2,
+				},{
+					nodeType: 'audio',
+					next: 2,
+				},{
+					nodeType: 'panner',
+					next: [3,4],
+				},{
+					nodeType: 'gain',
+					gain: { input: true },
+					next: 5,
+				},{
+					nodeType: 'gain',
+					gain: { input: true },
+					next: 5,
+				},{
+					nodeType: 'destination',
+				}
+			],
+		})
+		const graph=ctx.toJSON()
+		assert.equal(graph.name,"AudioDestinationNode")
+		assert.equal(graph.inputs.length,2)
+		assert.equal(graph.inputs[0].name,"GainNode")
+		assert.equal(graph.inputs[1].name,"GainNode")
+		assert.equal(graph.inputs[0].inputs.length,2)
+		assert.equal(graph.inputs[1].inputs.length,2)
+		assert.equal(graph.inputs[0].inputs[0].name,"MediaElementAudioSourceNode")
+		assert.equal(graph.inputs[1].inputs[0].name,"MediaElementAudioSourceNode")
+		assert.equal(graph.inputs[0].inputs[1].name,"MediaElementAudioSourceNode")
+		assert.equal(graph.inputs[1].inputs[1].name,"MediaElementAudioSourceNode")
+	})
+	it("creates junction node in place of passive panner because too many inputs/outputs",()=>{
 		const ctx=getAudioContext({
 			graph: [
 				{
@@ -322,15 +359,15 @@ describe("Code",()=>{
 					next: [4,5,6],
 				},{
 					nodeType: 'gain',
-					gain: 0.1,
+					gain: { input: true },
 					next: 7,
 				},{
 					nodeType: 'gain',
-					gain: 0.2,
+					gain: { input: true },
 					next: 7,
 				},{
 					nodeType: 'gain',
-					gain: 0.3,
+					gain: { input: true },
 					next: 7,
 				},{
 					nodeType: 'destination',
@@ -350,5 +387,27 @@ describe("Code",()=>{
 		assert.equal(graph.inputs[1].inputs[0].name,"GainNode")
 		assert.equal(graph.inputs[2].inputs[0].name,"GainNode")
 		assert.equal(graph.inputs[0].inputs[0].inputs.length,3)
+	})
+	it("creates junction node in place of passive panner because its inputs have parallel connections to its outputs",()=>{
+		const ctx=getAudioContext({
+			graph: [
+				{
+					nodeType: 'audio',
+					next: [1,2],
+				},{
+					nodeType: 'panner',
+					next: 2,
+				},{
+					nodeType: 'destination',
+				}
+			],
+		})
+		const graph=ctx.toJSON()
+		assert.equal(graph.name,"AudioDestinationNode")
+		assert.equal(graph.inputs.length,2)
+		assert.deepEqual(
+			[graph.inputs[0].name,graph.inputs[1].name].sort(),
+			["GainNode","MediaElementAudioSourceNode"]
+		)
 	})
 })

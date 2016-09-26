@@ -8,6 +8,8 @@ const NoseWrapLines=require('crnx-base/nose-wrap-lines')
 const RefLines=require('crnx-base/ref-lines')
 const Feature=require('./feature')
 
+// TODO naming conventions for two graphs: user-entered and web audio api
+
 const NodeClasses={}
 
 // abstract classes (not exported)
@@ -37,10 +39,10 @@ class Node extends Feature {
 	get upstreamEffect() {
 		return false // destination or visualization node
 	}
-	get nInputJsNames() {
+	get nInputJsNames() { // estimate number of inputs, ok to overestimate
 		return 0
 	}
-	get nOutputJsNames() {
+	get nOutputJsNames() { // estimate number of outputs, ok to overestimate
 		return 0
 	}
 	get prevNodeJsNameCount() {
