@@ -137,6 +137,7 @@ const langStrings={
 		'label.destination.compressor': "Enable dynamics compressor",
 
 		'comment.context': "create [audio context][context]",
+		'comment.graph.junction': "create junction node as [gain node][gain]",
 		'comment.graph.audio': "create [audio source node][source]",
 		'comment.graph.video': "create [video source node][source]",
 		'comment.graph.sample': "load [sample][buffer]",
@@ -299,6 +300,7 @@ const langStrings={
 		'label.destination.compressor': "Включить компрессор",
 
 		'comment.context': "создаём [аудио-контекст][context]",
+		'comment.graph.junction': "создаём узел для соединения в виде [узла усилителя][gain]",
 		'comment.graph.audio': "создаём [узел источника аудио][source]",
 		'comment.graph.video': "создаём [узел источника видео][source]",
 		'comment.graph.sample': "загружаем [сэмпл][buffer]",

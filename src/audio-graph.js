@@ -31,6 +31,7 @@ class AudioGraph extends Feature {
 			})
 			return outputNodes
 		}
+		// TODO gain = 0 breaks, have to do before effect propagation
 		// TODO propagate upstream/downstream effects, clean up nodes that don't have both
 		// 	can try to combine it with assignNumbersToNodes
 		//		const liveNodes=new Set
@@ -59,19 +60,19 @@ class AudioGraph extends Feature {
 							})
 						})
 					} else {
-						// replace node with passive node
-						const passiveNode=new Node.passive
-						passiveNode.prevNodes=node.prevNodes
-						passiveNode.nextNodes=node.nextNodes
+						// replace node with junction node
+						const junctionNode=new Node.junction
+						junctionNode.prevNodes=node.prevNodes
+						junctionNode.nextNodes=node.nextNodes
 						node.prevNodes.forEach(prevNode=>{
 							prevNode.nextNodes.delete(node)
-							prevNode.nextNodes.add(passiveNode)
+							prevNode.nextNodes.add(junctionNode)
 						})
 						node.nextNodes.forEach(nextNode=>{
 							nextNode.prevNodes.delete(node)
-							nextNode.prevNodes.add(passiveNode)
+							nextNode.prevNodes.add(junctionNode)
 						})
-						outputNodes.push(passiveNode)
+						outputNodes.push(junctionNode)
 					}
 				}
 			}

@@ -237,9 +237,9 @@ class PassiveByDefaultFilterNode extends FilterNode {
 
 // concrete classes
 
-NodeClasses.passive = class extends FilterNode { // special node used as summator/junction
+NodeClasses.junction = class extends FilterNode { // special node used as summator/junction
 	get type() {
-		return 'gain'
+		return 'junction'
 	}
 	get ctxCreateMethodName() {
 		return 'createGain'
