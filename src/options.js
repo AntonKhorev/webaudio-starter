@@ -6,7 +6,7 @@ class Options extends BaseOptions {
 	get entriesDescription() {
 		return [
 			['AcyclicGraph','graph',[
-				['GraphNode','audio',[
+				['AudioGraphNode','audio',[
 					['Checkbox','enabled',true],
 					['Text','url',[
 						// original w3c mooc
@@ -18,8 +18,8 @@ class Options extends BaseOptions {
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/drums.ogg',
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/guitar.ogg',
 					]],
-				],{enableSwitch:true,inEdges:false}],
-				['GraphNode','video',[
+				],{inEdges:false}],
+				['AudioGraphNode','video',[
 					['Checkbox','enabled',true],
 					['Text','url',[
 						'http://mainline.i3s.unice.fr/mooc/elephants-dream-medium.webm',
@@ -29,7 +29,7 @@ class Options extends BaseOptions {
 					]],
 					['Int','width',[1,1920],320,{ unit: 'pixel' }],
 					['Int','height',[1,1080],240,{ unit: 'pixel' }],
-				],{enableSwitch:true,inEdges:false}],
+				],{inEdges:false}],
 				/*
 				['Group','sample',[
 					['Text','url',[
@@ -45,16 +45,16 @@ class Options extends BaseOptions {
 					['Float','randomGain',[0,1]],
 				]],
 				*/
-				['GraphNode','gain',[
+				['AudioGraphNode','gain',[
 					['Checkbox','enabled',true],
 					['LiveFloat','gain',[0,10],1,{
 						defaultMax: 1,
 					}],
-				],{enableSwitch:true}],
-				['GraphNode','panner',[
+				]],
+				['AudioGraphNode','panner',[
 					['Checkbox','enabled',true],
 					['LiveFloat','pan',[-1,1],0],
-				],{enableSwitch:true}],
+				]],
 				/*
 				['BiquadFilter','biquad'],
 				['IIRFilter','iir'],
@@ -69,12 +69,12 @@ class Options extends BaseOptions {
 				]],
 				['EqualizerFilter','equalizer'],
 				*/
-				['GraphNode','compressor',[ // Firefox compresses automatically?
+				['AudioGraphNode','compressor',[ // Firefox compresses automatically?
 					['Checkbox','enabled',true],
-				],{enableSwitch:true}],
-				['GraphNode','destination',[
+				]],
+				['AudioGraphNode','destination',[
 					['Checkbox','enabled',true],
-				],{enableSwitch:true,outEdges:false}],
+				],{outEdges:false}],
 			],'nodeType'],
 			/*
 			['Group','destination',[

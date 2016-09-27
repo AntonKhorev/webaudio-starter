@@ -198,6 +198,16 @@ describe("Option.Graph",()=>{
 		const e0=graphEntry.makeEntry('mesh')
 		assert.equal(e0.enabled,true)
 	})
+	it("imports default enable state",()=>{
+		const options=new TestOptions({
+			filters: [
+				{type:'mesh',x:0,y:0},
+			],
+		})
+		const graphEntry=options.root.entries[0]
+		const e0=graphEntry.nodes[0].entry
+		assert.equal(e0.enabled,true)
+	})
 	it("imports enable state",()=>{
 		const options=new TestOptions({
 			filters: [

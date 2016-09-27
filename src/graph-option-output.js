@@ -375,9 +375,9 @@ class GraphOptionOutput {
 				)
 			}
 			const writeBox=()=>{
-				const enableSwitchId=generateId()
 				const $box=$("<div class='node-box'>")
 				if (nodeOption.enableSwitch) {
+					const enableSwitchId=generateId()
 					$box.append(
 						$(`<input type='checkbox' id='${enableSwitchId}'>`).prop('checked',nodeOption.enabled).change(function(){
 							nodeOption.enabled=$(this).prop('checked')
@@ -386,6 +386,18 @@ class GraphOptionOutput {
 					)
 				}
 				return $box
+			}
+			const writeAdditionalControls=()=>{
+				// webaudio-starter specific code
+				if (nodeOption.enableSwitch) {
+					const enableInputSwitchId=generateId()
+					return $("<div class='node-under-box-switch'>").append(
+						$(`<input type='checkbox' id='${enableInputSwitchId}'>`).prop('checked',nodeOption.enabledInput).change(function(){
+							nodeOption.enabledInput=$(this).prop('checked')
+						}),
+						` <label for='${enableInputSwitchId}'>switch</label>` // TODO i18n
+					)
+				}
 			}
 			$node.attr({
 				id,
@@ -415,7 +427,8 @@ class GraphOptionOutput {
 				$("<div class='node-ports'>").append(
 					writePort(0,!nodeOption.inEdges),
 					writePort(1,!nodeOption.outEdges),
-					writeBox()
+					writeBox(),
+					writeAdditionalControls()
 				)
 			)
 			$node.mousedown(function(ev){

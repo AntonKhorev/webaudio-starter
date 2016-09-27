@@ -239,7 +239,7 @@ Option.GraphNode = class extends Option.Group {
 		this.outEdges=(settings.outEdges===undefined)||settings.outEdges
 		this.enableSwitch=!!settings.enableSwitch
 		if (this.enableSwitch) {
-			if (typeof data == 'object') {
+			if (typeof data == 'object' && data.enabled!==undefined) {
 				this._enabled=!!data.enabled
 			} else {
 				this._enabled=true
@@ -265,6 +265,47 @@ Option.GraphNode = class extends Option.Group {
 	}
 	set enabled(enabled) {
 		this._enabled=enabled
+		if (this.enableSwitch) {
+			this.update()
+		}
+	}
+}
+
+Option.AudioGraphNode = class extends Option.GraphNode {
+	static collectArgs(scalarArg,arrayArg,settings) {
+		settings=Object.create(settings)
+		settings.enableSwitch=true
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
+		super(...arguments)
+		if (this.enableSwitch) {
+			if (typeof data == 'object') {
+				this._enabledInput=!!data.enabledInput
+			} else {
+				this._enabledInput=false
+			}
+		}
+	}
+	export() {
+		const data=super.export()
+		if (this.enableSwitch && this._enabledInput==true) {
+			data.enabledInput=this._enabledInput
+		}
+		return data
+	}
+	fix() {
+		const fixed=super.fix()
+		if (this.enableSwitch) {
+			fixed.enabledInput=this._enabledInput
+		}
+		return fixed
+	}
+	get enabledInput() {
+		return this._enabledInput
+	}
+	set enabledInput(enabledInput) {
+		this._enabledInput=enabledInput
 		if (this.enableSwitch) {
 			this.update()
 		}
