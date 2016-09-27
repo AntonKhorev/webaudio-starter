@@ -100,7 +100,7 @@
 						}
 						& > .node-ports {
 							position: relative;
-							margin: 0 @grid-size;
+							margin: 0 @grid-size*3/4;
 							.node-port {
 								position: absolute;
 								width: 50%;
@@ -110,14 +110,14 @@
 									left: 0;
 									text-align: left;
 									&::before, .node-port-hole {
-										left: -@grid-size;
+										left: -@grid-size*3/4;
 									}
 								}
 								&.node-port-out {
 									right: 0;
 									text-align: right;
 									&::before, .node-port-hole {
-										right: -@grid-size;
+										right: -@grid-size*3/4;
 									}
 								}
 								&::before, .node-port-hole {
@@ -145,12 +145,35 @@
 									box-shadow: inset 0 0 3px 3px rgba(10%,50%,10%,0.3); //shade(#98FB98,50%);
 								}
 								*/
-								.node-port-label > span {
-									.visually-hidden();
+								.node-port-label {
+									position: relative;
+									height: @grid-size/2 - 1px;
+									line-height: @grid-size/2 - 1px;
+									border-bottom: solid 2px #000;
+									& > span {
+										.visually-hidden();
+									}
+								}
+								&.node-port-in .node-port-label {
+									padding-left: @grid-size/4;
+									margin-right: @grid-size*3/8;
+								}
+								&.node-port-out .node-port-label {
+									padding-right: @grid-size/4;
+									margin-left: @grid-size*3/8;
 								}
 								.node-port-controls {
 									.visually-hidden();
 								}
+							}
+							.node-box {
+								position: absolute;
+								width: @grid-size*3/4;
+								height: @grid-size*3/4;
+								left: (@node-width - 3/2 - 3/4)*@grid-size/2;
+								top: @grid-size/8;
+								border: solid 2px #000;
+								box-sizing: border-box;
 							}
 						}
 					}

@@ -399,7 +399,8 @@ class GraphOptionOutput {
 				),
 				$("<div class='node-ports'>").append(
 					writePort(0,nodeOption instanceof Option.GraphSource),
-					writePort(1,nodeOption instanceof Option.GraphSink)
+					writePort(1,nodeOption instanceof Option.GraphSink),
+					"<div class='node-box'>"
 				)
 			)
 			$node.mousedown(function(ev){
