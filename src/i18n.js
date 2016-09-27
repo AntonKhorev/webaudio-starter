@@ -60,13 +60,12 @@ const langStrings={
 		'options.graph.equalizer.add': "Add equalizer",
 		'options.graph.equalizer.gain{60,170,350,1000,3500,10000}': "{} Hz gain",
 		*/
+		'options.graph.compressor': "Dynamics compressor",
+		'options.graph.compressor.add': "Add dynamics compressor",
 		'options.graph.destination': "Destination",
 		'options.graph.destination.add': "Add destination",
 
 		/*
-		'options.destination': "Destination",
-		'options.destination.compressor': "Dynamics compressor",
-		'options.destination.compressor.enabled': "Add dynamics compressor before the destination",
 		'options.destination.{waveform,frequencies}': "{Waveform,Frequencies} visualization",
 		'options.destination.{waveform,frequencies}.enabled': "Enable {} visualization",
 		'options.destination.waveform.width': "Waveform line width",
@@ -143,6 +142,7 @@ const langStrings={
 		'comment.graph.sample': "load [sample][buffer]",
 		'comment.graph.gain': "create [gain node][gain]",
 		'comment.graph.panner': "create [stereo panner node][panner]",
+		'comment.graph.compressor': "create [dynamics compressor node][compressor]",
 		/*
 		'comment.filters.biquad': "create [biquad filter node][biquad]",
 		'comment.filters.iir': "create [IIR filter node][iir]",
@@ -150,7 +150,6 @@ const langStrings={
 		'comment.filters.convolver.single': "create [convolver node][convolver]",
 		'comment.filters.equalizer': "create equalizer as a sequence of [peaking][peaking] [biquad filter nodes][biquad]",
 		'comment.filters.equalizer.single': "create equalizer as a [peaking][peaking] [biquad filter node][biquad]",
-		'comment.destination.compressor': "create [dynamics compressor node][compressor]",
 		'comment.destination.analyser': "create [analyser node][analyser]",
 		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "create [analyser node][analyser] for {waveform,frequencies,waveform and frequencies} visualization",
 		'comment.destination.analyser.split': "create [channel splitter node][splitter] connected to two [analyser nodes][analyser]",
@@ -223,13 +222,12 @@ const langStrings={
 		'options.graph.equalizer.add': "Добавить эквалайзер",
 		'options.graph.equalizer.gain{60,170,350,1000,3500,10000}': "Усиление частоты {} Гц",
 		*/
+		'options.graph.compressor': "Компрессор",
+		'options.graph.compressor.add': "Добавить компрессор",
 		'options.graph.destination': "Выход",
 		'options.graph.destination.add': "Добавить выход",
 
 		/*
-		'options.destination': "Выход",
-		'options.destination.compressor': "Компрессор",
-		'options.destination.compressor.enabled': "Добавить компрессор перед выходом",
 		'options.destination.{waveform,frequencies}': "Визуализация {формы волны,частот}",
 		'options.destination.{waveform,frequencies}.enabled': "Включить визуализацию {формы волны,частот}",
 		'options.destination.waveform.width': "Ширина линии волны",
@@ -306,6 +304,7 @@ const langStrings={
 		'comment.graph.sample': "загружаем [сэмпл][buffer]",
 		'comment.graph.gain': "создаём [узел усилителя][gain]",
 		'comment.graph.panner': "создаём [узел панорамирования][panner]",
+		'comment.graph.compressor': "создаём [узел компрессора][compressor]",
 		/*
 		'comment.filters.biquad': "создаём [узел биквадратичного фильтра][biquad]",
 		'comment.filters.iir': "создаём [узел БИХ-фильтра][iir]",
@@ -313,7 +312,6 @@ const langStrings={
 		'comment.filters.convolver.single': "создаём [узел свёртки][convolver]",
 		'comment.filters.equalizer': "создаём эквалайзер в виде последовательности [peaking][peaking] [биквадратичных фильтров][biquad]",
 		'comment.filters.equalizer.single': "создаём эквалайзер в виде [peaking][peaking] [биквадратичного фильтра][biquad]",
-		'comment.destination.compressor': "создаём [узел компрессора][compressor]",
 		'comment.destination.analyser': "создаём [узел анализатора][analyser]",
 		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "создаём [узел анализатора][analyser] для визуализации {формы волны,частот,формы волны и частот}",
 		'comment.destination.analyser.split': "создаём [узел разделения каналов][splitter], соединённый с двумя [узлами анализатора][analyser]",

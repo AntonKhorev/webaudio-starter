@@ -224,7 +224,9 @@ class FilterNode extends SingleNode {
 		)
 	}
 	// abstract:
-	// get nodeProperties()
+	get nodeProperties() {
+		return []
+	}
 	// get ctxCreateMethodName()
 }
 
@@ -245,9 +247,6 @@ NodeClasses.junction = class extends FilterNode { // special node used as summat
 	}
 	get ctxCreateMethodName() {
 		return 'createGain'
-	}
-	get nodeProperties() {
-		return []
 	}
 	get passive() {
 		return true
@@ -307,6 +306,15 @@ NodeClasses.panner = class extends PassiveByDefaultFilterNode {
 				type:'range',
 			}
 		]
+	}
+}
+
+NodeClasses.compressor = class extends FilterNode {
+	get type() {
+		return 'compressor'
+	}
+	get ctxCreateMethodName() {
+		return 'createDynamicsCompressor'
 	}
 }
 

@@ -65,13 +65,11 @@ class Options extends BaseOptions {
 				]],
 				['EqualizerFilter','equalizer'],
 				*/
+				['Group','compressor',[]], // Firefox compresses automatically?
 				['GraphSink','destination',[]],
 			],'nodeType'],
 			/*
 			['Group','destination',[
-				['Group','compressor',[
-					['Checkbox','enabled'], // Firefox compresses automatically?
-				]],
 				['Group','waveform',[
 					['Checkbox','enabled'],
 					['Float','width',[0,10],1,{
