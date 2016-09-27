@@ -11,6 +11,8 @@
 		@inactive-color: #444;
 		@close-color: #C44;
 		@open-color: #4C4;
+		@main-font-size: 14px;
+		@detail-font-size: 12px;
 		fieldset.option {
 			/*
 			figure {
@@ -31,7 +33,7 @@
 				overflow: auto;
 				height: @grid-size * 15;
 				min-height: @grid-size * 2;
-				font-size: 14px;
+				font-size: @main-font-size;
 				font-family: sans-serif;
 				margin-left: -11px; // expand to fieldset border - can't mess with fieldset itself b/c plans of option comparison
 				margin-right: -2px;
@@ -104,6 +106,7 @@
 						& > .node-ports {
 							position: relative;
 							margin: 0 @grid-size*3/4;
+							font-size: @detail-font-size;
 							.node-port {
 								position: absolute;
 								width: 50%;
@@ -197,7 +200,7 @@
 			@side-width: 1.5;
 			@spacing-size: 4px;
 			@more-button-size: 10px;
-			font-size: 12px;
+			font-size: @detail-font-size;
 			.node-option-section {
 				display: block;
 				position: relative;
@@ -210,7 +213,7 @@
 				display: block;
 				position: absolute;
 				box-sizing: border-box;
-				font-size: 12px;
+				font-size: @detail-font-size;
 				&:invalid {
 					background: #F8A;
 				}
