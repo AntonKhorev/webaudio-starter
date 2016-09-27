@@ -21,15 +21,28 @@ class Node extends Feature {
 		// set/modified by graph constructor:
 		this.nextNodes=new Set
 		this.prevNodes=new Set
-		//this.n=undefined
+		//this._n=undefined
+	}
+	get n() {
+		return this._n
+	}
+	set n(n) {
+		this._n=n
 	}
 	get nSuffix() {
-		if (this.n!==undefined) {
-			return '.'+this.n
+		if (this._n!==undefined) {
+			return '.'+this._n
 		} else {
 			return ''
 		}
 	}
+	getPropertyInputHtmlName(propertyName) {
+		return 'my.'+this.type+this.nSuffix+'.'+propertyName
+	}
+	getPropertyInputJsName(propertyName) {
+		return camelCase(this.type+this.nSuffix+'.'+propertyName+'.input')
+	}
+	// abstract get type() // required for n-assignment, can't do it by class with aggregation nodes like Node.bypass
 	get passive() {
 		return false
 	}
@@ -38,6 +51,12 @@ class Node extends Feature {
 	}
 	get upstreamEffect() {
 		return false // destination or visualization node
+	}
+	get fixedInput() {
+		return false // TODO set to true by default
+	}
+	get fixedOutput() {
+		return false
 	}
 	get nInputJsNames() { // estimate number of inputs, ok to overestimate
 		return 0
@@ -72,6 +91,12 @@ class Node extends Feature {
 }
 
 class SingleNode extends Node { // corresponds to single web audio node
+	get fixedInput() {
+		return true
+	}
+	get fixedOutput() {
+		return true
+	}
 	get nOutputJsNames() {
 		return 1
 	}
@@ -88,7 +113,6 @@ class SingleNode extends Node { // corresponds to single web audio node
 		)
 	}
 	// abstract:
-	// get type()
 	// getCreateNodeJsLines(featureContext)
 }
 
@@ -116,12 +140,6 @@ class MediaElementNode extends SingleNode {
 class FilterNode extends SingleNode {
 	get nInputJsNames() {
 		return 1
-	}
-	getPropertyInputHtmlName(propertyName) {
-		return 'my.'+this.type+this.nSuffix+'.'+propertyName
-	}
-	getPropertyInputJsName(propertyName) {
-		return camelCase(this.type+this.nSuffix+'.'+propertyName+'.input')
 	}
 	requestFeatureContext(featureContext) {
 		featureContext.audioContext=true
@@ -241,6 +259,49 @@ class PassiveByDefaultFilterNode extends FilterNode {
 
 // concrete classes
 
+NodeClasses.bypass = class extends Node { // used when enableInput is set
+	constructor(options,innerNode) {
+		super(options)
+		this.innerNode=innerNode
+	}
+	set n(n) {
+		super.n=n
+		this.innerNode.n=n
+	}
+	get type() {
+		return this.innerNode.type
+	}
+	get nInputJsNames() { // estimate number of inputs, ok to overestimate
+		return this.innerNode.nInputJsNames
+	}
+	get nOutputJsNames() { // estimate number of outputs, ok to overestimate
+		return this.innerNode.nOutputJsNames
+	}
+	get passive() {
+		this.innerNode.passive
+	}
+	get fixedInput() {
+		this.passive
+	}
+	get fixedOutput() {
+		this.passive
+	}
+	requestFeatureContext(featureContext) {
+		this.innerNode.requestFeatureContext(featureContext)
+	}
+	getHtmlLines(featureContext,i18n) {
+		if (this.passive) return JsLines.be()
+		const inputHtmlName=this.getPropertyInputHtmlName('enabled')
+		return JsLines.bae(
+			NoseWrapLines.b("<div>","</div>").ae(
+				Lines.html`<input id=${inputHtmlName} type=checkbox checked=${this.options.enabled}>`,
+				Lines.html`<label for=${inputHtmlName}>${i18n('options-output.enabled')}</label>` // TODO correct i18n
+			),
+			this.innerNode.getHtmlLines(featureContext,i18n)
+		)
+	}
+}
+
 NodeClasses.junction = class extends FilterNode { // special node used as summator/junction
 	get type() {
 		return 'junction'
@@ -250,6 +311,12 @@ NodeClasses.junction = class extends FilterNode { // special node used as summat
 	}
 	get passive() {
 		return true
+	}
+}
+
+NodeClasses.activeJunction = class extends NodeClasses.junction { // to be inserted between non-fixed i/o nodes
+	get passive() {
+		return false // can't optimize away (TODO allow parallel merging)
 	}
 }
 
@@ -319,7 +386,16 @@ NodeClasses.compressor = class extends FilterNode {
 }
 
 NodeClasses.destination = class extends Node {
+	get type() {
+		return 'destination'
+	}
 	get upstreamEffect() {
+		return true
+	}
+	get fixedInput() {
+		return true
+	}
+	get fixedOutput() {
 		return true
 	}
 	get nInputJsNames() {

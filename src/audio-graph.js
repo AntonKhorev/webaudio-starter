@@ -47,6 +47,9 @@ class AudioGraph extends Feature {
 				if (node instanceof Node.destination) {
 					node=destinationNode
 				}
+				if (nodeOptions.enabledInput) {
+					node=new Node.bypass(nodeOptions,node)
+				}
 				distinctNodes.add(node)
 				return node
 			})
@@ -60,6 +63,29 @@ class AudioGraph extends Feature {
 			distinctNodes.forEach(node=>{
 				outputNodes.push(node)
 			})
+			return outputNodes
+		}
+		const insertActiveJunctions=(inputNodes)=>{
+			const outputNodes=[]
+			for (const node of inputNodes) {
+				outputNodes.push(node)
+				if (node.fixedOutput) continue
+				const rewireNodes=[]
+				node.nextNodes.forEach(nextNode=>{
+					if (nextNode.fixedInput) return
+					rewireNodes.push(nextNode)
+				})
+				for (const nextNode of rewireNodes) {
+					const junctionNode=new Node.activeJunction
+					node.nextNodes.delete(nextNode)
+					node.nextNodes.add(junctionNode)
+					junctionNode.prevNodes.add(node)
+					nextNode.prevNodes.delete(node)
+					nextNode.prevNodes.add(junctionNode)
+					junctionNode.nextNodes.add(nextNode)
+					outputNodes.push(junctionNode)
+				}
+			}
 			return outputNodes
 		}
 		// TODO gain = 0 breaks, have to do before effect propagation
@@ -123,28 +149,27 @@ class AudioGraph extends Feature {
 		const sortNodes=(inputNodes)=>{
 			const outputNodes=[]
 			const visited=new Set
-			const classCounts=new Map
-			const classLastNodes=new Map
+			const typeCounts={}
+			const typeLastNodes={}
 			const rec=(node)=>{
 				if (visited.has(node)) return
 				visited.add(node)
 				node.prevNodes.forEach(rec)
-				const proto=Object.getPrototypeOf(node)
-				const n=classCounts.get(proto)+1||1
-				classCounts.set(proto,n)
-				classLastNodes.set(proto,node)
+				const n=typeCounts[node.type]+1||1
+				typeCounts[node.type]=n
+				typeLastNodes[node.type]=node
 				node.n=n
 				outputNodes.push(node)
 			}
 			inputNodes.forEach(rec)
-			classCounts.forEach((n,proto)=>{
-				if (n==1) {
-					delete classLastNodes.get(proto).n
+			for (const type in typeCounts) {
+				if (typeCounts[type]==1) {
+					typeLastNodes[type].n=undefined
 				}
-			})
+			}
 			return outputNodes
 		}
-		const createdNodes=createNodes()
+		const createdNodes=insertActiveJunctions(createNodes())
 		const filteredNodes=removeUnaffectedNodes(removePassiveNodes(createdNodes))
 		this.nodes=sortNodes(filteredNodes)
 	}
