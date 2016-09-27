@@ -13,8 +13,8 @@ const graphInsides=[
 	['GraphNode','stuff',[
 		['Checkbox','thing'],
 	]],
-	['GraphSource','src'],
-	['GraphSink','dst'],
+	['GraphNode','src',{inEdges:false}],
+	['GraphNode','dst',{outEdges:false}],
 ]
 
 describe("Option.Graph",()=>{

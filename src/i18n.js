@@ -126,6 +126,7 @@ const langStrings={
 		'options-output.filter.biquad.clone.info': `<a href='${webaudioSpec}'>The API specification</a> was self-contradictory and implementations weren't following it. Additionally, it was discovered that filter coefficient formulas need to be changed to accomodate a wider range of lowpass and highpass filters. See Web Audio API issues ${webaudioIssue(769)}, ${webaudioIssue(771)} and ${webaudioIssue(791)} for details. A possible method to check if an implementation has switched to the updated formulas is offered <a href='${webaudioDetect}'>here</a>.`,
 		'options-output.show': "Show",
 		'options-output.hide': "Hide",
+		'options-output.enabled': "Enabled",
 
 		'code-output.warning.jsfiddle-run': "You may have to click <kbd>Run</kbd> in JSFiddle to get sound output working",
 		'code-output.warning.interesting': "You need at least one source and some processing enabled to get interesting JavaScript code",
@@ -288,6 +289,7 @@ const langStrings={
 		'options-output.filter.biquad.clone.info': `<a href='${webaudioSpec}'>Спецификация API</a> была противоречива и реализации ей не следовали. Также было обнаружено, что формулы для коэффициентов фильтров должны быть изменены, чтобы стало возможно задавать некоторые фильтры низких и высоких частот, которые ранее задать было невозможно. Подробности можно узнать из Web Audio API issues ${webaudioIssue(769)}, ${webaudioIssue(771)} и ${webaudioIssue(791)}. Возможный метод обнаружения, перешла ли реализация на новые формулы, приводится <a href='${webaudioDetect}'>здесь</a>.`,
 		'options-output.show': "Показать",
 		'options-output.hide': "Скрыть",
+		'options-output.enabled': "Включен",
 
 		'code-output.warning.jsfiddle-run': "Для корректного вывода звука в JSFiddle может потребоваться нажатие кнопки <kbd>Run</kbd>",
 		'code-output.warning.interesting': "Для нетривиального JavaScript-кода нужно включить по крайней мере один источник и последующую обработку звука",

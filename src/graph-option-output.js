@@ -372,6 +372,16 @@ class GraphOptionOutput {
 					)
 				)
 			}
+			const writeBox=()=>{
+				const $box=$("<div class='node-box'>")
+				if (nodeOption.enableSwitch) {
+					$box.append(
+						$(`<input type='checkbox'> id='${enableSwitchId}'`),
+						` <label for='${enableSwitchId}'>`+i18n('options-output.enabled')+`</label>`
+					)
+				}
+				return $box
+			}
 			$node.attr({
 				id,
 			}).css({
@@ -398,9 +408,9 @@ class GraphOptionOutput {
 					})
 				),
 				$("<div class='node-ports'>").append(
-					writePort(0,nodeOption instanceof Option.GraphSource),
-					writePort(1,nodeOption instanceof Option.GraphSink),
-					"<div class='node-box'>"
+					writePort(0,!nodeOption.inEdges),
+					writePort(1,!nodeOption.outEdges),
+					writeBox()
 				)
 			)
 			$node.mousedown(function(ev){

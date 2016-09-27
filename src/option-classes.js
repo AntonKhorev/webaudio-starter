@@ -232,9 +232,17 @@ Option.EqualizerFilter = class extends Option.Group {
 	}
 }
 
-Option.GraphNode = class extends Option.Group {}
-Option.GraphSource = class extends Option.GraphNode {}
-Option.GraphSink = class extends Option.GraphNode {}
+Option.GraphNode = class extends Option.Group {
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
+		super(...arguments)
+		this.inEdges=(settings.inEdges===undefined)||settings.inEdges
+		this.outEdges=(settings.outEdges===undefined)||settings.outEdges
+		this.enableSwitch=!!settings.enableSwitch
+		if (this.enableSwitch) {
+			this.enabled=true
+		}
+	}
+}
 
 Option.Graph = class extends Option.Collection {
 	getElementsPropertyName() {
@@ -305,10 +313,10 @@ Option.Graph = class extends Option.Collection {
 		// additionally it's ok to update nodes[i].x and nodes[i].y directly, but not other properties
 	}
 	canConnectNodes(i,j) {
-		return !(
-			this._nodes[i].entry instanceof Option.GraphSink ||
-			this._nodes[j].entry instanceof Option.GraphSource ||
-			this._nodes[i].next/*:Array*/.includes(j)
+		return (
+			this._nodes[i].entry.outEdges &&
+			this._nodes[j].entry.inEdges &&
+			!this._nodes[i].next/*:Array*/.includes(j)
 		)
 	}
 	connectNodes(i,j) {

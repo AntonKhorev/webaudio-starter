@@ -6,7 +6,8 @@ class Options extends BaseOptions {
 	get entriesDescription() {
 		return [
 			['AcyclicGraph','graph',[
-				['GraphSource','audio',[
+				['GraphNode','audio',[
+					['Checkbox','enabled',true],
 					['Text','url',[
 						// original w3c mooc
 						'http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3',
@@ -17,8 +18,9 @@ class Options extends BaseOptions {
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/drums.ogg',
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/guitar.ogg',
 					]],
-				]],
-				['GraphSource','video',[
+				],{inEdges:false}],
+				['GraphNode','video',[
+					['Checkbox','enabled',true],
 					['Text','url',[
 						'http://mainline.i3s.unice.fr/mooc/elephants-dream-medium.webm',
 						'http://mainline.i3s.unice.fr/mooc/elephants-dream-medium.mp4',
@@ -27,7 +29,7 @@ class Options extends BaseOptions {
 					]],
 					['Int','width',[1,1920],320,{ unit: 'pixel' }],
 					['Int','height',[1,1080],240,{ unit: 'pixel' }],
-				]],
+				],{inEdges:false}],
 				/*
 				['Group','sample',[
 					['Text','url',[
@@ -44,11 +46,13 @@ class Options extends BaseOptions {
 				]],
 				*/
 				['GraphNode','gain',[
+					['Checkbox','enabled',true],
 					['LiveFloat','gain',[0,10],1,{
 						defaultMax: 1,
 					}],
 				]],
 				['GraphNode','panner',[
+					['Checkbox','enabled',true],
 					['LiveFloat','pan',[-1,1],0],
 				]],
 				/*
@@ -65,8 +69,12 @@ class Options extends BaseOptions {
 				]],
 				['EqualizerFilter','equalizer'],
 				*/
-				['Group','compressor',[]], // Firefox compresses automatically?
-				['GraphSink','destination',[]],
+				['GraphNode','compressor',[ // Firefox compresses automatically?
+					['Checkbox','enabled',true],
+				]],
+				['GraphNode','destination',[
+					['Checkbox','enabled',true],
+				],{outEdges:false}],
 			],'nodeType'],
 			/*
 			['Group','destination',[
