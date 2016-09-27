@@ -139,11 +139,13 @@ class GraphOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		const gridSize=32
 		const nodeWidth=6
+		const inactiveColor='#444';
+		const closeColor='#C44';
 		const $lines=$(
 			"<svg xmlns='http://www.w3.org/2000/svg' version='1.1'>"+
 			"<defs>"+
 				"<marker id='circleMarker' markerWidth='8' markerHeight='8' refX='4' refY='4'>"+
-					"<circle cx='4' cy='4' r='2' fill='#000' stroke='none' />"+
+					"<circle cx='4' cy='4' r='2' fill='"+inactiveColor+"' stroke='none' />"+
 				"</marker>"+
 			"</defs>"+
 			"</svg>"
@@ -164,14 +166,14 @@ class GraphOptionOutput {
 		).attr({
 			'marker-start': 'url(#circleMarker)', // TODO multiple overlaid markers look bad, scrap them
 			'marker-end': 'url(#circleMarker)',
-			stroke: '#000',
+			stroke: inactiveColor,
 			'stroke-width': 2,
 			x1,y1,x2,y2
 		})
 		const writeInvisibleLine=(x1,y1,x2,y2)=>$(
 			document.createElementNS("http://www.w3.org/2000/svg","line")
 		).attr({
-			stroke: '#000',
+			stroke: inactiveColor,
 			'stroke-width': 10,
 			'stroke-opacity': 0,
 			x1,y1,x2,y2
@@ -267,9 +269,9 @@ class GraphOptionOutput {
 				$outNode.data('outs').set($inNode[0],$line)
 				$inNode.data('ins').set($outNode[0],$line)
 				$iLine.mouseover(function(){
-					$vLine.attr('stroke','#F00')
+					$vLine.attr('stroke',closeColor)
 				}).mouseout(function(){
-					$vLine.attr('stroke','#000')
+					$vLine.attr('stroke',inactiveColor)
 				}).click(function(){
 					disconnectNodes($thisNode,$thatNode,dirIndex)
 				})

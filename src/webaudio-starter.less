@@ -8,6 +8,9 @@
 		@grid-size: 32px;
 		@node-width: 6;
 		@node-color: #DDF;
+		@inactive-color: #444;
+		@close-color: #C44;
+		@open-color: #4C4;
 		fieldset.option {
 			/*
 			figure {
@@ -86,9 +89,9 @@
 								border: none;
 								background-color: transparent;
 								background-repeat: no-repeat;
-								.cross-icon(@grid-size/2,#444);
+								.cross-icon(@grid-size/2,@inactive-color);
 								&:hover {
-									.cross-icon(@grid-size/2,#C44);
+									.cross-icon(@grid-size/2,@close-color);
 									&:active {
 										background-position: 0 1px;
 									}
@@ -149,7 +152,7 @@
 									position: relative;
 									height: @grid-size/2 - 1px;
 									line-height: @grid-size/2 - 1px;
-									border-bottom: solid 2px #000;
+									border-bottom: solid 2px @inactive-color;
 									& > span {
 										.visually-hidden();
 									}
@@ -172,7 +175,7 @@
 								height: @grid-size*3/4;
 								left: (@node-width - 3/2 - 3/4)*@grid-size/2;
 								top: @grid-size/8;
-								border: solid 2px #000;
+								border: solid 2px @inactive-color;
 								box-sizing: border-box;
 							}
 						}
@@ -289,9 +292,9 @@
 						@h: @s/2;
 						.svg(@s,@s,"<path d='M 0 @{h} H @{s} M @{h} 0 V @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
 					}
-					.plus-icon(@more-button-size,#444);
+					.plus-icon(@more-button-size,@inactive-color);
 					&:hover {
-						.plus-icon(@more-button-size,#4C4);
+						.plus-icon(@more-button-size,@open-color);
 					}
 				}
 				button.less {
@@ -300,9 +303,9 @@
 						@h: @s/2;
 						.svg(@s,@s,"<path d='M 0 @{h} H @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
 					}
-					.minus-icon(@more-button-size,#444);
+					.minus-icon(@more-button-size,@inactive-color);
 					&:hover {
-						.minus-icon(@more-button-size,#C44);
+						.minus-icon(@more-button-size,@close-color);
 					}
 				}
 			}
@@ -314,9 +317,9 @@
 					top: @spacing-size;
 					padding: 0;
 					line-height: @grid-size - 2*@spacing-size;
-					border: outset 1px #444;
+					border: outset 1px @inactive-color;
 					&:hover:active {
-						border: inset 1px #444;
+						border: inset 1px @inactive-color;
 					}
 				}
 				// { LiveNumber
