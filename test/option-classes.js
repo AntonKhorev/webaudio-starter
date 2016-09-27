@@ -6,7 +6,7 @@ const Options=require('../src/options')
 const graphInsides=[
 	['GraphNode','mesh',[
 		['Int','lod',[0,10],6],
-	]],
+	],{enableSwitch:true}],
 	['GraphNode','rotate',[
 		['Float','angle',[-180,180]],
 	]],
@@ -191,6 +191,47 @@ describe("Option.Graph",()=>{
 			{entry:e1,next:[],x:7,y:8},
 		]
 		assert.deepEqual(graphEntry.nodes[0].next,[])
+	})
+	it("sets enable state to true by default",()=>{
+		const options=new TestOptions
+		const graphEntry=options.root.entries[0]
+		const e0=graphEntry.makeEntry('mesh')
+		assert.equal(e0.enabled,true)
+	})
+	it("imports enable state",()=>{
+		const options=new TestOptions({
+			filters: [
+				{type:'mesh',enabled:false,x:0,y:0},
+			],
+		})
+		const graphEntry=options.root.entries[0]
+		const e0=graphEntry.nodes[0].entry
+		assert.equal(e0.enabled,false)
+	})
+	it("exports enable state",()=>{
+		const options=new TestOptions
+		const graphEntry=options.root.entries[0]
+		const e0=graphEntry.makeEntry('mesh')
+		graphEntry.nodes=[
+			{entry:e0,next:[],x:2,y:4},
+		]
+		e0.enabled=false
+		assert.deepEqual(options.export(),{
+			filters: [
+				{enabled:false,x:2,y:4},
+			],
+		})
+	})
+	it("fixes enable state",()=>{
+		const options=new TestOptions
+		const graphEntry=options.root.entries[0]
+		const e0=graphEntry.makeEntry('mesh')
+		graphEntry.nodes=[
+			{entry:e0,next:[],x:2,y:4},
+		]
+		e0.enabled=false
+		const fixed=options.fix()
+		assert.equal(fixed.filters.nodes[0].enabled,false)
 	})
 })
 

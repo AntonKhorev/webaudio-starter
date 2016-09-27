@@ -239,7 +239,34 @@ Option.GraphNode = class extends Option.Group {
 		this.outEdges=(settings.outEdges===undefined)||settings.outEdges
 		this.enableSwitch=!!settings.enableSwitch
 		if (this.enableSwitch) {
-			this.enabled=true
+			if (typeof data == 'object') {
+				this._enabled=!!data.enabled
+			} else {
+				this._enabled=true
+			}
+		}
+	}
+	export() {
+		const data=super.export()
+		if (this.enableSwitch && this._enabled==false) {
+			data.enabled=this._enabled
+		}
+		return data
+	}
+	fix() {
+		const fixed=super.fix()
+		if (this.enableSwitch) {
+			fixed.enabled=this._enabled
+		}
+		return fixed
+	}
+	get enabled() {
+		return this._enabled
+	}
+	set enabled(enabled) {
+		this._enabled=enabled
+		if (this.enableSwitch) {
+			this.update()
 		}
 	}
 }
