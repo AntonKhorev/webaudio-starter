@@ -375,10 +375,13 @@ class GraphOptionOutput {
 				)
 			}
 			const writeBox=()=>{
+				const enableSwitchId=generateId()
 				const $box=$("<div class='node-box'>")
 				if (nodeOption.enableSwitch) {
 					$box.append(
-						$(`<input type='checkbox'> id='${enableSwitchId}'`),
+						$(`<input type='checkbox' id='${enableSwitchId}'>`).prop('checked',nodeOption.enabled).change(function(){
+							nodeOption.enabled=$(this).prop('checked')
+						}),
 						` <label for='${enableSwitchId}'>`+i18n('options-output.enabled')+`</label>`
 					)
 				}

@@ -38,7 +38,12 @@ class AudioGraph extends Feature {
 			const distinctNodes=new Set()
 			const destinationNode=new Node.destination
 			const indexedNodes=options.nodes.map(nodeOptions=>{
-				let node=new Node[nodeOptions.nodeType](nodeOptions)
+				let node
+				if (nodeOptions.enabled) {
+					node=new Node[nodeOptions.nodeType](nodeOptions)
+				} else {
+					node=new Node.junction
+				}
 				if (node instanceof Node.destination) {
 					node=destinationNode
 				}
