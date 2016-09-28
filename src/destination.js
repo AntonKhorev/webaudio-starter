@@ -58,28 +58,6 @@ class Destination extends Feature {
 			}
 			return a.e()
 		}
-		const getCompressorLines=()=>{
-			const a=JsLines.b()
-			let nextNodeJsName=((this.options.waveform.enabled || this.options.frequencies.enabled || this.options.volume.enabled) ? 'analyserNode' : 'ctx.destination')
-			a(
-				RefLines.parse("// "+i18n('comment.destination.compressor')),
-				featureContext.getJsConnectAssignLines("var","compressorNode","ctx.createDynamicsCompressor()",prevNodeJsNames)
-			)
-			if (prevNodeJsNames.length>0) {
-				a(
-					"document.getElementById('my.compressor').onchange=function(){",
-					"	if (this.checked) {",
-					...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".disconnect("+nextNodeJsName+");"),
-					...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".connect(compressorNode);"),
-					"	} else {",
-					...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".disconnect(compressorNode);"),
-					...prevNodeJsNames.map(prevNodeJsName=>"\t\t"+prevNodeJsName+".connect("+nextNodeJsName+");"),
-					"	}",
-					"};"
-				)
-			}
-			return a.e()
-		}
 		const getDirectAnalyserLines=()=>{
 			const a=JsLines.b()
 			let comment=''

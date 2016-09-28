@@ -360,55 +360,35 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 	getInitJsLines(featureContext,i18n) {
 		const inputHtmlName=this.getPropertyInputHtmlName('enabled')
 		const a=JsLines.b()
-		//const rewire=(fn,fromNodes,toNodes)=>{
-		// TODO
-		//}
+		const rewire=(method,fromNames,toNames)=>{
+			for (const fromName of fromNames) {
+				for (const toName of toNames) {
+					a(`\t\t${fromName}.${method}(${toName});`)
+				}
+			}
+		}
 		a(
 			this.innerNode.getInitJsLines(featureContext,i18n),
 			`document.getElementById('${inputHtmlName}').onchange=function(){`,
 			`	if (this.checked) {`
 		)
-		for (const prevName of this.getPrevNodeJsNames()) {
-			for (const nextName of this.getNextNodeJsNames()) {
-				a(`\t\t${prevName}.disconnect(${nextName});`)
-			}
-		}
+		rewire('disconnect',this.getPrevNodeJsNames(),this.getNextNodeJsNames())
 		if (this.rewireInput) {
-			for (const prevName of this.getPrevNodeJsNames()) {
-				for (const inputName of this.innerNode.getInputJsNames()) {
-					a(`\t\t${prevName}.connect(${inputName});`)
-				}
-			}
+			rewire('connect',this.getPrevNodeJsNames(),this.innerNode.getInputJsNames())
 		}
 		if (this.rewireOutput) {
-			for (const outputName of this.innerNode.getOutputJsNames()) {
-				for (const nextName of this.getNextNodeJsNames()) {
-					a(`\t\t${outputName}.connect(${nextName});`)
-				}
-			}
+			rewire('connect',this.innerNode.getOutputJsNames(),this.getNextNodeJsNames())
 		}
 		a(
 			`	} else {`
 		)
 		if (this.rewireOutput) {
-			for (const outputName of this.innerNode.getOutputJsNames()) {
-				for (const nextName of this.getNextNodeJsNames()) {
-					a(`\t\t${outputName}.disconnect(${nextName});`)
-				}
-			}
+			rewire('disconnect',this.innerNode.getOutputJsNames(),this.getNextNodeJsNames())
 		}
 		if (this.rewireInput) {
-			for (const prevName of this.getPrevNodeJsNames()) {
-				for (const inputName of this.innerNode.getInputJsNames()) {
-					a(`\t\t${prevName}.disconnect(${inputName});`)
-				}
-			}
+			rewire('disconnect',this.getPrevNodeJsNames(),this.innerNode.getInputJsNames())
 		}
-		for (const prevName of this.getPrevNodeJsNames()) {
-			for (const nextName of this.getNextNodeJsNames()) {
-				a(`\t\t${prevName}.connect(${nextName});`)
-			}
-		}
+		rewire('connect',this.getPrevNodeJsNames(),this.getNextNodeJsNames())
 		a(
 			`	}`,
 			`};`
