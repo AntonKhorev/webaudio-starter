@@ -287,13 +287,13 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 		// TODO max(^,sum of prev nodes outputs)
 	}
 	get passive() {
-		this.innerNode.passive
+		return this.innerNode.passive
 	}
 	get fixedInput() {
-		this.passive
+		return this.passive
 	}
 	get fixedOutput() {
-		this.passive
+		return this.passive
 	}
 	getOutputJsNames() {
 		if (this.options.enabled) {
