@@ -289,6 +289,11 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 			this.innerNode.prevNodes=this.prevNodes
 			this.innerNode.nextNodes=this.nextNodes
 		}
+		// { passed to GenNode ctor
+		this.rewireInput=(this.innerNode.upstreamEffect || !this.innerNode.downstreamEffect) // prefer to rewire inputs
+		this.rewireOutput=this.innerNode.downstreamEffect
+		// TODO rewire smaller side
+		// } passed to GenNode ctor
 	}
 	set n(n) {
 		super.n=n
@@ -319,18 +324,24 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 		return this.passive
 	}
 	getInputJsNames() {
-		if (this.options.enabled) {
-			return this.innerNode.getInputJsNames()
-		} else {
-			return this.getNextNodeJsNames()
+		const names=[]
+		if (this.options.enabled || !this.rewireInput) {
+			names.push(...this.innerNode.getInputJsNames())
 		}
+		if (!this.options.enabled) {
+			names.push(...this.getNextNodeJsNames())
+		}
+		return names
 	}
 	getOutputJsNames() {
-		if (this.options.enabled) {
-			return this.innerNode.getOutputJsNames()
-		} else {
-			return this.getPrevNodeJsNames()
+		const names=[]
+		if (this.options.enabled || !this.rewireOutput) {
+			names.push(...this.innerNode.getOutputJsNames())
 		}
+		if (!this.options.enabled) {
+			names.push(...this.getPrevNodeJsNames())
+		}
+		return names
 	}
 	requestFeatureContext(featureContext) {
 		featureContext.audioContext=true
@@ -349,41 +360,48 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 	getInitJsLines(featureContext,i18n) {
 		const inputHtmlName=this.getPropertyInputHtmlName('enabled')
 		const a=JsLines.b()
+		//const rewire=(fn,fromNodes,toNodes)=>{
+		// TODO
+		//}
 		a(
 			this.innerNode.getInitJsLines(featureContext,i18n),
 			`document.getElementById('${inputHtmlName}').onchange=function(){`,
 			`	if (this.checked) {`
 		)
-		// TODO don't (dis)connect both inputs and outputs
-		// 	e.g. if inner node is not a source, can keep it always connected
-		// 	check this by up/downstream effect - have to disconnect the effect
-		// 	prefer to disconnect input
 		for (const prevName of this.getPrevNodeJsNames()) {
 			for (const nextName of this.getNextNodeJsNames()) {
 				a(`\t\t${prevName}.disconnect(${nextName});`)
 			}
 		}
-		for (const prevName of this.getPrevNodeJsNames()) {
-			for (const inputName of this.innerNode.getInputJsNames()) {
-				a(`\t\t${prevName}.connect(${inputName});`)
+		if (this.rewireInput) {
+			for (const prevName of this.getPrevNodeJsNames()) {
+				for (const inputName of this.innerNode.getInputJsNames()) {
+					a(`\t\t${prevName}.connect(${inputName});`)
+				}
 			}
 		}
-		for (const outputName of this.innerNode.getOutputJsNames()) {
-			for (const nextName of this.getNextNodeJsNames()) {
-				a(`\t\t${outputName}.connect(${nextName});`)
+		if (this.rewireOutput) {
+			for (const outputName of this.innerNode.getOutputJsNames()) {
+				for (const nextName of this.getNextNodeJsNames()) {
+					a(`\t\t${outputName}.connect(${nextName});`)
+				}
 			}
 		}
 		a(
 			`	} else {`
 		)
-		for (const outputName of this.innerNode.getOutputJsNames()) {
-			for (const nextName of this.getNextNodeJsNames()) {
-				a(`\t\t${outputName}.disconnect(${nextName});`)
+		if (this.rewireOutput) {
+			for (const outputName of this.innerNode.getOutputJsNames()) {
+				for (const nextName of this.getNextNodeJsNames()) {
+					a(`\t\t${outputName}.disconnect(${nextName});`)
+				}
 			}
 		}
-		for (const prevName of this.getPrevNodeJsNames()) {
-			for (const inputName of this.innerNode.getInputJsNames()) {
-				a(`\t\t${prevName}.disconnect(${inputName});`)
+		if (this.rewireInput) {
+			for (const prevName of this.getPrevNodeJsNames()) {
+				for (const inputName of this.innerNode.getInputJsNames()) {
+					a(`\t\t${prevName}.disconnect(${inputName});`)
+				}
 			}
 		}
 		for (const prevName of this.getPrevNodeJsNames()) {
