@@ -303,13 +303,11 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 	get upstreamEffect() {
 		return this.innerNode.upstreamEffect
 	}
-	get nInputJsNames() { // estimate number of inputs, ok to overestimate
-		return this.innerNode.nInputJsNames
-		// TODO max(^,sum of next nodes inputs) or maybe infinity?
+	get nInputJsNames() {
+		return 100 // "infinity", can't use infinity directly b/c have to multiply by it
 	}
-	get nOutputJsNames() { // estimate number of outputs, ok to overestimate
-		return this.innerNode.nOutputJsNames
-		// TODO max(^,sum of prev nodes outputs) or maybe infinity?
+	get nOutputJsNames() {
+		return 100 // "infinity", can't use infinity directly b/c have to multiply by it
 	}
 	get passive() {
 		return this.innerNode.passive
