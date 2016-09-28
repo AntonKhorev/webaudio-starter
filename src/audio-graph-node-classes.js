@@ -297,14 +297,19 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 	get type() {
 		return this.innerNode.type
 	}
-	// TODO replicate effects of inner node
+	get downstreamEffect() {
+		return this.innerNode.downstreamEffect
+	}
+	get upstreamEffect() {
+		return this.innerNode.upstreamEffect
+	}
 	get nInputJsNames() { // estimate number of inputs, ok to overestimate
 		return this.innerNode.nInputJsNames
-		// TODO max(^,sum of next nodes inputs)
+		// TODO max(^,sum of next nodes inputs) or maybe infinity?
 	}
 	get nOutputJsNames() { // estimate number of outputs, ok to overestimate
 		return this.innerNode.nOutputJsNames
-		// TODO max(^,sum of prev nodes outputs)
+		// TODO max(^,sum of prev nodes outputs) or maybe infinity?
 	}
 	get passive() {
 		return this.innerNode.passive
@@ -330,6 +335,7 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 		}
 	}
 	requestFeatureContext(featureContext) {
+		featureContext.audioContext=true
 		this.innerNode.requestFeatureContext(featureContext)
 	}
 	getHtmlLines(featureContext,i18n) {
