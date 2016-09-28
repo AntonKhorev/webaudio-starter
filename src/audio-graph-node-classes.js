@@ -81,16 +81,28 @@ class Node extends Feature {
 		})
 		return count
 	}
-	getOutputJsNames() { // TODO make getter
+	// { GenNode interface
+	getInputJsNames() {
 		return []
 	}
-	getPrevNodeJsNames() { // TODO make getter
+	getOutputJsNames() {
+		return []
+	}
+	getPrevNodeJsNames() {
 		const names=[]
 		this.prevNodes.forEach(node=>{
 			names.push(...node.getOutputJsNames())
 		})
 		return names
 	}
+	getNextNodeJsNames() {
+		const names=[]
+		this.nextNodes.forEach(node=>{
+			names.push(...node.getInputJsNames())
+		})
+		return names
+	}
+	// } GenNode interface
 }
 
 class SingleNode extends Node { // corresponds to single web audio node
@@ -105,6 +117,9 @@ class SingleNode extends Node { // corresponds to single web audio node
 	}
 	get nodeJsName() {
 		return camelCase(this.type+this.nSuffix+'.node')
+	}
+	getInputJsNames() {
+		return [this.nodeJsName]
 	}
 	getOutputJsNames() {
 		return [this.nodeJsName]
@@ -262,6 +277,10 @@ class PassiveByDefaultFilterNode extends FilterNode {
 
 // concrete classes
 
+// TODO fix bug with parallel bypasses
+// TODO fix bug with non-fixed inner element
+// 	by insulating it with junctions - can't do it now b/c can't ask for junctions to be generated - graph has to do it
+// 	(currently it's impossible to get this bug through options)
 NodeClasses.bypass = class extends Node { // used when enableInput is set
 	constructor(options,innerNode) {
 		super(options)
@@ -278,6 +297,7 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 	get type() {
 		return this.innerNode.type
 	}
+	// TODO replicate effects of inner node
 	get nInputJsNames() { // estimate number of inputs, ok to overestimate
 		return this.innerNode.nInputJsNames
 		// TODO max(^,sum of next nodes inputs)
@@ -295,6 +315,13 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 	get fixedOutput() {
 		return this.passive
 	}
+	getInputJsNames() {
+		if (this.options.enabled) {
+			return this.innerNode.getInputJsNames()
+		} else {
+			return this.getNextNodeJsNames()
+		}
+	}
 	getOutputJsNames() {
 		if (this.options.enabled) {
 			return this.innerNode.getOutputJsNames()
@@ -306,7 +333,6 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 		this.innerNode.requestFeatureContext(featureContext)
 	}
 	getHtmlLines(featureContext,i18n) {
-		if (this.passive) return JsLines.be()
 		const inputHtmlName=this.getPropertyInputHtmlName('enabled')
 		return JsLines.bae(
 			NoseWrapLines.b("<div>","</div>").ae(
@@ -317,8 +343,55 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 		)
 	}
 	getInitJsLines(featureContext,i18n) {
-		return this.innerNode.getInitJsLines(featureContext,i18n)
-		// TODO checkbox handler
+		const inputHtmlName=this.getPropertyInputHtmlName('enabled')
+		const a=JsLines.b()
+		a(
+			this.innerNode.getInitJsLines(featureContext,i18n),
+			`document.getElementById('${inputHtmlName}').onchange=function(){`,
+			`	if (this.checked) {`
+		)
+		// TODO don't (dis)connect both inputs and outputs
+		// 	e.g. if inner node is not a source, can keep it always connected
+		// 	check this by up/downstream effect - have to disconnect the effect
+		// 	prefer to disconnect input
+		for (const prevName of this.getPrevNodeJsNames()) {
+			for (const nextName of this.getNextNodeJsNames()) {
+				a(`\t\t${prevName}.disconnect(${nextName});`)
+			}
+		}
+		for (const prevName of this.getPrevNodeJsNames()) {
+			for (const inputName of this.innerNode.getInputJsNames()) {
+				a(`\t\t${prevName}.connect(${inputName});`)
+			}
+		}
+		for (const outputName of this.innerNode.getOutputJsNames()) {
+			for (const nextName of this.getNextNodeJsNames()) {
+				a(`\t\t${outputName}.connect(${nextName});`)
+			}
+		}
+		a(
+			`	} else {`
+		)
+		for (const outputName of this.innerNode.getOutputJsNames()) {
+			for (const nextName of this.getNextNodeJsNames()) {
+				a(`\t\t${outputName}.disconnect(${nextName});`)
+			}
+		}
+		for (const prevName of this.getPrevNodeJsNames()) {
+			for (const inputName of this.innerNode.getInputJsNames()) {
+				a(`\t\t${prevName}.disconnect(${inputName});`)
+			}
+		}
+		for (const prevName of this.getPrevNodeJsNames()) {
+			for (const nextName of this.getNextNodeJsNames()) {
+				a(`\t\t${prevName}.connect(${nextName});`)
+			}
+		}
+		a(
+			`	}`,
+			`};`
+		)
+		return a.e()
 	}
 	getPreVisJsLines(featureContext,i18n) {
 		return this.innerNode.getPreVisJsLines(featureContext,i18n)
@@ -426,6 +499,9 @@ NodeClasses.destination = class extends Node {
 	}
 	get nInputJsNames() {
 		return 1
+	}
+	getInputJsNames() {
+		return ['ctx.destination']
 	}
 	getInitJsLines(featureContext,i18n) {
 		return JsLines.bae(

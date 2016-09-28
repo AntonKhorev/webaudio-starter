@@ -49,16 +49,6 @@ class Destination extends Feature {
 			}
 		}
 	}
-	getHtmlLines(featureContext,i18n) {
-		const a=NoseWrapLines.b("<div>","</div>")
-		if (featureContext.audioProcessing && this.options.compressor.enabled) {
-			a(
-				"<input id=my.compressor type=checkbox checked>",
-				Lines.html`<label for=my.compressor>${i18n('label.destination.compressor')}</label>`
-			)
-		}
-		return a.e()
-	}
 	getJsInitLines(featureContext,i18n,prevNodeJsNames) {
 		const getAnalyserNodeLines=(jsName,prevNodeJsNames,connectArgs)=>{
 			const a=JsLines.b()
