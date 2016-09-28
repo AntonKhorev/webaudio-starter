@@ -146,6 +146,41 @@ describe("Code",()=>{
 			]
 		})
 	})
+	it("adds gain node by default when requesting bypass switch",()=>{
+		const ctx=getSandbox({
+			graph: [
+				{
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'gain',
+					gain: 0.5,
+					enabledInput: true,
+					next: 2,
+				},{
+					nodeType: 'destination',
+				}
+			],
+		}).ctx
+		assert.deepEqual(ctx.toJSON(),{
+			"name": "AudioDestinationNode",
+			"inputs": [
+				{
+					"name": "GainNode",
+					"gain": {
+						"value": 0.5,
+						"inputs": []
+					},
+					"inputs": [
+						{
+							"name": "MediaElementAudioSourceNode",
+							"inputs": []
+						}
+					]
+				}
+			]
+		})
+	})
 	it("adds panner node",()=>{
 		const ctx=getSandbox({
 			graph: [

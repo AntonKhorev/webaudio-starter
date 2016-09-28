@@ -9,6 +9,9 @@ const RefLines=require('crnx-base/ref-lines')
 const Feature=require('./feature')
 
 // TODO naming conventions for two graphs: user-entered and web audio api
+// TODO consider two classes for each node type:
+// 	ConNode.* = graph construction nodes - can be rewired, have .toGenNode(genNodeClass) method, not subclasses of Feature
+// 	GenNode.* = code generation nodes - connot be rewired, can create them after node sorting, subclasses of Feature
 
 const NodeClasses={}
 
@@ -263,6 +266,10 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 	constructor(options,innerNode) {
 		super(options)
 		this.innerNode=innerNode
+		if (this.options.enabled) {
+			this.innerNode.prevNodes=this.prevNodes
+			this.innerNode.nextNodes=this.nextNodes
+		}
 	}
 	set n(n) {
 		super.n=n
@@ -273,9 +280,11 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 	}
 	get nInputJsNames() { // estimate number of inputs, ok to overestimate
 		return this.innerNode.nInputJsNames
+		// TODO max(^,sum of next nodes inputs)
 	}
 	get nOutputJsNames() { // estimate number of outputs, ok to overestimate
 		return this.innerNode.nOutputJsNames
+		// TODO max(^,sum of prev nodes outputs)
 	}
 	get passive() {
 		this.innerNode.passive
@@ -285,6 +294,13 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 	}
 	get fixedOutput() {
 		this.passive
+	}
+	getOutputJsNames() {
+		if (this.options.enabled) {
+			return this.innerNode.getOutputJsNames()
+		} else {
+			return this.getPrevNodeJsNames()
+		}
 	}
 	requestFeatureContext(featureContext) {
 		this.innerNode.requestFeatureContext(featureContext)
@@ -299,6 +315,16 @@ NodeClasses.bypass = class extends Node { // used when enableInput is set
 			),
 			this.innerNode.getHtmlLines(featureContext,i18n)
 		)
+	}
+	getInitJsLines(featureContext,i18n) {
+		return this.innerNode.getInitJsLines(featureContext,i18n)
+		// TODO checkbox handler
+	}
+	getPreVisJsLines(featureContext,i18n) {
+		return this.innerNode.getPreVisJsLines(featureContext,i18n)
+	}
+	getVisJsLines(featureContext,i18n) {
+		return this.innerNode.getVisJsLines(featureContext,i18n)
 	}
 }
 
