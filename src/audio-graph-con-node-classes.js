@@ -5,7 +5,8 @@ const ConNode={}
 //// abstract classes (not exported)
 
 class Node {
-	constructor() {
+	constructor(options={}) {
+		this.options=options
 		// can be set/modified by graph constructor:
 		this.nextNodes=new Set
 		this.prevNodes=new Set
@@ -34,37 +35,27 @@ class Node {
 	get estimatedNOutputs() { // ok to overestimate
 		return 0
 	}
-	toGenNode(GenNodeClass,jsName) {
-		return new GenNodeClass(jsName)
+	toGenNode(GenNodeClass,name) {
+		return new GenNodeClass(this.options,name)
 	}
 	// public helpers:
 	get estimatedNPrevNodeOutputs() {
 		let count=0
 		this.prevNodes.forEach(node=>{
-			count+=node.nOutputJsNames
+			count+=node.estimatedNOutputs
 		})
 		return count
 	}
 	get estimatedNNextNodeInputs() {
 		let count=0
 		this.nextNodes.forEach(node=>{
-			count+=node.nInputJsNames
+			count+=node.estimatedNInputs
 		})
 		return count
 	}
 }
 
-class RequestedNode extends Node {
-	constructor(options) {
-		super()
-		this.options=options
-	}
-	toGenNode(GenNodeClass,name) {
-		return new GenNodeClass(name,this.options)
-	}
-}
-
-class MediaElementNode extends RequestedNode {
+class MediaElementNode extends Node {
 	get downstreamEffect() {
 		return true
 	}
@@ -73,7 +64,7 @@ class MediaElementNode extends RequestedNode {
 	}
 }
 
-class FilterNode extends RequestedNode {
+class FilterNode extends Node {
 	get estimatedNInputs() {
 		return 1
 	}
@@ -90,10 +81,25 @@ class PassiveByDefaultFilterNode extends FilterNode {
 		})
 	}
 	// protected:
-	// get propertyNames()
+	get propertyNames() {
+		return []
+	}
 }
 
 //// concrete classes
+
+ConNode.junction = class extends PassiveByDefaultFilterNode { // special node used as summator/junction
+	get type() {
+		return 'junction'
+	}
+}
+
+ConNode.activeJunction = class extends ConNode.junction { // to be inserted between non-fixed i/o nodes
+	// type is kept unchanged
+	get passive() {
+		return false // can't optimize away (TODO allow parallel merging)
+	}
+}
 
 ConNode.audio = class extends MediaElementNode {
 	get type() {
@@ -133,7 +139,7 @@ ConNode.compressor = class extends FilterNode {
 	}
 }
 
-ConNode.destination = class extends RequestedNode {
+ConNode.destination = class extends Node {
 	get type() {
 		return 'destination'
 	}

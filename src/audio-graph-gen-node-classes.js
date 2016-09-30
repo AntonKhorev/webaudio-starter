@@ -13,8 +13,9 @@ const GenNode={}
 //// abstract classes (not exported)
 
 class Node extends Feature {
-	constructor(name) {
+	constructor(options,name) {
 		super()
+		this.options=options
 		this.name=name
 		// set those before calling any public methods:
 		//this.prevNodes=prevNodes // array of nodes
@@ -47,14 +48,7 @@ class Node extends Feature {
 	}
 }
 
-class RequestedNode extends Node {
-	constructor(name,options) {
-		super(name)
-		this.options=options
-	}
-}
-
-class SingleNode extends RequestedNode {
+class SingleNode extends Node { // corresponds to single web audio node
 	getOutputs() {
 		return [this.nodeJsName]
 	}
@@ -206,6 +200,15 @@ class FilterNode extends SingleNode {
 
 //// concrete classes
 
+GenNode.junction = class extends FilterNode {
+	get type() {
+		return 'junction'
+	}
+	get ctxCreateMethodName() {
+		return 'createGain'
+	}
+}
+
 GenNode.audio = class extends MediaElementNode {
 	get type() {
 		return 'audio'
@@ -273,7 +276,7 @@ GenNode.compressor = class extends FilterNode {
 	}
 }
 
-GenNode.destination = class extends RequestedNode {
+GenNode.destination = class extends Node {
 	get type() {
 		return 'destination'
 	}
