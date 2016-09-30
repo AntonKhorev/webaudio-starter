@@ -54,19 +54,9 @@ class RequestedNode extends Node {
 	}
 }
 
-//// concrete classes
-
-GenNode.audio = class extends RequestedNode {
-	get type() {
-		return 'audio'
-	}
+class SingleNode extends RequestedNode {
 	getOutputs() {
 		return [this.nodeJsName]
-	}
-	getHtmlLines(featureContext,i18n) {
-		return NoseWrapLines.b("<div>","</div>").ae(
-			this.getElementHtmlLines(featureContext,i18n)
-		)
 	}
 	getInitJsLines(featureContext,i18n) {
 		return JsLines.bae(
@@ -78,6 +68,21 @@ GenNode.audio = class extends RequestedNode {
 	get nodeJsName() {
 		return camelCase(this.name+'.node')
 	}
+	// getCreateNodeJsLines(featureContext)
+}
+
+//// concrete classes
+
+GenNode.audio = class extends SingleNode {
+	get type() {
+		return 'audio'
+	}
+	getHtmlLines(featureContext,i18n) {
+		return NoseWrapLines.b("<div>","</div>").ae(
+			this.getElementHtmlLines(featureContext,i18n)
+		)
+	}
+	// protected:
 	get elementHtmlName() {
 		return 'my.'+this.name
 	}
@@ -93,6 +98,133 @@ GenNode.audio = class extends RequestedNode {
 	}
 }
 
+GenNode.gain = class extends SingleNode {
+	get type() {
+		return 'gain'
+	}
+	getInputs() {
+		return [this.nodeJsName]
+	}
+	requestFeatureContext(featureContext) {
+		featureContext.audioContext=true
+	}
+	getHtmlLines(featureContext,i18n) {
+		const getPropertyHtmlLines=(property)=>{
+			if (property.skip) {
+				return Lines.be()
+			}
+			const option=this.options[property.name]
+			const inputHtmlName=this.getPropertyInputHtmlName(property.name)
+			const propertyOptionName='options.graph.'+this.type+'.'+property.name
+			const a=Lines.b()
+			if (property.type=='range' && option.input) {
+				const p=option.precision
+				const fmtAttrs=formatNumbers.html({ min:option.min, max:option.max, value:option.value },p)
+				const fmtLabels=formatNumbers({ min:option.min, max:option.max },p)
+				const minMax=n=>i18n.numberWithUnits(n,option.unit,(a,e)=>Lines.html`<abbr title=${e}>`+a+`</abbr>`)
+				a(
+					Lines.html`<label for=${inputHtmlName}>${i18n(propertyOptionName)}:</label>`,
+					"<span class=min>"+minMax(fmtLabels.min)+"</span>",
+					Lines.html`<input id=${inputHtmlName} type=range value=${fmtAttrs.value} min=${fmtAttrs.min} max=${fmtAttrs.max} step=${p?Math.pow(0.1,p).toFixed(p):false}>`,
+					"<span class=max>"+minMax(fmtLabels.max)+"</span>"
+				)
+			} else if (property.type=='select' && option.input) {
+				a(
+					Lines.html`<label for=${inputHtmlName}>${i18n(propertyOptionName)}:</label>`,
+					WrapLines.b(
+						Lines.html`<select id=${inputHtmlName}>`,`</select>`
+					).ae(
+						...option.availableValues.map(value=>{
+							const title=i18n(propertyOptionName+'.'+value)
+							return Lines.html`<option selected=${option.value==value} value=${value!=title && value}>${title}</option>`
+						})
+					)
+				)
+			} else if (property.type=='xhr') {
+				a(
+					Lines.html`<span id=${inputHtmlName}>${i18n(this.getPropertyOptionName(property)+'.loading')}</span>`
+				)
+			}
+			return a.e()
+		}
+		return Lines.bae(
+			...this.nodeProperties.map(
+				property=>NoseWrapLines.b(
+					"<div>","</div>"
+				).ae(
+					getPropertyHtmlLines(property)
+				)
+			)
+		)
+	}
+	getInitJsLines(featureContext,i18n) {
+		return Lines.bae(
+			super.getInitJsLines(featureContext,i18n),
+			...this.nodeProperties.map(property=>{
+				if (property.skip) {
+					return Lines.be()
+				}
+				const option=this.options[property.name]
+				const nodePropertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")
+				const a=JsLines.b()
+				if (option.input) {
+					const inputJsName=this.getPropertyInputJsName(property.name)
+					const inputHtmlName=this.getPropertyInputHtmlName(property.name)
+					let value=inputJsName+".value"
+					if (property.fn) {
+						value=property.fn(value)
+					}
+					const eventProp=(property.type=='range'?'oninput':'onchange')
+					a(
+						"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
+						// was for IE11 compat (but IE11 has no Web Audio): (property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
+						";("+inputJsName+"."+eventProp+"=function(){",
+						"	"+nodePropertyJsName+"="+value+";",
+						"})();"
+					)
+				} else if (option.value!=option.defaultValue) {
+					let value=option.value
+					if (property.type=='select') {
+						value="'"+value+"'"
+					}
+					if (property.fn) {
+						value=property.fn(value)
+					}
+					a(
+						nodePropertyJsName+"="+value+";"
+					)
+				}
+				return a.e()
+			})
+		)
+	}
+	// protected:
+	getPropertyInputHtmlName(propertyName) {
+		return 'my.'+this.name+'.'+propertyName
+	}
+	getPropertyInputJsName(propertyName) {
+		return camelCase(this.name+'.'+propertyName+'.input')
+	}
+	getCreateNodeJsLines(featureContext) {
+		return featureContext.getConnectAssignJsLines(
+			"var",this.nodeJsName,
+			"ctx."+this.ctxCreateMethodName+"()",
+			this.getPrevNodeOutputs()
+		)
+	}
+	get ctxCreateMethodName() {
+		return 'createGain'
+	}
+	get nodeProperties() {
+		return [
+			{
+				name:'gain',
+				type:'range',
+			}
+		]
+	}
+}
+
 GenNode.destination = class extends RequestedNode {
 	get type() {
 		return 'destination'
@@ -103,7 +235,7 @@ GenNode.destination = class extends RequestedNode {
 	getInitJsLines(featureContext,i18n) {
 		return JsLines.bae(
 			RefLines.parse("// "+i18n('comment.graph.destination')),
-			...this.getPrevNodeJsNames().map(name=>name+".connect(ctx.destination);")
+			...this.getPrevNodeOutputs().map(name=>name+".connect(ctx.destination);")
 		)
 	}
 }

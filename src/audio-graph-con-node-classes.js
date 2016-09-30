@@ -78,6 +78,28 @@ ConNode.audio = class extends RequestedNode {
 	}
 }
 
+ConNode.gain = class extends RequestedNode {
+	get type() {
+		return 'gain'
+	}
+	get passive() {
+		return this.propertyNames.every(propertyName=>{
+			const option=this.options[propertyName]
+			return option.value==option.defaultValue && !option.input
+		})
+	}
+	get estimatedNInputs() {
+		return 1
+	}
+	get estimatedNOutputs() {
+		return 1
+	}
+	// protected:
+	get propertyNames() {
+		return ['gain']
+	}
+}
+
 ConNode.destination = class extends RequestedNode {
 	get type() {
 		return 'destination'

@@ -351,23 +351,6 @@ NodeClasses.video = class extends MediaElementNode {
 	}
 }
 
-NodeClasses.gain = class extends PassiveByDefaultFilterNode {
-	get type() {
-		return 'gain'
-	}
-	get ctxCreateMethodName() {
-		return 'createGain'
-	}
-	get nodeProperties() {
-		return [
-			{
-				name:'gain',
-				type:'range',
-			}
-		]
-	}
-}
-
 NodeClasses.panner = class extends PassiveByDefaultFilterNode {
 	get type() {
 		return 'panner'
