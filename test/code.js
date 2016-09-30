@@ -434,6 +434,21 @@ describe("Code",()=>{
 			["GainNode","MediaElementAudioSourceNode"]
 		)
 	})
+	it("places junction between bypassable nodes",()=>{
+		const ctx=getSandbox({
+			graph: [
+				{
+					nodeType: 'audio',
+					enabledInput: true,
+					next: 1,
+				},{
+					nodeType: 'destination',
+					enabledInput: true,
+				}
+			],
+		}).ctx
+		assert.deepEqual(ctx.toJSON(),makeSourceGainDestinationGraph(1))
+	})
 	it("removes panner node because it is not affected by inputs",()=>{
 		const sandbox=getSandbox({
 			graph: [

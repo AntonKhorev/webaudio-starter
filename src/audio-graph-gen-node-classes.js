@@ -17,12 +17,11 @@ class Node extends Feature {
 		super()
 		this.options=options
 		this.name=name
-		// set those before calling any public methods:
-		//this.prevNodes=prevNodes // array of nodes
-		//this.nextNodes=nextNodes // array of nodes
 	}
-	// public:
-	// get type()
+	initEdges(prevNodes,nextNodes) { // call it before calling any other methods
+		this.prevNodes=prevNodes
+		this.nextNodes=nextNodes
+	}
 	getInputs() {
 		return []
 	}
@@ -39,12 +38,19 @@ class Node extends Feature {
 		})
 		return names
 	}
-	getNextNodeJsNames() {
+	getNextNodeInputs() {
 		const names=[]
 		this.nextNodes.forEach(node=>{
-			names.push(...node.getInputJsNames())
+			names.push(...node.getInputs())
 		})
 		return names
+	}
+	// protected:
+	getPropertyInputHtmlName(propertyName) {
+		return 'my.'+this.name+'.'+propertyName
+	}
+	getPropertyInputJsName(propertyName) {
+		return camelCase(this.name+'.'+propertyName+'.input')
 	}
 }
 
@@ -59,6 +65,7 @@ class SingleNode extends Node { // corresponds to single web audio node
 		)
 	}
 	// protected:
+	// get type()
 	get nodeJsName() {
 		return camelCase(this.name+'.node')
 	}
@@ -183,12 +190,6 @@ class FilterNode extends SingleNode {
 	get properties() {
 		return []
 	}
-	getPropertyInputHtmlName(propertyName) {
-		return 'my.'+this.name+'.'+propertyName
-	}
-	getPropertyInputJsName(propertyName) {
-		return camelCase(this.name+'.'+propertyName+'.input')
-	}
 	getCreateNodeJsLines(featureContext) {
 		return featureContext.getConnectAssignJsLines(
 			"var",this.nodeJsName,
@@ -199,6 +200,97 @@ class FilterNode extends SingleNode {
 }
 
 //// concrete classes
+
+GenNode.bypass = class extends Node {  // used when enableInput is set
+	constructor(options,name,innerNode,rewireInput,rewireOutput) {
+		super(options,name)
+		this.innerNode=innerNode
+		this.rewireInput=rewireInput
+		this.rewireOutput=rewireOutput
+	}
+	initEdges(prevNodes,nextNodes) {
+		super.initEdges(prevNodes,nextNodes)
+		this.innerNode.initEdges(prevNodes,nextNodes)
+	}
+	getInputs() {
+		const names=[]
+		if (this.options.enabled || !this.rewireInput) {
+			names.push(...this.innerNode.getInputs())
+		}
+		if (!this.options.enabled) {
+			names.push(...this.getNextNodeInputs())
+		}
+		return names
+	}
+	getOutputs() {
+		const names=[]
+		if (this.options.enabled || !this.rewireOutput) {
+			names.push(...this.innerNode.getOutputs())
+		}
+		if (!this.options.enabled) {
+			names.push(...this.getPrevNodeOutputs())
+		}
+		return names
+	}
+	requestFeatureContext(featureContext) {
+		featureContext.audioContext=true
+		this.innerNode.requestFeatureContext(featureContext)
+	}
+	getHtmlLines(featureContext,i18n) {
+		const inputHtmlName=this.getPropertyInputHtmlName('enabled')
+		return JsLines.bae(
+			NoseWrapLines.b("<div>","</div>").ae(
+				Lines.html`<input id=${inputHtmlName} type=checkbox checked=${this.options.enabled}>`,
+				Lines.html`<label for=${inputHtmlName}>${i18n('options-output.enabled')}</label>` // TODO correct i18n
+			),
+			this.innerNode.getHtmlLines(featureContext,i18n)
+		)
+	}
+	getInitJsLines(featureContext,i18n) {
+		const inputHtmlName=this.getPropertyInputHtmlName('enabled')
+		const a=JsLines.b()
+		const rewire=(method,fromNames,toNames)=>{
+			for (const fromName of fromNames) {
+				for (const toName of toNames) {
+					a(`\t\t${fromName}.${method}(${toName});`)
+				}
+			}
+		}
+		a(
+			this.innerNode.getInitJsLines(featureContext,i18n),
+			`document.getElementById('${inputHtmlName}').onchange=function(){`,
+			`	if (this.checked) {`
+		)
+		rewire('disconnect',this.getPrevNodeOutputs(),this.getNextNodeInputs())
+		if (this.rewireInput) {
+			rewire('connect',this.getPrevNodeOutputs(),this.innerNode.getInputs())
+		}
+		if (this.rewireOutput) {
+			rewire('connect',this.innerNode.getOutputs(),this.getNextNodeInputs())
+		}
+		a(
+			`	} else {`
+		)
+		if (this.rewireOutput) {
+			rewire('disconnect',this.innerNode.getOutputs(),this.getNextNodeInputs())
+		}
+		if (this.rewireInput) {
+			rewire('disconnect',this.getPrevNodeOutputs(),this.innerNode.getInputs())
+		}
+		rewire('connect',this.getPrevNodeOutputs(),this.getNextNodeInputs())
+		a(
+			`	}`,
+			`};`
+		)
+		return a.e()
+	}
+	getPreVisJsLines(featureContext,i18n) {
+		return this.innerNode.getPreVisJsLines(featureContext,i18n)
+	}
+	getVisJsLines(featureContext,i18n) {
+		return this.innerNode.getVisJsLines(featureContext,i18n)
+	}
+}
 
 GenNode.junction = class extends FilterNode {
 	get type() {
@@ -277,9 +369,6 @@ GenNode.compressor = class extends FilterNode {
 }
 
 GenNode.destination = class extends Node {
-	get type() {
-		return 'destination'
-	}
 	getInputs() {
 		return ['ctx.destination']
 	}

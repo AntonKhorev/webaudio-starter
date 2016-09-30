@@ -185,7 +185,7 @@ class AudioGraph extends Feature {
 			if (node.n!==undefined) {
 				name+='.'+node.n
 			}
-			const genNode=node.toGenNode(GenNode[node.type],name)
+			const genNode=node.toGenNode(GenNode,name)
 			conToGenMap.set(node,genNode)
 			return genNode
 		})
@@ -197,8 +197,10 @@ class AudioGraph extends Feature {
 				})
 				return genNodes
 			}
-			genNodes[i].prevNodes=translateConToGen(sortedNodes[i].prevNodes)
-			genNodes[i].nextNodes=translateConToGen(sortedNodes[i].nextNodes)
+			genNodes[i].initEdges(
+				translateConToGen(sortedNodes[i].prevNodes),
+				translateConToGen(sortedNodes[i].nextNodes)
+			)
 		}
 		this.nodes=genNodes
 	}
