@@ -186,6 +186,9 @@ class FilterNode extends SingleNode {
 		)
 	}
 	// protected:
+	get properties() {
+		return []
+	}
 	getPropertyInputHtmlName(propertyName) {
 		return 'my.'+this.name+'.'+propertyName
 	}
@@ -258,6 +261,15 @@ GenNode.panner = class extends FilterNode {
 				type:'range',
 			}
 		]
+	}
+}
+
+GenNode.compressor = class extends FilterNode {
+	get type() {
+		return 'compressor'
+	}
+	get ctxCreateMethodName() {
+		return 'createDynamicsCompressor'
 	}
 }
 

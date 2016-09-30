@@ -310,13 +310,4 @@ NodeClasses.activeJunction = class extends NodeClasses.junction { // to be inser
 	}
 }
 
-NodeClasses.compressor = class extends FilterNode {
-	get type() {
-		return 'compressor'
-	}
-	get ctxCreateMethodName() {
-		return 'createDynamicsCompressor'
-	}
-}
-
 module.exports=NodeClasses

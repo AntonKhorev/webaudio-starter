@@ -185,6 +185,25 @@ describe("Code",()=>{
 		}).ctx
 		assert.deepEqual(ctx.toJSON(),makeSourcePannerDestinationGraph(1))
 	})
+	it("adds compressor node",()=>{
+		const ctx=getSandbox({
+			graph: [
+				{
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'compressor',
+					next: 2,
+				},{
+					nodeType: 'destination',
+				}
+			],
+		}).ctx
+		const graph=ctx.toJSON()
+		assert.equal(graph.name,"AudioDestinationNode")
+		assert.equal(graph.inputs.length,1)
+		assert.equal(graph.inputs[0].name,"DynamicsCompressorNode")
+	})
 	/*
 	it("adds equalizer with 1 input",()=>{
 		const ctx=getSandbox({

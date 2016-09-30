@@ -74,18 +74,23 @@ class MediaElementNode extends RequestedNode {
 }
 
 class FilterNode extends RequestedNode {
-	get passive() {
-		return this.propertyNames.every(propertyName=>{
-			const option=this.options[propertyName]
-			return option.value==option.defaultValue && !option.input
-		})
-	}
 	get estimatedNInputs() {
 		return 1
 	}
 	get estimatedNOutputs() {
 		return 1
 	}
+}
+
+class PassiveByDefaultFilterNode extends FilterNode {
+	get passive() {
+		return this.propertyNames.every(propertyName=>{
+			const option=this.options[propertyName]
+			return option.value==option.defaultValue && !option.input
+		})
+	}
+	// protected:
+	// get propertyNames()
 }
 
 //// concrete classes
@@ -102,7 +107,7 @@ ConNode.video = class extends MediaElementNode {
 	}
 }
 
-ConNode.gain = class extends FilterNode {
+ConNode.gain = class extends PassiveByDefaultFilterNode {
 	get type() {
 		return 'gain'
 	}
@@ -112,13 +117,19 @@ ConNode.gain = class extends FilterNode {
 	}
 }
 
-ConNode.panner = class extends FilterNode {
+ConNode.panner = class extends PassiveByDefaultFilterNode {
 	get type() {
 		return 'panner'
 	}
 	// protected:
 	get propertyNames() {
 		return ['pan']
+	}
+}
+
+ConNode.compressor = class extends FilterNode {
+	get type() {
+		return 'compressor'
 	}
 }
 
