@@ -164,15 +164,6 @@ class FilterNode extends SingleNode {
 	// get ctxCreateMethodName()
 }
 
-class PassiveByDefaultFilterNode extends FilterNode {
-	get passive() {
-		return this.nodeProperties.every(property=>{
-			const option=this.options[property.name]
-			return option.value==option.defaultValue && !option.input
-		})
-	}
-}
-
 // concrete classes
 
 // TODO fix bug with parallel bypasses
@@ -316,23 +307,6 @@ NodeClasses.junction = class extends FilterNode { // special node used as summat
 NodeClasses.activeJunction = class extends NodeClasses.junction { // to be inserted between non-fixed i/o nodes
 	get passive() {
 		return false // can't optimize away (TODO allow parallel merging)
-	}
-}
-
-NodeClasses.panner = class extends PassiveByDefaultFilterNode {
-	get type() {
-		return 'panner'
-	}
-	get ctxCreateMethodName() {
-		return 'createStereoPanner'
-	}
-	get nodeProperties() {
-		return [
-			{
-				name:'pan',
-				type:'range',
-			}
-		]
 	}
 }
 

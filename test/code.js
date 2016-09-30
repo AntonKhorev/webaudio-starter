@@ -41,13 +41,14 @@ describe("Code",()=>{
 		)
 		return sandbox
 	}
-	const makeSourceGainDestinationGraph=(gainValue)=>({
+
+	const makeSourceFilterDestinationGraph=(filterName,filterProperty,filterPropertyValue)=>({
 		"name": "AudioDestinationNode",
 		"inputs": [
 			{
-				"name": "GainNode",
-				"gain": {
-					"value": gainValue,
+				"name": filterName,
+				[filterProperty]: {
+					"value": filterPropertyValue,
 					"inputs": []
 				},
 				"inputs": [
@@ -59,6 +60,8 @@ describe("Code",()=>{
 			}
 		]
 	})
+	const makeSourceGainDestinationGraph=(gainValue)=>makeSourceFilterDestinationGraph("GainNode","gain",gainValue)
+	const makeSourcePannerDestinationGraph=(panValue)=>makeSourceFilterDestinationGraph("StereoPannerNode","pan",panValue)
 	beforeEach(()=>{
 		WebAudioTestAPI.use()
 	})
@@ -180,24 +183,7 @@ describe("Code",()=>{
 				}
 			],
 		}).ctx
-		assert.deepEqual(ctx.toJSON(),{
-			"name": "AudioDestinationNode",
-			"inputs": [
-				{
-					"name": "StereoPannerNode",
-					"pan": {
-						"value": 1,
-						"inputs": []
-					},
-					"inputs": [
-						{
-							"name": "MediaElementAudioSourceNode",
-							"inputs": []
-						}
-					]
-				}
-			]
-		})
+		assert.deepEqual(ctx.toJSON(),makeSourcePannerDestinationGraph(1))
 	})
 	/*
 	it("adds equalizer with 1 input",()=>{

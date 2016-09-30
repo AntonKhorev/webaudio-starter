@@ -88,36 +88,7 @@ class MediaElementNode extends SingleNode {
 	}
 }
 
-//// concrete classes
-
-GenNode.audio = class extends MediaElementNode {
-	get type() {
-		return 'audio'
-	}
-	// protected:
-	getElementHtmlLines(featureContext,i18n) {
-		return Lines.bae(
-			Lines.html`<audio src=${this.options.url} id=${this.elementHtmlName} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></audio>`
-		)
-	}
-}
-
-GenNode.video = class extends MediaElementNode {
-	get type() {
-		return 'video'
-	}
-	// protected:
-	getElementHtmlLines(featureContext,i18n) {
-		return Lines.bae(
-			Lines.html`<video src=${this.options.url} id=${this.elementHtmlName} width=${this.options.width} height=${this.options.height} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></video>`
-		)
-	}
-}
-
-GenNode.gain = class extends SingleNode {
-	get type() {
-		return 'gain'
-	}
+class FilterNode extends SingleNode {
 	getInputs() {
 		return [this.nodeJsName]
 	}
@@ -164,7 +135,7 @@ GenNode.gain = class extends SingleNode {
 			return a.e()
 		}
 		return Lines.bae(
-			...this.nodeProperties.map(
+			...this.properties.map(
 				property=>NoseWrapLines.b(
 					"<div>","</div>"
 				).ae(
@@ -176,7 +147,7 @@ GenNode.gain = class extends SingleNode {
 	getInitJsLines(featureContext,i18n) {
 		return Lines.bae(
 			super.getInitJsLines(featureContext,i18n),
-			...this.nodeProperties.map(property=>{
+			...this.properties.map(property=>{
 				if (property.skip) {
 					return Lines.be()
 				}
@@ -228,13 +199,62 @@ GenNode.gain = class extends SingleNode {
 			this.getPrevNodeOutputs()
 		)
 	}
+}
+
+//// concrete classes
+
+GenNode.audio = class extends MediaElementNode {
+	get type() {
+		return 'audio'
+	}
+	// protected:
+	getElementHtmlLines(featureContext,i18n) {
+		return Lines.bae(
+			Lines.html`<audio src=${this.options.url} id=${this.elementHtmlName} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></audio>`
+		)
+	}
+}
+
+GenNode.video = class extends MediaElementNode {
+	get type() {
+		return 'video'
+	}
+	// protected:
+	getElementHtmlLines(featureContext,i18n) {
+		return Lines.bae(
+			Lines.html`<video src=${this.options.url} id=${this.elementHtmlName} width=${this.options.width} height=${this.options.height} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></video>`
+		)
+	}
+}
+
+GenNode.gain = class extends FilterNode {
+	get type() {
+		return 'gain'
+	}
 	get ctxCreateMethodName() {
 		return 'createGain'
 	}
-	get nodeProperties() {
+	get properties() {
 		return [
 			{
 				name:'gain',
+				type:'range',
+			}
+		]
+	}
+}
+
+GenNode.panner = class extends FilterNode {
+	get type() {
+		return 'panner'
+	}
+	get ctxCreateMethodName() {
+		return 'createStereoPanner'
+	}
+	get properties() {
+		return [
+			{
+				name:'pan',
 				type:'range',
 			}
 		]
