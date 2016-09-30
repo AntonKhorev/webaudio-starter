@@ -41,13 +41,31 @@ describe("Code",()=>{
 		)
 		return sandbox
 	}
+	const makeSourceGainDestinationGraph=(gainValue)=>({
+		"name": "AudioDestinationNode",
+		"inputs": [
+			{
+				"name": "GainNode",
+				"gain": {
+					"value": gainValue,
+					"inputs": []
+				},
+				"inputs": [
+					{
+						"name": "MediaElementAudioSourceNode",
+						"inputs": []
+					}
+				]
+			}
+		]
+	})
 	beforeEach(()=>{
 		WebAudioTestAPI.use()
 	})
 	afterEach(()=>{
 		WebAudioTestAPI.unuse()
 	})
-	it("makes simplest possible sound output",()=>{
+	it("makes simplest possible audio output",()=>{
 		const ctx=getSandbox({
 			graph: [
 				{
@@ -91,24 +109,24 @@ describe("Code",()=>{
 				}
 			],
 		}).ctx
-		assert.deepEqual(ctx.toJSON(),{
-			"name": "AudioDestinationNode",
-			"inputs": [
+		assert.deepEqual(ctx.toJSON(),makeSourceGainDestinationGraph(0.5))
+	})
+	it("adds gain node for video element",()=>{
+		const ctx=getSandbox({
+			graph: [
 				{
-					"name": "GainNode",
-					"gain": {
-						"value": 0.5,
-						"inputs": []
-					},
-					"inputs": [
-						{
-							"name": "MediaElementAudioSourceNode",
-							"inputs": []
-						}
-					]
+					nodeType: 'video',
+					next: 1,
+				},{
+					nodeType: 'gain',
+					gain: 0.5,
+					next: 2,
+				},{
+					nodeType: 'destination',
 				}
-			]
-		})
+			],
+		}).ctx
+		assert.deepEqual(ctx.toJSON(),makeSourceGainDestinationGraph(0.5))
 	})
 	it("adds gain node with input",()=>{
 		const ctx=getSandbox({
@@ -127,24 +145,7 @@ describe("Code",()=>{
 				}
 			],
 		}).ctx
-		assert.deepEqual(ctx.toJSON(),{
-			"name": "AudioDestinationNode",
-			"inputs": [
-				{
-					"name": "GainNode",
-					"gain": {
-						"value": 1,
-						"inputs": []
-					},
-					"inputs": [
-						{
-							"name": "MediaElementAudioSourceNode",
-							"inputs": []
-						}
-					]
-				}
-			]
-		})
+		assert.deepEqual(ctx.toJSON(),makeSourceGainDestinationGraph(1))
 	})
 	it("adds gain node by default when requesting bypass switch",()=>{
 		const ctx=getSandbox({
@@ -162,24 +163,7 @@ describe("Code",()=>{
 				}
 			],
 		}).ctx
-		assert.deepEqual(ctx.toJSON(),{
-			"name": "AudioDestinationNode",
-			"inputs": [
-				{
-					"name": "GainNode",
-					"gain": {
-						"value": 0.5,
-						"inputs": []
-					},
-					"inputs": [
-						{
-							"name": "MediaElementAudioSourceNode",
-							"inputs": []
-						}
-					]
-				}
-			]
-		})
+		assert.deepEqual(ctx.toJSON(),makeSourceGainDestinationGraph(0.5))
 	})
 	it("adds panner node",()=>{
 		const ctx=getSandbox({

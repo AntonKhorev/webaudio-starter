@@ -64,17 +64,26 @@ class RequestedNode extends Node {
 	}
 }
 
-//// concrete classes
-
-ConNode.audio = class extends RequestedNode {
-	get type() {
-		return 'audio'
-	}
+class MediaElementNode extends RequestedNode {
 	get downstreamEffect() {
 		return true
 	}
 	get estimatedNOutputs() {
 		return 1
+	}
+}
+
+//// concrete classes
+
+ConNode.audio = class extends MediaElementNode {
+	get type() {
+		return 'audio'
+	}
+}
+
+ConNode.video = class extends MediaElementNode {
+	get type() {
+		return 'video'
 	}
 }
 

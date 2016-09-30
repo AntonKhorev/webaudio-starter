@@ -71,12 +71,7 @@ class SingleNode extends RequestedNode {
 	// getCreateNodeJsLines(featureContext)
 }
 
-//// concrete classes
-
-GenNode.audio = class extends SingleNode {
-	get type() {
-		return 'audio'
-	}
+class MediaElementNode extends SingleNode {
 	getHtmlLines(featureContext,i18n) {
 		return NoseWrapLines.b("<div>","</div>").ae(
 			this.getElementHtmlLines(featureContext,i18n)
@@ -86,14 +81,35 @@ GenNode.audio = class extends SingleNode {
 	get elementHtmlName() {
 		return 'my.'+this.name
 	}
+	getCreateNodeJsLines(featureContext) {
+		return JsLines.bae(
+			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
+		)
+	}
+}
+
+//// concrete classes
+
+GenNode.audio = class extends MediaElementNode {
+	get type() {
+		return 'audio'
+	}
+	// protected:
 	getElementHtmlLines(featureContext,i18n) {
 		return Lines.bae(
 			Lines.html`<audio src=${this.options.url} id=${this.elementHtmlName} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></audio>`
 		)
 	}
-	getCreateNodeJsLines(featureContext) {
-		return JsLines.bae(
-			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
+}
+
+GenNode.video = class extends MediaElementNode {
+	get type() {
+		return 'video'
+	}
+	// protected:
+	getElementHtmlLines(featureContext,i18n) {
+		return Lines.bae(
+			Lines.html`<video src=${this.options.url} id=${this.elementHtmlName} width=${this.options.width} height=${this.options.height} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></video>`
 		)
 	}
 }

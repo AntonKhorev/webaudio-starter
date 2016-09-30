@@ -53,27 +53,6 @@ class SingleNode extends Node { // corresponds to single web audio node
 	// getCreateNodeJsLines(featureContext)
 }
 
-class MediaElementNode extends SingleNode {
-	get downstreamEffect() {
-		return true
-	}
-	get elementHtmlName() {
-		return 'my.'+this.type+this.nSuffix
-	}
-	getHtmlLines(featureContext,i18n) {
-		return NoseWrapLines.b("<div>","</div>").ae(
-			this.getElementHtmlLines(featureContext,i18n)
-		)
-	}
-	getCreateNodeJsLines(featureContext) {
-		return JsLines.bae(
-			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
-		)
-	}
-	// abstract:
-	// getElementHtmlLines()
-}
-
 class FilterNode extends SingleNode {
 	get nInputJsNames() {
 		return 1
@@ -337,17 +316,6 @@ NodeClasses.junction = class extends FilterNode { // special node used as summat
 NodeClasses.activeJunction = class extends NodeClasses.junction { // to be inserted between non-fixed i/o nodes
 	get passive() {
 		return false // can't optimize away (TODO allow parallel merging)
-	}
-}
-
-NodeClasses.video = class extends MediaElementNode {
-	get type() {
-		return 'video'
-	}
-	getElementHtmlLines(featureContext,i18n) {
-		return Lines.bae(
-			Lines.html`<video src=${this.options.url} id=${this.elementHtmlName} width=${this.options.width} height=${this.options.height} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></video>`
-		)
 	}
 }
 
