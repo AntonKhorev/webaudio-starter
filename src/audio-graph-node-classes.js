@@ -1,17 +1,6 @@
+// TODO remove this module
+
 'use strict'
-
-const camelCase=require('crnx-base/fake-lodash/camelcase')
-const formatNumbers=require('crnx-base/format-numbers')
-const Lines=require('crnx-base/lines')
-const JsLines=require('crnx-base/js-lines')
-const NoseWrapLines=require('crnx-base/nose-wrap-lines')
-const RefLines=require('crnx-base/ref-lines')
-const Feature=require('./feature')
-
-// TODO naming conventions for two graphs: user-entered and web audio api
-// TODO consider two classes for each node type:
-// 	ConNode.* = graph construction nodes - can be rewired, have .toGenNode(genNodeClass) method, not subclasses of Feature
-// 	GenNode.* = code generation nodes - connot be rewired, can create them after node sorting, subclasses of Feature
 
 const NodeClasses={}
 
@@ -26,19 +15,6 @@ class Node extends Feature {
 		this.prevNodes=new Set
 		//this._n=undefined
 	}
-	get n() {
-		return this._n
-	}
-	set n(n) {
-		this._n=n
-	}
-	get nSuffix() {
-		if (this._n!==undefined) {
-			return '.'+this._n
-		} else {
-			return ''
-		}
-	}
 	getPropertyInputHtmlName(propertyName) {
 		return 'my.'+this.type+this.nSuffix+'.'+propertyName
 	}
@@ -46,63 +22,6 @@ class Node extends Feature {
 		return camelCase(this.type+this.nSuffix+'.'+propertyName+'.input')
 	}
 	// abstract get type() // required for n-assignment, can't do it by class with aggregation nodes like Node.bypass
-	get passive() {
-		return false
-	}
-	get downstreamEffect() {
-		return false // source node
-	}
-	get upstreamEffect() {
-		return false // destination or visualization node
-	}
-	get fixedInput() {
-		return false // TODO set to true by default
-	}
-	get fixedOutput() {
-		return false
-	}
-	get nInputJsNames() { // estimate number of inputs, ok to overestimate
-		return 0
-	}
-	get nOutputJsNames() { // estimate number of outputs, ok to overestimate
-		return 0
-	}
-	get prevNodeJsNameCount() {
-		let count=0
-		this.prevNodes.forEach(node=>{
-			count+=node.nOutputJsNames
-		})
-		return count
-	}
-	get nextNodeJsNameCount() {
-		let count=0
-		this.nextNodes.forEach(node=>{
-			count+=node.nInputJsNames
-		})
-		return count
-	}
-	// { GenNode interface
-	getInputJsNames() {
-		return []
-	}
-	getOutputJsNames() {
-		return []
-	}
-	getPrevNodeJsNames() {
-		const names=[]
-		this.prevNodes.forEach(node=>{
-			names.push(...node.getOutputJsNames())
-		})
-		return names
-	}
-	getNextNodeJsNames() {
-		const names=[]
-		this.nextNodes.forEach(node=>{
-			names.push(...node.getInputJsNames())
-		})
-		return names
-	}
-	// } GenNode interface
 }
 
 class SingleNode extends Node { // corresponds to single web audio node
@@ -483,33 +402,6 @@ NodeClasses.compressor = class extends FilterNode {
 	}
 	get ctxCreateMethodName() {
 		return 'createDynamicsCompressor'
-	}
-}
-
-NodeClasses.destination = class extends Node {
-	get type() {
-		return 'destination'
-	}
-	get upstreamEffect() {
-		return true
-	}
-	get fixedInput() {
-		return true
-	}
-	get fixedOutput() {
-		return true
-	}
-	get nInputJsNames() {
-		return 1
-	}
-	getInputJsNames() {
-		return ['ctx.destination']
-	}
-	getInitJsLines(featureContext,i18n) {
-		return JsLines.bae(
-			RefLines.parse("// "+i18n('comment.graph.destination')),
-			...this.getPrevNodeJsNames().map(name=>name+".connect(ctx.destination);")
-		)
 	}
 }
 

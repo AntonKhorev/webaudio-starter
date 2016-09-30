@@ -1,9 +1,14 @@
 'use strict'
 
-const Node=require('./audio-graph-node-classes')
+const ConNode=require('./audio-graph-con-node-classes')
+const GenNode=require('./audio-graph-gen-node-classes')
 const Lines=require('crnx-base/lines')
 const InterleaveLines=require('crnx-base/interleave-lines')
 const Feature=require('./feature')
+
+// con-node = node used for graph construction
+// gen-node = node used after graph construction
+// input, output = web audio api node represented as js expression
 
 class AudioGraph extends Feature {
 	constructor(options) {
@@ -36,19 +41,19 @@ class AudioGraph extends Feature {
 		}
 		const createNodes=()=>{
 			const distinctNodes=new Set()
-			const destinationNode=new Node.destination
+			const destinationNode=new ConNode.destination
 			const indexedNodes=options.nodes.map(nodeOptions=>{
 				let node
 				if (nodeOptions.enabled || nodeOptions.enabledInput) {
-					node=new Node[nodeOptions.nodeType](nodeOptions)
+					node=new ConNode[nodeOptions.nodeType](nodeOptions)
 				} else {
-					node=new Node.junction
+					node=new ConNode.junction
 				}
-				if (node instanceof Node.destination) {
+				if (node instanceof ConNode.destination) {
 					node=destinationNode
 				}
 				if (nodeOptions.enabledInput) {
-					node=new Node.bypass(nodeOptions,node)
+					node=new ConNode.bypass(nodeOptions,node)
 				}
 				distinctNodes.add(node)
 				return node
@@ -69,20 +74,22 @@ class AudioGraph extends Feature {
 			const outputNodes=[]
 			for (const node of inputNodes) {
 				outputNodes.push(node)
-				if (node.fixedOutput) continue
+				if (node.fixedOutputs) continue
 				const rewireNodes=[]
 				node.nextNodes.forEach(nextNode=>{
-					if (nextNode.fixedInput) return
+					if (nextNode.fixedInputs) return
 					rewireNodes.push(nextNode)
 				})
 				for (const nextNode of rewireNodes) {
-					const junctionNode=new Node.activeJunction
+					const junctionNode=new ConNode.activeJunction
+					// { TODO insertNode(junctionNode,node,nextNode)
 					node.nextNodes.delete(nextNode)
 					node.nextNodes.add(junctionNode)
 					junctionNode.prevNodes.add(node)
 					nextNode.prevNodes.delete(node)
 					nextNode.prevNodes.add(junctionNode)
 					junctionNode.nextNodes.add(nextNode)
+					// }
 					outputNodes.push(junctionNode)
 				}
 			}
@@ -96,8 +103,8 @@ class AudioGraph extends Feature {
 					outputNodes.push(node)
 				} else {
 					const removingWouldCreateTooManyConnections=()=>{
-						const nInputs=node.prevNodeJsNameCount
-						const nOutputs=node.nextNodeJsNameCount
+						const nInputs=node.estimatedNPrevNodeOutputs
+						const nOutputs=node.estimatedNNextNodeInputs
 						return nInputs*nOutputs>nInputs+nOutputs+1
 					}
 					const hasDirectParallelConnections=()=>{
@@ -110,7 +117,7 @@ class AudioGraph extends Feature {
 						return parallel
 					}
 					if (removingWouldCreateTooManyConnections() || hasDirectParallelConnections()) {
-						const junctionNode=new Node.junction
+						const junctionNode=new ConNode.junction
 						replaceNode(node,junctionNode)
 						outputNodes.push(junctionNode)
 					} else {
@@ -171,7 +178,29 @@ class AudioGraph extends Feature {
 		}
 		const createdNodes=insertActiveJunctions(createNodes())
 		const filteredNodes=removeUnaffectedNodes(removePassiveNodes(createdNodes))
-		this.nodes=sortNodes(filteredNodes)
+		const sortedNodes=sortNodes(filteredNodes)
+		const conToGenMap=new Map
+		const genNodes=sortedNodes.map(node=>{
+			let jsName=node.type
+			if (node.n!==undefined) {
+				jsName+='.'+node.n
+			}
+			const genNode=node.toGenNode(GenNode[type],jsName)
+			conToGenMap.add(node,genNode)
+			return genNode
+		})
+		for (let i=0;i<sortedNodes.length;i++) {
+			const translateConToGen=(conNodesSet)=>{
+				const genNodes=[]
+				conNodesSet.forEach(conNode=>{
+					genNodes.push(conToGenMap(conNode))
+				})
+				return genNodes
+			}
+			genNodes[i].prevNodes=translateConToGen(sortedNodes[i].prevNodes)
+			genNodes[i].nextNodes=translateConToGen(sortedNodes[i].nextNodes)
+		}
+		this.nodes=genNodes
 	}
 	requestFeatureContext(featureContext) {
 		for (const node of this.nodes) {
@@ -179,6 +208,7 @@ class AudioGraph extends Feature {
 		}
 	}
 	getHtmlLines(featureContext,i18n) {
+		// TODO <fieldset>
 		return Lines.bae(...this.nodes.map(node=>node.getHtmlLines(featureContext,i18n)))
 	}
 	getInitJsLines(featureContext,i18n) {
