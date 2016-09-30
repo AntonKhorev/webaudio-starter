@@ -178,6 +178,12 @@ ConNode.panner = class extends PassiveByDefaultFilterNode {
 	}
 }
 
+ConNode.convolver = class extends FilterNode {
+	get type() {
+		return 'convolver'
+	}
+}
+
 ConNode.compressor = class extends FilterNode {
 	get type() {
 		return 'compressor'

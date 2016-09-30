@@ -50,12 +50,16 @@ const langStrings={
 		'options.graph.iir.feedback': "Feedback coefficients", // Transfer fn denominator coefs
 		'options.graph.iir.feedback.a': "a",
 		'options.graph.iir.feedback.a.add': "Add coefficient",
+		*/
 		'options.graph.convolver': "Convolver",
 		'options.graph.convolver.add': "Add convolver",
-		'options.graph.convolver.url': "Impulse responce URL",
+		'options.graph.convolver.url': "<abbr title='impulse responce'>IR</abbr> URL", // "Impulse responce URL",
+		/*
 		'options.graph.convolver.reverb': "Reverb (dry/wet)",
+		*/
 		'options.graph.convolver.buffer.loading': "Loading and decoding the impulse response",
 		'options.graph.convolver.buffer.error': "Error while loading the impulse response",
+		/*
 		'options.graph.equalizer': "Equalizer",
 		'options.graph.equalizer.add': "Add equalizer",
 		'options.graph.equalizer.gain{60,170,350,1000,3500,10000}': "{} Hz gain",
@@ -143,12 +147,12 @@ const langStrings={
 		'comment.graph.sample': "load [sample][buffer]",
 		'comment.graph.gain': "create [gain node][gain]",
 		'comment.graph.panner': "create [stereo panner node][panner]",
+		'comment.graph.convolver': "create [convolver node][convolver]",
 		'comment.graph.compressor': "create [dynamics compressor node][compressor]",
 		/*
 		'comment.filters.biquad': "create [biquad filter node][biquad]",
 		'comment.filters.iir': "create [IIR filter node][iir]",
 		'comment.filters.convolver': "create dry and wet routes with [convolver node][convolver]",
-		'comment.filters.convolver.single': "create [convolver node][convolver]",
 		'comment.filters.equalizer': "create equalizer as a sequence of [peaking][peaking] [biquad filter nodes][biquad]",
 		'comment.filters.equalizer.single': "create equalizer as a [peaking][peaking] [biquad filter node][biquad]",
 		'comment.destination.analyser': "create [analyser node][analyser]",
@@ -213,12 +217,16 @@ const langStrings={
 		'options.graph.iir.feedback': "Коэффициенты обратной связи", // Transfer fn denominator coefs
 		'options.graph.iir.feedback.a': "a",
 		'options.graph.iir.feedback.a.add': "Добавить коэффициент",
+		*/
 		'options.graph.convolver': "Свёртка",
 		'options.graph.convolver.add': "Добавить свёртку",
-		'options.graph.convolver.url': "URL импульсной характеристики",
+		'options.graph.convolver.url': "URL", //"URL импульсной характеристики",
+		/*
 		'options.graph.convolver.reverb': "Соотношение прямого/обработанного звука", // http://www.ixbt.com/proaudio/theory-of-reverb.shtml
+		*/
 		'options.graph.convolver.buffer.loading': "Идёт загрузка и декодирование импульсной характеристики",
 		'options.graph.convolver.buffer.error': "Ошибка загрузки импульсной характеристики",
+		/*
 		'options.graph.equalizer': "Эквалайзер",
 		'options.graph.equalizer.add': "Добавить эквалайзер",
 		'options.graph.equalizer.gain{60,170,350,1000,3500,10000}': "Усиление частоты {} Гц",
@@ -306,12 +314,12 @@ const langStrings={
 		'comment.graph.sample': "загружаем [сэмпл][buffer]",
 		'comment.graph.gain': "создаём [узел усилителя][gain]",
 		'comment.graph.panner': "создаём [узел панорамирования][panner]",
+		'comment.graph.convolver': "создаём [узел свёртки][convolver]",
 		'comment.graph.compressor': "создаём [узел компрессора][compressor]",
 		/*
 		'comment.filters.biquad': "создаём [узел биквадратичного фильтра][biquad]",
 		'comment.filters.iir': "создаём [узел БИХ-фильтра][iir]",
 		'comment.filters.convolver': "создаём прямой путь и путь через [узел свёртки][convolver]",
-		'comment.filters.convolver.single': "создаём [узел свёртки][convolver]",
 		'comment.filters.equalizer': "создаём эквалайзер в виде последовательности [peaking][peaking] [биквадратичных фильтров][biquad]",
 		'comment.filters.equalizer.single': "создаём эквалайзер в виде [peaking][peaking] [биквадратичного фильтра][biquad]",
 		'comment.destination.analyser': "создаём [узел анализатора][analyser]",

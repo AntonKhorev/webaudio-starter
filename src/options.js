@@ -58,8 +58,9 @@ class Options extends BaseOptions {
 				/*
 				['BiquadFilter','biquad'],
 				['IIRFilter','iir'],
-				['Group','convolver',[
-					['LiveFloat','reverb',[0,1]],
+				*/
+				['AudioGraphNode','convolver',[
+					//['LiveFloat','reverb',[0,1]],
 					['Text','url',[
 						// original w3c mooc
 						'http://mainline.i3s.unice.fr/mooc/Scala-Milan-Opera-Hall.wav',
@@ -67,6 +68,7 @@ class Options extends BaseOptions {
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/irHall.ogg',
 					]],
 				]],
+				/*
 				['EqualizerFilter','equalizer'],
 				*/
 				['AudioGraphNode','compressor',[ // Firefox compresses automatically?

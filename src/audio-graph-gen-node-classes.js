@@ -130,7 +130,7 @@ class FilterNode extends SingleNode {
 				)
 			} else if (property.type=='xhr') {
 				a(
-					Lines.html`<span id=${inputHtmlName}>${i18n(this.getPropertyOptionName(property)+'.loading')}</span>`
+					Lines.html`<span id=${inputHtmlName}>${i18n(propertyOptionName+'.loading')}</span>`
 				)
 			}
 			return a.e()
@@ -153,11 +153,12 @@ class FilterNode extends SingleNode {
 					return Lines.be()
 				}
 				const option=this.options[property.name]
-				const nodePropertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")
+				const propertyOptionName='options.graph.'+this.type+'.'+property.name
+				const propertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")
+				const inputJsName=this.getPropertyInputJsName(property.name)
+				const inputHtmlName=this.getPropertyInputHtmlName(property.name)
 				const a=JsLines.b()
-				if (option.input) {
-					const inputJsName=this.getPropertyInputJsName(property.name)
-					const inputHtmlName=this.getPropertyInputHtmlName(property.name)
+				if (property.type!='xhr' && option.input) {
 					let value=inputJsName+".value"
 					if (property.fn) {
 						value=property.fn(value)
@@ -167,10 +168,10 @@ class FilterNode extends SingleNode {
 						"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
 						// was for IE11 compat (but IE11 has no Web Audio): (property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
 						";("+inputJsName+"."+eventProp+"=function(){",
-						"	"+nodePropertyJsName+"="+value+";",
+						"	"+propertyJsName+"="+value+";",
 						"})();"
 					)
-				} else if (option.value!=option.defaultValue) {
+				} else if (property.type!='xhr' && option.value!=option.defaultValue) {
 					let value=option.value
 					if (property.type=='select') {
 						value="'"+value+"'"
@@ -179,7 +180,24 @@ class FilterNode extends SingleNode {
 						value=property.fn(value)
 					}
 					a(
-						nodePropertyJsName+"="+value+";"
+						propertyJsName+"="+value+";"
+					)
+				} else if (property.type=='xhr') {
+					a(
+						"loadSample('"+this.options.url+"',function(buffer){", // TODO html escape
+						"	"+propertyJsName+"=buffer;",
+						"	document.getElementById('"+inputHtmlName+"').textContent='';",
+						"}"
+					)
+					if (featureContext.loaderOnError) {
+						a.t(
+							",function(){",
+							"	document.getElementById('"+inputHtmlName+"').textContent='"+i18n(propertyOptionName+'.error')+"';",
+							"}"
+						)
+					}
+					a.t(
+						");"
 					)
 				}
 				return a.e()
@@ -305,7 +323,6 @@ GenNode.audio = class extends MediaElementNode {
 	get type() {
 		return 'audio'
 	}
-	// protected:
 	getElementHtmlLines(featureContext,i18n) {
 		return Lines.bae(
 			Lines.html`<audio src=${this.options.url} id=${this.elementHtmlName} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></audio>`
@@ -317,7 +334,6 @@ GenNode.video = class extends MediaElementNode {
 	get type() {
 		return 'video'
 	}
-	// protected:
 	getElementHtmlLines(featureContext,i18n) {
 		return Lines.bae(
 			Lines.html`<video src=${this.options.url} id=${this.elementHtmlName} width=${this.options.width} height=${this.options.height} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></video>`
@@ -356,6 +372,27 @@ GenNode.panner = class extends FilterNode {
 				type:'range',
 			}
 		]
+	}
+}
+
+GenNode.convolver = class extends FilterNode {
+	get type() {
+		return 'convolver'
+	}
+	get ctxCreateMethodName() {
+		return 'createConvolver'
+	}
+	get properties() {
+		return [
+			{
+				name:'buffer',
+				type:'xhr',
+			}
+		]
+	}
+	requestFeatureContext(featureContext) {
+		super.requestFeatureContext(featureContext)
+		featureContext.loader=true
 	}
 }
 
