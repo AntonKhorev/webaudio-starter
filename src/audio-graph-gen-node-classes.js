@@ -13,9 +13,9 @@ const GenNode={}
 //// abstract classes (not exported)
 
 class Node extends Feature {
-	constructor(jsName) {
+	constructor(name) {
 		super()
-		this.jsName=jsName
+		this.name=name
 		// set those before calling any public methods:
 		//this.prevNodes=prevNodes // array of nodes
 		//this.nextNodes=nextNodes // array of nodes
@@ -47,9 +47,53 @@ class Node extends Feature {
 	}
 }
 
+class RequestedNode extends Node {
+	constructor(name,options) {
+		super(name)
+		this.options=options
+	}
+}
+
 //// concrete classes
 
-GenNode.destination = class extends Node {
+GenNode.audio = class extends RequestedNode {
+	get type() {
+		return 'audio'
+	}
+	getOutputs() {
+		return [this.nodeJsName]
+	}
+	getHtmlLines(featureContext,i18n) {
+		return NoseWrapLines.b("<div>","</div>").ae(
+			this.getElementHtmlLines(featureContext,i18n)
+		)
+	}
+	getInitJsLines(featureContext,i18n) {
+		return JsLines.bae(
+			RefLines.parse("// "+i18n('comment.graph.'+this.type)),
+			this.getCreateNodeJsLines(featureContext)
+		)
+	}
+	// protected:
+	get nodeJsName() {
+		return camelCase(this.name+'.node')
+	}
+	get elementHtmlName() {
+		return 'my.'+this.name
+	}
+	getElementHtmlLines(featureContext,i18n) {
+		return Lines.bae(
+			Lines.html`<audio src=${this.options.url} id=${this.elementHtmlName} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></audio>`
+		)
+	}
+	getCreateNodeJsLines(featureContext) {
+		return JsLines.bae(
+			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
+		)
+	}
+}
+
+GenNode.destination = class extends RequestedNode {
 	get type() {
 		return 'destination'
 	}

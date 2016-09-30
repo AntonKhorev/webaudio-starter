@@ -181,19 +181,19 @@ class AudioGraph extends Feature {
 		const sortedNodes=sortNodes(filteredNodes)
 		const conToGenMap=new Map
 		const genNodes=sortedNodes.map(node=>{
-			let jsName=node.type
+			let name=node.type
 			if (node.n!==undefined) {
-				jsName+='.'+node.n
+				name+='.'+node.n
 			}
-			const genNode=node.toGenNode(GenNode[type],jsName)
-			conToGenMap.add(node,genNode)
+			const genNode=node.toGenNode(GenNode[node.type],name)
+			conToGenMap.set(node,genNode)
 			return genNode
 		})
 		for (let i=0;i<sortedNodes.length;i++) {
 			const translateConToGen=(conNodesSet)=>{
 				const genNodes=[]
 				conNodesSet.forEach(conNode=>{
-					genNodes.push(conToGenMap(conNode))
+					genNodes.push(conToGenMap.get(conNode))
 				})
 				return genNodes
 			}

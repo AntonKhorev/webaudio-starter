@@ -54,13 +54,31 @@ class Node {
 	}
 }
 
-//// concrete classes
-
-ConNode.destination = class extends Node {
+class RequestedNode extends Node {
 	constructor(options) {
 		super()
 		this.options=options
 	}
+	toGenNode(GenNodeClass,name) {
+		return new GenNodeClass(name,this.options)
+	}
+}
+
+//// concrete classes
+
+ConNode.audio = class extends RequestedNode {
+	get type() {
+		return 'audio'
+	}
+	get downstreamEffect() {
+		return true
+	}
+	get estimatedNOutputs() {
+		return 1
+	}
+}
+
+ConNode.destination = class extends RequestedNode {
 	get type() {
 		return 'destination'
 	}
@@ -69,9 +87,6 @@ ConNode.destination = class extends Node {
 	}
 	get estimatedNInputs() {
 		return 1
-	}
-	toGenNode(GenNodeClass,jsName) {
-		return new GenNodeClass(jsName,this.options)
 	}
 }
 

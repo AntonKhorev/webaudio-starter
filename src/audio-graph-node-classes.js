@@ -38,7 +38,7 @@ class SingleNode extends Node { // corresponds to single web audio node
 		return camelCase(this.type+this.nSuffix+'.node')
 	}
 	getInputJsNames() {
-		return [this.nodeJsName]
+		return [this.nodeJsName] // was wrong b/c media elements have no inputs
 	}
 	getOutputJsNames() {
 		return [this.nodeJsName]
@@ -337,17 +337,6 @@ NodeClasses.junction = class extends FilterNode { // special node used as summat
 NodeClasses.activeJunction = class extends NodeClasses.junction { // to be inserted between non-fixed i/o nodes
 	get passive() {
 		return false // can't optimize away (TODO allow parallel merging)
-	}
-}
-
-NodeClasses.audio = class extends MediaElementNode {
-	get type() {
-		return 'audio'
-	}
-	getElementHtmlLines(featureContext,i18n) {
-		return Lines.bae(
-			Lines.html`<audio src=${this.options.url} id=${this.elementHtmlName} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></audio>`
-		)
 	}
 }
 
