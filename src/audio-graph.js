@@ -41,35 +41,69 @@ class AudioGraph extends Feature {
 			})
 		}
 		const createNodes=()=>{
-			const distinctNodes=new Set()
-			const destinationNode=new ConNode.destination
-			const indexedNodes=options.nodes.map(nodeOptions=>{
-				let node
-				if (nodeOptions.enabled || nodeOptions.enabledInput) {
-					node=new ConNode[nodeOptions.nodeType](nodeOptions)
-				} else {
-					node=new ConNode.junction
-				}
+			const createNodesAndScores=()=>options.nodes.map((nodeOptions)=>{
+				let destinationScore=0
+				let node=new ConNode[nodeOptions.nodeType](nodeOptions)
 				if (node instanceof ConNode.destination) {
-					node=destinationNode
+					destinationScore=1
 				}
-				if (nodeOptions.enabledInput) {
-					node=new ConNode.bypass(nodeOptions,node)
+				if (node instanceof ConNode.convolver) {
+					if (nodeOptions.wet==0 && !nodeOptions.wet.input) {
+						node=new ConNode.junction
+						destinationScore=0
+					} else if (nodeOptions.wet!=1 || nodeOptions.wet.input) {
+						node=new ConNode.drywet(nodeOptions,node)
+					}
 				}
-				distinctNodes.add(node)
-				return node
+				//if (bypassable) { // everything is bypassable
+					if (!nodeOptions.enabled && !nodeOptions.enabledInput) {
+						node=new ConNode.junction
+						destinationScore=0
+					} else if (nodeOptions.enabledInput) {
+						node=new ConNode.bypass(nodeOptions,node)
+						destinationScore*=2+nodeOptions.enabled
+					}
+				//}
+				return [node,destinationScore]
 			})
-			for (let i=0;i<options.nodes.length;i++) {
-				for (const j of options.nodes[i].next) {
-					indexedNodes[i].nextNodes.add(indexedNodes[j])
-					indexedNodes[j].prevNodes.add(indexedNodes[i])
+			const keepBestNodes=(nodesAndScores)=>{ // got to have only one "best" destination node
+				let bestNode=null
+				let bestScore=0 // interested only in scores above 0
+				for (let i=0;i<nodesAndScores.length;i++) {
+					let [node,score]=nodesAndScores[i]
+					if (score>bestScore) {
+						bestNode=node
+						bestScore=score
+					}
 				}
+				return nodesAndScores.map(([node,score])=>{
+					if (bestNode!=null && score>0) {
+						return bestNode
+					} else {
+						return node
+					}
+				})
 			}
-			const outputNodes=[]
-			distinctNodes.forEach(node=>{
-				outputNodes.push(node)
-			})
-			return outputNodes
+			const linkNodes=(nodes)=>{
+				for (let i=0;i<options.nodes.length;i++) {
+					for (const j of options.nodes[i].next) {
+						nodes[i].nextNodes.add(nodes[j])
+						nodes[j].prevNodes.add(nodes[i])
+					}
+				}
+				return nodes
+			}
+			const keepDistinctNodes=(inputNodes)=>{
+				const outputNodes=[]
+				const visited=new Set
+				for (const node of inputNodes) {
+					if (visited.has(node)) continue
+					visited.add(node)
+					outputNodes.push(node)
+				}
+				return outputNodes
+			}
+			return keepDistinctNodes(linkNodes(keepBestNodes(createNodesAndScores())))
 		}
 		const insertActiveJunctions=(inputNodes)=>{
 			const outputNodes=[]

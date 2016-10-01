@@ -312,6 +312,13 @@ Option.AudioGraphNode = class extends Option.GraphNode {
 	}
 }
 
+Option.WetAudioGraphNode = class extends Option.AudioGraphNode {
+	static collectArgs(scalarArg,arrayArg,settings) {
+		arrayArg=[['LiveFloat','wet',[0,1],1],...arrayArg]
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+}
+
 Option.Graph = class extends Option.Collection {
 	getElementsPropertyName() {
 		return 'nodes'

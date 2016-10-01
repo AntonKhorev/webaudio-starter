@@ -59,8 +59,7 @@ class Options extends BaseOptions {
 				['BiquadFilter','biquad'],
 				['IIRFilter','iir'],
 				*/
-				['AudioGraphNode','convolver',[
-					//['LiveFloat','reverb',[0,1]],
+				['WetAudioGraphNode','convolver',[
 					['Text','url',[
 						// original w3c mooc
 						'http://mainline.i3s.unice.fr/mooc/Scala-Milan-Opera-Hall.wav',

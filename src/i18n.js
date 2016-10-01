@@ -54,9 +54,7 @@ const langStrings={
 		'options.graph.convolver': "Convolver",
 		'options.graph.convolver.add': "Add convolver",
 		'options.graph.convolver.url': "<abbr title='impulse responce'>IR</abbr> URL", // "Impulse responce URL",
-		/*
-		'options.graph.convolver.reverb': "Reverb (dry/wet)",
-		*/
+		'options.graph.convolver.wet': "Reverb (dry/wet)",
 		'options.graph.convolver.buffer.loading': "Loading and decoding the impulse response",
 		'options.graph.convolver.buffer.error': "Error while loading the impulse response",
 		/*
@@ -222,9 +220,7 @@ const langStrings={
 		'options.graph.convolver': "Свёртка",
 		'options.graph.convolver.add': "Добавить свёртку",
 		'options.graph.convolver.url': "URL", //"URL импульсной характеристики",
-		/*
-		'options.graph.convolver.reverb': "Соотношение прямого/обработанного звука", // http://www.ixbt.com/proaudio/theory-of-reverb.shtml
-		*/
+		'options.graph.convolver.wet': "Соотношение прямого/обработанного звука", // http://www.ixbt.com/proaudio/theory-of-reverb.shtml
 		'options.graph.convolver.buffer.loading': "Идёт загрузка и декодирование импульсной характеристики",
 		'options.graph.convolver.buffer.error': "Ошибка загрузки импульсной характеристики",
 		/*
