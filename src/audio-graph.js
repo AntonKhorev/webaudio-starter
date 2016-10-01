@@ -4,6 +4,7 @@ const ConNode=require('./audio-graph-con-node-classes')
 const GenNode=require('./audio-graph-gen-node-classes')
 const Lines=require('crnx-base/lines')
 const InterleaveLines=require('crnx-base/interleave-lines')
+const NoseWrapLines=require('crnx-base/nose-wrap-lines')
 const Feature=require('./feature')
 
 // con-node = node used for graph construction
@@ -210,8 +211,19 @@ class AudioGraph extends Feature {
 		}
 	}
 	getHtmlLines(featureContext,i18n) {
-		// TODO <fieldset>
-		return Lines.bae(...this.nodes.map(node=>node.getHtmlLines(featureContext,i18n)))
+		return Lines.bae(
+			...this.nodes.map(node=>NoseWrapLines.b(
+				Lines.bae(
+					"<fieldset>",
+					"	<legend>"+i18n('options.graph.'+node.type)+"</legend>"
+				),
+				Lines.bae(
+					"</fieldset>"
+				)
+			).ae(
+				node.getHtmlLines(featureContext,i18n)
+			))
+		)
 	}
 	getInitJsLines(featureContext,i18n) {
 		if (featureContext.audioContext) {

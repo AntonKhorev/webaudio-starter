@@ -22,6 +22,7 @@ class Node extends Feature {
 		this.prevNodes=prevNodes
 		this.nextNodes=nextNodes
 	}
+	// get type()
 	getInputs() {
 		return []
 	}
@@ -65,7 +66,6 @@ class SingleNode extends Node { // corresponds to single web audio node
 		)
 	}
 	// protected:
-	// get type()
 	get nodeJsName() {
 		return camelCase(this.name+'.node')
 	}
@@ -229,6 +229,9 @@ GenNode.bypass = class extends Node {  // used when enableInput is set
 	initEdges(prevNodes,nextNodes) {
 		super.initEdges(prevNodes,nextNodes)
 		this.innerNode.initEdges(prevNodes,nextNodes)
+	}
+	get type() {
+		return this.innerNode.type
 	}
 	getInputs() {
 		const names=[]
@@ -406,6 +409,9 @@ GenNode.compressor = class extends FilterNode {
 }
 
 GenNode.destination = class extends Node {
+	get type() {
+		return 'destination'
+	}
 	getInputs() {
 		return ['ctx.destination']
 	}

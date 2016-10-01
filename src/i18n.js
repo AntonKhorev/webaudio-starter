@@ -68,6 +68,7 @@ const langStrings={
 		'options.graph.compressor.add': "Add dynamics compressor",
 		'options.graph.destination': "Destination",
 		'options.graph.destination.add': "Add destination",
+		'options.graph.junction': "Junction", // not used
 
 		/*
 		'options.destination.{waveform,frequencies}': "{Waveform,Frequencies} visualization",
@@ -235,6 +236,7 @@ const langStrings={
 		'options.graph.compressor.add': "Добавить компрессор",
 		'options.graph.destination': "Выход",
 		'options.graph.destination.add': "Добавить выход",
+		'options.graph.junction': "Узел для соединения", // not used
 
 		/*
 		'options.destination.{waveform,frequencies}': "Визуализация {формы волны,частот}",
