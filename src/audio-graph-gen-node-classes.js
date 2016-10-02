@@ -108,6 +108,12 @@ class ContainerNode extends Node {
 		featureContext.audioContext=true
 		this.innerNode.requestFeatureContext(featureContext)
 	}
+	getPreVisJsLines(featureContext,i18n) {
+		return this.innerNode.getPreVisJsLines(featureContext,i18n)
+	}
+	getVisJsLines(featureContext,i18n) {
+		return this.innerNode.getVisJsLines(featureContext,i18n)
+	}
 }
 
 class SingleNode extends Node { // corresponds to single web audio node
@@ -186,7 +192,7 @@ class FilterNode extends SingleNode {
 						"})();"
 					)
 				} else if (property.type!='xhr' && option.value!=option.defaultValue) {
-					let value=option.value
+					let value=option.value // TODO format number
 					if (property.type=='select') {
 						value="'"+value+"'"
 					}
@@ -311,12 +317,6 @@ GenNode.bypass = class extends ContainerNode { // used when enableInput is set
 		)
 		return a.e()
 	}
-	getPreVisJsLines(featureContext,i18n) {
-		return this.innerNode.getPreVisJsLines(featureContext,i18n)
-	}
-	getVisJsLines(featureContext,i18n) {
-		return this.innerNode.getVisJsLines(featureContext,i18n)
-	}
 }
 
 GenNode.drywet = class extends ContainerNode {
@@ -340,6 +340,33 @@ GenNode.drywet = class extends ContainerNode {
 			this.getPropertyHtmlLines(featureContext,i18n,{name:'wet',type:'range'}),
 			this.innerNode.getHtmlLines(featureContext,i18n)
 		)
+	}
+	getInitJsLines(featureContext,i18n) {
+		const a=JsLines.b()
+		a(
+			this.innerNode.getInitJsLines(featureContext,i18n)
+		)
+		a(
+			featureContext.getConnectAssignJsLines(
+				"var",this.dryGainNodeJsName,
+				"ctx.createGain()",
+				this.getPrevNodeOutputs()
+			)
+		)
+		if (!this.options.wet.input) {
+			a(`${this.dryGainNodeJsName}.gain.value=${1-this.options.wet};`) // TODO format number (bugs out when wet=0.59)
+		}
+		a(
+			featureContext.getConnectAssignJsLines(
+				"var",this.wetGainNodeJsName,
+				"ctx.createGain()",
+				this.innerNode.getOutputs()
+			)
+		)
+		if (!this.options.wet.input) {
+			a(`${this.wetGainNodeJsName}.gain.value=${this.options.wet};`) // TODO format number
+		}
+		return a.e()
 	}
 	// protected:
 	get dryGainNodeJsName() {
