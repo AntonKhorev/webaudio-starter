@@ -1,6 +1,7 @@
 'use strict'
 
 const camelCase=require('crnx-base/fake-lodash/camelcase')
+const formatNumber=require('crnx-base/format-number')
 const formatNumbers=require('crnx-base/format-numbers')
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
@@ -55,6 +56,17 @@ class Node extends Feature {
 	}
 	getPropertyInputJsName(propertyName) {
 		return camelCase(this.name+'.'+propertyName+'.input')
+	}
+	getPropertyJsConstant(property,option,value=option.value) {
+		if (property.type=='range') {
+			value=formatNumber.js(value,option.precision)
+		} else if (property.type=='select') {
+			value="'"+value+"'"
+		}
+		if (property.fn) {
+			value=property.fn(value)
+		}
+		return value
 	}
 	getPropertyHtmlLines(featureContext,i18n,property) {
 		if (property.skip) {
@@ -192,15 +204,8 @@ class FilterNode extends SingleNode {
 						"})();"
 					)
 				} else if (property.type!='xhr' && option.value!=option.defaultValue) {
-					let value=option.value // TODO format number
-					if (property.type=='select') {
-						value="'"+value+"'"
-					}
-					if (property.fn) {
-						value=property.fn(value)
-					}
 					a(
-						propertyJsName+"="+value+";"
+						propertyJsName+"="+this.getPropertyJsConstant(property,option)+";"
 					)
 				} else if (property.type=='xhr') {
 					a(
@@ -337,7 +342,7 @@ GenNode.drywet = class extends ContainerNode {
 	}
 	getHtmlLines(featureContext,i18n) {
 		return Lines.bae(
-			this.getPropertyHtmlLines(featureContext,i18n,{name:'wet',type:'range'}),
+			this.getPropertyHtmlLines(featureContext,i18n,this.wetProperty),
 			this.innerNode.getHtmlLines(featureContext,i18n)
 		)
 	}
@@ -354,7 +359,9 @@ GenNode.drywet = class extends ContainerNode {
 			)
 		)
 		if (!this.options.wet.input) {
-			a(`${this.dryGainNodeJsName}.gain.value=${1-this.options.wet};`) // TODO format number (bugs out when wet=0.59)
+			a(
+				this.dryGainNodeJsName+".gain.value="+this.getPropertyJsConstant(this.wetProperty,this.options.wet,1-this.options.wet)+";"
+			)
 		}
 		a(
 			featureContext.getConnectAssignJsLines(
@@ -364,7 +371,9 @@ GenNode.drywet = class extends ContainerNode {
 			)
 		)
 		if (!this.options.wet.input) {
-			a(`${this.wetGainNodeJsName}.gain.value=${this.options.wet};`) // TODO format number
+			a(
+				this.wetGainNodeJsName+".gain.value="+this.getPropertyJsConstant(this.wetProperty,this.options.wet)+";"
+			)
 		}
 		return a.e()
 	}
@@ -374,6 +383,9 @@ GenNode.drywet = class extends ContainerNode {
 	}
 	get wetGainNodeJsName() {
 		return camelCase(this.name+'.wet.gain.node')
+	}
+	get wetProperty() {
+		return {name:'wet',type:'range'}
 	}
 }
 
