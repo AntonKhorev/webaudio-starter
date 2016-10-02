@@ -19,7 +19,7 @@ class Node extends Feature {
 		this.name=name
 	}
 	initEdges(prevNodes,nextNodes) { // call it before calling any other methods
-		this.prevNodes=prevNodes
+		this.prevNodes=prevNodes // need then only for inputs/outputs - could just keep inputs/outputs if not for bypass node
 		this.nextNodes=nextNodes
 	}
 	// get type()
@@ -47,11 +47,66 @@ class Node extends Feature {
 		return names
 	}
 	// protected:
+	get nodeJsName() {
+		return camelCase(this.name+'.node')
+	}
 	getPropertyInputHtmlName(propertyName) {
 		return 'my.'+this.name+'.'+propertyName
 	}
 	getPropertyInputJsName(propertyName) {
 		return camelCase(this.name+'.'+propertyName+'.input')
+	}
+	getPropertyHtmlLines(featureContext,i18n,property) {
+		if (property.skip) {
+			return Lines.be()
+		}
+		const option=this.options[property.name]
+		const inputHtmlName=this.getPropertyInputHtmlName(property.name)
+		const propertyOptionName='options.graph.'+this.type+'.'+property.name
+		const a=Lines.b()
+		if (property.type=='range' && option.input) {
+			const p=option.precision
+			const fmtAttrs=formatNumbers.html({ min:option.min, max:option.max, value:option.value },p)
+			const fmtLabels=formatNumbers({ min:option.min, max:option.max },p)
+			const minMax=n=>i18n.numberWithUnits(n,option.unit,(a,e)=>Lines.html`<abbr title=${e}>`+a+`</abbr>`)
+			a(
+				Lines.html`<label for=${inputHtmlName}>${i18n(propertyOptionName)}:</label>`,
+				"<span class=min>"+minMax(fmtLabels.min)+"</span>",
+				Lines.html`<input id=${inputHtmlName} type=range value=${fmtAttrs.value} min=${fmtAttrs.min} max=${fmtAttrs.max} step=${p?Math.pow(0.1,p).toFixed(p):false}>`,
+				"<span class=max>"+minMax(fmtLabels.max)+"</span>"
+			)
+		} else if (property.type=='select' && option.input) {
+			a(
+				Lines.html`<label for=${inputHtmlName}>${i18n(propertyOptionName)}:</label>`,
+				WrapLines.b(
+					Lines.html`<select id=${inputHtmlName}>`,`</select>`
+				).ae(
+					...option.availableValues.map(value=>{
+						const title=i18n(propertyOptionName+'.'+value)
+						return Lines.html`<option selected=${option.value==value} value=${value!=title && value}>${title}</option>`
+					})
+				)
+			)
+		} else if (property.type=='xhr') {
+			a(
+				Lines.html`<span id=${inputHtmlName}>${i18n(propertyOptionName+'.loading')}</span>`
+			)
+		}
+		return a.e()
+	}
+}
+
+class ContainerNode extends Node {
+	constructor(options,name,innerNode) {
+		super(options,name)
+		this.innerNode=innerNode
+	}
+	get type() {
+		return this.innerNode.type
+	}
+	requestFeatureContext(featureContext) {
+		featureContext.audioContext=true
+		this.innerNode.requestFeatureContext(featureContext)
 	}
 }
 
@@ -66,9 +121,6 @@ class SingleNode extends Node { // corresponds to single web audio node
 		)
 	}
 	// protected:
-	get nodeJsName() {
-		return camelCase(this.name+'.node')
-	}
 	// getCreateNodeJsLines(featureContext)
 }
 
@@ -97,50 +149,12 @@ class FilterNode extends SingleNode {
 		featureContext.audioContext=true
 	}
 	getHtmlLines(featureContext,i18n) {
-		const getPropertyHtmlLines=(property)=>{
-			if (property.skip) {
-				return Lines.be()
-			}
-			const option=this.options[property.name]
-			const inputHtmlName=this.getPropertyInputHtmlName(property.name)
-			const propertyOptionName='options.graph.'+this.type+'.'+property.name
-			const a=Lines.b()
-			if (property.type=='range' && option.input) {
-				const p=option.precision
-				const fmtAttrs=formatNumbers.html({ min:option.min, max:option.max, value:option.value },p)
-				const fmtLabels=formatNumbers({ min:option.min, max:option.max },p)
-				const minMax=n=>i18n.numberWithUnits(n,option.unit,(a,e)=>Lines.html`<abbr title=${e}>`+a+`</abbr>`)
-				a(
-					Lines.html`<label for=${inputHtmlName}>${i18n(propertyOptionName)}:</label>`,
-					"<span class=min>"+minMax(fmtLabels.min)+"</span>",
-					Lines.html`<input id=${inputHtmlName} type=range value=${fmtAttrs.value} min=${fmtAttrs.min} max=${fmtAttrs.max} step=${p?Math.pow(0.1,p).toFixed(p):false}>`,
-					"<span class=max>"+minMax(fmtLabels.max)+"</span>"
-				)
-			} else if (property.type=='select' && option.input) {
-				a(
-					Lines.html`<label for=${inputHtmlName}>${i18n(propertyOptionName)}:</label>`,
-					WrapLines.b(
-						Lines.html`<select id=${inputHtmlName}>`,`</select>`
-					).ae(
-						...option.availableValues.map(value=>{
-							const title=i18n(propertyOptionName+'.'+value)
-							return Lines.html`<option selected=${option.value==value} value=${value!=title && value}>${title}</option>`
-						})
-					)
-				)
-			} else if (property.type=='xhr') {
-				a(
-					Lines.html`<span id=${inputHtmlName}>${i18n(propertyOptionName+'.loading')}</span>`
-				)
-			}
-			return a.e()
-		}
 		return Lines.bae(
 			...this.properties.map(
 				property=>NoseWrapLines.b(
 					"<div>","</div>"
 				).ae(
-					getPropertyHtmlLines(property)
+					this.getPropertyHtmlLines(featureContext,i18n,property)
 				)
 			)
 		)
@@ -219,19 +233,15 @@ class FilterNode extends SingleNode {
 
 //// concrete classes
 
-GenNode.bypass = class extends Node {  // used when enableInput is set
+GenNode.bypass = class extends ContainerNode { // used when enableInput is set
 	constructor(options,name,innerNode,rewireInput,rewireOutput) {
-		super(options,name)
-		this.innerNode=innerNode
+		super(options,name,innerNode)
 		this.rewireInput=rewireInput
 		this.rewireOutput=rewireOutput
 	}
 	initEdges(prevNodes,nextNodes) {
 		super.initEdges(prevNodes,nextNodes)
 		this.innerNode.initEdges(prevNodes,nextNodes)
-	}
-	get type() {
-		return this.innerNode.type
 	}
 	getInputs() {
 		const names=[]
@@ -253,13 +263,9 @@ GenNode.bypass = class extends Node {  // used when enableInput is set
 		}
 		return names
 	}
-	requestFeatureContext(featureContext) {
-		featureContext.audioContext=true
-		this.innerNode.requestFeatureContext(featureContext)
-	}
 	getHtmlLines(featureContext,i18n) {
 		const inputHtmlName=this.getPropertyInputHtmlName('enabled')
-		return JsLines.bae(
+		return Lines.bae(
 			NoseWrapLines.b("<div>","</div>").ae(
 				Lines.html`<input id=${inputHtmlName} type=checkbox checked=${this.options.enabled}>`,
 				Lines.html`<label for=${inputHtmlName}>${i18n('options-output.enabled')}</label>` // TODO correct i18n
@@ -310,6 +316,37 @@ GenNode.bypass = class extends Node {  // used when enableInput is set
 	}
 	getVisJsLines(featureContext,i18n) {
 		return this.innerNode.getVisJsLines(featureContext,i18n)
+	}
+}
+
+GenNode.drywet = class extends ContainerNode {
+	initEdges(prevNodes,nextNodes) {
+		super.initEdges(prevNodes,nextNodes)
+		const wetGainDummyNode={
+			getInputs() {
+				[this.wetGainNodeJsName]
+			}
+		}
+		this.innerNode.initEdges(prevNodes,[wetGainDummyNode])
+	}
+	getInputs() {
+		return [this.dryGainNodeJsName,...this.innerNode.getInputs()]
+	}
+	getOutputs() {
+		return [this.dryGainNodeJsName,this.wetGainNodeJsName]
+	}
+	getHtmlLines(featureContext,i18n) {
+		return Lines.bae(
+			this.getPropertyHtmlLines(featureContext,i18n,{name:'wet',type:'range'}),
+			this.innerNode.getHtmlLines(featureContext,i18n)
+		)
+	}
+	// protected:
+	get dryGainNodeJsName() {
+		return camelCase(this.name+'.dry.gain.node')
+	}
+	get wetGainNodeJsName() {
+		return camelCase(this.name+'.wet.gain.node')
 	}
 }
 

@@ -55,6 +55,25 @@ class Node {
 	}
 }
 
+class ContainerNode extends Node {
+	constructor(options,innerNode) {
+		super(options)
+		this.innerNode=innerNode
+	}
+	get type() {
+		return this.innerNode.type
+	}
+	get passive() {
+		return this.innerNode.passive
+	}
+	get downstreamEffect() {
+		return this.innerNode.downstreamEffect
+	}
+	get upstreamEffect() {
+		return this.innerNode.upstreamEffect
+	}
+}
+
 class MediaElementNode extends Node {
 	get downstreamEffect() {
 		return true
@@ -92,25 +111,12 @@ class PassiveByDefaultFilterNode extends FilterNode {
 // TODO fix bug with non-fixed inner element
 // 	by insulating it with junctions - can't do it now b/c can't ask for junctions to be generated - graph has to do it
 // 	(currently it's impossible to get this bug through options)
-ConNode.bypass = class extends Node {  // used when enableInput is set
+ConNode.bypass = class extends ContainerNode { // used when enableInput is set
 	constructor(options,innerNode) {
-		super(options)
-		this.innerNode=innerNode
+		super(options,innerNode)
 		this.rewireInput=(this.innerNode.upstreamEffect || !this.innerNode.downstreamEffect) // prefer to rewire inputs
 		this.rewireOutput=this.innerNode.downstreamEffect
 		// TODO rewire smaller side
-	}
-	get type() {
-		return this.innerNode.type
-	}
-	get passive() {
-		return this.innerNode.passive
-	}
-	get downstreamEffect() {
-		return this.innerNode.downstreamEffect
-	}
-	get upstreamEffect() {
-		return this.innerNode.upstreamEffect
 	}
 	get fixedInputs() {
 		return this.passive
@@ -129,6 +135,21 @@ ConNode.bypass = class extends Node {  // used when enableInput is set
 			this.options,name,
 			this.innerNode.toGenNode(GenNode,name),
 			this.rewireInput,this.rewireOutput
+		)
+	}
+}
+
+ConNode.drywet = class extends ContainerNode {
+	get estimatedNInputs() {
+		return this.innerNode.estimatedNInputs+1
+	}
+	get estimatedNOutputs() {
+		return 2
+	}
+	toGenNode(GenNode,name) {
+		return new GenNode.drywet(
+			this.options,name,
+			this.innerNode.toGenNode(GenNode,name)
 		)
 	}
 }
