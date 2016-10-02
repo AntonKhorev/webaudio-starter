@@ -6,7 +6,6 @@ const formatNumbers=require('crnx-base/format-numbers')
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
 const NoseWrapLines=require('crnx-base/nose-wrap-lines')
-const RefLines=require('crnx-base/ref-lines')
 const Feature=require('./feature')
 
 const GenNode={}
@@ -132,14 +131,6 @@ class SingleNode extends Node { // corresponds to single web audio node
 	getOutputs() {
 		return [this.nodeJsName]
 	}
-	getInitJsLines(featureContext,i18n) {
-		return JsLines.bae(
-			RefLines.parse("// "+i18n('comment.graph.'+this.type)),
-			this.getCreateNodeJsLines(featureContext)
-		)
-	}
-	// protected:
-	// getCreateNodeJsLines(featureContext)
 }
 
 class MediaElementNode extends SingleNode {
@@ -152,7 +143,7 @@ class MediaElementNode extends SingleNode {
 	get elementHtmlName() {
 		return 'my.'+this.name
 	}
-	getCreateNodeJsLines(featureContext) {
+	getInitJsLines(featureContext,i18n) {
 		return JsLines.bae(
 			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
 		)
@@ -179,7 +170,11 @@ class FilterNode extends SingleNode {
 	}
 	getInitJsLines(featureContext,i18n) {
 		return Lines.bae(
-			super.getInitJsLines(featureContext,i18n),
+			featureContext.getConnectAssignJsLines(
+				"var",this.nodeJsName,
+				"ctx."+this.ctxCreateMethodName+"()",
+				this.getPrevNodeOutputs()
+			),
 			...this.properties.map(property=>{
 				if (property.skip) {
 					return Lines.be()
@@ -230,15 +225,9 @@ class FilterNode extends SingleNode {
 		)
 	}
 	// protected:
+	// get ctxCreateMethodName()
 	get properties() {
 		return []
-	}
-	getCreateNodeJsLines(featureContext) {
-		return featureContext.getConnectAssignJsLines(
-			"var",this.nodeJsName,
-			"ctx."+this.ctxCreateMethodName+"()",
-			this.getPrevNodeOutputs()
-		)
 	}
 }
 
@@ -504,7 +493,6 @@ GenNode.destination = class extends Node {
 	}
 	getInitJsLines(featureContext,i18n) {
 		return JsLines.bae(
-			RefLines.parse("// "+i18n('comment.graph.destination')),
 			...this.getPrevNodeOutputs().map(name=>name+".connect(ctx.destination);")
 		)
 	}
