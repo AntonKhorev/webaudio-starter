@@ -375,6 +375,17 @@ GenNode.drywet = class extends ContainerNode {
 				this.wetGainNodeJsName+".gain.value="+this.getPropertyJsConstant(this.wetProperty,this.options.wet)+";"
 			)
 		}
+		if (this.options.wet.input) {
+			const inputHtmlName=this.getPropertyInputHtmlName('wet')
+			const inputJsName=this.getPropertyInputJsName('wet')
+			a(
+				"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
+				";("+inputJsName+".oninput=function(){",
+				"	"+this.wetGainNodeJsName+".gain.value="+inputJsName+".value;",
+				"	"+this.dryGainNodeJsName+".gain.value=1-"+inputJsName+".value;",
+				"})();"
+			)
+		}
 		return a.e()
 	}
 	// protected:
