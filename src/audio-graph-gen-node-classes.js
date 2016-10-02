@@ -23,6 +23,9 @@ class Node extends Feature {
 		this.nextNodes=nextNodes
 	}
 	// get type()
+	get jsCommentType() {
+		return this.type
+	}
 	getInputs() {
 		return []
 	}
@@ -114,6 +117,9 @@ class ContainerNode extends Node {
 	}
 	get type() {
 		return this.innerNode.type
+	}
+	get jsCommentType() {
+		return this.innerNode.jsCommentType
 	}
 	requestFeatureContext(featureContext) {
 		featureContext.audioContext=true
@@ -322,6 +328,9 @@ GenNode.drywet = class extends ContainerNode {
 			}
 		}
 		this.innerNode.initEdges(prevNodes,[wetGainDummyNode])
+	}
+	get jsCommentType() {
+		return this.innerNode.jsCommentType+'.drywet'
 	}
 	getInputs() {
 		return [this.dryGainNodeJsName,...this.innerNode.getInputs()]

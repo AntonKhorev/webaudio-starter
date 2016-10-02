@@ -264,7 +264,7 @@ class AudioGraph extends Feature {
 	getInitJsLines(featureContext,i18n) {
 		if (featureContext.audioContext) {
 			return InterleaveLines.bae(...this.nodes.map(node=>JsLines.bae(
-				RefLines.parse("// "+i18n('comment.graph.'+node.type)),
+				RefLines.parse("// "+i18n('comment.graph.'+node.jsCommentType)),
 				node.getInitJsLines(featureContext,i18n)
 			)))
 		}
