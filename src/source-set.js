@@ -11,22 +11,8 @@ const InterleaveLines=require('crnx-base/interleave-lines')
 const RefLines=require('crnx-base/ref-lines')
 const CollectionFeature=require('./collection-feature')
 
-class Source {
-	constructor(options,n) {
-		this.options=options
-		this.n=n
-	}
-}
-
 const sourceClasses={
 	sample: class extends Source {
-		get type() { return 'sample' }
-		getElementHtmlLines(featureContext,i18n) {
-			const messageHtmlName=this.elementHtmlName+'.buffer'
-			return Lines.bae(
-				Lines.html`<button id=${this.elementHtmlName} disabled>${i18n('label.sources.sample.play')}</button> <span id=${messageHtmlName}>${i18n('options.sources.sample.buffer.loading')}</span>`
-			)
-		}
 		getJsInitLines(featureContext,i18n) {
 			const messageHtmlName=this.elementHtmlName+'.buffer'
 			const fmtMul=(fmtNum)=>{

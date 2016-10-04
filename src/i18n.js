@@ -14,8 +14,6 @@ const langStrings={
 		'options.graph.{audio,video}.add': "Add {} element",
 		'options.graph.sample': "Sample",
 		'options.graph.sample.add': "Add sample",
-		'options.graph.sample.buffer.loading': "Loading and decoding the sample",
-		'options.graph.sample.buffer.error': "Error while loading the sample",
 		'options.graph.sample.repeat': "Repeat sample",
 		'options.graph.sample.interval': "Repeat interval",
 		'options.graph.sample.randomShift': "Random start time",
@@ -53,8 +51,6 @@ const langStrings={
 		'options.graph.convolver.add': "Add convolver",
 		'options.graph.convolver.url': "<abbr title='impulse responce'>IR</abbr> URL", // "Impulse responce URL",
 		'options.graph.convolver.wet': "Reverb (dry/wet)",
-		'options.graph.convolver.buffer.loading': "Loading and decoding the impulse response",
-		'options.graph.convolver.buffer.error': "Error while loading the impulse response",
 		/*
 		'options.graph.equalizer': "Equalizer",
 		'options.graph.equalizer.add': "Add equalizer",
@@ -134,8 +130,11 @@ const langStrings={
 
 		'code.title': "Web Audio API example — generated code",
 
-		'label.sources.sample.play': "Play sample",
-		'label.destination.compressor': "Enable dynamics compressor",
+		'label.graph.sample.play': "Play sample",
+		'label.graph.sample.buffer.loading': "Loading and decoding the sample",
+		'label.graph.sample.buffer.error': "Error while loading the sample",
+		'label.graph.convolver.buffer.loading': "Loading and decoding the impulse response",
+		'label.graph.convolver.buffer.error': "Error while loading the impulse response",
 
 		'comment.context': "create [audio context][context]",
 		'comment.graph.junction': "create junction node as [gain node][gain]",
@@ -173,8 +172,6 @@ const langStrings={
 		'options.graph.{audio,video}.add': "Добавить элемент <code>{}</code>",
 		'options.graph.sample': "Сэмпл",
 		'options.graph.sample.add': "Добавить сэмпл",
-		'options.graph.sample.buffer.loading': "Идёт загрузка и декодирование сэмпла",
-		'options.graph.sample.buffer.error': "Ошибка загрузки сэмпла",
 		'options.graph.sample.repeat': "Повторить сэмпл",
 		'options.graph.sample.interval': "Интервал повторов",
 		'options.graph.sample.randomShift': "Случ. сдвиг начала",
@@ -217,8 +214,6 @@ const langStrings={
 		'options.graph.convolver.add': "Добавить свёртку",
 		'options.graph.convolver.url': "URL", //"URL импульсной характеристики",
 		'options.graph.convolver.wet': "Соотношение прямого/обработанного звука", // http://www.ixbt.com/proaudio/theory-of-reverb.shtml
-		'options.graph.convolver.buffer.loading': "Идёт загрузка и декодирование импульсной характеристики",
-		'options.graph.convolver.buffer.error': "Ошибка загрузки импульсной характеристики",
 		/*
 		'options.graph.equalizer': "Эквалайзер",
 		'options.graph.equalizer.add': "Добавить эквалайзер",
@@ -298,8 +293,11 @@ const langStrings={
 
 		'code.title': "Пример использования Web Audio API — сгенерированный код",
 
-		'label.sources.sample.play': "Играть сэмпл",
-		'label.destination.compressor': "Включить компрессор",
+		'label.graph.sample.play': "Играть сэмпл",
+		'label.graph.sample.buffer.loading': "Идёт загрузка и декодирование сэмпла",
+		'label.graph.sample.buffer.error': "Ошибка загрузки сэмпла",
+		'label.graph.convolver.buffer.loading': "Идёт загрузка и декодирование импульсной характеристики",
+		'label.graph.convolver.buffer.error': "Ошибка загрузки импульсной характеристики",
 
 		'comment.context': "создаём [аудио-контекст][context]",
 		'comment.graph.junction': "создаём узел для соединения в виде [узла усилителя][gain]",

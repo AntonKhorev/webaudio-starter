@@ -2,6 +2,8 @@
 
 const ConNode={}
 
+const MANY=100 // "infinity", can't use infinity directly b/c have to multiply by it
+
 //// abstract classes (not exported)
 
 class Node {
@@ -125,10 +127,10 @@ ConNode.bypass = class extends ContainerNode { // used when enableInput is set
 		return this.passive
 	}
 	get estimatedNInputs() {
-		return 100 // "infinity", can't use infinity directly b/c have to multiply by it
+		return MANY
 	}
 	get estimatedNOutputs() {
-		return 100 // "infinity", can't use infinity directly b/c have to multiply by it
+		return MANY
 	}
 	toGenNode(GenNode,name) {
 		return new GenNode.bypass(
@@ -176,6 +178,21 @@ ConNode.audio = class extends MediaElementNode {
 ConNode.video = class extends MediaElementNode {
 	get type() {
 		return 'video'
+	}
+}
+
+ConNode.sample = class extends Node {
+	get type() {
+		return 'sample'
+	}
+	get downstreamEffect() {
+		return true
+	}
+	get fixedOutputs() {
+		return false
+	}
+	get estimatedNOutputs() {
+		return MANY
 	}
 }
 

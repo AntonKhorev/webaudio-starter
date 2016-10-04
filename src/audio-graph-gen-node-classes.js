@@ -50,6 +50,9 @@ class Node extends Feature {
 		return names
 	}
 	// protected:
+	get nodeHtmlName() {
+		return 'my.'+this.name
+	}
 	get nodeJsName() {
 		return camelCase(this.name+'.node')
 	}
@@ -103,7 +106,7 @@ class Node extends Feature {
 			)
 		} else if (property.type=='xhr') {
 			a(
-				Lines.html`<span id=${inputHtmlName}>${i18n(propertyOptionName+'.loading')}</span>`
+				Lines.html`<span id=${inputHtmlName}>${i18n('label.graph.'+this.type+'.'+property.name+'.loading')}</span>`
 			)
 		}
 		return a.e()
@@ -146,12 +149,9 @@ class MediaElementNode extends SingleNode {
 		)
 	}
 	// protected:
-	get elementHtmlName() {
-		return 'my.'+this.name
-	}
 	getInitJsLines(featureContext,i18n) {
 		return JsLines.bae(
-			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.elementHtmlName+"'));"
+			"var "+this.nodeJsName+"=ctx.createMediaElementSource(document.getElementById('"+this.nodeHtmlName+"'));"
 		)
 	}
 }
@@ -186,7 +186,6 @@ class FilterNode extends SingleNode {
 					return Lines.be()
 				}
 				const option=this.options[property.name]
-				const propertyOptionName='options.graph.'+this.type+'.'+property.name
 				const propertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")
 				const inputJsName=this.getPropertyInputJsName(property.name)
 				const inputHtmlName=this.getPropertyInputHtmlName(property.name)
@@ -218,7 +217,7 @@ class FilterNode extends SingleNode {
 					if (featureContext.loaderOnError) {
 						a.t(
 							",function(){",
-							"	document.getElementById('"+inputHtmlName+"').textContent='"+i18n(propertyOptionName+'.error')+"';",
+							"	document.getElementById('"+inputHtmlName+"').textContent='"+i18n('label.graph.'+this.type+'.'+property.name+'.error')+"';",
 							"}"
 						)
 					}
@@ -413,7 +412,7 @@ GenNode.audio = class extends MediaElementNode {
 	}
 	getElementHtmlLines(featureContext,i18n) {
 		return Lines.bae(
-			Lines.html`<audio src=${this.options.url} id=${this.elementHtmlName} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></audio>`
+			Lines.html`<audio src=${this.options.url} id=${this.nodeHtmlName} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></audio>`
 		)
 	}
 }
@@ -424,7 +423,23 @@ GenNode.video = class extends MediaElementNode {
 	}
 	getElementHtmlLines(featureContext,i18n) {
 		return Lines.bae(
-			Lines.html`<video src=${this.options.url} id=${this.elementHtmlName} width=${this.options.width} height=${this.options.height} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></video>`
+			Lines.html`<video src=${this.options.url} id=${this.nodeHtmlName} width=${this.options.width} height=${this.options.height} controls loop crossorigin=${featureContext.audioContext?'anonymous':false}></video>`
+		)
+	}
+}
+
+GenNode.sample = class extends Node {
+	get type() {
+		return 'sample'
+	}
+	requestFeatureContext(featureContext) {
+		featureContext.audioContext=true
+		featureContext.loader=true
+	}
+	getHtmlLines(featureContext,i18n) {
+		const messageHtmlName=this.nodeHtmlName+'.buffer'
+		return NoseWrapLines.b("<div>","</div>").ae(
+			Lines.html`<button id=${this.nodeHtmlName} disabled>${i18n('label.graph.sample.play')}</button> <span id=${messageHtmlName}>${i18n('label.graph.sample.buffer.loading')}</span>`
 		)
 	}
 }

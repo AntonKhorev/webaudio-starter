@@ -57,7 +57,7 @@ class AudioGraph extends Feature {
 						node=new ConNode.drywet(nodeOptions,node)
 					}
 				}
-				//if (bypassable) { // everything is bypassable
+				if (!(node instanceof ConNode.sample)) { // bypassable
 					if (!nodeOptions.enabled && !nodeOptions.enabledInput) {
 						node=new ConNode.junction
 						destinationScore=0
@@ -65,7 +65,7 @@ class AudioGraph extends Feature {
 						node=new ConNode.bypass(nodeOptions,node)
 						destinationScore*=2+nodeOptions.enabled
 					}
-				//}
+				}
 				return [node,destinationScore]
 			})
 			const keepBestNodes=(nodesAndScores)=>{ // got to have only one "best" destination node
