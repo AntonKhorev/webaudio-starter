@@ -448,6 +448,105 @@ GenNode.sample = class extends Node {
 			Lines.html`<button id=${this.nodeHtmlName} disabled>${i18n('label.graph.sample.play')}</button> <span id=${messageHtmlName}>${i18n('label.graph.sample.buffer.loading')}</span>`
 		)
 	}
+	getInitJsLines(featureContext,i18n) {
+		const messageHtmlName=this.nodeHtmlName+'.buffer'
+		const fmtMul=(fmtNum)=>{
+			if (fmtNum==1) {
+				return ""
+			} else {
+				return "*"+fmtNum
+			}
+		}
+		const getSampleLines=(startOptions)=>{
+			const randomValue=(baseOption,randomOption)=>{
+				const numbers={}
+				numbers.base=baseOption
+				if (randomOption>0) {
+					numbers.random=randomOption
+				}
+				const fmt=formatNumbers.js(numbers)
+				let value=fmt.base
+				if (randomOption>0) {
+					value+="+Math.random()"+fmtMul(fmt.random)
+				}
+				return value
+			}
+			const a=JsLines.b()
+			let lastNodeName="bufferSourceNode"
+			a(
+				"var bufferSourceNode=ctx.createBufferSource();",
+				"bufferSourceNode.buffer=buffer;"
+			)
+			if (this.options.pitch!=1 || this.options.randomPitch>0) {
+				a(
+					"bufferSourceNode.playbackRate.value="+randomValue(this.options.pitch,this.options.randomPitch)+";"
+				)
+			}
+			if (this.options.gain!=1 || this.options.randomGain>0) {
+				lastNodeName="bufferSourceGainNode"
+				a(
+					featureContext.getConnectAssignJsLines("var","bufferSourceGainNode","ctx.createGain()",["bufferSourceNode"]),
+					"bufferSourceGainNode.gain.value="+randomValue(this.options.gain,this.options.randomGain)+";"
+				)
+			}
+			a(
+				...this.getNextNodeInputs().map(
+					nodeJsName=>lastNodeName+".connect("+nodeJsName+");"
+				),
+				"bufferSourceNode.start("+startOptions+");"
+			)
+			return a.e()
+		}
+		const getOnClickLines=()=>{
+			let startOptions=""
+			const numbers={}
+			if (this.options.repeat!=1) {
+				numbers.interval=this.options.interval
+			}
+			if (this.options.randomShift>0) {
+				numbers.randomShift=this.options.randomShift
+			}
+			const fmt=formatNumbers.js(numbers)
+			if (this.options.repeat!=1) {
+				startOptions+="+i"+fmtMul(fmt.interval)
+			}
+			if (this.options.randomShift>0) {
+				startOptions+="+Math.random()"+fmtMul(fmt.randomShift)
+			}
+			if (startOptions.length>0) {
+				startOptions="ctx.currentTime"+startOptions
+			}
+			if (this.options.repeat==1) {
+				return getSampleLines(startOptions)
+			} else {
+				return WrapLines.b(
+					JsLines.bae("for (var i=0;i<"+this.options.repeat+";i++) {"),
+					JsLines.bae("}")
+				).ae(
+					getSampleLines(startOptions)
+				)
+			}
+		}
+		const getOnDecodeLines=()=>{
+			return JsLines.bae(
+				"var button=document.getElementById('"+this.nodeHtmlName+"');",
+				WrapLines.b(
+					JsLines.bae("button.onclick=function(){"),
+					JsLines.bae("};")
+				).ae(
+					getOnClickLines()
+				),
+				"button.disabled=false;",
+				"document.getElementById('"+messageHtmlName+"').textContent='';"
+			)
+		}
+		const getOnErrorLines=()=>{
+			return JsLines.bae(
+				"document.getElementById('"+messageHtmlName+"').textContent='"+i18n('label.graph.sample.buffer.error')+"';"
+			)
+		}
+		return this.getXhrJsLines(featureContext,i18n,getOnDecodeLines(),getOnErrorLines())
+	}
 }
 
 GenNode.gain = class extends FilterNode {
