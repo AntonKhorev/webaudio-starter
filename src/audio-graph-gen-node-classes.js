@@ -5,6 +5,7 @@ const formatNumber=require('crnx-base/format-number')
 const formatNumbers=require('crnx-base/format-numbers')
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
+const WrapLines=require('crnx-base/wrap-lines')
 const NoseWrapLines=require('crnx-base/nose-wrap-lines')
 const Feature=require('./feature')
 
@@ -111,6 +112,22 @@ class Node extends Feature {
 		}
 		return a.e()
 	}
+	getXhrJsLines(featureContext,i18n,onDecodeLines,onErrorLines) {
+		const leadLines=JsLines.bae(
+			"loadSample('"+this.options.url+"',function(buffer){" // TODO html escape
+		)
+		const midLines=JsLines.bae(
+			"},function(){"
+		)
+		const endLines=JsLines.bae(
+			"});"
+		)
+		if (!featureContext.loaderOnError) {
+			return WrapLines.b(leadLines,endLines).ae(onDecodeLines)
+		} else {
+			return WrapLines.b(leadLines,midLines,endLines).ae(onDecodeLines,onErrorLines)
+		}
+	}
 }
 
 class ContainerNode extends Node {
@@ -175,7 +192,7 @@ class FilterNode extends SingleNode {
 		)
 	}
 	getInitJsLines(featureContext,i18n) {
-		return Lines.bae(
+		return JsLines.bae(
 			featureContext.getConnectAssignJsLines(
 				"var",this.nodeJsName,
 				"ctx."+this.ctxCreateMethodName+"()",
@@ -183,20 +200,19 @@ class FilterNode extends SingleNode {
 			),
 			...this.properties.map(property=>{
 				if (property.skip) {
-					return Lines.be()
+					return JsLines.be()
 				}
 				const option=this.options[property.name]
 				const propertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")
 				const inputJsName=this.getPropertyInputJsName(property.name)
 				const inputHtmlName=this.getPropertyInputHtmlName(property.name)
-				const a=JsLines.b()
 				if (property.type!='xhr' && option.input) {
 					let value=inputJsName+".value"
 					if (property.fn) {
 						value=property.fn(value)
 					}
 					const eventProp=(property.type=='range'?'oninput':'onchange')
-					a(
+					return JsLines.bae(
 						"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
 						// was for IE11 compat (but IE11 has no Web Audio): (property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
 						";("+inputJsName+"."+eventProp+"=function(){",
@@ -204,28 +220,18 @@ class FilterNode extends SingleNode {
 						"})();"
 					)
 				} else if (property.type!='xhr' && option.value!=option.defaultValue) {
-					a(
+					return JsLines.bae(
 						propertyJsName+"="+this.getPropertyJsConstant(property,option)+";"
 					)
 				} else if (property.type=='xhr') {
-					a(
-						"loadSample('"+this.options.url+"',function(buffer){", // TODO html escape
-						"	"+propertyJsName+"=buffer;",
-						"	document.getElementById('"+inputHtmlName+"').textContent='';",
-						"}"
-					)
-					if (featureContext.loaderOnError) {
-						a.t(
-							",function(){",
-							"	document.getElementById('"+inputHtmlName+"').textContent='"+i18n('label.graph.'+this.type+'.'+property.name+'.error')+"';",
-							"}"
-						)
-					}
-					a.t(
-						");"
-					)
+					return this.getXhrJsLines(featureContext,i18n,JsLines.bae(
+						propertyJsName+"=buffer;",
+						"document.getElementById('"+inputHtmlName+"').textContent='';"
+					),JsLines.bae(
+						"document.getElementById('"+inputHtmlName+"').textContent='"+i18n('label.graph.'+this.type+'.'+property.name+'.error')+"';"
+					))
 				}
-				return a.e()
+				return JsLines.be()
 			})
 		)
 	}
