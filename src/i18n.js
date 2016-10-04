@@ -4,8 +4,8 @@ const webaudioSpec='https://webaudio.github.io/web-audio-api/'
 const webaudioIssue=n=>`<a href='https://github.com/WebAudio/web-audio-api/issues/${n}'>${n}</a>`
 const webaudioDetect='https://github.com/GoogleChrome/web-audio-samples/wiki/Detection-of-lowpass-BiquadFilter-implementation'
 
-const enColors="{<span style='color:#800'>red</span>,<span style='color:#080'>green</span>,<span style='color:#008'>blue</span>,opacity}"
-const ruColors="{<span style='color:#800'>Красный</span> ,<span style='color:#080'>Зелёный</span> ,<span style='color:#008'>Синий</span> ,Альфа-}канал"
+const enColors="{<span style='color:#800'>Red</span>,<span style='color:#080'>Green</span>,<span style='color:#008'>Blue</span>,Opacity}"
+const ruColors="{<span style='color:#800'>Красный</span>,<span style='color:#080'>Зелёный</span>,<span style='color:#008'>Синий</span>,Альфа-канал}"
 
 const langStrings={
 	en:{
@@ -58,16 +58,17 @@ const langStrings={
 		*/
 		'options.graph.compressor': "Dynamics compressor",
 		'options.graph.compressor.add': "Add dynamics compressor",
+		'options.graph.{waveform,frequencies}': "{Waveform,Frequencies} visualization",
+		'options.graph.{waveform,frequencies}.add': "Add {} visualization",
+		'options.graph.{waveform,frequencies,volume}.logFftSize': "log(FFT size)",
+		'options.graph.waveform.width': "Line width",
+		'options.graph.waveform.color': "Line color",
+		'options.graph.waveform.color.{r,g,b,a}': enColors,
 		'options.graph.destination': "Destination",
 		'options.graph.destination.add': "Add destination",
 		'options.graph.junction': "Junction", // not used
 
 		/*
-		'options.destination.{waveform,frequencies}': "{Waveform,Frequencies} visualization",
-		'options.destination.{waveform,frequencies}.enabled': "Enable {} visualization",
-		'options.destination.waveform.width': "Waveform line width",
-		'options.destination.waveform.color': "Waveform line color",
-		'options.destination.waveform.color.{r,g,b,a}': `Waveform line ${enColors}`,
 		'options.destination.frequencies.cutoff': "Limit plot to a fraction of low frequences",
 		'options.destination.frequencies.base': "Frequency bars extend from",
 		'options.destination.frequencies.base.{bottom,middle}': "{} of canvas",
@@ -84,8 +85,6 @@ const langStrings={
 		'options.destination.volume': "Volume meter",
 		'options.destination.volume.enabled': "Enable volume meter",
 		'options.destination.volume.stereo': "Meters for left and right stereo channels",
-		'options.destination.analyser': "Analyser",
-		'options.destination.analyser.logFftSize': "FFT size (power of 2)",
 		*/
 
 		'options.canvas': "Canvas",
@@ -221,16 +220,18 @@ const langStrings={
 		*/
 		'options.graph.compressor': "Компрессор",
 		'options.graph.compressor.add': "Добавить компрессор",
+		'options.graph.{waveform,frequencies}': "Визуализация {волны,частот}",
+		'options.graph.{waveform,frequencies}.add': "Добавить визуализацию {волны,частот}",
+		'options.graph.{waveform,frequencies,volume}.logFftSize': "log размера БПФ",
+		'options.graph.waveform.width': "Ширина линии",
+		'options.graph.waveform.color': "Цвет линии",
+		'options.graph.waveform.color.{r,g,b,a}': ruColors,
+
 		'options.graph.destination': "Выход",
 		'options.graph.destination.add': "Добавить выход",
 		'options.graph.junction': "Узел для соединения", // not used
 
 		/*
-		'options.destination.{waveform,frequencies}': "Визуализация {формы волны,частот}",
-		'options.destination.{waveform,frequencies}.enabled': "Включить визуализацию {формы волны,частот}",
-		'options.destination.waveform.width': "Ширина линии волны",
-		'options.destination.waveform.color': "Цвет линии волны",
-		'options.destination.waveform.color.{r,g,b,a}': `${ruColors} линии волны`,
 		'options.destination.frequencies.cutoff': "Ограничить рисование долей низких частот",
 		'options.destination.frequencies.base': "Полосы частот растут от",
 		'options.destination.frequencies.base.{bottom,middle}': "{низа,середины} элемента <code>canvas</code>",
@@ -247,8 +248,6 @@ const langStrings={
 		'options.destination.volume': "Индикатор громкости",
 		'options.destination.volume.enabled': "Включить индикатор громкости",
 		'options.destination.volume.stereo': "Отдельные индикаторы для левого и правого каналов",
-		'options.destination.analyser': "Анализатор",
-		'options.destination.analyser.logFftSize': "Размер БПФ (степень 2)",
 		*/
 
 		'options.canvas': "Элемент <code>canvas</code>",

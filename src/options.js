@@ -71,27 +71,22 @@ class Options extends BaseOptions {
 				['AudioGraphNode','compressor',[ // Firefox compresses automatically?
 					['Checkbox','enabled',true],
 				]],
+				['AudioGraphNode','waveform',[
+					['Int','logFftSize',[5,12],8],
+					['Float','width',[0,10],1,{ unit: 'pixel' }],
+					['Group','color',[
+						['Int','r',[0,100],0,{ unit: '%' }],
+						['Int','g',[0,100],0,{ unit: '%' }],
+						['Int','b',[0,100],0,{ unit: '%' }],
+						['Int','a',[0,100],100,{ unit: '%' }],
+					]],
+				]],
 				['AudioGraphNode','destination',[
 					['Checkbox','enabled',true],
 				],{ outEdges:false }],
 			],'nodeType'],
 			/*
 			['Group','destination',[
-				['Group','waveform',[
-					['Checkbox','enabled'],
-					['Float','width',[0,10],1,{
-						unit: 'pixel',
-						visibilityData: {'destination.waveform.enabled':[true]},
-					}],
-					['Group','color',[
-						['Int','r',[0,100],0,{ unit: '%' }],
-						['Int','g',[0,100],0,{ unit: '%' }],
-						['Int','b',[0,100],0,{ unit: '%' }],
-						['Int','a',[0,100],100,{ unit: '%' }],
-					],{
-						visibilityData: {'destination.waveform.enabled':[true]},
-					}],
-				]],
 				['Group','frequencies',[
 					['Checkbox','enabled'],
 					['Int','cutoff',[10,100],100,{
@@ -131,12 +126,6 @@ class Options extends BaseOptions {
 						visibilityData: {'destination.volume.enabled':[true]},
 					}],
 				]],
-				['Group','analyser',[
-					['Int','logFftSize',[5,12],8],
-				],{
-					visibilityData: {'destination.waveform.enabled':[true],'destination.frequencies.enabled':[true],'destination.volume.enabled':[true]},
-					visibilityDataLogic: 'or',
-				}],
 			]],
 			*/
 			['Group','canvas',[
