@@ -18,7 +18,7 @@ class Options extends BaseOptions {
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/drums.ogg',
 						'https://cdn.rawgit.com/cwilso/WebAudio/9ece1787cede81ddcd26f2a78d4fb3ba0812379a/sounds/guitar.ogg',
 					]],
-				],{inEdges:false}],
+				],{ inEdges:false }],
 				['AudioGraphNode','video',[
 					['Checkbox','enabled',true],
 					['Text','url',[
@@ -29,9 +29,8 @@ class Options extends BaseOptions {
 					]],
 					['Int','width',[1,1920],320,{ unit: 'pixel' }],
 					['Int','height',[1,1080],240,{ unit: 'pixel' }],
-				],{inEdges:false}],
-				/*
-				['Group','sample',[
+				],{ inEdges:false }],
+				['AudioGraphNode','sample',[
 					['Text','url',[
 						'http://mainline.i3s.unice.fr/mooc/shoot1.mp3',
 						'http://mainline.i3s.unice.fr/mooc/shoot2.mp3',
@@ -43,8 +42,7 @@ class Options extends BaseOptions {
 					['Float','randomPitch',[0,1]],
 					['Float','gain',[0,2],1],
 					['Float','randomGain',[0,1]],
-				]],
-				*/
+				],{ inEdges:false, enableSwitch:false }],
 				['AudioGraphNode','gain',[
 					['Checkbox','enabled',true],
 					['LiveFloat','gain',[0,10],1,{
@@ -75,7 +73,7 @@ class Options extends BaseOptions {
 				]],
 				['AudioGraphNode','destination',[
 					['Checkbox','enabled',true],
-				],{outEdges:false}],
+				],{ outEdges:false }],
 			],'nodeType'],
 			/*
 			['Group','destination',[

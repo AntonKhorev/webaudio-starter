@@ -274,7 +274,9 @@ Option.GraphNode = class extends Option.Group {
 Option.AudioGraphNode = class extends Option.GraphNode {
 	static collectArgs(scalarArg,arrayArg,settings) {
 		settings=Object.create(settings)
-		settings.enableSwitch=true
+		if (settings.enableSwitch===undefined) {
+			settings.enableSwitch=true
+		}
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
 	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
