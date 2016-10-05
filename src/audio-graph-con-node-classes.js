@@ -119,9 +119,15 @@ class PassiveByDefaultFilterNode extends FilterNode {
 	}
 }
 
-class VisualizationNode extends FilterNode {
+class VisualizationNode extends Node {
 	get upstreamEffect() {
 		return true
+	}
+	get estimatedNInputs() {
+		return 1
+	}
+	get estimatedNOutputs() {
+		return 1
 	}
 	toGenNode(name) {
 		throw new Error(`Attempted to make GenNode for visualization ConNode.${this.type}`)
@@ -183,8 +189,8 @@ ConNode.drywet = class extends ContainerNode {
 	}
 }
 
-ConNode.analyser = class extends FilterNode {
-	constructor(options,innerNodes) {
+ConNode.analyser = class extends Node {
+	constructor(options,innerNodes) { // options come from any inner node - only need options.logFftSize
 		super(options)
 		this.innerNodes=innerNodes
 	}

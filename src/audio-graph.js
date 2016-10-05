@@ -189,6 +189,15 @@ class AudioGraph extends Feature {
 				}
 			})
 		}
+		const wrapVisualizationNodes=(inputNodes)=>{
+			return inputNodes.map(node=>{
+				if (node.toVisNode) {
+					return new ConNode.analyser(node.options,[node])
+				} else {
+					return node
+				}
+			})
+		}
 		const sortNodes=(inputNodes)=>{
 			const outputNodes=[]
 			const visited=new Set
@@ -212,11 +221,14 @@ class AudioGraph extends Feature {
 			}
 			return outputNodes
 		}
-		const createdNodes=insertActiveJunctions(createNodes())
-		const filteredNodes=removeUnaffectedNodes(removePassiveNodes(createdNodes))
-		const sortedNodes=sortNodes(filteredNodes)
+		const conNodes=[
+			insertActiveJunctions,removePassiveNodes,removeUnaffectedNodes,wrapVisualizationNodes,sortNodes
+		].reduce(
+			(nodes,transform)=>transform(nodes),
+			createNodes()
+		)
 		const conToGenMap=new Map
-		const genNodes=sortedNodes.map(node=>{
+		const genNodes=conNodes.map(node=>{
 			let name=node.type
 			if (node.n!==undefined) {
 				name+='.'+node.n
@@ -225,7 +237,7 @@ class AudioGraph extends Feature {
 			conToGenMap.set(node,genNode)
 			return genNode
 		})
-		for (let i=0;i<sortedNodes.length;i++) {
+		for (let i=0;i<conNodes.length;i++) {
 			const translateConToGen=(conNodesSet)=>{
 				const genNodes=[]
 				conNodesSet.forEach(conNode=>{
@@ -234,8 +246,8 @@ class AudioGraph extends Feature {
 				return genNodes
 			}
 			genNodes[i].initEdges(
-				translateConToGen(sortedNodes[i].prevNodes),
-				translateConToGen(sortedNodes[i].nextNodes)
+				translateConToGen(conNodes[i].prevNodes),
+				translateConToGen(conNodes[i].nextNodes)
 			)
 		}
 		this.nodes=genNodes

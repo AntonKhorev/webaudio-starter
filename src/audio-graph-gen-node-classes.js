@@ -403,6 +403,26 @@ GenNode.drywet = class extends ContainerNode {
 	}
 }
 
+GenNode.analyser = class extends SingleNode {
+	constructor(options,name,visNodes) {
+		super(options,name)
+		this.visNodes=visNodes
+	}
+	get type() {
+		return 'analyser'
+	}
+	getInputs() {
+		return [this.nodeJsName]
+	}
+	requestFeatureContext(featureContext) {
+		featureContext.audioContext=true
+		featureContext.canvas=true
+		for (const visNode of this.visNodes) {
+			visNode.requestFeatureContext(featureContext)
+		}
+	}
+}
+
 GenNode.junction = class extends FilterNode {
 	get type() {
 		return 'junction'

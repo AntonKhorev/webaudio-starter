@@ -67,6 +67,7 @@ const langStrings={
 		'options.graph.destination': "Destination",
 		'options.graph.destination.add': "Add destination",
 		'options.graph.junction': "Junction", // not used
+		'options.graph.analyser': "Analyser", // not used
 
 		/*
 		'options.destination.frequencies.cutoff': "Limit plot to a fraction of low frequences",
@@ -145,12 +146,12 @@ const langStrings={
 		'comment.graph.convolver': "create [convolver node][convolver]",
 		'comment.graph.convolver.drywet': "create dry and wet routes with [convolver node][convolver]",
 		'comment.graph.compressor': "create [dynamics compressor node][compressor]",
+		'comment.graph.analyser': "create [analyser node][analyser]",
 		/*
 		'comment.filters.biquad': "create [biquad filter node][biquad]",
 		'comment.filters.iir': "create [IIR filter node][iir]",
 		'comment.filters.equalizer': "create equalizer as a sequence of [peaking][peaking] [biquad filter nodes][biquad]",
 		'comment.filters.equalizer.single': "create equalizer as a [peaking][peaking] [biquad filter node][biquad]",
-		'comment.destination.analyser': "create [analyser node][analyser]",
 		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "create [analyser node][analyser] for {waveform,frequencies,waveform and frequencies} visualization",
 		'comment.destination.analyser.split': "create [channel splitter node][splitter] connected to two [analyser nodes][analyser]",
 		*/
@@ -230,6 +231,7 @@ const langStrings={
 		'options.graph.destination': "Выход",
 		'options.graph.destination.add': "Добавить выход",
 		'options.graph.junction': "Узел для соединения", // not used
+		'options.graph.analyser': "Анализатор", // not used
 
 		/*
 		'options.destination.frequencies.cutoff': "Ограничить рисование долей низких частот",
@@ -308,12 +310,12 @@ const langStrings={
 		'comment.graph.convolver': "создаём [узел свёртки][convolver]",
 		'comment.graph.convolver.drywet': "создаём прямой путь и путь через [узел свёртки][convolver]",
 		'comment.graph.compressor': "создаём [узел компрессора][compressor]",
+		'comment.graph.analyser': "создаём [узел анализатора][analyser]",
 		/*
 		'comment.filters.biquad': "создаём [узел биквадратичного фильтра][biquad]",
 		'comment.filters.iir': "создаём [узел БИХ-фильтра][iir]",
 		'comment.filters.equalizer': "создаём эквалайзер в виде последовательности [peaking][peaking] [биквадратичных фильтров][biquad]",
 		'comment.filters.equalizer.single': "создаём эквалайзер в виде [peaking][peaking] [биквадратичного фильтра][biquad]",
-		'comment.destination.analyser': "создаём [узел анализатора][analyser]",
 		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "создаём [узел анализатора][analyser] для визуализации {формы волны,частот,формы волны и частот}",
 		'comment.destination.analyser.split': "создаём [узел разделения каналов][splitter], соединённый с двумя [узлами анализатора][analyser]",
 		*/
