@@ -1,5 +1,8 @@
 'use strict'
 
+const GenNode=require('./audio-graph-gen-node-classes')
+const VisNode=require('./audio-graph-vis-node-classes')
+
 const ConNode={}
 
 const MANY=100 // "infinity", can't use infinity directly b/c have to multiply by it
@@ -37,7 +40,10 @@ class Node {
 	get estimatedNOutputs() { // ok to overestimate
 		return 0
 	}
-	toGenNode(GenNode,name) {
+	get bypassable() {
+		return false
+	}
+	toGenNode(name) {
 		return new GenNode[this.type](this.options,name)
 	}
 	// public helpers:
@@ -83,6 +89,9 @@ class MediaElementNode extends Node {
 	get estimatedNOutputs() {
 		return 1
 	}
+	get bypassable() {
+		return true
+	}
 }
 
 class FilterNode extends Node {
@@ -91,6 +100,9 @@ class FilterNode extends Node {
 	}
 	get estimatedNOutputs() {
 		return 1
+	}
+	get bypassable() {
+		return true
 	}
 }
 
@@ -104,6 +116,18 @@ class PassiveByDefaultFilterNode extends FilterNode {
 	// protected:
 	get propertyNames() {
 		return []
+	}
+}
+
+class VisualizationNode extends FilterNode {
+	get upstreamEffect() {
+		return true
+	}
+	toGenNode(name) {
+		throw new Error(`Attempted to make GenNode for visualization ConNode.${this.type}`)
+	}
+	toVisNode() {
+		return new VisNode[this.type](this.options)
 	}
 }
 
@@ -132,10 +156,10 @@ ConNode.bypass = class extends ContainerNode { // used when enableInput is set
 	get estimatedNOutputs() {
 		return MANY
 	}
-	toGenNode(GenNode,name) {
+	toGenNode(name) {
 		return new GenNode.bypass(
 			this.options,name,
-			this.innerNode.toGenNode(GenNode,name),
+			this.innerNode.toGenNode(name),
 			this.rewireInput,this.rewireOutput
 		)
 	}
@@ -148,10 +172,38 @@ ConNode.drywet = class extends ContainerNode {
 	get estimatedNOutputs() {
 		return 2
 	}
-	toGenNode(GenNode,name) {
+	get bypassable() {
+		return true
+	}
+	toGenNode(name) {
 		return new GenNode.drywet(
 			this.options,name,
-			this.innerNode.toGenNode(GenNode,name)
+			this.innerNode.toGenNode(name)
+		)
+	}
+}
+
+ConNode.analyser = class extends FilterNode {
+	constructor(options,innerNodes) {
+		super(options)
+		this.innerNodes=innerNodes
+	}
+	get type() {
+		return 'analyser'
+	}
+	get upstreamEffect() {
+		return true
+	}
+	get estimatedNInputs() {
+		return 1
+	}
+	get estimatedNOutputs() {
+		return 1
+	}
+	toGenNode(name) {
+		return new GenNode.analyser(
+			this.options,name,
+			this.innerNodes.map(innerNode=>innerNode.toVisNode())
 		)
 	}
 }
@@ -228,6 +280,12 @@ ConNode.compressor = class extends FilterNode {
 	}
 }
 
+ConNode.waveform = class extends VisualizationNode {
+	get type() {
+		return 'waveform'
+	}
+}
+
 ConNode.destination = class extends Node {
 	get type() {
 		return 'destination'
@@ -237,6 +295,9 @@ ConNode.destination = class extends Node {
 	}
 	get estimatedNInputs() {
 		return 1
+	}
+	get bypassable() {
+		return true
 	}
 }
 

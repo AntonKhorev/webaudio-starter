@@ -23,6 +23,10 @@ describe("Code",()=>{
 		const window=document.defaultView
 		const sandbox={
 			AudioContext,
+			XMLHttpRequest: class {
+				open() {}
+				send() {}
+			},
 			document: {
 				getElementById: id=>{
 					const element=document.getElementById(id)
@@ -448,6 +452,29 @@ describe("Code",()=>{
 			],
 		}).ctx
 		assert.deepEqual(ctx.toJSON(),makeSourceGainDestinationGraph(1))
+	})
+	it("places junction between dry/wet-bypassable nodes",()=>{
+		const ctx=getSandbox({
+			graph: [
+				{
+					nodeType: 'audio',
+					enabledInput: true,
+					next: 1,
+				},{
+					nodeType: 'convolver',
+					wet: 0.5,
+					enabledInput: true,
+					next: 2,
+				},{
+					nodeType: 'destination',
+					enabledInput: true,
+				}
+			],
+		}).ctx
+		const graph=ctx.toJSON()
+		assert.equal(graph.name,"AudioDestinationNode")
+		assert.equal(graph.inputs.length,1)
+		assert.equal(graph.inputs[0].name,"GainNode")
 	})
 	it("removes panner node because it is not affected by inputs",()=>{
 		const sandbox=getSandbox({

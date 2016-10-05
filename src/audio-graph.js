@@ -1,7 +1,6 @@
 'use strict'
 
 const ConNode=require('./audio-graph-con-node-classes')
-const GenNode=require('./audio-graph-gen-node-classes')
 const Lines=require('crnx-base/lines')
 const InterleaveLines=require('crnx-base/interleave-lines')
 const NoseWrapLines=require('crnx-base/nose-wrap-lines')
@@ -57,7 +56,7 @@ class AudioGraph extends Feature {
 						node=new ConNode.drywet(nodeOptions,node)
 					}
 				}
-				if (nodeOptions.enableSwitch) {
+				if (node.bypassable) {
 					if (!nodeOptions.enabled && !nodeOptions.enabledInput) {
 						node=new ConNode.junction
 						destinationScore=0
@@ -222,7 +221,7 @@ class AudioGraph extends Feature {
 			if (node.n!==undefined) {
 				name+='.'+node.n
 			}
-			const genNode=node.toGenNode(GenNode,name)
+			const genNode=node.toGenNode(name)
 			conToGenMap.set(node,genNode)
 			return genNode
 		})
