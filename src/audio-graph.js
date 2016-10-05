@@ -57,7 +57,7 @@ class AudioGraph extends Feature {
 						node=new ConNode.drywet(nodeOptions,node)
 					}
 				}
-				if (!(node instanceof ConNode.sample)) { // bypassable
+				if (nodeOptions.enableSwitch) {
 					if (!nodeOptions.enabled && !nodeOptions.enabledInput) {
 						node=new ConNode.junction
 						destinationScore=0

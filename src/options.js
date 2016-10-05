@@ -80,7 +80,7 @@ class Options extends BaseOptions {
 						['Int','b',[0,100],0,{ unit: '%' }],
 						['Int','a',[0,100],100,{ unit: '%' }],
 					]],
-				]],
+				],{ enableSwitch:false }],
 				['AudioGraphNode','destination',[
 					['Checkbox','enabled',true],
 				],{ outEdges:false }],
