@@ -8,11 +8,9 @@ const Option=require('./option-classes')
 class NodeOptionsOutput extends BaseOptionsOutput {
 	setOptionClassWriters(optionClassWriters) {
 		optionClassWriters.set(Option.Group,(option,writeOption,i18n,generateId)=>{
-			return option.$=$("<div class='node-fieldset-container'>").append(
-				$("<fieldset class='node-option'>").append(
-					"<legend>"+i18n('options.'+option.fullName)+"</legend>",
-					option.entries.map(writeOption)
-				)
+			return option.$=$("<fieldset class='node-option'>").append(
+				"<legend>"+i18n('options.'+option.fullName)+"</legend>",
+				option.entries.map(writeOption)
 			)
 		})
 		optionClassWriters.set(Option.Text,(option,writeOption,i18n,generateId)=>{ // TODO fix mostly copypaste from crnx-base
@@ -299,7 +297,7 @@ class GraphOptionOutput {
 		}
 		const addNode=(nodeOption,gx0,gy0)=>{
 			const nodeOptionsOutput=new NodeOptionsOutput({root: nodeOption},generateId,i18n)
-			const $node=nodeOptionsOutput.$output.children('fieldset')
+			const $node=nodeOptionsOutput.$output
 			const id=generateId()
 			let dragAnimationId=null
 			let snapAnimationId=null
