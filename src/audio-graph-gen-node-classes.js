@@ -417,9 +417,24 @@ GenNode.analyser = class extends SingleNode {
 	requestFeatureContext(featureContext) {
 		featureContext.audioContext=true
 		featureContext.canvas=true
+		if (featureContext.maxLogFftSize==undefined || featureContext.maxLogFftSize<this.options.logFftSize) {
+			featureContext.maxLogFftSize=this.options.logFftSize
+			featureContext.maxLogFftSizeNodeJsName=this.nodeJsName
+		}
 		for (const visNode of this.visNodes) {
 			visNode.requestFeatureContext(featureContext)
 		}
+	}
+	getInitJsLines(featureContext,i18n) {
+		const getAnalyserNodeLines=(jsName,prevOutputs,connectArgs)=>{
+			const a=JsLines.b()
+			a(featureContext.getConnectAssignJsLines("var",jsName,"ctx.createAnalyser()",prevOutputs,connectArgs))
+			if (this.options.logFftSize!=11) { // default FFT size is 2048
+				a(jsName+".fftSize="+(1<<this.options.logFftSize)+";")
+			}
+			return a.e()
+		}
+		return getAnalyserNodeLines(this.nodeJsName,this.getPrevNodeOutputs())
 	}
 }
 

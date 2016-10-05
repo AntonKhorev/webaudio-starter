@@ -192,7 +192,9 @@ class AudioGraph extends Feature {
 		const wrapVisualizationNodes=(inputNodes)=>{
 			return inputNodes.map(node=>{
 				if (node.toVisNode) {
-					return new ConNode.analyser(node.options,[node])
+					const analyserNode=new ConNode.analyser(node.options,[node])
+					replaceNode(node,analyserNode)
+					return analyserNode
 				} else {
 					return node
 				}

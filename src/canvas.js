@@ -51,6 +51,11 @@ class Canvas extends Feature {
 				"canvasVolumeGradient.addColorStop(0.00,'#FFF');"
 			)
 		}
+		if (featureContext.maxLogFftSizeNodeJsName!==undefined) {
+			a(
+				"var analyserData=new Uint8Array("+featureContext.maxLogFftSizeNodeJsName+".frequencyBinCount);"
+			)
+		}
 		return a.e()
 	}
 	getPreVisJsLines(featureContext,i18n) {

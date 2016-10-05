@@ -31,6 +31,8 @@ class Code extends BaseWebCode {
 		//	canvasVolumeGradient = Canvas has to create var canvasVolumeGradient
 		//	loader = Loader has to provide loadSample() function
 		//	loaderOnError = loadSample() caller has to pass the error handler
+		//	maxLogFftSize = max log(fft size) of all analysers
+		//	maxLogFftSizeNodeJsName = name of analyser node with max log(fft size); if set, Canvas has to allocate analyserData array
 		// helpers:
 		//	getConnectAssignJsLines = set by AudioContext
 		for (const feature of this.features) {
