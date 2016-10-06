@@ -436,6 +436,16 @@ GenNode.analyser = class extends SingleNode {
 		}
 		return getAnalyserNodeLines(this.nodeJsName,this.getPrevNodeOutputs())
 	}
+	getPreVisJsLines(featureContext,i18n) {
+		return JsLines.bae(
+			...this.visNodes.map(visNode=>visNode.getPreVisJsLines(featureContext,i18n))
+		)
+	}
+	getVisJsLines(featureContext,i18n) {
+		return JsLines.bae(
+			...this.visNodes.map(visNode=>visNode.getVisJsLines(featureContext,i18n))
+		)
+	}
 }
 
 GenNode.junction = class extends FilterNode {

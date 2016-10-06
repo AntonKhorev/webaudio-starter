@@ -9,19 +9,31 @@ class Canvas extends Feature {
 		super()
 		this.options=options
 	}
-	static getStyleLines(canvasContextProperty,colorOption) {
+	static getStyle(colorOption) {
 		const a=JsLines.b()
 		const cs=['r','g','b']
 		const color=cs.map(c=>colorOption[c]+"%").join()
-		const isBlack=cs.every(c=>colorOption[c]==0)
 		if (colorOption.a==100) {
-			if (!isBlack) {
-				a("canvasContext."+canvasContextProperty+"='rgb("+color+")';")
+			if (cs.every(c=>colorOption[c]==0)) {
+				return '#000'
+			} else if (cs.every(c=>colorOption[c]==100)) {
+				return '#FFF'
+			} else {
+				return `rgb(${color})`
 			}
 		} else {
-			a("canvasContext."+canvasContextProperty+"='rgba("+color+","+(colorOption.a/100).toFixed(2)+")';")
+			return `rgba(${color},${(colorOption.a/100).toFixed(2)})`
 		}
-		return a.e()
+	}
+	static getStyleLines(canvasContextProperty,colorOption) {
+		const style=Canvas.getStyle(colorOption)
+		if (style=='#000') {
+			return JsLines.be()
+		} else {
+			return JsLines.bae(
+				`canvasContext.${canvasContextProperty}='${style}';`
+			)
+		}
 	}
 	getHtmlLines(featureContext,i18n) {
 		const a=Lines.b()
@@ -60,6 +72,9 @@ class Canvas extends Feature {
 	}
 	getPreVisJsLines(featureContext,i18n) {
 		const a=JsLines.b()
+		if (featureContext.visualizeWaveformFn) {
+			a(featureContext.visualizeWaveformFn.getDeclJsLines())
+		}
 		if (featureContext.canvas) {
 			if (this.options.background.type=='clear') {
 				a("canvasContext.clearRect(0,0,canvas.width,canvas.height);")

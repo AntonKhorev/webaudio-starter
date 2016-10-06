@@ -275,19 +275,30 @@ class AudioGraph extends Feature {
 		)
 	}
 	getInitJsLines(featureContext,i18n) {
-		if (featureContext.audioContext) {
-			return InterleaveLines.bae(...this.nodes.map(node=>{
-				const nodeJsLines=node.getInitJsLines(featureContext,i18n)
-				if (nodeJsLines.isEmpty()) {
-					return nodeJsLines
-				} else {
-					return JsLines.bae(
-						RefLines.parse("// "+i18n('comment.graph.'+node.jsCommentType)),
-						nodeJsLines
-					)
-				}
-			}))
-		}
+		if (!featureContext.audioContext) return JsLines.be()
+		return InterleaveLines.bae(...this.nodes.map(node=>{
+			const nodeJsLines=node.getInitJsLines(featureContext,i18n)
+			if (nodeJsLines.isEmpty()) {
+				return nodeJsLines
+			} else {
+				return JsLines.bae(
+					RefLines.parse("// "+i18n('comment.graph.'+node.jsCommentType)),
+					nodeJsLines
+				)
+			}
+		}))
+	}
+	getPreVisJsLines(featureContext,i18n) {
+		if (!featureContext.audioContext) return JsLines.be()
+		return JsLines.bae(
+			...this.nodes.map(node=>node.getPreVisJsLines(featureContext,i18n))
+		)
+	}
+	getVisJsLines(featureContext,i18n) {
+		if (!featureContext.audioContext) return JsLines.be()
+		return JsLines.bae(
+			...this.nodes.map(node=>node.getVisJsLines(featureContext,i18n))
+		)
 	}
 }
 
