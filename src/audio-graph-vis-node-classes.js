@@ -11,7 +11,7 @@ class VisFunction {
 	constructor() {
 		this.data={}
 	}
-	addArgValues(values) {
+	addArgValues(...values) {
 		for (let i=0;i<values.length;i++) {
 			const arg=this.args[i]
 			const value=values[i]
@@ -26,7 +26,7 @@ class VisFunction {
 		if (Array.isArray(this.data[arg])) {
 			return arg
 		} else {
-			return
+			return this.data[arg]
 		}
 	}
 	getDeclJsLines() { // TODO arg to save/restore context
@@ -43,7 +43,7 @@ class VisFunction {
 			this.getBodyJsLines()
 		)
 	}
-	getCallJsLines(values) {
+	getCallJsLines(...values) {
 		const passValues=[]
 		for (let i=0;i<values.length;i++) {
 			if (Array.isArray(this.data[this.args[i]])) {
@@ -110,18 +110,18 @@ VisNode.waveform = class extends Node {
 		if (featureContext.visualizeWaveformFn===undefined) {
 			featureContext.visualizeWaveformFn=new WaveformVisFunction()
 		}
-		featureContext.visualizeWaveformFn.addArgValues([
+		featureContext.visualizeWaveformFn.addArgValues(
 			//this.options.logFftSize,
 			this.options.width//,
 			//Canvas.getStyle(this.options.color)
-		])
+		)
 	}
 	getVisJsLines(featureContext,i18n) {
-		return featureContext.visualizeWaveformFn.getCallJsLines([
+		return featureContext.visualizeWaveformFn.getCallJsLines(
 			//this.options.logFftSize,
 			this.options.width//,
 			//Canvas.getStyle(this.options.color)
-		])
+		)
 	}
 }
 
