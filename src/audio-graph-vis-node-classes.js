@@ -29,7 +29,7 @@ class VisFunction {
 			return this.data[arg]
 		}
 	}
-	getDeclJsLines() { // TODO arg to save/restore context
+	getDeclJsLines(canvasContext) {
 		const declArgs=[]
 		for (let i=0;i<this.args.length;i++) {
 			if (Array.isArray(this.data[this.args[i]])) {
@@ -40,7 +40,7 @@ class VisFunction {
 			JsLines.bae("function "+this.name+"("+declArgs.join()+") {"),
 			JsLines.bae("}")
 		).ae(
-			this.getBodyJsLines()
+			this.getBodyJsLines(canvasContext)
 		)
 	}
 	getCallJsLines(...values) {
@@ -56,7 +56,7 @@ class VisFunction {
 	}
 	// get name()
 	// get args()
-	// getBodyJsLines()
+	// getBodyJsLines(canvasContext)
 }
 
 class WaveformVisFunction extends VisFunction {
@@ -64,13 +64,68 @@ class WaveformVisFunction extends VisFunction {
 		return 'visualizeWaveform'
 	}
 	get args() {
-		return [/*'analyserDataLength',*/'waveformWidth'/*,'waveformColor'*/]
+		return [/*'analyserDataLength',*/'waveformWidth','waveformColor']
 	}
-	getBodyJsLines() {
+	getBodyJsLines(canvasContext) {
+		const a=canvasContext.b()
+		a(
+			a.setProp('lineWidth',this.getArgValue('waveformWidth')),
+			a.setProp('strokeStyle',this.getArgValue('waveformColor'))
+		)
+		return a.e()
+
+		/*
+		const canvasContextFrame=canvasContext.enter()
+		canvasContextFrame.JsLines.b(
+			canvasContextFrame.set('lineWidth',this.getArgValue('waveformWidth')),
+			canvasContextFrame.set('strokeStyle',this.getArgValue('waveformColor')),
+		)
+
+		canvasContext.JsLines.b(
+			canvasContext.set('lineWidth',this.getArgValue('waveformWidth')),
+			canvasContext.set('strokeStyle',this.getArgValue('waveformColor')),
+			// ...
+		)
+		*/
+
+		/*
+		const a=CanvasContextJsLines.b()
+		a.prop('lineWidth',this.getArgValue('waveformWidth'))
+		a.prop('strokeStyle',this.getArgValue('waveformColor'))
+		a(
+			// ...
+		)
+		return a.e()
+
+
+		return CanvasLines.bae(
+			CanvasLines.ctx`canvasContext.lineWidth=${this.getArgValue('waveformWidth')};`,
+			CanvasLines.ctx`canvasContext.strokeStyle=${this.getArgValue('waveformColor')}`,
+			// ...
+		)
+
+
+		return CanvasContextLines.b().setProperty('lineWidth',
+			this.getArgValue('waveformWidth')
+		).setProperty('strokeStyle',
+			this.getArgValue('waveformColor')
+		).a(
+			// ...
+		).e()
+
+		return CanvasContextLines.b(canvasContext).ae(
+			canvasContext.propertyJsLines('lineWidth',this.getArgValue('waveformWidth')),
+			canvasContext.propertyJsLines('strokeStyle',this.getArgValue('waveformColor')),
+			// ...
+		)
+		*/
+
+		/*
 		const a=JsLines.b()
 		if (this.getArgValue('waveformWidth')!=1.0) {
 			a("canvasContext.lineWidth="+this.getArgValue('waveformWidth')+";")
 		}
+		*/
 		/*
 		a(
 			Canvas.getStyleLines('strokeStyle',this.options.waveform.color),
@@ -88,7 +143,9 @@ class WaveformVisFunction extends VisFunction {
 			"canvasContext.stroke();"
 		)
 		*/
+		/*
 		return a.e()
+		*/
 	}
 }
 
@@ -112,15 +169,15 @@ VisNode.waveform = class extends Node {
 		}
 		featureContext.visualizeWaveformFn.addArgValues(
 			//this.options.logFftSize,
-			this.options.width//,
-			//Canvas.getStyle(this.options.color)
+			this.options.width,
+			Canvas.getStyle(this.options.color)
 		)
 	}
 	getVisJsLines(featureContext,i18n) {
 		return featureContext.visualizeWaveformFn.getCallJsLines(
 			//this.options.logFftSize,
-			this.options.width//,
-			//Canvas.getStyle(this.options.color)
+			this.options.width,
+			Canvas.getStyle(this.options.color)
 		)
 	}
 }

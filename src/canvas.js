@@ -2,6 +2,7 @@
 
 const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
+const CanvasContext=require('./canvas-context')
 const Feature=require('./feature')
 
 class Canvas extends Feature {
@@ -9,23 +10,23 @@ class Canvas extends Feature {
 		super()
 		this.options=options
 	}
-	static getStyle(colorOption) {
+	static getStyle(colorOption) { // TODO move to canvas context
 		const a=JsLines.b()
 		const cs=['r','g','b']
 		const color=cs.map(c=>colorOption[c]+"%").join()
 		if (colorOption.a==100) {
 			if (cs.every(c=>colorOption[c]==0)) {
-				return '#000'
+				return "'#000'"
 			} else if (cs.every(c=>colorOption[c]==100)) {
-				return '#FFF'
+				return "'#FFF'"
 			} else {
-				return `rgb(${color})`
+				return `'rgb(${color})'`
 			}
 		} else {
 			return `rgba(${color},${(colorOption.a/100).toFixed(2)})`
 		}
 	}
-	static getStyleLines(canvasContextProperty,colorOption) {
+	static getStyleLines(canvasContextProperty,colorOption) { // TODO remove
 		const style=Canvas.getStyle(colorOption)
 		if (style=='#000') {
 			return JsLines.be()
@@ -71,17 +72,17 @@ class Canvas extends Feature {
 		return a.e()
 	}
 	getPreVisJsLines(featureContext,i18n) {
-		const a=JsLines.b()
+		if (!featureContext.canvas) return JsLines.be()
+		const canvasContext=new CanvasContext('canvasContext')
+		const a=canvasContext.b()
 		if (featureContext.visualizeWaveformFn) {
-			a(featureContext.visualizeWaveformFn.getDeclJsLines())
+			a(featureContext.visualizeWaveformFn.getDeclJsLines(canvasContext))
 		}
-		if (featureContext.canvas) {
-			if (this.options.background.type=='clear') {
-				a("canvasContext.clearRect(0,0,canvas.width,canvas.height);")
-			} else {
-				a(Canvas.getStyleLines('fillStyle',this.options.background.color))
-				a("canvasContext.fillRect(0,0,canvas.width,canvas.height);")
-			}
+		if (this.options.background.type=='clear') {
+			a(a.jsName+".clearRect(0,0,canvas.width,canvas.height);")
+		} else {
+			a(a.setProp('fillStyle',Canvas.getStyle(this.options.background.color)))
+			a(a.jsName+".fillRect(0,0,canvas.width,canvas.height);")
 		}
 		return a.e()
 	}
