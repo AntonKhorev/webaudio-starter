@@ -112,14 +112,14 @@ VisNode.waveform = class extends Node {
 		}
 		featureContext.visualizeWaveformFn.addArgValues(
 			this.analyserNodeJsName,
-			this.options.width,
+			this.options.width.value,
 			Canvas.getStyle(this.options.color)
 		)
 	}
 	getVisJsLines(featureContext,i18n) {
 		return featureContext.visualizeWaveformFn.getCallJsLines(
 			this.analyserNodeJsName,
-			this.options.width,
+			this.options.width.value,
 			Canvas.getStyle(this.options.color)
 		)
 	}
