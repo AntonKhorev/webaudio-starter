@@ -207,10 +207,12 @@ ConNode.analyser = class extends Node {
 		return 1
 	}
 	toGenNode(name) {
-		return new GenNode.analyser(
-			this.options,name,
-			this.innerNodes.map(innerNode=>innerNode.toVisNode())
-		)
+		const visNodes=this.innerNodes.map(innerNode=>innerNode.toVisNode())
+		const genNode=new GenNode.analyser(this.options,name,visNodes)
+		for (const visNode of visNodes) {
+			visNode.initParent(genNode.nodeJsName)
+		}
+		return genNode
 	}
 }
 

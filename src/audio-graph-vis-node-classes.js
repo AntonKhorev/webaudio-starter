@@ -64,88 +64,28 @@ class WaveformVisFunction extends VisFunction {
 		return 'visualizeWaveform'
 	}
 	get args() {
-		return [/*'analyserDataLength',*/'waveformWidth','waveformColor']
+		return ['analyserNode','waveformWidth','waveformColor']
 	}
 	getBodyJsLines(canvasContext) {
+		const analyserNode=this.getArgValue('analyserNode')
 		const a=canvasContext.b()
 		a(
 			a.setProp('lineWidth',this.getArgValue('waveformWidth')),
-			a.setProp('strokeStyle',this.getArgValue('waveformColor'))
+			a.setProp('strokeStyle',this.getArgValue('waveformColor')),
+			`${analyserNode}.getByteTimeDomainData(analyserData);`,
+			`${a.jsName}.beginPath();`,
+			`for (var i=0;i<${analyserNode}.frequencyBinCount;i++) {`,
+			`	var x=i*canvas.width/(${analyserNode}.frequencyBinCount-1);`,
+			`	var y=analyserData[i]*canvas.height/256;`,
+			`	if (i==0) {`,
+			`		${a.jsName}.moveTo(x,y);`,
+			`	} else {`,
+			`		${a.jsName}.lineTo(x,y);`,
+			`	}`,
+			`}`,
+			`${a.jsName}.stroke();`
 		)
 		return a.e()
-
-		/*
-		const canvasContextFrame=canvasContext.enter()
-		canvasContextFrame.JsLines.b(
-			canvasContextFrame.set('lineWidth',this.getArgValue('waveformWidth')),
-			canvasContextFrame.set('strokeStyle',this.getArgValue('waveformColor')),
-		)
-
-		canvasContext.JsLines.b(
-			canvasContext.set('lineWidth',this.getArgValue('waveformWidth')),
-			canvasContext.set('strokeStyle',this.getArgValue('waveformColor')),
-			// ...
-		)
-		*/
-
-		/*
-		const a=CanvasContextJsLines.b()
-		a.prop('lineWidth',this.getArgValue('waveformWidth'))
-		a.prop('strokeStyle',this.getArgValue('waveformColor'))
-		a(
-			// ...
-		)
-		return a.e()
-
-
-		return CanvasLines.bae(
-			CanvasLines.ctx`canvasContext.lineWidth=${this.getArgValue('waveformWidth')};`,
-			CanvasLines.ctx`canvasContext.strokeStyle=${this.getArgValue('waveformColor')}`,
-			// ...
-		)
-
-
-		return CanvasContextLines.b().setProperty('lineWidth',
-			this.getArgValue('waveformWidth')
-		).setProperty('strokeStyle',
-			this.getArgValue('waveformColor')
-		).a(
-			// ...
-		).e()
-
-		return CanvasContextLines.b(canvasContext).ae(
-			canvasContext.propertyJsLines('lineWidth',this.getArgValue('waveformWidth')),
-			canvasContext.propertyJsLines('strokeStyle',this.getArgValue('waveformColor')),
-			// ...
-		)
-		*/
-
-		/*
-		const a=JsLines.b()
-		if (this.getArgValue('waveformWidth')!=1.0) {
-			a("canvasContext.lineWidth="+this.getArgValue('waveformWidth')+";")
-		}
-		*/
-		/*
-		a(
-			Canvas.getStyleLines('strokeStyle',this.options.waveform.color),
-			"analyserNode.getByteTimeDomainData(analyserData);",
-			"canvasContext.beginPath();",
-			"for (var i=0;i<analyserData.length;i++) {",
-			"	var x=i*canvas.width/(analyserData.length-1);",
-			"	var y=analyserData[i]*canvas.height/256;",
-			"	if (i==0) {",
-			"		canvasContext.moveTo(x,y);",
-			"	} else {",
-			"		canvasContext.lineTo(x,y);",
-			"	}",
-			"}",
-			"canvasContext.stroke();"
-		)
-		*/
-		/*
-		return a.e()
-		*/
 	}
 }
 
@@ -158,6 +98,9 @@ class Node extends Feature {
 		super()
 		this.options=options
 	}
+	initParent(analyserNodeJsName) {
+		this.analyserNodeJsName=analyserNodeJsName
+	}
 }
 
 //// concrete classes
@@ -168,14 +111,14 @@ VisNode.waveform = class extends Node {
 			featureContext.visualizeWaveformFn=new WaveformVisFunction()
 		}
 		featureContext.visualizeWaveformFn.addArgValues(
-			//this.options.logFftSize,
+			this.analyserNodeJsName,
 			this.options.width,
 			Canvas.getStyle(this.options.color)
 		)
 	}
 	getVisJsLines(featureContext,i18n) {
 		return featureContext.visualizeWaveformFn.getCallJsLines(
-			//this.options.logFftSize,
+			this.analyserNodeJsName,
 			this.options.width,
 			Canvas.getStyle(this.options.color)
 		)
