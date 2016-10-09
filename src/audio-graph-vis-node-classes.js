@@ -5,7 +5,7 @@
 const JsLines=require('crnx-base/js-lines')
 const WrapLines=require('crnx-base/wrap-lines')
 const Feature=require('./feature')
-const Canvas=require('./canvas')
+const CanvasContext=require('./canvas-context')
 
 class VisFunction {
 	constructor() {
@@ -113,14 +113,14 @@ VisNode.waveform = class extends Node {
 		featureContext.visualizeWaveformFn.addArgValues(
 			this.analyserNodeJsName,
 			this.options.width.value,
-			Canvas.getStyle(this.options.color)
+			CanvasContext.getColorStyle(this.options.color)
 		)
 	}
 	getVisJsLines(featureContext,i18n) {
 		return featureContext.visualizeWaveformFn.getCallJsLines(
 			this.analyserNodeJsName,
 			this.options.width.value,
-			Canvas.getStyle(this.options.color)
+			CanvasContext.getColorStyle(this.options.color)
 		)
 	}
 }

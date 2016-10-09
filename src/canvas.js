@@ -10,32 +10,6 @@ class Canvas extends Feature {
 		super()
 		this.options=options
 	}
-	static getStyle(colorOption) { // TODO move to canvas context
-		const a=JsLines.b()
-		const cs=['r','g','b']
-		const color=cs.map(c=>colorOption[c]+"%").join()
-		if (colorOption.a==100) {
-			if (cs.every(c=>colorOption[c]==0)) {
-				return "'#000'"
-			} else if (cs.every(c=>colorOption[c]==100)) {
-				return "'#FFF'"
-			} else {
-				return `'rgb(${color})'`
-			}
-		} else {
-			return `rgba(${color},${(colorOption.a/100).toFixed(2)})`
-		}
-	}
-	static getStyleLines(canvasContextProperty,colorOption) { // TODO remove
-		const style=Canvas.getStyle(colorOption)
-		if (style=='#000') {
-			return JsLines.be()
-		} else {
-			return JsLines.bae(
-				`canvasContext.${canvasContextProperty}='${style}';`
-			)
-		}
-	}
 	getHtmlLines(featureContext,i18n) {
 		const a=Lines.b()
 		if (featureContext.canvas) {
@@ -81,7 +55,7 @@ class Canvas extends Feature {
 		if (this.options.background.type=='clear') {
 			a(a.jsName+".clearRect(0,0,canvas.width,canvas.height);")
 		} else {
-			a(a.setProp('fillStyle',Canvas.getStyle(this.options.background.color)))
+			a(a.setProp('fillStyle',a.getColorStyle(this.options.background.color)))
 			a(a.jsName+".fillRect(0,0,canvas.width,canvas.height);")
 		}
 		return a.e()

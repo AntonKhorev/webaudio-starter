@@ -16,6 +16,22 @@ class CanvasContext {
 	constructor(jsName) {
 		this.jsName=jsName
 	}
+	static getColorStyle(colorOption) {
+		const a=JsLines.b()
+		const cs=['r','g','b']
+		const color=cs.map(c=>colorOption[c]+"%").join()
+		if (colorOption.a==100) {
+			if (cs.every(c=>colorOption[c]==0)) {
+				return "'#000'" // TODO #F00 #0F0 etc
+			} else if (cs.every(c=>colorOption[c]==100)) {
+				return "'#FFF'"
+			} else {
+				return `'rgb(${color})'`
+			}
+		} else {
+			return `'rgba(${color},${(colorOption.a/100).toFixed(2)})'`
+		}
+	}
 	b() {
 		const props={
 			lineWidth: 1,
@@ -37,6 +53,7 @@ class CanvasContext {
 				)
 			}
 		}
+		a.getColorStyle=(colorOption)=>CanvasContext.getColorStyle(colorOption)
 		a.jsName=this.jsName
 		return a
 	}
