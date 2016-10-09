@@ -21,10 +21,8 @@ class CanvasContext {
 		const cs=['r','g','b']
 		const color=cs.map(c=>colorOption[c]+"%").join()
 		if (colorOption.a==100) {
-			if (cs.every(c=>colorOption[c]==0)) {
-				return "'#000'" // TODO #F00 #0F0 etc
-			} else if (cs.every(c=>colorOption[c]==100)) {
-				return "'#FFF'"
+			if (cs.every(c=>colorOption[c]%20==0)) {
+				return "'#"+cs.map(c=>(colorOption[c]/20*3).toString(16).toUpperCase()).join('')+"'"
 			} else {
 				return `'rgb(${color})'`
 			}
