@@ -228,7 +228,7 @@ const langStrings={
 		'options.graph.waveform.width': "Ширина линии",
 		'options.graph.waveform.color': "Цвет линии",
 		'options.graph.waveform.color.{r,g,b,a}': ruColors,
-		'options.graph.frequencyBars.cutoff': "Ограничение частот",
+		'options.graph.frequencyBars.cutoff': "Верх частот",
 		'options.graph.frequencyBars.base': "Полосы частот растут от",
 		'options.graph.frequencyBars.base.{bottom,middle}': "{низа,середины} элемента <code>canvas</code>",
 		'options.graph.frequencyBars.coloring': "Раскраска полос частот",
@@ -272,7 +272,7 @@ const langStrings={
 
 		'options-info.graph.convolver.wet': "Соотношение прямого/обработанного звука.", // http://www.ixbt.com/proaudio/theory-of-reverb.shtml
 		'options-info.graph.{waveform,frequencyBars}.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]]. Больший размер даёт {более широкое окно для формы волны,более тонкие полосы частот}.",
-		'options-info.graph.frequencyBars.cutoff': "Ограничить рисование долей низких частот",
+		'options-info.graph.frequencyBars.cutoff': "Ограничить рисование долей низких частот.",
 		'options-info.canvas.background.color.a': "Низкие значения альфа-канала приводят к эффекту размывания.",
 
 		'options-output.input': "Значение изменяемо",

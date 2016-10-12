@@ -14,7 +14,23 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				option.entries.map(writeOption)
 			)
 		})
-		optionClassWriters.set(Option.Text,(option,writeOption,i18n,generateId)=>{ // TODO fix mostly copypaste from crnx-base
+		optionClassWriters.set(Option.Select,(option,writeOption,i18n,generateId)=>{
+			const valueId=value=>'options.'+option.fullName+'.'+value
+			const id=generateId()
+			return option.$=$("<div class='node-option'>").append(
+				$("<span class='node-option-section node-option-section-text'>").append(
+					this.getLeadLabel(id,i18n,option),
+					$("<select id='"+id+"'>").append(
+						option.availableValues.map(availableValue=>
+							$("<option>").val(availableValue).html(i18n(valueId(availableValue)))
+						)
+					).val(option.value).change(function(){
+						option.value=this.value
+					})
+				)
+			)
+		})
+		optionClassWriters.set(Option.Text,(option,writeOption,i18n,generateId)=>{
 			const id=generateId()
 			const listId=generateId()
 			return option.$=$("<div class='node-option'>").append(
@@ -512,7 +528,7 @@ class GraphOptionOutput {
 				}
 				$(document).on(handlers)
 				ev.preventDefault() // prevent text selection
-			}).on('mousedown','input, button',function(ev){
+			}).on('mousedown','input, select, button',function(ev){
 				ev.stopPropagation() // don't run the handler defined above when using inputs
 			})
 			$nodes.append($node)
