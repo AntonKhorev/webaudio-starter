@@ -49,7 +49,7 @@ const langStrings={
 		*/
 		'options.graph.convolver': "Convolver",
 		'options.graph.convolver.add': "Add convolver",
-		'options.graph.convolver.url': "<abbr title='impulse responce'>IR</abbr> URL", // "Impulse responce URL",
+		'options.graph.convolver.url': "Impulse response URL",
 		'options.graph.convolver.wet': "Reverb (dry/wet)",
 		/*
 		'options.graph.equalizer': "Equalizer",
@@ -213,8 +213,8 @@ const langStrings={
 		*/
 		'options.graph.convolver': "Свёртка",
 		'options.graph.convolver.add': "Добавить свёртку",
-		'options.graph.convolver.url': "URL", //"URL импульсной характеристики",
-		'options.graph.convolver.wet': "Соотношение прямого/обработанного звука", // http://www.ixbt.com/proaudio/theory-of-reverb.shtml
+		'options.graph.convolver.url': "URL импульсной <abbr title='характеристики'>хар-ки</abbr>",
+		'options.graph.convolver.wet': "Dry/wet",
 		/*
 		'options.graph.equalizer': "Эквалайзер",
 		'options.graph.equalizer.add': "Добавить эквалайзер",
@@ -270,6 +270,7 @@ const langStrings={
 		'options.api.noVendorPrefix': "Можно создавать аудио-контекст без префиксов производителей",
 		'options.api.connectReturnValue': "Можно использовать значение, возвращаемое <code>AudioNode.connect()</code>",
 
+		'options-info.graph.convolver.wet': "Соотношение прямого/обработанного звука.", // http://www.ixbt.com/proaudio/theory-of-reverb.shtml
 		'options-info.graph.{waveform,frequencyBars}.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]]. Больший размер даёт {более широкое окно для формы волны,более тонкие полосы частот}.",
 		'options-info.graph.frequencyBars.cutoff': "Ограничить рисование долей низких частот",
 		'options-info.canvas.background.color.a': "Низкие значения альфа-канала приводят к эффекту размывания.",

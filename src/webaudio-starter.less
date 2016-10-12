@@ -292,17 +292,22 @@
 					display: block;
 					position: absolute;
 					height: @grid-size;
-					width: @side-width*@grid-size - @spacing-size;
-					text-align: right;
+					height: 12px;
+					line-height: 12px;
+					width: @node-width*@grid-size - 2*@spacing-size;
+					left: @spacing-size;
+					text-align: left;
 					& + span.space {
 						display: none;
 					}
 				}
 				input[type="text"] {
-					height: @grid-size - 2*@spacing-size;
-					width: (@node-width - @side-width)*@grid-size - @spacing-size;
-					top: @spacing-size;
-					left: @side-width*@grid-size;
+					height: @grid-size / 2;
+					width: @node-width*@grid-size - 2*@spacing-size;
+					left: @spacing-size;
+					top: @grid-size / 2 - @spacing-size;
+					padding-top: 0;
+					padding-bottom: 0;
 				}
 			}
 			.node-option-section-number {
