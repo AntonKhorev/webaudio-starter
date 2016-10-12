@@ -65,7 +65,6 @@ const langStrings={
 		'options.graph.waveform.color': "Line color",
 		'options.graph.waveform.color.{r,g,b,a}': enColors,
 		'options.graph.frequencyBars.cutoff': "<abbr title='Frequency'>Freq.</abbr> cutoff",
-		'options.graph.frequencyBars.cutoff.info': "Limit plot to a fraction of low frequences",
 		'options.graph.frequencyBars.base': "Extend from",
 		'options.graph.frequencyBars.base.{bottom,middle}': "{} of canvas",
 		'options.graph.frequencyBars.coloring': "Coloring",
@@ -107,7 +106,8 @@ const langStrings={
 		'options.api.noVendorPrefix': "Can create an audio context without a vendor prefix",
 		'options.api.connectReturnValue': "Can use a return value of <code>AudioNode.connect()</code>",
 
-		'options-info.destination.analyser.logFftSize': "[[Fast Fourier transform]] size for the waveform/frequency visualization. Use a larger size to get a wider time window for the waveform and thinner frequency bars.",
+		'options-info.graph.{waveform,frequencyBars}.logFftSize': "[[Fast Fourier transform]] size. Use a larger size to get {a wider time window for the waveform,thinner frequency bars}.",
+		'options-info.graph.frequencyBars.cutoff': "Limit plot to a fraction of low frequences.",
 		'options-info.canvas.background.color.a': "Lower opacity values lead to a blur effect.",
 
 		'options-output.input': "Editable",
@@ -229,7 +229,6 @@ const langStrings={
 		'options.graph.waveform.color': "Цвет линии",
 		'options.graph.waveform.color.{r,g,b,a}': ruColors,
 		'options.graph.frequencyBars.cutoff': "Ограничение частот",
-		'options.graph.frequencyBars.cutoff.info': "Ограничить рисование долей низких частот",
 		'options.graph.frequencyBars.base': "Полосы частот растут от",
 		'options.graph.frequencyBars.base.{bottom,middle}': "{низа,середины} элемента <code>canvas</code>",
 		'options.graph.frequencyBars.coloring': "Раскраска полос частот",
@@ -271,7 +270,8 @@ const langStrings={
 		'options.api.noVendorPrefix': "Можно создавать аудио-контекст без префиксов производителей",
 		'options.api.connectReturnValue': "Можно использовать значение, возвращаемое <code>AudioNode.connect()</code>",
 
-		'options-info.destination.analyser.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]] для визуализаций формы волны и частот. Больший размер даёт более широкое окно для формы волны и более тонкие полосы частот.",
+		'options-info.graph.{waveform,frequencyBars}.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]]. Больший размер даёт {более широкое окно для формы волны,более тонкие полосы частот}.",
+		'options-info.graph.frequencyBars.cutoff': "Ограничить рисование долей низких частот",
 		'options-info.canvas.background.color.a': "Низкие значения альфа-канала приводят к эффекту размывания.",
 
 		'options-output.input': "Значение изменяемо",

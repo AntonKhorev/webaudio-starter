@@ -67,10 +67,10 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				" ",
 				setInputAttrsAndListeners($numberInput,$sliderInput)
 			)
-			if (i18n.has('options.'+option.fullName+'.info')) {
+			if (i18n.has('options-info.'+option.fullName)) {
 				$mainSection.append(
 					" ",
-					writeTip('info',i18n('options.'+option.fullName+'.info'))
+					writeTip('info',i18n('options-info.'+option.fullName))
 				)
 			}
 			$mainSection.append(
