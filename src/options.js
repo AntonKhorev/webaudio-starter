@@ -27,8 +27,8 @@ class Options extends BaseOptions {
 						'http://mainline.i3s.unice.fr/mooc/sintel.webm',
 						'http://mainline.i3s.unice.fr/mooc/sintel.mp4',
 					]],
-					['Int','width',[1,1920],320,{ unit: 'pixel' }],
-					['Int','height',[1,1080],240,{ unit: 'pixel' }],
+					['Int','width',[1,1920],320,{ unit:'pixel' }],
+					['Int','height',[1,1080],240,{ unit:'pixel' }],
 				],{ inEdges:false }],
 				['AudioGraphNode','sample',[
 					['Text','url',[
@@ -36,8 +36,8 @@ class Options extends BaseOptions {
 						'http://mainline.i3s.unice.fr/mooc/shoot2.mp3',
 					]],
 					['Int','repeat',[1,20]],
-					['Float','interval',[0,1],0.1,{ unit: 'second' }],
-					['Float','randomShift',[0,1],{ unit: 'second' }],
+					['Float','interval',[0,1],0.1,{ unit:'second' }],
+					['Float','randomShift',[0,1],{ unit:'second' }],
 					['Float','pitch',[0,2],1],
 					['Float','randomPitch',[0,1]],
 					['Float','gain',[0,2],1],
@@ -73,14 +73,22 @@ class Options extends BaseOptions {
 				]],
 				['AudioGraphNode','waveform',[
 					['Int','logFftSize',[5,12],8],
-					['Float','width',[0,10],1,{ unit: 'pixel' }],
+					['Float','width',[0,10],1,{ unit:'pixel' }],
 					['Group','color',[
-						['Int','r',[0,100],0,{ unit: '%' }],
-						['Int','g',[0,100],0,{ unit: '%' }],
-						['Int','b',[0,100],0,{ unit: '%' }],
-						['Int','a',[0,100],100,{ unit: '%' }],
+						['Int','r',[0,100],0,{ unit:'%' }],
+						['Int','g',[0,100],0,{ unit:'%' }],
+						['Int','b',[0,100],0,{ unit:'%' }],
+						['Int','a',[0,100],100,{ unit:'%' }],
 					]],
 				],{ enableSwitch:false }],
+				['AudioGraphNode','frequencyBars',[
+					['Int','logFftSize',[5,12],8],
+					['Int','cutoff',[10,100],100,{ unit:'%' }],
+					['Select','base',['bottom','middle']],
+					['Select','coloring',['component','spectral']],
+					['Select','coloringInput',['amplitude','frequency']],
+				],{ enableSwitch:false }],
+				// TODO frequencyOutline
 				['AudioGraphNode','destination',[
 					['Checkbox','enabled',true],
 				],{ outEdges:false }],
@@ -88,20 +96,6 @@ class Options extends BaseOptions {
 			/*
 			['Group','destination',[
 				['Group','frequencies',[
-					['Checkbox','enabled'],
-					['Int','cutoff',[10,100],100,{
-						unit: '%',
-						visibilityData: {'destination.frequencies.enabled':[true]},
-					}],
-					['Select','base',['bottom','middle'],{
-						visibilityData: {'destination.frequencies.enabled':[true]},
-					}],
-					['Select','coloring',['component','spectral'],{
-						visibilityData: {'destination.frequencies.enabled':[true]},
-					}],
-					['Select','coloringInput',['amplitude','frequency'],{
-						visibilityData: {'destination.frequencies.enabled':[true]},
-					}],
 					['Group','outline',[
 						['Checkbox','enabled'],
 						['Float','width',[0,10],1,{
@@ -129,17 +123,17 @@ class Options extends BaseOptions {
 			]],
 			*/
 			['Group','canvas',[
-				['Int','width',[1,1920],300,{ unit: 'pixel' }],
-				['Int','height',[1,1080],100,{ unit: 'pixel' }],
+				['Int','width',[1,1920],300,{ unit:'pixel' }],
+				['Int','height',[1,1080],100,{ unit:'pixel' }],
 				['Group','background',[
 					['Select','type',['clear','filled']],
 					['Group','color',[
-						['Int','r',[0,100],100,{ unit: '%' }],
-						['Int','g',[0,100],100,{ unit: '%' }],
-						['Int','b',[0,100],100,{ unit: '%' }],
-						['Int','a',[0,100],100,{ unit: '%' }],
+						['Int','r',[0,100],100,{ unit:'%' }],
+						['Int','g',[0,100],100,{ unit:'%' }],
+						['Int','b',[0,100],100,{ unit:'%' }],
+						['Int','a',[0,100],100,{ unit:'%' }],
 					],{
-						visibilityData: {'canvas.background.type':['filled']}
+						visibilityData:{'canvas.background.type':['filled']}
 					}],
 				]],
 			]/*,{

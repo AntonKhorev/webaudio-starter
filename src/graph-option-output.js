@@ -1,6 +1,7 @@
 'use strict'
 
 const formatNumbers=require('crnx-base/format-numbers')
+const writeTip=require('crnx-base/tip')
 const BaseOptionsOutput=require('crnx-base/options-output')
 const Option=require('./option-classes')
 
@@ -64,7 +65,15 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				" <span class='units'>"+i18n.numberUnits(fmt.max,option.unit)+"</span> ",
 				setInputAttrsAndListeners($sliderInput,$numberInput),
 				" ",
-				setInputAttrsAndListeners($numberInput,$sliderInput),
+				setInputAttrsAndListeners($numberInput,$sliderInput)
+			)
+			if (i18n.has('options.'+option.fullName+'.info')) {
+				$mainSection.append(
+					" ",
+					writeTip('info',i18n('options.'+option.fullName+'.info'))
+				)
+			}
+			$mainSection.append(
 				" ",
 				$("<button class='more' title='Show more options'>").append($moreButtonText).click(function(){ // TODO i18n
 					const $button=$(this)

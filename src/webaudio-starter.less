@@ -7,7 +7,7 @@
 	.options-output {
 		@grid-size: 32px;
 		@node-width: 6;
-		@node-color: #DDF;
+		@node-color: #EEF;
 		@inactive-color: #444;
 		@close-color: #C44;
 		@open-color: #4C4;
@@ -380,6 +380,23 @@
 					.minus-icon(@more-button-size,@inactive-color);
 					&:hover {
 						.minus-icon(@more-button-size,@close-color);
+					}
+				}
+				.tip-info {
+					position: absolute;
+					display: block;
+					top: 0;
+					right: 2*@spacing-size + @more-button-size;
+					line-height: 12px;
+					width: @more-button-size;
+					height: @more-button-size;
+					border-radius: 0;
+					border: none;
+					.tip-content {
+						font-size: 12px;
+						border-radius: 0;
+						border: none;
+						box-shadow: 0 0 3px 3px rgba(0,0,0,0.3);
 					}
 				}
 			}
