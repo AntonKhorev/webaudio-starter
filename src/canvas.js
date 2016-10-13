@@ -48,20 +48,24 @@ class Canvas extends Feature {
 	getPreVisJsLines(featureContext,i18n) {
 		if (!featureContext.canvas) return JsLines.be()
 		const canvasContext=new CanvasContext('canvasContext')
-		const a=canvasContext.b()
+		const getClearLines=()=>{
+			const a=canvasContext.b()
+			if (this.options.background.type=='clear') {
+				a(a.jsName+".clearRect(0,0,canvas.width,canvas.height);")
+			} else {
+				a(a.setProp('fillStyle',a.getColorStyle(this.options.background.color)))
+				a(a.jsName+".fillRect(0,0,canvas.width,canvas.height);")
+			}
+			return a.e()
+		}
+		const a=JsLines.b()
 		if (featureContext.visualizeWaveformFn) {
 			a(featureContext.visualizeWaveformFn.getDeclJsLines(canvasContext))
 		}
 		if (featureContext.visualizeFrequencyBarsFn) {
 			a(featureContext.visualizeFrequencyBarsFn.getDeclJsLines(canvasContext))
 		}
-		// TODO open context here
-		if (this.options.background.type=='clear') {
-			a(a.jsName+".clearRect(0,0,canvas.width,canvas.height);")
-		} else {
-			a(a.setProp('fillStyle',a.getColorStyle(this.options.background.color)))
-			a(a.jsName+".fillRect(0,0,canvas.width,canvas.height);")
-		}
+		a(getClearLines())
 		return a.e()
 	}
 }
