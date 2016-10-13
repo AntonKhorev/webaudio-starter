@@ -88,32 +88,24 @@ class Options extends BaseOptions {
 					['Select','coloring',['component','spectral']],
 					['Select','coloringInput',['amplitude','frequency']],
 				],{ enableSwitch:false }],
-				// TODO frequencyOutline
+				['AudioGraphNode','frequencyOutline',[
+					['Int','logFftSize',[5,12],8],
+					['Int','cutoff',[10,100],100,{ unit:'%' }],
+					['Select','base',['bottom','middle']],
+					['Float','width',[0,10],1,{ unit:'pixel' }],
+					['Group','color',[
+						['Int','r',[0,100],0,{ unit:'%' }],
+						['Int','g',[0,100],0,{ unit:'%' }],
+						['Int','b',[0,100],0,{ unit:'%' }],
+						['Int','a',[0,100],100,{ unit:'%' }],
+					]],
+				],{ enableSwitch:false }],
 				['AudioGraphNode','destination',[
 					['Checkbox','enabled',true],
 				],{ outEdges:false }],
 			],'nodeType'],
 			/*
 			['Group','destination',[
-				['Group','frequencies',[
-					['Group','outline',[
-						['Checkbox','enabled'],
-						['Float','width',[0,10],1,{
-							unit: 'pixel',
-							visibilityData: {'destination.frequencies.outline.enabled':[true]},
-						}],
-						['Group','color',[
-							['Int','r',[0,100],0,{ unit: '%' }],
-							['Int','g',[0,100],0,{ unit: '%' }],
-							['Int','b',[0,100],0,{ unit: '%' }],
-							['Int','a',[0,100],100,{ unit: '%' }],
-						],{
-							visibilityData: {'destination.frequencies.outline.enabled':[true]},
-						}],
-					],{
-						visibilityData: {'destination.frequencies.enabled':[true]},
-					}]
-				]],
 				['Group','volume',[
 					['Checkbox','enabled'],
 					['Checkbox','stereo',{

@@ -58,15 +58,15 @@ const langStrings={
 		*/
 		'options.graph.compressor': "Dynamics compressor",
 		'options.graph.compressor.add': "Add dynamics compressor",
-		'options.graph.{waveform,frequencyBars}': "Draw {waveform,frequency bars}",
-		'options.graph.{waveform,frequencyBars}.add': "Add {waveform,frequency bars} visualization",
-		'options.graph.{waveform,frequencyBars,volume}.logFftSize': "log(FFT size)",
-		'options.graph.waveform.width': "Line width",
-		'options.graph.waveform.color': "Line color",
-		'options.graph.waveform.color.{r,g,b,a}': enColors,
-		'options.graph.frequencyBars.cutoff': "<abbr title='Frequency'>Freq.</abbr> cutoff",
-		'options.graph.frequencyBars.base': "Frequency bars extend from",
-		'options.graph.frequencyBars.base.{bottom,middle}': "{} of canvas",
+		'options.graph.{waveform,frequencyBars,frequencyOutline}': "Draw {waveform,frequency bars,frequency outline}",
+		'options.graph.{waveform,frequencyBars,frequencyOutline}.add': "Add {waveform,frequency bars,frequency outline} visualization",
+		'options.graph.{waveform,frequencyBars,frequencyOutline,volume}.logFftSize': "log(FFT size)",
+		'options.graph.{waveform,frequencyOutline}.width': "Line width",
+		'options.graph.{waveform,frequencyOutline}.color': "Line color",
+		'options.graph.{waveform,frequencyOutline}.color.{r,g,b,a}': "{,}"+enColors,
+		'options.graph.{frequencyBars,frequencyOutline}.cutoff': "<abbr title='Frequency'>Freq.</abbr> cutoff",
+		'options.graph.{frequencyBars,frequencyOutline}.base': "Frequency {bars extend from,outline centered at}",
+		'options.graph.{frequencyBars,frequencyOutline}.base.{bottom,middle}': "{,}{} of canvas",
 		'options.graph.frequencyBars.coloring': "Frequency bars coloring",
 		'options.graph.frequencyBars.coloring.component': "with single color component",
 		'options.graph.frequencyBars.coloring.spectral': "spectral",
@@ -76,13 +76,7 @@ const langStrings={
 		'options.graph.destination.add': "Add destination",
 		'options.graph.junction': "Junction", // not used
 		'options.graph.analyser': "Analyser", // not used
-
 		/*
-		'options.destination.frequencies.outline': "Frequency bars outline",
-		'options.destination.frequencies.outline.enabled': "Enable frequency bars outline",
-		'options.destination.frequencies.outline.width': "Frequency bars outline width",
-		'options.destination.frequencies.outline.color': "Frequency bars outline color",
-		'options.destination.frequencies.outline.color.{r,g,b,a}': `Frequency bars outline ${enColors}`,
 		'options.destination.volume': "Volume meter",
 		'options.destination.volume.enabled': "Enable volume meter",
 		'options.destination.volume.stereo': "Meters for left and right stereo channels",
@@ -106,8 +100,8 @@ const langStrings={
 		'options.api.noVendorPrefix': "Can create an audio context without a vendor prefix",
 		'options.api.connectReturnValue': "Can use a return value of <code>AudioNode.connect()</code>",
 
-		'options-info.graph.{waveform,frequencyBars}.logFftSize': "[[Fast Fourier transform]] size. Use a larger size to get {a wider time window for the waveform,thinner frequency bars}.",
-		'options-info.graph.frequencyBars.cutoff': "Limit plot to a fraction of low frequences.",
+		'options-info.graph.{waveform,frequencyBars,frequencyOutline}.logFftSize': "[[Fast Fourier transform]] size. Use a larger size to get {a wider time window for the waveform,thinner frequency bars,more details on frequency outline}.",
+		'options-info.graph.{frequencyBars,frequencyOutline}.cutoff': "Limit plot to a fraction of low frequences.",
 		'options-info.canvas.background.color.a': "Lower opacity values lead to a blur effect.",
 
 		'options-output.input': "Editable",
@@ -222,15 +216,17 @@ const langStrings={
 		*/
 		'options.graph.compressor': "Компрессор",
 		'options.graph.compressor.add': "Добавить компрессор",
-		'options.graph.{waveform,frequencyBars}': "Визуализация {волны,частот}",
-		'options.graph.{waveform,frequencyBars}.add': "Добавить визуализацию {волны,частот}",
-		'options.graph.{waveform,frequencyBars,volume}.logFftSize': "log размера БПФ",
-		'options.graph.waveform.width': "Ширина линии",
-		'options.graph.waveform.color': "Цвет линии",
-		'options.graph.waveform.color.{r,g,b,a}': ruColors,
-		'options.graph.frequencyBars.cutoff': "Верх частот",
+		'options.graph.{waveform,frequencyBars,frequencyOutline}': "Вид {волны,полос частот,контура частот}",
+		'options.graph.{waveform,frequencyBars,frequencyOutline}.add': "Добавить визуализацию {волны,полос частот,контура частот}",
+		'options.graph.{waveform,frequencyBars,frequencyOutline,volume}.logFftSize': "log размера БПФ",
+		'options.graph.{waveform,frequencyOutline}.width': "Ширина линии",
+		'options.graph.{waveform,frequencyOutline}.color': "Цвет линии",
+		'options.graph.{waveform,frequencyOutline}.color.{r,g,b,a}': "{,}"+ruColors,
+		'options.graph.{frequencyBars,frequencyOutline}.cutoff': "Верх частот",
 		'options.graph.frequencyBars.base': "Полосы частот растут от",
 		'options.graph.frequencyBars.base.{bottom,middle}': "{низа,середины} элемента <code>canvas</code>",
+		'options.graph.frequencyOutline.base': "Контур частот центрирован по",
+		'options.graph.frequencyOutline.base.{bottom,middle}': "{низу,середине} элемента <code>canvas</code>",
 		'options.graph.frequencyBars.coloring': "Раскраска полос частот",
 		'options.graph.frequencyBars.coloring.component': "одним цветовым каналом",
 		'options.graph.frequencyBars.coloring.spectral': "спектральная",
@@ -240,13 +236,7 @@ const langStrings={
 		'options.graph.destination.add': "Добавить выход",
 		'options.graph.junction': "Узел для соединения", // not used
 		'options.graph.analyser': "Анализатор", // not used
-
 		/*
-		'options.destination.frequencies.outline': "Контур полос частот",
-		'options.destination.frequencies.outline.enabled': "Включить рисование контура частот",
-		'options.destination.frequencies.outline.width': "Ширина контура частот",
-		'options.destination.frequencies.outline.color': "Цвет контура частот",
-		'options.destination.frequencies.outline.color.{r,g,b,a}': `${ruColors} контура частот`,
 		'options.destination.volume': "Индикатор громкости",
 		'options.destination.volume.enabled': "Включить индикатор громкости",
 		'options.destination.volume.stereo': "Отдельные индикаторы для левого и правого каналов",
@@ -271,8 +261,8 @@ const langStrings={
 		'options.api.connectReturnValue': "Можно использовать значение, возвращаемое <code>AudioNode.connect()</code>",
 
 		'options-info.graph.convolver.wet': "Соотношение прямого/обработанного звука.", // http://www.ixbt.com/proaudio/theory-of-reverb.shtml
-		'options-info.graph.{waveform,frequencyBars}.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]]. Больший размер даёт {более широкое окно для формы волны,более тонкие полосы частот}.",
-		'options-info.graph.frequencyBars.cutoff': "Ограничить рисование долей низких частот.",
+		'options-info.graph.{waveform,frequencyBars,frequencyOutline}.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]]. Больший размер даёт {более широкое окно для формы волны,более тонкие полосы частот,более подробный контур частот}.",
+		'options-info.graph.{frequencyBars,frequencyOutline}.cutoff': "Ограничить рисование долей низких частот.",
 		'options-info.canvas.background.color.a': "Низкие значения альфа-канала приводят к эффекту размывания.",
 
 		'options-output.input': "Значение изменяемо",
