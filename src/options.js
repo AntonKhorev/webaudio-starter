@@ -100,6 +100,9 @@ class Options extends BaseOptions {
 						['Int','a',[0,100],100,{ unit:'%' }],
 					]],
 				],{ enableSwitch:false }],
+				['AudioGraphNode','volume',[
+					['Int','logFftSize',[5,12],8],
+				],{ enableSwitch:false }],
 				['AudioGraphNode','destination',[
 					['Checkbox','enabled',true],
 				],{ outEdges:false }],

@@ -60,6 +60,8 @@ const langStrings={
 		'options.graph.compressor.add': "Add dynamics compressor",
 		'options.graph.{waveform,frequencyBars,frequencyOutline}': "Draw {waveform,frequency bars,frequency outline}",
 		'options.graph.{waveform,frequencyBars,frequencyOutline}.add': "Add {waveform,frequency bars,frequency outline} visualization",
+		'options.graph.volume': "Volume meter",
+		'options.graph.volume.add': "Add volume meter",
 		'options.graph.{waveform,frequencyBars,frequencyOutline,volume}.logFftSize': "log(FFT size)",
 		'options.graph.{waveform,frequencyOutline}.width': "Line width",
 		'options.graph.{waveform,frequencyOutline}.color': "Line color",
@@ -77,8 +79,6 @@ const langStrings={
 		'options.graph.junction': "Junction", // not used
 		'options.graph.analyser': "Analyser", // not used
 		/*
-		'options.destination.volume': "Volume meter",
-		'options.destination.volume.enabled': "Enable volume meter",
 		'options.destination.volume.stereo': "Meters for left and right stereo channels",
 		*/
 
@@ -101,6 +101,7 @@ const langStrings={
 		'options.api.connectReturnValue': "Can use a return value of <code>AudioNode.connect()</code>",
 
 		'options-info.graph.{waveform,frequencyBars,frequencyOutline}.logFftSize': "[[Fast Fourier transform]] size. Use a larger size to get {a wider time window for the waveform,thinner frequency bars,more details on frequency outline}.",
+		'options-info.graph.volume.logFftSize': "[[Fast Fourier transform]] size.",
 		'options-info.graph.{frequencyBars,frequencyOutline}.cutoff': "Limit plot to a fraction of low frequences.",
 		'options-info.canvas.background.color.a': "Lower opacity values lead to a blur effect.",
 
@@ -218,6 +219,8 @@ const langStrings={
 		'options.graph.compressor.add': "Добавить компрессор",
 		'options.graph.{waveform,frequencyBars,frequencyOutline}': "Вид {волны,полос частот,контура частот}",
 		'options.graph.{waveform,frequencyBars,frequencyOutline}.add': "Добавить визуализацию {волны,полос частот,контура частот}",
+		'options.graph.volume': "Индикатор громкости",
+		'options.graph.volume.add': "Добавить индикатор громкости",
 		'options.graph.{waveform,frequencyBars,frequencyOutline,volume}.logFftSize': "log размера БПФ",
 		'options.graph.{waveform,frequencyOutline}.width': "Ширина линии",
 		'options.graph.{waveform,frequencyOutline}.color': "Цвет линии",
@@ -237,8 +240,6 @@ const langStrings={
 		'options.graph.junction': "Узел для соединения", // not used
 		'options.graph.analyser': "Анализатор", // not used
 		/*
-		'options.destination.volume': "Индикатор громкости",
-		'options.destination.volume.enabled': "Включить индикатор громкости",
 		'options.destination.volume.stereo': "Отдельные индикаторы для левого и правого каналов",
 		*/
 
@@ -262,6 +263,7 @@ const langStrings={
 
 		'options-info.graph.convolver.wet': "Соотношение прямого/обработанного звука.", // http://www.ixbt.com/proaudio/theory-of-reverb.shtml
 		'options-info.graph.{waveform,frequencyBars,frequencyOutline}.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]]. Больший размер даёт {более широкое окно для формы волны,более тонкие полосы частот,более подробный контур частот}.",
+		'options-info.graph.volume.logFftSize': "Размер [[Быстрое преобразование Фурье|Быстрого преобразования Фурье]].",
 		'options-info.graph.{frequencyBars,frequencyOutline}.cutoff': "Ограничить рисование долей низких частот.",
 		'options-info.canvas.background.color.a': "Низкие значения альфа-канала приводят к эффекту размывания.",
 
