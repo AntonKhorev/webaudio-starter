@@ -294,6 +294,12 @@ ConNode.waveform = class extends VisualizationNode {
 	}
 }
 
+ConNode.frequencyBars = class extends VisualizationNode {
+	get type() {
+		return 'frequencyBars'
+	}
+}
+
 ConNode.destination = class extends Node {
 	get type() {
 		return 'destination'

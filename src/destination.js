@@ -221,28 +221,6 @@ class Destination extends Feature {
 			}
 			return a.e()
 		}
-		const getVisualizeWaveformLines=()=>{
-			const a=JsLines.b()
-			if (this.options.waveform.width!=1.0) {
-				a("canvasContext.lineWidth="+this.options.waveform.width+";")
-			}
-			a(
-				Canvas.getStyleLines('strokeStyle',this.options.waveform.color),
-				"analyserNode.getByteTimeDomainData(analyserData);",
-				"canvasContext.beginPath();",
-				"for (var i=0;i<analyserData.length;i++) {",
-				"	var x=i*canvas.width/(analyserData.length-1);",
-				"	var y=analyserData[i]*canvas.height/256;",
-				"	if (i==0) {",
-				"		canvasContext.moveTo(x,y);",
-				"	} else {",
-				"		canvasContext.lineTo(x,y);",
-				"	}",
-				"}",
-				"canvasContext.stroke();"
-			)
-			return a.e()
-		}
 		return JsLines.bae(...[
 			[this.options.volume.enabled,'visualizeVolume',getVisualizeVolumeLines],
 			[this.options.frequencies.enabled,'visualizeFrequencies',getVisualizeFrequenciesLines],

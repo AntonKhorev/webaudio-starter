@@ -52,6 +52,10 @@ class Canvas extends Feature {
 		if (featureContext.visualizeWaveformFn) {
 			a(featureContext.visualizeWaveformFn.getDeclJsLines(canvasContext))
 		}
+		if (featureContext.visualizeFrequencyBarsFn) {
+			a(featureContext.visualizeFrequencyBarsFn.getDeclJsLines(canvasContext))
+		}
+		// TODO open context here
 		if (this.options.background.type=='clear') {
 			a(a.jsName+".clearRect(0,0,canvas.width,canvas.height);")
 		} else {
