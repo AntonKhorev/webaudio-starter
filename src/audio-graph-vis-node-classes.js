@@ -38,6 +38,22 @@ class VisFunction {
 		}
 		return `(${arg}=='${cases[0][0]}' ? ${cases[0][1]} : ${cases[1][1]})`
 	}
+	getConditionalArgLines(arg,cases) {
+		const argValue=this.getArgValue(arg)
+		for (const [caseArgValue,caseResultLines] of cases) {
+			if (`'${caseArgValue}'`==argValue) {
+				return caseResultLines
+			}
+		}
+		return WrapLines.b(
+			JsLines.bae(`if (${arg}=='${cases[0][0]}') {`),
+			JsLines.bae(`} else {`),
+			JsLines.bae(`}`)
+		).ae(
+			cases[0][1],
+			cases[1][1]
+		)
+	}
 	getDeclJsLines(canvasContext) {
 		const declArgs=[]
 		for (let i=0;i<this.args.length;i++) {
@@ -132,11 +148,65 @@ class FrequencyBarsVisFunction extends VisFunction {
 			`${analyserNode}.getByteFrequencyData(analyserData);`,
 			`for (var i=0;i<${nBars};i++) {`,
 			`	var x=i*canvas.width/${nBars};`,
-			`	canvasContext.fillStyle=${fillStyle};`,
+			`	${a.jsName}.fillStyle=${fillStyle};`,
 			`	var barHeight=analyserData[i]*canvas.height/256;`,
 			`	var y=${y};`,
 			`	${a.jsName}.fillRect(x,y,barWidth,barHeight);`,
 			`}`
+		)
+		return a.e()
+	}
+}
+
+class FrequencyOutlineVisFunction extends VisFunction {
+	get name() {
+		return 'visualizeFrequencyOutline'
+	}
+	get args() {
+		return ['analyserNode','frequencyCutoff','outlineBase','outlineWidth','outlineColor']
+	}
+	getBodyJsLines(canvasContext) {
+		// TODO remove residual "bars" naming
+		// { copypaste from bars
+		const analyserNode=this.getArgValue('analyserNode')
+		const frequencyCutoff=this.getArgValue('frequencyCutoff')
+		const a=canvasContext.b()
+		let nBars=`${analyserNode}.frequencyBinCount`
+		if (frequencyCutoff!=100) {
+			a(`var nBars=Math.floor(${nBars}*${(frequencyCutoff/100).toFixed(2)});`)
+			nBars="nBars"
+		}
+		// }
+		const getOutlineLines=y=>JsLines.bae(
+			`for (var i=0;i<${nBars};i++) {`,
+			`	var x=i*canvas.width/${nBars};`,
+			`	var barHeight=analyserData[i]*canvas.height/256;`,
+			`	var y=${y};`,
+			`	if (i==0) {`,
+			`		${a.jsName}.moveTo(0,y);`,
+			`	}`,
+			`	${a.jsName}.lineTo(x+barWidth/2,y);`,
+			`	if (i==${nBars}-1) {`,
+			`		${a.jsName}.lineTo(canvas.width,y);`,
+			`	}`,
+			`}`
+		)
+		a(
+			a.setProp('lineWidth',this.getArgValue('outlineWidth')),
+			a.setProp('strokeStyle',this.getArgValue('outlineColor')),
+			`var barWidth=canvas.width/${nBars}*0.8;`,
+			`${analyserNode}.getByteFrequencyData(analyserData);`, // TODO optimize out repeated calls to analyser
+			`${a.jsName}.beginPath();`,
+			this.getConditionalArgLines('outlineBase',[ // TODO if-else case is too verbose, make another function to shorten it
+				['bottom',getOutlineLines(`canvas.height-barHeight`)],
+				['middle',WrapLines.b(
+					JsLines.bae(`;[-1,+1].forEach(function(aboveOrBelow){`),
+					JsLines.bae(`});`)
+				).ae(
+					getOutlineLines(`(canvas.height+aboveOrBelow*barHeight)/2`)
+				)],
+			]),
+			`${a.jsName}.stroke();`
 		)
 		return a.e()
 	}
@@ -201,6 +271,24 @@ VisNode.frequencyBars = class extends Node {
 			"'"+this.options.base+"'",
 			"'"+this.options.coloring+"'",
 			"'"+this.options.coloringInput+"'"
+		]
+	}
+}
+
+VisNode.frequencyOutline = class extends Node {
+	get featureContextProp() {
+		return 'visualizeFrequencyOutlineFn'
+	}
+	makeVisFunction() {
+		return new FrequencyOutlineVisFunction()
+	}
+	listVisFunctionArgValues() {
+		return [
+			this.analyserNodeJsName,
+			this.options.cutoff.value,
+			"'"+this.options.base+"'",
+			this.options.width.value,
+			CanvasContext.getColorStyle(this.options.color)
 		]
 	}
 }

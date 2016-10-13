@@ -300,6 +300,12 @@ ConNode.frequencyBars = class extends VisualizationNode {
 	}
 }
 
+ConNode.frequencyOutline = class extends VisualizationNode {
+	get type() {
+		return 'frequencyOutline'
+	}
+}
+
 ConNode.destination = class extends Node {
 	get type() {
 		return 'destination'

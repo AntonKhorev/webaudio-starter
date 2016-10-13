@@ -65,6 +65,9 @@ class Canvas extends Feature {
 		if (featureContext.visualizeFrequencyBarsFn) {
 			a(featureContext.visualizeFrequencyBarsFn.getDeclJsLines(canvasContext))
 		}
+		if (featureContext.visualizeFrequencyOutlineFn) {
+			a(featureContext.visualizeFrequencyOutlineFn.getDeclJsLines(canvasContext))
+		}
 		a(getClearLines())
 		return a.e()
 	}
