@@ -345,4 +345,6 @@ for (let lang in langStrings) {
 	langStrings[lang]=strings
 }
 
+langStrings['ru']['options-output.reset']="Сброс" // глагол "Сбросить" слишком длинный для кнопки в редакторе графа; TODO apply only to graph ui
+
 module.exports=require('crnx-base/i18n')(langStrings)
