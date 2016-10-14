@@ -103,6 +103,9 @@ class Options extends BaseOptions {
 				['AudioGraphNode','volume',[
 					['Int','logFftSize',[5,12],8],
 				],{ enableSwitch:false }],
+				['AudioGraphNode','stereoVolume',[
+					['Int','logFftSize',[5,12],8],
+				],{ enableSwitch:false }],
 				['AudioGraphNode','destination',[
 					['Checkbox','enabled',true],
 				],{ outEdges:false }],
