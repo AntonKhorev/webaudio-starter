@@ -220,7 +220,7 @@ const langStrings={
 		'options.graph.{waveform,frequencyBars,frequencyOutline}.add': "Добавить визуализацию {волны,полос частот,контура частот}",
 		'options.graph.volume': "Индикатор громкости",
 		'options.graph.volume.add': "Добавить индикатор громкости",
-		'options.graph.stereoVolume': "Стерео-индикатор громкости",
+		'options.graph.stereoVolume': "Стерео-громкость",
 		'options.graph.stereoVolume.add': "Добавить стерео-индикатор громкости",
 		'options.graph.{waveform,frequencyBars,frequencyOutline,volume,stereoVolume}.logFftSize': "log размера БПФ",
 		'options.graph.{waveform,frequencyOutline}.width': "Ширина линии",
