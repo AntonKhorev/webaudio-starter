@@ -37,6 +37,7 @@ class Code extends BaseWebCode {
 		//	visualizeWaveformFn
 		//	visualizeFrequencyBarsFn
 		//	visualizeFrequencyOutlineFn
+		//	visualizeVolumeFn
 		// helpers:
 		//	getConnectAssignJsLines = set by AudioContext
 		for (const feature of this.features) {

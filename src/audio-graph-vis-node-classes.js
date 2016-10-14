@@ -212,6 +212,32 @@ class FrequencyOutlineVisFunction extends VisFunction {
 	}
 }
 
+class VolumeVisFunction extends VisFunction {
+	get name() {
+		return 'visualizeVolumeOutline'
+	}
+	get args() {
+		return ['analyserNode','xOffset']
+	}
+	getBodyJsLines(canvasContext) {
+		const analyserNode=this.getArgValue('analyserNode')
+		const xOffset=this.getArgValue('xOffset')
+		const a=canvasContext.b()
+		a(
+			`${analyserNode}.getByteFrequencyData(analyserData);`, // TODO optimize out repeated calls to analyser
+			`var sumAmplitudes=0;`,
+			`for (var i=0;i<${analyserNode}.frequencyBinCount;i++) {`,
+			`	sumAmplitudes+=analyserData[i];`,
+			`}`,
+			`var meanAmplitude=sumAmplitudes/${analyserNode}.frequencyBinCount;`,
+			`var barHeight=meanAmplitude*canvas.height/256;`,
+			a.setProp('fillStyle','canvasVolumeGradient'),
+			`${a.jsName}.fillRect(${xOffset},canvas.height-barHeight,25,barHeight);`
+		)
+		return a.e()
+	}
+}
+
 const VisNode={}
 
 //// abstract classes (not exported)
@@ -289,6 +315,32 @@ VisNode.frequencyOutline = class extends Node {
 			"'"+this.options.base+"'",
 			this.options.width.value,
 			CanvasContext.getColorStyle(this.options.color)
+		]
+	}
+}
+
+let nVolumeMeters=0 // TODO should be tracked by canvasContext
+
+VisNode.volume = class extends Node {
+	constructor(options) {
+		nVolumeMeters=0 // TODO totally wrong
+		super(options)
+		this.xOffset=(nVolumeMeters++)*26
+	}
+	requestFeatureContext(featureContext) {
+		super.requestFeatureContext(featureContext)
+		featureContext.canvasVolumeGradient=true
+	}
+	get featureContextProp() {
+		return 'visualizeVolumeFn'
+	}
+	makeVisFunction() {
+		return new VolumeVisFunction()
+	}
+	listVisFunctionArgValues() {
+		return [
+			this.analyserNodeJsName,
+			this.xOffset
 		]
 	}
 }
