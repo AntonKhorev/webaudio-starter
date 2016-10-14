@@ -105,7 +105,7 @@ class Options extends BaseOptions {
 				],{ enableSwitch:false }],
 				['AudioGraphNode','stereoVolume',[
 					['Int','logFftSize',[5,12],8],
-				],{ enableSwitch:false }],
+				],{ outEdges:false, enableSwitch:false }],
 				['AudioGraphNode','destination',[
 					['Checkbox','enabled',true],
 				],{ outEdges:false }],

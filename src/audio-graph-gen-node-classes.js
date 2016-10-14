@@ -51,10 +51,10 @@ class Node extends Feature {
 		return names
 	}
 	// protected:
-	get nodeHtmlName() {
+	get nodeHtmlName() { // TODO rename to htmlName
 		return 'my.'+this.name
 	}
-	get nodeJsName() {
+	get nodeJsName() { // TODO rename to jsName
 		return camelCase(this.name+'.node')
 	}
 	getPropertyInputHtmlName(propertyName) {
@@ -442,6 +442,64 @@ GenNode.analyser = class extends SingleNode {
 		)
 	}
 	getVisJsLines(featureContext,i18n) {
+		return JsLines.bae(
+			...this.visNodes.map(visNode=>visNode.getVisJsLines(featureContext,i18n))
+		)
+	}
+}
+
+GenNode.stereoVolume = class extends Node {
+	constructor(options,name,visNodes) {
+		super(options,name)
+		this.visNodes=visNodes
+	}
+	get type() {
+		return 'stereoVolume'
+	}
+	get splitterNodeJsName() {
+		return camelCase(this.name+'.splitter.node')
+	}
+	get leftAnalyserNodeJsName() {
+		return camelCase(this.name+'.left.analyser.node')
+	}
+	get rightAnalyserNodeJsName() {
+		return camelCase(this.name+'.right.analyser.node')
+	}
+	getInputs() {
+		return [this.splitterNodeJsName]
+	}
+	requestFeatureContext(featureContext) { // copypaste from analyser except for "leftAnalyserNodeJsName" TODO refactor
+		featureContext.audioContext=true
+		featureContext.canvas=true
+		if (featureContext.maxLogFftSize==undefined || featureContext.maxLogFftSize<this.options.logFftSize) {
+			featureContext.maxLogFftSize=this.options.logFftSize
+			featureContext.maxLogFftSizeNodeJsName=this.leftAnalyserNodeJsName
+		}
+		for (const visNode of this.visNodes) {
+			visNode.requestFeatureContext(featureContext)
+		}
+	}
+	getInitJsLines(featureContext,i18n) {
+		const getAnalyserNodeLines=(jsName,prevOutputs,connectArgs)=>{ // copypaste from analyser TODO refactor
+			const a=JsLines.b()
+			a(featureContext.getConnectAssignJsLines("var",jsName,"ctx.createAnalyser()",prevOutputs,connectArgs))
+			if (this.options.logFftSize!=11) { // default FFT size is 2048
+				a(jsName+".fftSize="+(1<<this.options.logFftSize)+";")
+			}
+			return a.e()
+		}
+		return JsLines.bae(
+			featureContext.getConnectAssignJsLines("var",this.splitterNodeJsName,"ctx.createChannelSplitter()",this.getPrevNodeOutputs()),
+			getAnalyserNodeLines(this.leftAnalyserNodeJsName,[this.splitterNodeJsName],"0"),
+			getAnalyserNodeLines(this.rightAnalyserNodeJsName,[this.splitterNodeJsName],"1")
+		)
+	}
+	getPreVisJsLines(featureContext,i18n) { // copypaste from analyser TODO refactor
+		return JsLines.bae(
+			...this.visNodes.map(visNode=>visNode.getPreVisJsLines(featureContext,i18n))
+		)
+	}
+	getVisJsLines(featureContext,i18n) { // copypaste from analyser TODO refactor
 		return JsLines.bae(
 			...this.visNodes.map(visNode=>visNode.getVisJsLines(featureContext,i18n))
 		)

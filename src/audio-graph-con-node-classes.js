@@ -216,6 +216,28 @@ ConNode.analyser = class extends Node {
 	}
 }
 
+ConNode.stereoVolume = class extends Node {
+	get type() {
+		return 'stereoVolume'
+	}
+	get upstreamEffect() {
+		return true
+	}
+	get estimatedNInputs() {
+		return 1
+	}
+	toGenNode(name) {
+		const visNodes=[
+			new VisNode.volume(this.options),
+			new VisNode.volume(this.options),
+		]
+		const genNode=new GenNode.stereoVolume(this.options,name,visNodes)
+		visNodes[0].initParent(genNode.leftAnalyserNodeJsName)
+		visNodes[1].initParent(genNode.rightAnalyserNodeJsName)
+		return genNode
+	}
+}
+
 ConNode.junction = class extends PassiveByDefaultFilterNode { // special node used as summator/junction
 	get type() {
 		return 'junction'
