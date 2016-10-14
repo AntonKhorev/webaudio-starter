@@ -33,11 +33,13 @@ class Code extends BaseWebCode {
 		//	loaderOnError = loadSample() caller has to pass the error handler
 		//	maxLogFftSize = max log(fft size) of all analysers
 		//	maxLogFftSizeNodeJsName = name of analyser node with max log(fft size); if set, Canvas has to allocate analyserData array
-		// visualization functions, either undefined or set to VisFunction object
+		// visualization functions, either undefined or set to VisFunction object:
 		//	visualizeWaveformFn
 		//	visualizeFrequencyBarsFn
 		//	visualizeFrequencyOutlineFn
 		//	visualizeVolumeFn
+		// counters:
+		//	canvasVolumeMeterCounter = number of volume meters, for communication between volume vis fns
 		// helpers:
 		//	getConnectAssignJsLines = set by AudioContext
 		for (const feature of this.features) {

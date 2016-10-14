@@ -319,17 +319,14 @@ VisNode.frequencyOutline = class extends Node {
 	}
 }
 
-let nVolumeMeters=0 // TODO should be tracked by canvasContext
-
 VisNode.volume = class extends Node {
-	constructor(options) {
-		nVolumeMeters=0 // TODO totally wrong
-		super(options)
-		this.xOffset=(nVolumeMeters++)*26
-	}
 	requestFeatureContext(featureContext) {
-		super.requestFeatureContext(featureContext)
 		featureContext.canvasVolumeGradient=true
+		if (featureContext.canvasVolumeMeterCounter===undefined) {
+			featureContext.canvasVolumeMeterCounter=0 // TODO should be tracked by canvasContext
+		}
+		this.xOffset=(featureContext.canvasVolumeMeterCounter++)*26
+		super.requestFeatureContext(featureContext)
 	}
 	get featureContextProp() {
 		return 'visualizeVolumeFn'
