@@ -200,6 +200,39 @@ class AudioGraph extends Feature {
 				}
 			})
 		}
+		const combineAnalyserNodes=(inputNodes)=>{
+			const outputNodes=[]
+			const visited=new Set
+			const rec=(node)=>{
+				if (visited.has(node)) return
+				visited.add(node)
+				if (
+					node instanceof ConNode.analyser &&
+					node.nextNodes.size==1 // can relax this condition with output nonintersection check
+				) {
+					let nextNodesToCombine=[]
+					node.nextNodes.forEach(nextNode=>{
+						if (
+							nextNode instanceof ConNode.analyser &&
+							node.options.logFftSize.value==nextNode.options.logFftSize.value
+						) {
+							nextNodesToCombine.push(nextNode)
+						}
+					})
+					for (const nextNode of nextNodesToCombine) {
+						visited.add(nextNode)
+						node.innerNodes.push(...nextNode.innerNodes)
+						deleteNode(nextNode)
+					}
+				}
+				// TODO while loop to combine more than two analysers
+				outputNodes.push(node)
+			}
+			for (const node of inputNodes) {
+				rec(node)
+			}
+			return outputNodes
+		}
 		const sortNodes=(inputNodes)=>{
 			const outputNodes=[]
 			const visited=new Set
@@ -224,7 +257,9 @@ class AudioGraph extends Feature {
 			return outputNodes
 		}
 		const conNodes=[
-			insertActiveJunctions,removePassiveNodes,removeUnaffectedNodes,wrapVisualizationNodes,sortNodes
+			insertActiveJunctions,removePassiveNodes,removeUnaffectedNodes,
+			wrapVisualizationNodes,combineAnalyserNodes,
+			sortNodes
 		].reduce(
 			(nodes,transform)=>transform(nodes),
 			createNodes()

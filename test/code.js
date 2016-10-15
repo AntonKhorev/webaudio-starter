@@ -27,11 +27,16 @@ describe("Code",()=>{
 				open() {}
 				send() {}
 			},
+			requestAnimationFrame() {},
 			document: {
 				getElementById: id=>{
 					const element=document.getElementById(id)
 					if (element instanceof window.HTMLMediaElement) {
 						return new WebAudioTestAPI.HTMLMediaElement()
+					} else if (element instanceof window.HTMLCanvasElement) {
+						return {
+							getContext() {},
+						}
 					} else {
 						//return element // WebAudioTestAPI doesn't like strings as parameter values
 						return {value: Number(element.value)}
@@ -45,7 +50,6 @@ describe("Code",()=>{
 		)
 		return sandbox
 	}
-
 	const makeSourceFilterDestinationGraph=(filterName,filterProperty,filterPropertyValue)=>({
 		"name": "AudioDestinationNode",
 		"inputs": [
@@ -66,6 +70,18 @@ describe("Code",()=>{
 	})
 	const makeSourceGainDestinationGraph=(gainValue)=>makeSourceFilterDestinationGraph("GainNode","gain",gainValue)
 	const makeSourcePannerDestinationGraph=(panValue)=>makeSourceFilterDestinationGraph("StereoPannerNode","pan",panValue)
+	const assertGraphIsChain=(graph,chain)=>{
+		for (let i=chain.length-1;i>=0;i--) {
+			assert.equal(graph.name,chain[i])
+			if (i>0) {
+				assert.equal(graph.inputs.length,1)
+				graph=graph.inputs[0]
+			} else {
+				assert.equal(graph.inputs.length,0)
+			}
+		}
+	}
+
 	beforeEach(()=>{
 		WebAudioTestAPI.use()
 	})
@@ -516,5 +532,49 @@ describe("Code",()=>{
 			],
 		})
 		assert.strictEqual(sandbox.pannerNode,undefined)
+	})
+	it("makes two analyser nodes because fft size is different",()=>{
+		const ctx=getSandbox({
+			graph: [
+				{
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'waveform',
+					logFftSize: 7,
+					next: 2,
+				},{
+					nodeType: 'frequencyBars',
+					logFftSize: 9,
+					next: 3,
+				},{
+					nodeType: 'destination',
+				}
+			],
+		}).ctx
+		const graph=ctx.toJSON()
+		assertGraphIsChain(graph,["MediaElementAudioSourceNode","AnalyserNode","AnalyserNode","AudioDestinationNode"])
+	})
+	it("makes one analyser node because fft size is same",()=>{
+		const ctx=getSandbox({
+			graph: [
+				{
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'waveform',
+					logFftSize: 8,
+					next: 2,
+				},{
+					nodeType: 'frequencyBars',
+					logFftSize: 8,
+					next: 3,
+				},{
+					nodeType: 'destination',
+				}
+			],
+		}).ctx
+		const graph=ctx.toJSON()
+		assertGraphIsChain(graph,["MediaElementAudioSourceNode","AnalyserNode","AudioDestinationNode"])
 	})
 })
