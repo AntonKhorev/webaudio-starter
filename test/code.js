@@ -72,13 +72,21 @@ describe("Code",()=>{
 	const makeSourcePannerDestinationGraph=(panValue)=>makeSourceFilterDestinationGraph("StereoPannerNode","pan",panValue)
 	const assertGraphIsChain=(graph,chain)=>{
 		for (let i=chain.length-1;i>=0;i--) {
-			assert.equal(graph.name,chain[i])
+			assert.equal(graph.name,chain[i],"node name mismatch")
 			if (i>0) {
-				assert.equal(graph.inputs.length,1)
+				assert.equal(graph.inputs.length,1,`input number mismatch for ${graph.name}`)
 				graph=graph.inputs[0]
 			} else {
-				assert.equal(graph.inputs.length,0)
+				assert.equal(graph.inputs.length,0,`input number mismatch for ${graph.name}`)
 			}
+		}
+	}
+	const assertGraphIsTree=(graph,tree)=>{
+		assert.equal(graph.name,tree.name,"node name mismatch")
+		assert.equal(graph.inputs.length,tree.inputs.length,`input number mismatch for ${graph.name}`)
+		const inputs=[...graph.inputs].sort((a,b)=>a.name<b.name?-1:a.name==b.name?0:1)
+		for (let i=0;i<inputs.length;i++) {
+			assertGraphIsTree(inputs[i],tree.inputs[i])
 		}
 	}
 
@@ -533,7 +541,7 @@ describe("Code",()=>{
 		})
 		assert.strictEqual(sandbox.pannerNode,undefined)
 	})
-	it("makes two analyser nodes because fft size is different",()=>{
+	it("keeps 2 analyser nodes because fft size is different",()=>{
 		const ctx=getSandbox({
 			graph: [
 				{
@@ -555,7 +563,7 @@ describe("Code",()=>{
 		const graph=ctx.toJSON()
 		assertGraphIsChain(graph,["MediaElementAudioSourceNode","AnalyserNode","AnalyserNode","AudioDestinationNode"])
 	})
-	it("makes one analyser node because fft size is same",()=>{
+	it("keeps 2 analyser nodes because second analyser has extra input",()=>{
 		const ctx=getSandbox({
 			graph: [
 				{
@@ -569,6 +577,72 @@ describe("Code",()=>{
 					nodeType: 'frequencyBars',
 					logFftSize: 8,
 					next: 3,
+				},{
+					nodeType: 'destination',
+				},{
+					nodeType: 'audio',
+					next: 2,
+				}
+			],
+		}).ctx
+		const graph=ctx.toJSON()
+		assertGraphIsTree(graph,{
+			name: "AudioDestinationNode",
+			inputs: [{
+				name: "AnalyserNode",
+				inputs: [{
+					name: "AnalyserNode",
+					inputs: [{
+						name: "MediaElementAudioSourceNode",
+						inputs: []
+					}]
+				},{
+					name: "MediaElementAudioSourceNode",
+					inputs: []
+				}]
+			}]
+		})
+	})
+	it("combines 2 analyser nodes into 1",()=>{
+		const ctx=getSandbox({
+			graph: [
+				{
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'waveform',
+					logFftSize: 8,
+					next: 2,
+				},{
+					nodeType: 'frequencyBars',
+					logFftSize: 8,
+					next: 3,
+				},{
+					nodeType: 'destination',
+				}
+			],
+		}).ctx
+		const graph=ctx.toJSON()
+		assertGraphIsChain(graph,["MediaElementAudioSourceNode","AnalyserNode","AudioDestinationNode"])
+	})
+	it("combines 3 analyser nodes into 1",()=>{
+		const ctx=getSandbox({
+			graph: [
+				{
+					nodeType: 'audio',
+					next: 1,
+				},{
+					nodeType: 'waveform',
+					logFftSize: 8,
+					next: 2,
+				},{
+					nodeType: 'frequencyBars',
+					logFftSize: 8,
+					next: 3,
+				},{
+					nodeType: 'frequencyOutline',
+					logFftSize: 8,
+					next: 4,
 				},{
 					nodeType: 'destination',
 				}

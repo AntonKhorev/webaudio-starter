@@ -214,6 +214,12 @@ ConNode.analyser = class extends Node {
 		}
 		return genNode
 	}
+	isEquivalentAnalyser(that) {
+		return (
+			that instanceof ConNode.analyser &&
+			this.options.logFftSize.value==that.options.logFftSize.value
+		)
+	}
 }
 
 ConNode.stereoVolume = class extends Node {

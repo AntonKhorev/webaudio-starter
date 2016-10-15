@@ -203,6 +203,7 @@ class AudioGraph extends Feature {
 		const combineAnalyserNodes=(inputNodes)=>{
 			const outputNodes=[]
 			const visited=new Set
+			//const deleted=new Set
 			const rec=(node)=>{
 				if (visited.has(node)) return
 				visited.add(node)
@@ -213,8 +214,8 @@ class AudioGraph extends Feature {
 					let nextNodesToCombine=[]
 					node.nextNodes.forEach(nextNode=>{
 						if (
-							nextNode instanceof ConNode.analyser &&
-							node.options.logFftSize.value==nextNode.options.logFftSize.value
+							node.isEquivalentAnalyser(nextNode) &&
+							nextNode.prevNodes.size==1 // no extra inputs besides current node
 						) {
 							nextNodesToCombine.push(nextNode)
 						}
