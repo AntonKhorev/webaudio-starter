@@ -15,6 +15,15 @@ const Feature=require('./feature')
 class AudioGraph extends Feature {
 	constructor(options) {
 		super()
+		const haveNodeOutputIntersection=(node1,node2)=>{
+			let intersect=false
+			node2.nextNodes.forEach(node=>{
+				if (node1.nextNodes.has(node)) {
+					intersect=true
+				}
+			})
+			return intersect
+		}
 		const replaceNode=(oldNode,newNode)=>{
 			newNode.prevNodes=oldNode.prevNodes
 			newNode.nextNodes=oldNode.nextNodes
@@ -201,38 +210,35 @@ class AudioGraph extends Feature {
 			})
 		}
 		const combineAnalyserNodes=(inputNodes)=>{
-			const outputNodes=[]
 			const visited=new Set
-			//const deleted=new Set
+			const deleted=new Set
 			const rec=(node)=>{
 				if (visited.has(node)) return
 				visited.add(node)
-				if (
-					node instanceof ConNode.analyser &&
-					node.nextNodes.size==1 // can relax this condition with output nonintersection check
-				) {
+				if (node instanceof ConNode.analyser) {
 					let nextNodesToCombine=[]
 					node.nextNodes.forEach(nextNode=>{
 						if (
 							node.isEquivalentAnalyser(nextNode) &&
 							nextNode.prevNodes.size==1 // no extra inputs besides current node
 						) {
+							rec(nextNode)
 							nextNodesToCombine.push(nextNode)
 						}
 					})
 					for (const nextNode of nextNodesToCombine) {
-						visited.add(nextNode)
-						node.innerNodes.push(...nextNode.innerNodes)
-						deleteNode(nextNode)
+						if (!haveNodeOutputIntersection(node,nextNode)) {
+							node.innerNodes.push(...nextNode.innerNodes)
+							deleteNode(nextNode)
+							deleted.add(nextNode)
+						}
 					}
 				}
-				// TODO while loop to combine more than two analysers
-				outputNodes.push(node)
 			}
 			for (const node of inputNodes) {
 				rec(node)
 			}
-			return outputNodes
+			return inputNodes.filter(node=>!deleted.has(node))
 		}
 		const sortNodes=(inputNodes)=>{
 			const outputNodes=[]
