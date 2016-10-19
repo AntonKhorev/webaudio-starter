@@ -146,91 +146,12 @@ Option.LiveSelect = class extends Option.Select {
 	}
 }
 
+/*
+// DON'T DELETE
+// TODO copy to crnx-base, here it's only for filter coefs
 Option.AnyFloat = class extends Option.NonBoolean {
 }
-
-Option.BiquadFilter = class extends Option.Group {
-	static typeUsesQ(type) {
-		return !!{
-			'lowpass': true,
-			'highpass': true,
-			'bandpass': true,
-			'peaking': true,
-			'notch': true,
-			'allpass': true,
-		}[type]
-	}
-	static typeUsesGain(type) {
-		return !!{
-			'lowshelf': true,
-			'highshelf': true,
-			'peaking': true,
-		}[type]
-	}
-	static collectArgs(scalarArg,arrayArg,settings) {
-		settings=Object.create(settings)
-		settings.descriptions=[
-			['LiveSelect','type',[
-				'lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch','allpass'
-			]],
-			['LiveInt','frequency',[0,22050],350,{ unit: 'hertz' }],
-			['LiveInt','detune',[0,100],{ unit: '¢' }],
-			['LiveFloat','Q',[-4,4],0], // log Q
-			['LiveInt','gain',[-30,30],0,{ unit: 'decibel' }],
-		]
-		return super.collectArgs(scalarArg,arrayArg,settings)
-	}
-	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
-		super(...arguments)
-		const type=this.entries[0]
-		const Q=this.entries[3]
-		const gain=this.entries[4]
-		Q.isVisible=()=>(type.input || Option.BiquadFilter.typeUsesQ(type.value))
-		gain.isVisible=()=>(type.input || Option.BiquadFilter.typeUsesGain(type.value))
-		type.addUpdateCallback(()=>{
-			Q.updateVisibility()
-			gain.updateVisibility()
-		})
-	}
-}
-
-Option.IIRFilterCoefs = class extends Option.Array {
-	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
-		super(...arguments)
-		if (this._entries.length==0) {
-			const type=this.availableTypes[0]
-			this._entries.push(this.makeEntry(type))
-		}
-	}
-}
-
-Option.IIRFilter = class extends Option.Group {
-	static collectArgs(scalarArg,arrayArg,settings) {
-		settings=Object.create(settings)
-		settings.descriptions=[
-			['IIRFilterCoefs','feedforward',[
-				['AnyFloat','b',1],
-			]],
-			['IIRFilterCoefs','feedback',[
-				['AnyFloat','a',1],
-			]],
-		]
-		return super.collectArgs(scalarArg,arrayArg,settings)
-	}
-}
-
-Option.EqualizerFilter = class extends Option.Group {
-	static get frequencies() {
-		return [60,170,350,1000,3500,10000]
-	}
-	static collectArgs(scalarArg,arrayArg,settings) {
-		settings=Object.create(settings)
-		settings.descriptions=Option.EqualizerFilter.frequencies.map(
-			freq=>['LiveInt','gain'+freq,[-30,30],0,{ unit: 'decibel' }]
-		)
-		return super.collectArgs(scalarArg,arrayArg,settings)
-	}
-}
+*/
 
 Option.GraphNode = class extends Option.Group {
 	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
@@ -320,6 +241,91 @@ Option.WetAudioGraphNode = class extends Option.AudioGraphNode {
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
 }
+
+Option.BiquadFilter = class extends Option.AudioGraphNode {
+	static typeUsesQ(type) {
+		return !!{
+			'lowpass': true,
+			'highpass': true,
+			'bandpass': true,
+			'peaking': true,
+			'notch': true,
+			'allpass': true,
+		}[type]
+	}
+	static typeUsesGain(type) {
+		return !!{
+			'lowshelf': true,
+			'highshelf': true,
+			'peaking': true,
+		}[type]
+	}
+	static collectArgs(scalarArg,arrayArg,settings) {
+		settings=Object.create(settings)
+		settings.descriptions=[
+			['LiveSelect','type',[
+				'lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch','allpass'
+			]],
+			['LiveInt','frequency',[0,22050],350,{ unit: 'hertz' }],
+			['LiveInt','detune',[0,100],{ unit: '¢' }],
+			['LiveFloat','Q',[-4,4],0], // log Q
+			['LiveInt','gain',[-30,30],0,{ unit: 'decibel' }],
+		]
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
+		super(...arguments)
+		const type=this.entries[0]
+		const Q=this.entries[3]
+		const gain=this.entries[4]
+		Q.isVisible=()=>(type.input || Option.BiquadFilter.typeUsesQ(type.value))
+		gain.isVisible=()=>(type.input || Option.BiquadFilter.typeUsesGain(type.value))
+		type.addUpdateCallback(()=>{
+			Q.updateVisibility()
+			gain.updateVisibility()
+		})
+	}
+}
+
+/*
+Option.IIRFilterCoefs = class extends Option.Array {
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
+		super(...arguments)
+		if (this._entries.length==0) {
+			const type=this.availableTypes[0]
+			this._entries.push(this.makeEntry(type))
+		}
+	}
+}
+
+Option.IIRFilter = class extends Option.AudioGraphNode {
+	static collectArgs(scalarArg,arrayArg,settings) {
+		settings=Object.create(settings)
+		settings.descriptions=[
+			['IIRFilterCoefs','feedforward',[
+				['AnyFloat','b',1],
+			]],
+			['IIRFilterCoefs','feedback',[
+				['AnyFloat','a',1],
+			]],
+		]
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+}
+
+Option.EqualizerFilter = class extends Option.AudioGraphNodes {
+	static get frequencies() {
+		return [60,170,350,1000,3500,10000]
+	}
+	static collectArgs(scalarArg,arrayArg,settings) {
+		settings=Object.create(settings)
+		settings.descriptions=Option.EqualizerFilter.frequencies.map(
+			freq=>['LiveInt','gain'+freq,[-30,30],0,{ unit: 'decibel' }]
+		)
+		return super.collectArgs(scalarArg,arrayArg,settings)
+	}
+}
+*/
 
 Option.Graph = class extends Option.Collection {
 	getElementsPropertyName() {

@@ -29,7 +29,6 @@ const langStrings={
 		'options.graph.panner': "Stereo panner",
 		'options.graph.panner.add': "Add stereo panner",
 		'options.graph.panner.pan': "Pan",
-		/*
 		'options.graph.biquad': "Biquad filter", // [[Digital biquad filter]]
 		'options.graph.biquad.add': "Add biquad filter",
 		'options.graph.biquad.type': "Filter type",
@@ -38,6 +37,7 @@ const langStrings={
 		'options.graph.biquad.detune': "Detune",
 		'options.graph.biquad.Q': "log(Q)",
 		'options.graph.biquad.gain': "Gain",
+		/*
 		'options.graph.iir': "IIR filter",
 		'options.graph.iir.add': "Add IIR filter",
 		'options.graph.iir.feedforward': "Feedforward coefficients", // Transfer fn numerator coefs
@@ -182,7 +182,6 @@ const langStrings={
 		'options.graph.panner': "Панорамирование",
 		'options.graph.panner.add': "Добавить панорамирование",
 		'options.graph.panner.pan': "Баланс",
-		/*
 		'options.graph.biquad': "Биквадратичный фильтр",
 		'options.graph.biquad.add': "Добавить биквадратичный фильтр",
 		'options.graph.biquad.type': "Тип фильтра",
@@ -196,6 +195,7 @@ const langStrings={
 		'options.graph.biquad.detune': "Detune",
 		'options.graph.biquad.Q': "Логарифм добротности",
 		'options.graph.biquad.gain': "Усиление",
+		/*
 		'options.graph.iir': "БИХ-фильтр",
 		'options.graph.iir.add': "Добавить БИХ-фильтр",
 		'options.graph.iir.feedforward': "Коэффициенты прямой связи", // Transfer fn numerator coefs

@@ -8,6 +8,21 @@ const Option=require('./option-classes')
 // has .node-option option class name instead of .option
 class NodeOptionsOutput extends BaseOptionsOutput {
 	setOptionClassWriters(optionClassWriters) {
+		const writeMoreButton=($extraSection)=>{ // TODO i18n
+			const $moreButtonText=$("<span>").html("More")
+			return $("<button class='more' title='Show more options'>").append($moreButtonText).click(function(){
+				const $button=$(this)
+				if ($button.hasClass('more')) {
+					$button.addClass('less').removeClass('more').attr('title',"Show less options")
+					$moreButtonText.html("Less")
+					$extraSection.show()
+				} else {
+					$button.addClass('more').removeClass('less').attr('title',"Show more options")
+					$moreButtonText.html("More")
+					$extraSection.hide()
+				}
+			})
+		}
 		optionClassWriters.set(Option.Group,(option,writeOption,i18n,generateId)=>{
 			return option.$=$("<fieldset class='node-option'>").append(
 				"<legend>"+i18n('options.'+option.fullName)+"</legend>",
@@ -29,6 +44,19 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 					})
 				)
 			)
+		})
+		optionClassWriters.set(Option.LiveSelect,(option,writeOption,i18n,generateId)=>{
+			const $output=optionClassWriters.get(Option.Select)(option,writeOption,i18n,generateId)
+			const $mainSection=$output.children('.node-option-section-text')
+			const $extraSection=$("<span class='node-option-section node-option-section-extra'>").append(
+				$("<button class='reset'>"+i18n('options-output.reset')+"</button>").click(function(){
+					//$sliderInput.val(option.defaultValue).change()
+				})
+			).hide()
+			$mainSection.append(
+				" ",writeMoreButton($extraSection)
+			)
+			return $output.append(" ",$extraSection)
 		})
 		optionClassWriters.set(Option.Text,(option,writeOption,i18n,generateId)=>{
 			const id=generateId()
@@ -71,7 +99,6 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				min: option.availableMin,
 				max: option.availableMax
 			},option.precision)
-			const $moreButtonText=$("<span>").html("More")
 			const $mainSection=$("<span class='node-option-section node-option-section-number'>").append(
 				$("<span class='range-label'>").append(
 					"<span class='min'>"+i18n.numberWithoutUnits(fmt.min,option.unit)+"</span> ",
@@ -85,30 +112,17 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 			)
 			if (i18n.has('options-info.'+option.fullName)) {
 				$mainSection.append(
-					" ",
-					writeTip('info',i18n('options-info.'+option.fullName))
+					" ",writeTip('info',i18n('options-info.'+option.fullName))
 				)
 			}
-			$mainSection.append(
-				" ",
-				$("<button class='more' title='Show more options'>").append($moreButtonText).click(function(){ // TODO i18n
-					const $button=$(this)
-					if ($button.hasClass('more')) {
-						$button.addClass('less').removeClass('more').attr('title',"Show less options")
-						$moreButtonText.html("Less")
-						$extraSection.show()
-					} else {
-						$button.addClass('more').removeClass('less').attr('title',"Show more options")
-						$moreButtonText.html("More")
-						$extraSection.hide()
-					}
-				})
-			)
 			const $extraSection=$("<span class='node-option-section node-option-section-extra'>").append(
 				$("<button class='reset'>"+i18n('options-output.reset')+"</button>").click(function(){
 					$sliderInput.val(option.defaultValue).change()
 				})
 			).hide()
+			$mainSection.append(
+				" ",writeMoreButton($extraSection)
+			)
 			return option.$=$("<div class='node-option'>").append(
 				$mainSection," ",$extraSection
 			)

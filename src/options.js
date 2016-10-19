@@ -53,8 +53,8 @@ class Options extends BaseOptions {
 					['Checkbox','enabled',true],
 					['LiveFloat','pan',[-1,1],0],
 				]],
-				/*
 				['BiquadFilter','biquad'],
+				/*
 				['IIRFilter','iir'],
 				*/
 				['WetAudioGraphNode','convolver',[

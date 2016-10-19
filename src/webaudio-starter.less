@@ -262,14 +262,6 @@
 			@spacing-size: 4px;
 			@more-button-size: 10px;
 			font-size: @detail-font-size;
-			.node-option-section {
-				display: block;
-				position: relative;
-				height: @grid-size;
-				line-height: @grid-size;
-				background: @node-color;
-				text-align: center;
-			}
 			input, select, button {
 				display: block;
 				position: absolute;
@@ -285,6 +277,52 @@
 				&::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
 					-webkit-appearance: none;
 					margin: 0;
+				}
+			}
+			.node-option-section {
+				display: block;
+				position: relative;
+				height: @grid-size;
+				line-height: @grid-size;
+				background: @node-color;
+				text-align: center;
+				button.more, button.less {
+					width: @more-button-size;
+					height: @more-button-size;
+					right: @spacing-size;
+					top: 0;
+					padding: 0;
+					border: 0;
+					background-color: transparent;
+					background-repeat: no-repeat;
+					&:hover:active {
+						background-position: 0 1px;
+					}
+					& > span {
+						.visually-hidden();
+					}
+				}
+				button.more {
+					.plus-icon(@size,@color) {
+						@s: unit(@size);
+						@h: @s/2;
+						.svg(@s,@s,"<path d='M 0 @{h} H @{s} M @{h} 0 V @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
+					}
+					.plus-icon(@more-button-size,@inactive-color);
+					&:hover {
+						.plus-icon(@more-button-size,@open-color);
+					}
+				}
+				button.less {
+					.minus-icon(@size,@color) {
+						@s: unit(@size);
+						@h: @s/2;
+						.svg(@s,@s,"<path d='M 0 @{h} H @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
+					}
+					.minus-icon(@more-button-size,@inactive-color);
+					&:hover {
+						.minus-icon(@more-button-size,@close-color);
+					}
 				}
 			}
 			.node-option-section-text {
@@ -348,44 +386,6 @@
 					top: @grid-size / 2 - @spacing-size;
 					padding-top: 0;
 					padding-bottom: 0;
-				}
-				button.more, button.less {
-					width: @more-button-size;
-					height: @more-button-size;
-					right: @spacing-size;
-					top: 0;
-					padding: 0;
-					border: 0;
-					background-color: transparent;
-					background-repeat: no-repeat;
-					&:hover:active {
-						background-position: 0 1px;
-					}
-					& > span {
-						.visually-hidden();
-					}
-				}
-				button.more {
-					.plus-icon(@size,@color) {
-						@s: unit(@size);
-						@h: @s/2;
-						.svg(@s,@s,"<path d='M 0 @{h} H @{s} M @{h} 0 V @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
-					}
-					.plus-icon(@more-button-size,@inactive-color);
-					&:hover {
-						.plus-icon(@more-button-size,@open-color);
-					}
-				}
-				button.less {
-					.minus-icon(@size,@color) {
-						@s: unit(@size);
-						@h: @s/2;
-						.svg(@s,@s,"<path d='M 0 @{h} H @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
-					}
-					.minus-icon(@more-button-size,@inactive-color);
-					&:hover {
-						.minus-icon(@more-button-size,@close-color);
-					}
 				}
 				.tip-info {
 					position: absolute;
