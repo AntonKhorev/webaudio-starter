@@ -419,7 +419,7 @@
 						border: inset 1px @inactive-color;
 					}
 				}
-				// { LiveNumber
+				// { LiveNumber, LiveSelect
 				input[type="checkbox"] {
 					height: @grid-size / 2;
 					width: @grid-size / 2;
@@ -435,6 +435,16 @@
 					left: @grid-size;
 					height: 12px;
 					line-height: 12px;
+					width: (@node-width - @side-width - 1)*@grid-size;
+					text-align: left;
+				}
+				.editable-middle {
+					display: block;
+					position: absolute;
+					top: 0;
+					left: @grid-size;
+					height: @grid-size;
+					line-height: @grid-size;
 					width: (@node-width - @side-width - 1)*@grid-size;
 					text-align: left;
 				}
@@ -460,7 +470,7 @@
 					left: 2.5*@grid-size;
 					bottom: @spacing-size;
 				}
-				// } LiveNumber
+				// } LiveNumber, LiveSelect
 			}
 		}
 	}

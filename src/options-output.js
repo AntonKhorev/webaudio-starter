@@ -4,9 +4,9 @@ const Option=require('./option-classes')
 const BaseOptionsOutput=require('crnx-base/options-output')
 //const ArrayOptionOutput=require('crnx-base/array-option-output')
 const GraphOptionOutput=require('./graph-option-output')
-const BiquadFilterOptionOutput=require('./biquad-filter-option-output')
-const IIRFilterOptionOutput=require('./iir-filter-option-output')
-const EqualizerFilterOptionOutput=require('./equalizer-filter-option-output')
+//const BiquadFilterOptionOutput=require('./biquad-filter-option-output')
+//const IIRFilterOptionOutput=require('./iir-filter-option-output')
+//const EqualizerFilterOptionOutput=require('./equalizer-filter-option-output')
 
 /*
 class IIRFilterCoefsOptionOutput extends ArrayOptionOutput {
@@ -33,34 +33,6 @@ class IIRFilterCoefsOptionOutput extends ArrayOptionOutput {
 class OptionsOutput extends BaseOptionsOutput {
 	setOptionClassWriters(optionClassWriters) {
 		super.setOptionClassWriters(optionClassWriters)
-		optionClassWriters.set(Option.LiveSelect,(option,writeOption,i18n,generateId)=>{
-			const id=generateId()
-			let $select,$inputCheckbox
-			return option.$=$("<div class='option'>").append( // not inheriting Option.Select b/c don't know how to handle reset button
-				this.getLeadLabel(id,i18n,option),
-				$select=$("<select id='"+id+"'>").append(
-					option.availableValues.map(function(availableValue){
-						return $("<option>").val(availableValue).html(i18n('options.'+option.fullName+'.'+availableValue))
-					})
-				).val(option.value).change(function(){
-					option.value=this.value
-				}),
-				" ",
-				$("<label class='nowrap'>").append(
-					$inputCheckbox=$("<input type='checkbox'>")
-						.prop('checked',option.input)
-						.change(function(){
-							option.input=$(this).prop('checked')
-						}),
-					" "+i18n('options-output.input')
-				),
-				" ",
-				$("<button type='button'>"+i18n('options-output.reset')+"</button>").click(function(){
-					$select.val(option.defaultValue).change()
-					$inputCheckbox.prop('checked',false).change()
-				})
-			)
-		})
 		/*
 		// DON'T DELETE
 		// TODO copy to crnx-base, here it's only for filter coefs
@@ -80,9 +52,6 @@ class OptionsOutput extends BaseOptionsOutput {
 		*/
 		//optionClassWriters.set(Option.IIRFilterCoefs,function(){
 		//	return new IIRFilterCoefsOptionOutput(...arguments).$output
-		//})
-		//optionClassWriters.set(Option.BiquadFilter,function(){
-		//	return new BiquadFilterOptionOutput(...arguments).$output
 		//})
 		//optionClassWriters.set(Option.IIRFilter,function(){
 		//	return new IIRFilterOptionOutput(...arguments).$output

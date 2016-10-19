@@ -48,9 +48,17 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 		optionClassWriters.set(Option.LiveSelect,(option,writeOption,i18n,generateId)=>{
 			const $output=optionClassWriters.get(Option.Select)(option,writeOption,i18n,generateId)
 			const $mainSection=$output.children('.node-option-section-text')
+			const $select=$mainSection.children('select')
+			const inputCheckboxId=generateId()
+			const $inputCheckbox=$("<input type='checkbox' class='editable' id='"+inputCheckboxId+"'>").prop('checked',option.input).change(function(){
+				option.input=$(this).prop('checked')
+			})
 			const $extraSection=$("<span class='node-option-section node-option-section-extra'>").append(
+				$inputCheckbox,
+				" <label class='editable-middle' for='"+inputCheckboxId+"'>"+i18n('options-output.input')+"</label> ",
 				$("<button class='reset'>"+i18n('options-output.reset')+"</button>").click(function(){
-					//$sliderInput.val(option.defaultValue).change()
+					$select.val(option.defaultValue).change()
+					$inputCheckbox.prop('checked',false).change()
 				})
 			).hide()
 			$mainSection.append(
@@ -143,8 +151,8 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 					}
 				})
 			const $output=optionClassWriters.get(Option.Number)(option,writeOption,i18n,generateId)
-			const id=generateId()
-			const $inputCheckbox=$("<input type='checkbox' class='editable' id='"+id+"'>").prop('checked',option.input).change(function(){
+			const inputCheckboxId=generateId()
+			const $inputCheckbox=$("<input type='checkbox' class='editable' id='"+inputCheckboxId+"'>").prop('checked',option.input).change(function(){
 				option.input=$(this).prop('checked')
 			})
 			const $rangeMinInput=writeMinMaxInput('min')
@@ -158,7 +166,7 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				$inputCheckbox,
 				" ",
 				$("<span class='editable-top'>").append(
-					"<label for='"+id+"'>"+i18n('options-output.input')+"</label> ",
+					"<label for='"+inputCheckboxId+"'>"+i18n('options-output.input')+"</label> ",
 					$rangeSpan1
 				),
 				" ",
