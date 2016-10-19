@@ -2,12 +2,12 @@
 
 const debounce=require('crnx-base/fake-lodash/debounce')
 const formatNumbers=require('crnx-base/format-numbers')
-const GroupOptionOutput=require('crnx-base/group-option-output')
+const GroupNodeOptionOutput=require('./group-node-option-output')
 
-const width=300
-const height=300
-const pad=30
-const maxNGridLines=10
+const width=32*6 // 300
+const height=32*6 // 300
+const pad=16 // 30
+const maxNGridLines=6 // 10
 const fontSize=10
 const fontOffset=3
 const minFrequencyInLogMode=10
@@ -19,11 +19,11 @@ let magnitudeArray0,phaseArray0
 
 const mix=(a,b,x)=>a*(1-x)+b*x
 
-class FilterOptionOutput extends GroupOptionOutput {
+class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		super(option,writeOption,i18n,generateId)
-		let $freqResponseUi=$()
-		const isFreqResponseUiShown=()=>$freqResponseUi.length>0
+		//let $freqResponseUi=$()
+		//const isFreqResponseUiShown=()=>$freqResponseUi.length>0
 		let magnitudeCanvasContext, phaseCanvasContext // TODO remove loitering on hide - but have to cancel update
 		let magnitudeLogScale=true, frequencyLogScale=false
 		const updatePlots=(filterNodes)=>{
@@ -233,12 +233,45 @@ class FilterOptionOutput extends GroupOptionOutput {
 				updatePlots(this.getFilterNodes(audioContext))
 			} catch (e) {}
 		},50)
-		let $frOption
-		const This=this
+		// { copypaste
+		const writeMoreButton=($extraSection)=>{ // TODO i18n
+			const $moreButtonText=$("<span>").html("More")
+			return $("<button class='more' title='Show more options'>").append($moreButtonText).click(function(){
+				const $button=$(this)
+				if ($button.hasClass('more')) {
+					$button.addClass('less').removeClass('more').attr('title',"Show less options")
+					$moreButtonText.html("Less")
+					// TODO compute it
+					$extraSection.show()
+				} else {
+					$button.addClass('more').removeClass('less').attr('title',"Show more options")
+					$moreButtonText.html("More")
+					// TODO deallocate it
+					$extraSection.hide()
+				}
+			})
+		}
+		// }
+		//const This=this
+		const $mainSection=$("<span class='node-option-section'>").append(
+			i18n('options-output.filter.frequencyResponse')
+		)
+		const $figureSection=$("<span class='node-option-section'>").append(
+			"TODO figures"
+		).hide()
+		$mainSection.append(
+			" ",writeMoreButton($figureSection)
+		)
 		this.$output.append(
-			$frOption=$("<div class='option only-buttons'>").append(
-				"<label>"+i18n('options-output.filter.frequencyResponse')+":</label><span class='space'> </span>",
-				$("<button type='button'>"+i18n('options-output.show')+"</button>").click(function(){
+			$("<div class='node-option'>").append(
+				$mainSection," ",$figureSection
+			)
+		)
+		/*
+		this.$output.append(
+			$("<div class='node-option'>").append(
+				"<label>"+i18n('options-output.filter.frequencyResponse')+"</label>",
+				$("<button type='button'>"+i18n('options-output.show')+"</button>").click(function(){ // TODO [+]
 					const $button=$(this)
 					if (!isFreqResponseUiShown()) {
 						This.runIfCanCreateAudioContext(audioContext=>{
@@ -286,23 +319,24 @@ class FilterOptionOutput extends GroupOptionOutput {
 							magnitudeCanvasContext=$magnitudeCanvas[0].getContext('2d')
 							phaseCanvasContext=$phaseCanvas[0].getContext('2d')
 							updatePlots(filterNodes)
-							$frOption.removeClass('only-buttons')
 						},$button,i18n('options-output.filter.contextError'))
 					} else {
 						// TODO cancel scheduled update
 						$freqResponseUi.remove()
 						$freqResponseUi=$()
 						$button.text(i18n('options-output.show'))
-						$frOption.addClass('only-buttons')
 					}
 				})
 			)
 		)
+		*/
+		/*
 		option.addUpdateCallback(()=>{
 			if (isFreqResponseUiShown()) {
 				delayedUpdate()
 			}
 		})
+		*/
 	}
 	runIfCanCreateAudioContext(fn,$ui,errorMessage) {
 		const initAudioContext=()=>{
@@ -338,4 +372,4 @@ class FilterOptionOutput extends GroupOptionOutput {
 	// getFilterNodes(audioContext)
 }
 
-module.exports=FilterOptionOutput
+module.exports=FilterNodeOptionOutput

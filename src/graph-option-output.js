@@ -2,8 +2,10 @@
 
 const formatNumbers=require('crnx-base/format-numbers')
 const writeTip=require('crnx-base/tip')
-const BaseOptionsOutput=require('crnx-base/options-output')
 const Option=require('./option-classes')
+const BaseOptionsOutput=require('crnx-base/options-output')
+const GroupNodeOptionOutput=require('./group-node-option-output')
+const BiquadFilterNodeOptionOutput=require('./biquad-filter-node-option-output')
 
 // has .node-option option class name instead of .option
 class NodeOptionsOutput extends BaseOptionsOutput {
@@ -23,12 +25,6 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				}
 			})
 		}
-		optionClassWriters.set(Option.Group,(option,writeOption,i18n,generateId)=>{
-			return option.$=$("<fieldset class='node-option'>").append(
-				"<legend>"+i18n('options.'+option.fullName)+"</legend>",
-				option.entries.map(writeOption)
-			)
-		})
 		optionClassWriters.set(Option.Select,(option,writeOption,i18n,generateId)=>{
 			const valueId=value=>'options.'+option.fullName+'.'+value
 			const id=generateId()
@@ -178,6 +174,12 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 				$rangeMaxInput.val(option.defaultMax).change()
 			})
 			return $output
+		})
+		optionClassWriters.set(Option.Group,function(){
+			return new GroupNodeOptionOutput(...arguments).$output
+		})
+		optionClassWriters.set(Option.BiquadFilter,function(){
+			return new BiquadFilterNodeOptionOutput(...arguments).$output
 		})
 	}
 }
