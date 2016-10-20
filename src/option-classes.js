@@ -297,22 +297,32 @@ Option.IIRFilterCoefs = class extends Option.Array {
 		}
 	}
 }
+*/
+
+Option.IIRFilterCoefs = class extends Option.Text {
+	static isValueValid(value) { // has to be nonempty comma-separated number sequence
+		try {
+			const result=JSON.parse('['+value+']')
+			return result.length>0 && result.every(v=>(typeof v == 'number'))
+		} catch (e) {
+			return false
+		}
+	}
+	// TODO check validity in import/creation
+}
 
 Option.IIRFilter = class extends Option.AudioGraphNode {
 	static collectArgs(scalarArg,arrayArg,settings) {
 		settings=Object.create(settings)
 		settings.descriptions=[
-			['IIRFilterCoefs','feedforward',[
-				['AnyFloat','b',1],
-			]],
-			['IIRFilterCoefs','feedback',[
-				['AnyFloat','a',1],
-			]],
+			['IIRFilterCoefs','feedforward',1],
+			['IIRFilterCoefs','feedback',1],
 		]
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
 }
 
+/*
 Option.EqualizerFilter = class extends Option.AudioGraphNodes {
 	static get frequencies() {
 		return [60,170,350,1000,3500,10000]

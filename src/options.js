@@ -54,9 +54,7 @@ class Options extends BaseOptions {
 					['LiveFloat','pan',[-1,1],0],
 				]],
 				['BiquadFilter','biquad'],
-				/*
 				['IIRFilter','iir'],
-				*/
 				['WetAudioGraphNode','convolver',[
 					['Text','url',[
 						// original w3c mooc

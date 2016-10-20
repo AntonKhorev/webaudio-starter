@@ -67,7 +67,7 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 			const listId=generateId()
 			return option.$=$("<div class='node-option'>").append(
 				$("<span class='node-option-section node-option-section-text'>").append(
-					$(this.getLeadLabel(id,i18n,option)),
+					this.getLeadLabel(id,i18n,option),
 					$("<input type='text' id='"+id+"' list='"+listId+"' />")
 						.val(option.value)
 						.on('input change',function(){
@@ -79,6 +79,24 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 					)
 				)
 			) // TODO expand on focus
+		})
+		optionClassWriters.set(Option.IIRFilterCoefs,(option,writeOption,i18n,generateId)=>{
+			const id=generateId()
+			return option.$=$("<div class='node-option'>").append(
+				$("<span class='node-option-section node-option-section-text'>").append(
+					this.getLeadLabel(id,i18n,option),
+					$("<input type='text' id='"+id+"' required>")
+						.val(option.value)
+						.on('input change',function(){
+							if (Option.IIRFilterCoefs.isValueValid(this.value)) {
+								this.setCustomValidity('')
+								option.value=this.value
+							} else {
+								this.setCustomValidity(i18n('options-output.iir-filter-coefs.invalid'))
+							}
+						})
+				)
+			)
 		})
 		optionClassWriters.set(Option.Number,(option,writeOption,i18n,generateId)=>{
 			const p=option.precision

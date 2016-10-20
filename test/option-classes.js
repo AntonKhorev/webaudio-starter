@@ -1,6 +1,7 @@
 'use strict'
 
 const assert=require('assert')
+const Option=require('../src/option-classes')
 const Options=require('../src/options')
 
 const graphInsides=[
@@ -16,6 +17,30 @@ const graphInsides=[
 	['GraphNode','src',{inEdges:false}],
 	['GraphNode','dst',{outEdges:false}],
 ]
+
+describe("Option.IIRFilterCoefs",()=>{
+	for (const [description,value,validity] of [
+		["empty value","",false],
+		["default number","1",true],
+		["single number","42",true],
+		["two numbers","42,23",true],
+		["two numbers with trailing comma","12,32,",false],
+		["two numbers with leading comma",",56,123",false],
+		["floating-point number","12.34",true],
+		["letters","asdfg",false],
+		["single-quote string","'asdfg'",false],
+		["double-quote string",'"asdfg"',false],
+		["backtick string",'`asdfg`',false],
+		["array","[2,3]",false],
+		["object","{'foo':'bar'}",false],
+		["expression","1+2",false],
+		["injection attempt","0);doEvil();(",false],
+	]) {
+		it(`considers ${description} ${validity?'':'in'}valid`,()=>{
+			assert.equal(Option.IIRFilterCoefs.isValueValid(value),validity)
+		})
+	}
+})
 
 describe("Option.Graph",()=>{
 	class TestOptions extends Options {

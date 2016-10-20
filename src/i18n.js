@@ -37,16 +37,10 @@ const langStrings={
 		'options.graph.biquad.detune': "Detune",
 		'options.graph.biquad.Q': "log(Q)",
 		'options.graph.biquad.gain': "Gain",
-		/*
 		'options.graph.iir': "IIR filter",
 		'options.graph.iir.add': "Add IIR filter",
 		'options.graph.iir.feedforward': "Feedforward coefficients", // Transfer fn numerator coefs
-		'options.graph.iir.feedforward.b': "b",
-		'options.graph.iir.feedforward.b.add': "Add coefficient",
 		'options.graph.iir.feedback': "Feedback coefficients", // Transfer fn denominator coefs
-		'options.graph.iir.feedback.a': "a",
-		'options.graph.iir.feedback.a.add': "Add coefficient",
-		*/
 		'options.graph.convolver': "Convolver",
 		'options.graph.convolver.add': "Add convolver",
 		'options.graph.convolver.url': "Impulse response URL",
@@ -116,6 +110,7 @@ const langStrings={
 		'options-output.filter.biquad.clone': "Clone as IIR filter",
 		'options-output.filter.biquad.clone.{pre,post}': "Clone with {}-2016-04-15 coefficients",
 		'options-output.filter.biquad.clone.info': `<a href='${webaudioSpec}'>The API specification</a> was self-contradictory and implementations weren't following it. Additionally, it was discovered that filter coefficient formulas need to be changed to accomodate a wider range of lowpass and highpass filters. See Web Audio API issues ${webaudioIssue(769)}, ${webaudioIssue(771)} and ${webaudioIssue(791)} for details. A possible method to check if an implementation has switched to the updated formulas is offered <a href='${webaudioDetect}'>here</a>.`,
+		'options-output.iir-filter-coefs.invalid': "comma-separated numbers required",
 		'options-output.show': "Show",
 		'options-output.hide': "Hide",
 		'options-output.enabled': "Enabled",
@@ -195,16 +190,10 @@ const langStrings={
 		'options.graph.biquad.detune': "Detune",
 		'options.graph.biquad.Q': "Log добротности",
 		'options.graph.biquad.gain': "Усиление",
-		/*
 		'options.graph.iir': "БИХ-фильтр",
 		'options.graph.iir.add': "Добавить БИХ-фильтр",
 		'options.graph.iir.feedforward': "Коэффициенты прямой связи", // Transfer fn numerator coefs
-		'options.graph.iir.feedforward.b': "b",
-		'options.graph.iir.feedforward.b.add': "Добавить коэффициент",
 		'options.graph.iir.feedback': "Коэффициенты обратной связи", // Transfer fn denominator coefs
-		'options.graph.iir.feedback.a': "a",
-		'options.graph.iir.feedback.a.add': "Добавить коэффициент",
-		*/
 		'options.graph.convolver': "Свёртка",
 		'options.graph.convolver.add': "Добавить свёртку",
 		'options.graph.convolver.url': "URL импульсной <abbr title='характеристики'>хар-ки</abbr>",
@@ -277,6 +266,7 @@ const langStrings={
 		'options-output.filter.biquad.clone': "Клонировать в виде БИХ-фильтра",
 		'options-output.filter.biquad.clone.{pre,post}': "Клонировать с коэффициентами по версиям {до,после} 2016-04-15",
 		'options-output.filter.biquad.clone.info': `<a href='${webaudioSpec}'>Спецификация API</a> была противоречива и реализации ей не следовали. Также было обнаружено, что формулы для коэффициентов фильтров должны быть изменены, чтобы стало возможно задавать некоторые фильтры низких и высоких частот, которые ранее задать было невозможно. Подробности можно узнать из Web Audio API issues ${webaudioIssue(769)}, ${webaudioIssue(771)} и ${webaudioIssue(791)}. Возможный метод обнаружения, перешла ли реализация на новые формулы, приводится <a href='${webaudioDetect}'>здесь</a>.`,
+		'options-output.iir-filter-coefs.invalid': "требуются числа, разделённые запятой",
 		'options-output.show': "Показать",
 		'options-output.hide': "Скрыть",
 		'options-output.enabled': "Включен",
