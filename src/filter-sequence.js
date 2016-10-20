@@ -37,40 +37,6 @@ class Filter {
 }
 
 const filterClasses={
-	biquad: class extends SinglePathFilter {
-		get type()                { return 'biquad' }
-		get ctxCreateMethodName() { return 'createBiquadFilter' }
-		get nodeProperties() {
-			return [
-				{
-					name:'type',
-					type:'select',
-				},{
-					name:'frequency',
-					type:'range',
-				},{
-					name:'detune',
-					type:'range',
-				},{
-					name:'Q',
-					type:'range',
-					fn:x=>`Math.pow(10,${x})`,
-					skip:(!this.options.type.input && !Option.BiquadFilter.typeUsesQ(this.options.type.value)),
-				},{
-					name:'gain',
-					type:'range',
-					skip:(!this.options.type.input && !Option.BiquadFilter.typeUsesGain(this.options.type.value)),
-				}
-			]
-		}
-		get skipNode() {
-			// lowshelf, highshelf and peaking are passive when gain==0
-			return (
-				!this.options.type.input && ['lowshelf','highshelf','peaking'].indexOf(this.options.type.value)>=0 &&
-				!this.options.gain.input && this.options.gain==0
-			)
-		}
-	},
 	iir: class extends SinglePathFilter {
 		get type()                { return 'iir' }
 		get ctxCreateMethodName() { return 'createIIRFilter' }

@@ -304,6 +304,19 @@ ConNode.panner = class extends PassiveByDefaultFilterNode {
 	}
 }
 
+ConNode.biquad = class extends FilterNode {
+	get type() {
+		return 'biquad'
+	}
+	get passive() {
+		// lowshelf, highshelf and peaking are passive when gain==0
+		return (
+			!this.options.type.input && ['lowshelf','highshelf','peaking'].indexOf(this.options.type.value)>=0 &&
+			!this.options.gain.input && this.options.gain==0
+		)
+	}
+}
+
 ConNode.convolver = class extends FilterNode {
 	get type() {
 		return 'convolver'

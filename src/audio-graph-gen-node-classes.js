@@ -7,6 +7,7 @@ const Lines=require('crnx-base/lines')
 const JsLines=require('crnx-base/js-lines')
 const WrapLines=require('crnx-base/wrap-lines')
 const NoseWrapLines=require('crnx-base/nose-wrap-lines')
+const Option=require('./option-classes')
 const Feature=require('./feature')
 
 const GenNode={}
@@ -681,6 +682,38 @@ GenNode.panner = class extends FilterNode {
 			{
 				name:'pan',
 				type:'range',
+			}
+		]
+	}
+}
+
+GenNode.biquad = class extends FilterNode {
+	get type() {
+		return 'biquad'
+	}
+	get ctxCreateMethodName() {
+		return 'createBiquadFilter'
+	}
+	get properties() {
+		return [
+			{
+				name:'type',
+				type:'select',
+			},{
+				name:'frequency',
+				type:'range',
+			},{
+				name:'detune',
+				type:'range',
+			},{
+				name:'Q',
+				type:'range',
+				fn:x=>`Math.pow(10,${x})`,
+				skip:(!this.options.type.input && !Option.BiquadFilter.typeUsesQ(this.options.type.value)),
+			},{
+				name:'gain',
+				type:'range',
+				skip:(!this.options.type.input && !Option.BiquadFilter.typeUsesGain(this.options.type.value)),
 			}
 		]
 	}
