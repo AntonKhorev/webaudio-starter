@@ -6,6 +6,7 @@ const Option=require('./option-classes')
 const BaseOptionsOutput=require('crnx-base/options-output')
 const GroupNodeOptionOutput=require('./group-node-option-output')
 const BiquadFilterNodeOptionOutput=require('./biquad-filter-node-option-output')
+const IIRFilterNodeOptionOutput=require('./iir-filter-node-option-output')
 
 // has .node-option option class name instead of .option
 class NodeOptionsOutput extends BaseOptionsOutput {
@@ -198,6 +199,9 @@ class NodeOptionsOutput extends BaseOptionsOutput {
 		})
 		optionClassWriters.set(Option.BiquadFilter,function(){
 			return new BiquadFilterNodeOptionOutput(...arguments).$output
+		})
+		optionClassWriters.set(Option.IIRFilter,function(){
+			return new IIRFilterNodeOptionOutput(...arguments).$output
 		})
 	}
 }
