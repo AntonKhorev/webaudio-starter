@@ -719,6 +719,27 @@ GenNode.biquad = class extends FilterNode {
 	}
 }
 
+GenNode.iir = class extends SingleNode {
+	get type() {
+		return 'iir'
+	}
+	getInputs() {
+		return [this.nodeJsName]
+	}
+	requestFeatureContext(featureContext) {
+		featureContext.audioContext=true
+	}
+	getInitJsLines(featureContext,i18n) {
+		return JsLines.bae(
+			featureContext.getConnectAssignJsLines(
+				"var",this.nodeJsName,
+				"ctx.createIIRFilter(["+this.options.feedforward+"],["+this.options.feedback+"])",
+				this.getPrevNodeOutputs()
+			)
+		)
+	}
+}
+
 GenNode.convolver = class extends FilterNode {
 	get type() {
 		return 'convolver'

@@ -317,6 +317,35 @@ ConNode.biquad = class extends FilterNode {
 	}
 }
 
+ConNode.iir = class extends FilterNode {
+	get type() {
+		return 'iir'
+	}
+	get passive() {
+		// corresponding coefs are equal, sequences are of equal length or differ by trailing zero coefs
+		const ff=JSON.parse('['+this.options.feedforward+']')
+		const fb=JSON.parse('['+this.options.feedback+']')
+		let i=0
+		while (i<ff.length && i<fb.length) {
+			if (ff[i]!=fb[i]) {
+				return false
+			}
+			i++
+		}
+		for (let j=i;j<ff.length;j++) {
+			if (ff[j]!=0) {
+				return false
+			}
+		}
+		for (let j=i;j<fb.length;j++) {
+			if (fb[j]!=0) {
+				return false
+			}
+		}
+		return true
+	}
+}
+
 ConNode.convolver = class extends FilterNode {
 	get type() {
 		return 'convolver'

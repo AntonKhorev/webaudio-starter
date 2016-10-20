@@ -139,8 +139,8 @@ const langStrings={
 		'comment.graph.analyser': "create [analyser node][analyser]",
 		'comment.graph.stereoVolume': "create [channel splitter node][splitter] connected to two [analyser nodes][analyser]",
 		'comment.graph.biquad': "create [biquad filter node][biquad]",
+		'comment.graph.iir': "create [IIR filter node][iir]",
 		/*
-		'comment.filters.iir': "create [IIR filter node][iir]",
 		'comment.filters.equalizer': "create equalizer as a sequence of [peaking][peaking] [biquad filter nodes][biquad]",
 		'comment.filters.equalizer.single': "create equalizer as a [peaking][peaking] [biquad filter node][biquad]",
 		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "create [analyser node][analyser] for {waveform,frequencies,waveform and frequencies} visualization",
@@ -295,8 +295,8 @@ const langStrings={
 		'comment.graph.analyser': "создаём [узел анализатора][analyser]",
 		'comment.graph.stereoVolume': "создаём [узел разделения каналов][splitter], соединённый с двумя [узлами анализатора][analyser]",
 		'comment.graph.biquad': "создаём [узел биквадратичного фильтра][biquad]",
+		'comment.graph.iir': "создаём [узел БИХ-фильтра][iir]",
 		/*
-		'comment.filters.iir': "создаём [узел БИХ-фильтра][iir]",
 		'comment.filters.equalizer': "создаём эквалайзер в виде последовательности [peaking][peaking] [биквадратичных фильтров][biquad]",
 		'comment.filters.equalizer.single': "создаём эквалайзер в виде [peaking][peaking] [биквадратичного фильтра][biquad]",
 		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "создаём [узел анализатора][analyser] для визуализации {формы волны,частот,формы волны и частот}",

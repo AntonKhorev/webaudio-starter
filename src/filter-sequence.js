@@ -37,23 +37,6 @@ class Filter {
 }
 
 const filterClasses={
-	iir: class extends SinglePathFilter {
-		get type()                { return 'iir' }
-		get ctxCreateMethodName() { return 'createIIRFilter' }
-		get nodeProperties() {
-			return []
-		}
-		getJsInitLines(featureContext,i18n,prevNodeJsNames) {
-			return JsLines.bae(
-				RefLines.parse("// "+i18n('comment.filters.'+this.type)),
-				featureContext.getJsConnectAssignLines(
-					"var",this.nodeJsName,
-					"ctx."+this.ctxCreateMethodName+"(["+this.options.feedforward.entries+"],["+this.options.feedback.entries+"])",
-					prevNodeJsNames
-				)
-			)
-		}
-	},
 	equalizer: class extends Filter {
 		get type()                { return 'equalizer' }
 		get ctxCreateMethodName() { return 'createBiquadFilter' }
