@@ -4,6 +4,7 @@ const writeTip=require('crnx-base/tip')
 const FilterNodeOptionOutput=require('./filter-node-option-output')
 
 class BiquadFilterNodeOptionOutput extends FilterNodeOptionOutput {
+	/*
 	constructor(option,writeOption,i18n,generateId) {
 		super(option,writeOption,i18n,generateId)
 		let $cloneButton
@@ -115,7 +116,6 @@ class BiquadFilterNodeOptionOutput extends FilterNodeOptionOutput {
 				},$cloneUi,i18n('options-output.filter.contextError'))
 			})
 		}
-		/*
 		this.$output.append(
 			$("<div class='option only-buttons'>").append(
 				"<label>"+i18n('options-output.filter.biquad.clone')+":</label><span class='space'> </span>",
@@ -128,8 +128,8 @@ class BiquadFilterNodeOptionOutput extends FilterNodeOptionOutput {
 				)
 			)
 		)
-		*/
 	}
+	*/
 	getFilterNodes(audioContext) {
 		const biquadNode=audioContext.createBiquadFilter()
 		const fixedOption=this.option.fix()

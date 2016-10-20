@@ -14,20 +14,6 @@
 		@main-font-size: 14px;
 		@detail-font-size: 12px;
 		fieldset.option {
-			/*
-			figure {
-				display: inline-block;
-				vertical-align: text-top;
-				margin: 0 -1px 0 0;
-				padding: 0;
-				canvas {
-					border: 1px solid;
-				}
-			}
-			figure:last-of-type {
-				margin: 0;
-			}
-			*/
 			& > .graph {
 				position: relative;
 				overflow: auto;
@@ -498,6 +484,21 @@
 						left: @grid-size;
 						width: (@node-width - 1)*@grid-size;
 						height: @grid-size / 2;
+					}
+				}
+			}
+			.node-option-section-plot-figure {
+				height: (@node-width + 1)*@grid-size;
+				figure {
+					display: block;
+					margin: 0;
+					padding: 0;
+					caption {
+						display: block;
+						height: @grid-size;
+					}
+					canvas {
+						display: block;
 					}
 				}
 			}

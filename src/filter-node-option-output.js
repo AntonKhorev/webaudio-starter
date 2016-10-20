@@ -19,6 +19,36 @@ let magnitudeArray0,phaseArray0
 
 const mix=(a,b,x)=>a*(1-x)+b*x
 
+const canCreateAudioContext=()=>{
+	const initAudioContext=()=>{
+		audioContext=new (AudioContext || webkitAudioContext)
+		linearFrequencyArray=new Float32Array(width)
+		logFrequencyArray=new Float32Array(width)
+		magnitudeArray=new Float32Array(width)
+		phaseArray=new Float32Array(width)
+		magnitudeArray0=new Float32Array(width)
+		phaseArray0=new Float32Array(width)
+		const maxFrequency=audioContext.sampleRate/2
+		const log10minFrequency=Math.log10(minFrequencyInLogMode)
+		const log10maxFrequency=Math.log10(maxFrequency)
+		for (let i=0;i<width;i++) {
+			const x=(i+0.5)/width
+			linearFrequencyArray[i]=maxFrequency*x
+			logFrequencyArray[i]=Math.pow(10,mix(log10minFrequency,log10maxFrequency,x))
+		}
+		logFrequencyArrayLinearLimit0=mix(log10minFrequency,log10maxFrequency,0.5/width)
+		logFrequencyArrayLinearLimit1=mix(log10minFrequency,log10maxFrequency,1-0.5/width)
+	}
+	if (!audioContext) {
+		try {
+			initAudioContext()
+		} catch (e) {
+			return false
+		}
+	}
+	return true
+}
+
 class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 	constructor(option,writeOption,i18n,generateId) {
 		super(option,writeOption,i18n,generateId)
@@ -229,105 +259,94 @@ class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 			plotResponse(phaseCanvasContext,phaseArray,'π',0,0.1,-Infinity,v=>v%2==0)
 		}
 		const delayedUpdate=debounce(()=>{
-			try {
+			try { // may get called when node is deleted
 				updatePlots(this.getFilterNodes(audioContext))
 			} catch (e) {}
 		},50)
-		// { copypaste
-		const writeMoreButton=($extraSection)=>{ // TODO i18n
+
+		const $mainSection=$("<span class='node-option-section node-option-section-plot-header'>").append(
+			i18n('options-output.filter.frequencyResponse')
+		)
+		const $option=$("<div class='node-option'>").append($mainSection)
+		let $plotUi
+		const addErrorSection=(errorMessage)=>{
+			$plotUi=$("<span class='node-option-section'>").append(errorMessage)
+			$option.append(
+				" ",$plotUi
+			)
+		}
+		const addPlotSections=()=>{
+			let filterNodes
+			try {
+				filterNodes=this.getFilterNodes(audioContext)
+			} catch (e) {
+				addErrorSection(i18n('options-output.filter.nodeError'))
+				return
+			}
+			const magnitudeId=generateId()
+			const frequencyId=generateId()
+			const $settingsSection=$("<span class='node-option-section node-option-section-plot-settings'>").append(
+				$("<span class='setting'>").append(
+					$("<input type='checkbox' id='"+magnitudeId+"'>").prop('checked',magnitudeLogScale).change(function(){
+						magnitudeLogScale=$(this).prop('checked')
+						delayedUpdate()
+					}),
+					" <label for='"+magnitudeId+"'>"+i18n('options-output.filter.logMagnitude')+"</label>"
+				),
+				" ",
+				$("<span class='setting'>").append(
+					$("<input type='checkbox' id='"+frequencyId+"'>").prop('checked',frequencyLogScale).change(function(){
+						frequencyLogScale=$(this).prop('checked')
+						delayedUpdate()
+					}),
+					" <label for='"+frequencyId+"'>"+i18n('options-output.filter.logFrequency')+"</label>"
+				)
+			)
+			const $magnitudeCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
+			magnitudeCanvasContext=$magnitudeCanvas[0].getContext('2d')
+			const $magnitudeSection=$("<span class='node-option-section node-option-section-plot-figure'>").append(
+				$("<figure>").append(
+					"<figcaption>"+i18n('options-output.filter.magnitude')+"</figcaption>",
+					$magnitudeCanvas
+				)
+			)
+			const $phaseCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
+			const $frequencySection=$("<span class='node-option-section node-option-section-plot-figure'>").append(
+				$("<figure>").append(
+					"<figcaption>"+i18n('options-output.filter.phase')+"</figcaption>",
+					$phaseCanvas
+				)
+			)
+			phaseCanvasContext=$phaseCanvas[0].getContext('2d')
+			updatePlots(filterNodes)
+			$plotUi=$settingsSection.add($magnitudeSection).add($frequencySection)
+			$option.append(" ",$settingsSection," ",$magnitudeSection," ",$frequencySection)
+		}
+		const writeMoreButton=()=>{ // TODO i18n
 			const $moreButtonText=$("<span>").html("More")
 			return $("<button class='more' title='Show more options'>").append($moreButtonText).click(function(){
 				const $button=$(this)
 				if ($button.hasClass('more')) {
 					$button.addClass('less').removeClass('more').attr('title',"Show less options")
 					$moreButtonText.html("Less")
-					// TODO compute it
-					$extraSection.show()
+					if ($plotUi) {
+						$plotUi.show()
+					} else if (!canCreateAudioContext()) {
+						addErrorSection(i18n('options-output.filter.contextError'))
+					} else {
+						addPlotSections()
+					}
 				} else {
 					$button.addClass('more').removeClass('less').attr('title',"Show more options")
 					$moreButtonText.html("More")
-					// TODO deallocate it
-					$extraSection.hide()
+					if ($plotUi) {
+						$plotUi.hide()
+					}
 				}
 			})
 		}
-		// }
-		//const This=this
-		const $mainSection=$("<span class='node-option-section node-option-section-plot-header'>").append(
-			i18n('options-output.filter.frequencyResponse')
-		)
-		const magnitudeId=generateId()
-		const frequencyId=generateId()
-		const $settingsSection=$("<span class='node-option-section node-option-section-plot-settings'>").append(
-			$("<span class='setting'>").append(
-				$("<input type='checkbox' id='"+magnitudeId+"'>").prop('checked',magnitudeLogScale).change(function(){
-					magnitudeLogScale=$(this).prop('checked')
-					delayedUpdate()
-				}),
-				" <label for='"+magnitudeId+"'>"+i18n('options-output.filter.logMagnitude')+"</label>"
-			),
-			" ",
-			$("<span class='setting'>").append(
-				$("<input type='checkbox' id='"+frequencyId+"'>").prop('checked',frequencyLogScale).change(function(){
-					frequencyLogScale=$(this).prop('checked')
-					delayedUpdate()
-				}),
-				" <label for='"+frequencyId+"'>"+i18n('options-output.filter.logFrequency')+"</label>"
-			)
-		).hide()
-		const $magnitudeSection=$("<span class='node-option-section node-option-section-plot-figure'>").hide()
-		const $frequencySection=$("<span class='node-option-section node-option-section-plot-figure'>").hide()
-		$mainSection.append(
-			" ",writeMoreButton($settingsSection.add($magnitudeSection).add($frequencySection))
-		)
-		this.$output.append(
-			$("<div class='node-option'>").append(
-				$mainSection," ",$settingsSection," ",$magnitudeSection," ",$frequencySection
-			)
-		)
-		/*
-		this.$output.append(
-			$("<div class='node-option'>").append(
-				"<label>"+i18n('options-output.filter.frequencyResponse')+"</label>",
-				$("<button type='button'>"+i18n('options-output.show')+"</button>").click(function(){ // TODO [+]
-					const $button=$(this)
-					if (!isFreqResponseUiShown()) {
-						This.runIfCanCreateAudioContext(audioContext=>{
-							let filterNodes
-							try {
-								filterNodes=This.getFilterNodes(audioContext)
-							} catch (e) {
-								$button.replaceWith(i18n('options-output.filter.nodeError'))
-								return
-							}
-							let $magnitudeCanvas, $phaseCanvas
-							$freqResponseUi=$freqResponseUi.add(
-								$("<div>").append(
-									$("<figure>").append(
-										"<figcaption>"+i18n('options-output.filter.magnitude')+"</figcaption>",
-										$magnitudeCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
-									),
-									$("<figure>").append(
-										"<figcaption>"+i18n('options-output.filter.phase')+"</figcaption>",
-										$phaseCanvas=$(`<canvas width='${width}' height='${height}'></canvas>`)
-									)
-								)
-							)
-							$button.after($freqResponseUi).text(i18n('options-output.hide'))
-							magnitudeCanvasContext=$magnitudeCanvas[0].getContext('2d')
-							phaseCanvasContext=$phaseCanvas[0].getContext('2d')
-							updatePlots(filterNodes)
-						},$button,i18n('options-output.filter.contextError'))
-					} else {
-						// TODO cancel scheduled update
-						$freqResponseUi.remove()
-						$freqResponseUi=$()
-						$button.text(i18n('options-output.show'))
-					}
-				})
-			)
-		)
-		*/
+		$mainSection.append(" ",writeMoreButton())
+		this.$output.append($option)
 		/*
 		option.addUpdateCallback(()=>{
 			if (isFreqResponseUiShown()) {
@@ -335,36 +354,6 @@ class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 			}
 		})
 		*/
-	}
-	runIfCanCreateAudioContext(fn,$ui,errorMessage) {
-		const initAudioContext=()=>{
-			audioContext=new (AudioContext || webkitAudioContext)
-			linearFrequencyArray=new Float32Array(width)
-			logFrequencyArray=new Float32Array(width)
-			magnitudeArray=new Float32Array(width)
-			phaseArray=new Float32Array(width)
-			magnitudeArray0=new Float32Array(width)
-			phaseArray0=new Float32Array(width)
-			const maxFrequency=audioContext.sampleRate/2
-			const log10minFrequency=Math.log10(minFrequencyInLogMode)
-			const log10maxFrequency=Math.log10(maxFrequency)
-			for (let i=0;i<width;i++) {
-				const x=(i+0.5)/width
-				linearFrequencyArray[i]=maxFrequency*x
-				logFrequencyArray[i]=Math.pow(10,mix(log10minFrequency,log10maxFrequency,x))
-			}
-			logFrequencyArrayLinearLimit0=mix(log10minFrequency,log10maxFrequency,0.5/width)
-			logFrequencyArrayLinearLimit1=mix(log10minFrequency,log10maxFrequency,1-0.5/width)
-		}
-		if (!audioContext) {
-			try {
-				initAudioContext()
-			} catch (e) {
-				$ui.replaceWith(errorMessage)
-				return
-			}
-		}
-		fn(audioContext)
 	}
 	// abstract
 	// getFilterNodes(audioContext)
