@@ -329,6 +329,11 @@ class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 			updatePlots(filterNodes)
 			$plotUi=$settingsSection.add($magnitudeSection).add($frequencySection)
 			$option.append(" ",$settingsSection," ",$magnitudeSection," ",$frequencySection)
+			const $extraSection=this.writeExtraSection(audioContext,i18n)
+			if ($extraSection) {
+				$plotUi=$plotUi.add($extraSection)
+				$option.append(" ",$extraSection)
+			}
 		}
 		const writeMoreButton=()=>{ // TODO i18n
 			const $moreButtonText=$("<span>").html("More")
@@ -368,6 +373,7 @@ class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 	}
 	// abstract
 	// getFilterNodes(audioContext)
+	writeExtraSection(audioContext,i18n) {}
 }
 
 module.exports=FilterNodeOptionOutput

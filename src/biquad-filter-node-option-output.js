@@ -4,10 +4,17 @@ const writeTip=require('crnx-base/tip')
 const FilterNodeOptionOutput=require('./filter-node-option-output')
 
 class BiquadFilterNodeOptionOutput extends FilterNodeOptionOutput {
-	/*
-	constructor(option,writeOption,i18n,generateId) {
-		super(option,writeOption,i18n,generateId)
-		let $cloneButton
+	getFilterNodes(audioContext) {
+		const biquadNode=audioContext.createBiquadFilter()
+		const fixedOption=this.option.fix()
+		biquadNode.type=fixedOption.type.value
+		biquadNode.frequency.value=fixedOption.frequency.value
+		biquadNode.detune.value=fixedOption.detune.value
+		biquadNode.Q.value=Math.pow(10,fixedOption.Q.value)
+		biquadNode.gain.value=fixedOption.gain.value
+		return [biquadNode]
+	}
+	writeExtraSection(audioContext,i18n) {
 		const computeCoefs=(sampleRate,type,frequency,detune,Q,gain,post20160415)=>{
 			// constants defined in the spec
 			const F_s=sampleRate
@@ -28,117 +35,104 @@ class BiquadFilterNodeOptionOutput extends FilterNodeOptionOutput {
 
 			switch (type) {
 			case 'lowpass':
-				return {
-					feedforward: [(1-c)/2,   1-c, (1-c)/2],
-					feedback: (post20160415
+				return [
+					[(1-c)/2,   1-c, (1-c)/2],
+					(post20160415
 						? [1+alpha_Q_dB, -2*c, 1-alpha_Q_dB]
 						: [1+alpha_B   , -2*c, 1-alpha_B   ]
 					),
-				}
+				]
 			case 'highpass':
-				return {
-					feedforward: [(1+c)/2, -(1+c), (1+c)/2],
-					feedback: (post20160415
+				return [
+					[(1+c)/2, -(1+c), (1+c)/2],
+					(post20160415
 						? [1+alpha_Q_dB, -2*c, 1-alpha_Q_dB]
 						: [1+alpha_B   , -2*c, 1-alpha_B   ]
 					),
-				}
+				]
 			case 'bandpass':
-				return {
-					feedforward: [alpha_Q, 0, -alpha_Q],
-					feedback: [1+alpha_Q, -2*c, 1-alpha_Q],
-				}
+				return [
+					[alpha_Q, 0, -alpha_Q],
+					[1+alpha_Q, -2*c, 1-alpha_Q],
+				]
 			case 'notch':
-				return {
-					feedforward: [1, -2*c, 1],
-					feedback: [1+alpha_Q, -2*c, 1-alpha_Q],
-				}
+				return [
+					[1, -2*c, 1],
+					[1+alpha_Q, -2*c, 1-alpha_Q],
+				]
 			case 'allpass':
-				return {
-					feedforward: [1-alpha_Q, -2*c, 1+alpha_Q],
-					feedback: [1+alpha_Q, -2*c, 1-alpha_Q],
-				}
+				return [
+					[1-alpha_Q, -2*c, 1+alpha_Q],
+					[1+alpha_Q, -2*c, 1-alpha_Q],
+				]
 			case 'peaking':
-				return {
-					feedforward: [1+alpha_Q*A, -2*c, 1-alpha_Q*A],
-					feedback: [1+alpha_Q/A, -2*c, 1-alpha_Q/A],
-				}
+				return [
+					[1+alpha_Q*A, -2*c, 1-alpha_Q*A],
+					[1+alpha_Q/A, -2*c, 1-alpha_Q/A],
+				]
 			case 'lowshelf':
-				return {
-					feedforward: [
+				return [
+					[
 						   A*( (A+1) - (A-1)*c + aSA2 ),
 						 2*A*( (A-1) - (A+1)*c ),
 						   A*( (A+1) - (A-1)*c - aSA2 ),
 					],
-					feedback: [
+					[
 						       (A+1) + (A-1)*c + aSA2,
 						  -2*( (A-1) + (A+1)*c ),
 						       (A+1) + (A-1)*c - aSA2,
 					],
-				}
+				]
 			case 'highshelf':
-				return {
-					feedforward: [
+				return [
+					[
 						   A*( (A+1) + (A-1)*c + aSA2 ),
 						-2*A*( (A-1) + (A+1)*c ),
 						   A*( (A+1) + (A-1)*c - aSA2 ),
 					],
-					feedback: [
+					[
 						       (A+1) - (A-1)*c + aSA2,
 						   2*( (A-1) - (A+1)*c ),
 						       (A+1) - (A-1)*c - aSA2,
 					],
-				}
+				]
 			}
 		}
 		const This=this
-		let $cloneUi
 		const writeCloneButton=(post20160415)=>{
 			return $("<button type='button' class='clone'>"+i18n(
 				'options-output.filter.biquad.clone.'+(post20160415?'post':'pre')
 			)+"</button>").click(function(){
-				This.runIfCanCreateAudioContext(audioContext=>{
-					const fixedOption=option.fix()
-					const coefs=computeCoefs(
-						audioContext.sampleRate,
-						fixedOption.type.value,
-						fixedOption.frequency.value,
-						fixedOption.detune.value,
-						Math.pow(10,fixedOption.Q.value),
-						fixedOption.gain.value,
-						post20160415
-					)
-					if (coefs) {
-						$(this).data('coefs',coefs)
-					} else {
-						$(this).removeData('coefs')
-					}
-				},$cloneUi,i18n('options-output.filter.contextError'))
+				const fixedOption=This.option.fix()
+				const coefs=computeCoefs(
+					audioContext.sampleRate,
+					fixedOption.type.value,
+					fixedOption.frequency.value,
+					fixedOption.detune.value,
+					Math.pow(10,fixedOption.Q.value),
+					fixedOption.gain.value,
+					post20160415
+				)
+				if (coefs) {
+					const [ff,fb]=coefs
+					$(this).data('coefs',{
+						feedforward: ff.join(),
+						feedback: fb.join(),
+					})
+				} else {
+					$(this).removeData('coefs')
+				}
 			})
 		}
-		this.$output.append(
-			$("<div class='option only-buttons'>").append(
-				"<label>"+i18n('options-output.filter.biquad.clone')+":</label><span class='space'> </span>",
-				$cloneUi=$("<span>").append(
-					writeCloneButton(false),
-					" ",
-					writeCloneButton(true),
-					" ",
-					writeTip('info',i18n('options-output.filter.biquad.clone.info'))
-				)
-			)
+		return $("<span class='node-option-section node-option-section-clone'>").append(
+			//i18n('options-output.filter.biquad.clone'),
+			//" ",
+			writeCloneButton(false)//,
+			//" ",
+			//writeCloneButton(true),
+			//" ",
+			//writeTip('info',i18n('options-output.filter.biquad.clone.info'))
 		)
-	}
-	*/
-	getFilterNodes(audioContext) {
-		const biquadNode=audioContext.createBiquadFilter()
-		const fixedOption=this.option.fix()
-		biquadNode.type=fixedOption.type.value
-		biquadNode.frequency.value=fixedOption.frequency.value
-		biquadNode.detune.value=fixedOption.detune.value
-		biquadNode.Q.value=Math.pow(10,fixedOption.Q.value)
-		biquadNode.gain.value=fixedOption.gain.value
-		return [biquadNode]
 	}
 }
 

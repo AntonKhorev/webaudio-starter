@@ -406,6 +406,14 @@ class GraphOptionOutput {
 			requestAnimationFrame(resizeAnimationHandler)
 		}
 		resizeAnimationHandler()
+		// make clone button work
+		$nodes.on('click','button.clone',function(){
+			const coefs=$(this).data('coefs')
+			if (coefs) {
+				const nodeOption=option.makeEntry('iir',coefs)
+				addNode(nodeOption,0,0)
+			}
+		})
 	}
 	// make clone button work
 	/*
