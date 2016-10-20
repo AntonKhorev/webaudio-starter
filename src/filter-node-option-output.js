@@ -253,18 +253,36 @@ class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 		}
 		// }
 		//const This=this
-		const $mainSection=$("<span class='node-option-section'>").append(
+		const $mainSection=$("<span class='node-option-section node-option-section-plot-header'>").append(
 			i18n('options-output.filter.frequencyResponse')
 		)
-		const $figureSection=$("<span class='node-option-section'>").append(
-			"TODO figures"
+		const magnitudeId=generateId()
+		const frequencyId=generateId()
+		const $settingsSection=$("<span class='node-option-section node-option-section-plot-settings'>").append(
+			$("<span class='setting'>").append(
+				$("<input type='checkbox' id='"+magnitudeId+"'>").prop('checked',magnitudeLogScale).change(function(){
+					magnitudeLogScale=$(this).prop('checked')
+					delayedUpdate()
+				}),
+				" <label for='"+magnitudeId+"'>"+i18n('options-output.filter.logMagnitude')+"</label>"
+			),
+			" ",
+			$("<span class='setting'>").append(
+				$("<input type='checkbox' id='"+frequencyId+"'>").prop('checked',frequencyLogScale).change(function(){
+					frequencyLogScale=$(this).prop('checked')
+					delayedUpdate()
+				}),
+				" <label for='"+frequencyId+"'>"+i18n('options-output.filter.logFrequency')+"</label>"
+			)
 		).hide()
+		const $magnitudeSection=$("<span class='node-option-section node-option-section-plot-figure'>").hide()
+		const $frequencySection=$("<span class='node-option-section node-option-section-plot-figure'>").hide()
 		$mainSection.append(
-			" ",writeMoreButton($figureSection)
+			" ",writeMoreButton($settingsSection.add($magnitudeSection).add($frequencySection))
 		)
 		this.$output.append(
 			$("<div class='node-option'>").append(
-				$mainSection," ",$figureSection
+				$mainSection," ",$settingsSection," ",$magnitudeSection," ",$frequencySection
 			)
 		)
 		/*
@@ -284,26 +302,6 @@ class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 							}
 							let $magnitudeCanvas, $phaseCanvas
 							$freqResponseUi=$freqResponseUi.add(
-								$("<span>").append(
-									" ",
-									$("<label class='nowrap'>").append(
-										$("<input type='checkbox'>").prop('checked',magnitudeLogScale).change(function(){
-											magnitudeLogScale=$(this).prop('checked')
-											delayedUpdate()
-										}),
-										" "+i18n('options-output.filter.logMagnitude')
-									),
-									" ",
-									$("<label class='nowrap'>").append(
-										$("<input type='checkbox'>").prop('checked',frequencyLogScale).change(function(){
-											frequencyLogScale=$(this).prop('checked')
-											delayedUpdate()
-										}),
-										" "+i18n('options-output.filter.logFrequency')
-									),
-									" "
-								)
-							).add(
 								$("<div>").append(
 									$("<figure>").append(
 										"<figcaption>"+i18n('options-output.filter.magnitude')+"</figcaption>",

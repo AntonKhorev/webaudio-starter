@@ -290,7 +290,6 @@
 					width: @more-button-size;
 					height: @more-button-size;
 					right: @spacing-size;
-					top: 0;
 					padding: 0;
 					border: 0;
 					background-color: transparent;
@@ -472,6 +471,37 @@
 				}
 				// } LiveNumber, LiveSelect
 			}
+			// { filter frequency response
+			.node-option-section-plot-header {
+				button.more, button.less {
+					top: (@grid-size - @more-button-size) / 2;
+				}
+			}
+			.node-option-section-plot-settings {
+				.setting {
+					display: block;
+					position: relative;
+					height: @grid-size / 2;
+					line-height: @grid-size / 2;
+					width: 100%;
+					input[type="checkbox"] {
+						height: @grid-size / 2;
+						width: @grid-size / 2;
+						left: @grid-size / 4;
+						line-height: @grid-size / 2;
+						margin: 0;
+					}
+					label {
+						position: absolute;
+						display: block;
+						text-align: left;
+						left: @grid-size;
+						width: (@node-width - 1)*@grid-size;
+						height: @grid-size / 2;
+					}
+				}
+			}
+			// } filter frequency response
 		}
 	}
 }
