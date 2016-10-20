@@ -287,18 +287,6 @@ Option.BiquadFilter = class extends Option.AudioGraphNode {
 	}
 }
 
-/*
-Option.IIRFilterCoefs = class extends Option.Array {
-	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
-		super(...arguments)
-		if (this._entries.length==0) {
-			const type=this.availableTypes[0]
-			this._entries.push(this.makeEntry(type))
-		}
-	}
-}
-*/
-
 Option.IIRFilterCoefs = class extends Option.Text {
 	static isValueValid(value) { // has to be nonempty comma-separated number sequence
 		try {
@@ -308,15 +296,23 @@ Option.IIRFilterCoefs = class extends Option.Text {
 			return false
 		}
 	}
-	// TODO check validity in import/creation
+	constructor(name,settings,data,parent,visibilityManager,makeEntry) {
+		if (settings.defaultValue===undefined) {
+			settings.defaultValue="1"
+		}
+		super(...arguments)
+		if (!Option.IIRFilterCoefs.isValueValid(this.value)) {
+			this.value="1"
+		}
+	}
 }
 
 Option.IIRFilter = class extends Option.AudioGraphNode {
 	static collectArgs(scalarArg,arrayArg,settings) {
 		settings=Object.create(settings)
 		settings.descriptions=[
-			['IIRFilterCoefs','feedforward',1],
-			['IIRFilterCoefs','feedback',1],
+			['IIRFilterCoefs','feedforward'],
+			['IIRFilterCoefs','feedback'],
 		]
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}

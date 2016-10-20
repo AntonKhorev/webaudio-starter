@@ -40,6 +40,32 @@ describe("Option.IIRFilterCoefs",()=>{
 			assert.equal(Option.IIRFilterCoefs.isValueValid(value),validity)
 		})
 	}
+	class TestOptions extends Options {
+		get entriesDescription() {
+			return [
+				['IIRFilterCoefs','coefs'],
+			]
+		}
+	}
+	it("has default value 1",()=>{
+		const options=new TestOptions
+		const entry=options.root.entries[0]
+		assert.equal(entry.value,'1')
+	})
+	it("imports valid value",()=>{
+		const options=new TestOptions({
+			coefs: '1,2,3'
+		})
+		const entry=options.root.entries[0]
+		assert.equal(entry.value,'1,2,3')
+	})
+	it("imports invalid value as 1",()=>{
+		const options=new TestOptions({
+			coefs: '1,2,3,boom'
+		})
+		const entry=options.root.entries[0]
+		assert.equal(entry.value,'1')
+	})
 })
 
 describe("Option.Graph",()=>{
