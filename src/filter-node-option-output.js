@@ -258,17 +258,20 @@ class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 			}
 			plotResponse(phaseCanvasContext,phaseArray,'π',0,0.1,-Infinity,v=>v%2==0)
 		}
-		const delayedUpdate=debounce(()=>{
+		const immediateUpdate=()=>{
 			try { // may get called when node is deleted
 				updatePlots(this.getFilterNodes(audioContext))
 			} catch (e) {}
-		},50)
+		}
+		const delayedUpdate=debounce(immediateUpdate,50)
 
 		const $mainSection=$("<span class='node-option-section node-option-section-plot-header'>").append(
 			i18n('options-output.filter.frequencyResponse')
 		)
 		const $option=$("<div class='node-option'>").append($mainSection)
 		let $plotUi
+		let isPlotUiVisible=false
+		let isPlotUiErrorFree=false
 		const addErrorSection=(errorMessage)=>{
 			$plotUi=$("<span class='node-option-section'>").append(errorMessage)
 			$option.append(
@@ -289,7 +292,9 @@ class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 				$("<span class='setting'>").append(
 					$("<input type='checkbox' id='"+magnitudeId+"'>").prop('checked',magnitudeLogScale).change(function(){
 						magnitudeLogScale=$(this).prop('checked')
-						delayedUpdate()
+						if (isPlotUiVisible && isPlotUiErrorFree) {
+							delayedUpdate()
+						}
 					}),
 					" <label for='"+magnitudeId+"'>"+i18n('options-output.filter.logMagnitude')+"</label>"
 				),
@@ -297,7 +302,9 @@ class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 				$("<span class='setting'>").append(
 					$("<input type='checkbox' id='"+frequencyId+"'>").prop('checked',frequencyLogScale).change(function(){
 						frequencyLogScale=$(this).prop('checked')
-						delayedUpdate()
+						if (isPlotUiVisible && isPlotUiErrorFree) {
+							delayedUpdate()
+						}
 					}),
 					" <label for='"+frequencyId+"'>"+i18n('options-output.filter.logFrequency')+"</label>"
 				)
@@ -318,6 +325,7 @@ class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 				)
 			)
 			phaseCanvasContext=$phaseCanvas[0].getContext('2d')
+			isPlotUiErrorFree=true
 			updatePlots(filterNodes)
 			$plotUi=$settingsSection.add($magnitudeSection).add($frequencySection)
 			$option.append(" ",$settingsSection," ",$magnitudeSection," ",$frequencySection)
@@ -326,34 +334,37 @@ class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 			const $moreButtonText=$("<span>").html("More")
 			return $("<button class='more' title='Show more options'>").append($moreButtonText).click(function(){
 				const $button=$(this)
-				if ($button.hasClass('more')) {
+				if (!isPlotUiVisible) {
 					$button.addClass('less').removeClass('more').attr('title',"Show less options")
 					$moreButtonText.html("Less")
 					if ($plotUi) {
 						$plotUi.show()
+						if (isPlotUiErrorFree) {
+							immediateUpdate()
+						}
 					} else if (!canCreateAudioContext()) {
 						addErrorSection(i18n('options-output.filter.contextError'))
 					} else {
 						addPlotSections()
 					}
+					isPlotUiVisible=true
 				} else {
 					$button.addClass('more').removeClass('less').attr('title',"Show more options")
 					$moreButtonText.html("More")
 					if ($plotUi) {
 						$plotUi.hide()
 					}
+					isPlotUiVisible=false
 				}
 			})
 		}
 		$mainSection.append(" ",writeMoreButton())
 		this.$output.append($option)
-		/*
 		option.addUpdateCallback(()=>{
-			if (isFreqResponseUiShown()) {
+			if (isPlotUiVisible && isPlotUiErrorFree) {
 				delayedUpdate()
 			}
 		})
-		*/
 	}
 	// abstract
 	// getFilterNodes(audioContext)
