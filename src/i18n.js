@@ -182,7 +182,7 @@ const langStrings={
 		'options.graph.panner': "Панорамирование",
 		'options.graph.panner.add': "Добавить панорамирование",
 		'options.graph.panner.pan': "Баланс",
-		'options.graph.biquad': "Биквадратичный фильтр",
+		'options.graph.biquad': "Биквадратный фильтр", // "Биквадратичный фильтр"
 		'options.graph.biquad.add': "Добавить биквадратичный фильтр",
 		'options.graph.biquad.type': "Тип фильтра",
 		'options.graph.biquad.type.lowpass': "нижних частот",
@@ -193,7 +193,7 @@ const langStrings={
 		'options.graph.biquad.type.allpass': "всепропускающий", // http://www.dsplib.ru/content/allpass/allpass.html
 		'options.graph.biquad.frequency': "Частота",
 		'options.graph.biquad.detune': "Detune",
-		'options.graph.biquad.Q': "Логарифм добротности",
+		'options.graph.biquad.Q': "Log добротности",
 		'options.graph.biquad.gain': "Усиление",
 		/*
 		'options.graph.iir': "БИХ-фильтр",
@@ -265,13 +265,13 @@ const langStrings={
 		'options-info.graph.{frequencyBars,frequencyOutline}.cutoff': "Ограничить рисование долей низких частот.",
 		'options-info.canvas.background.color.a': "Низкие значения альфа-канала приводят к эффекту размывания.",
 
-		'options-output.input': "Значение изменяемо",
-		'options-output.range': "в диапазоне",
+		'options-output.input': "Изменяемо",
+		'options-output.range': "от и до",
 		'options-output.filter.frequencyResponse': "Частотная характеристика",
 		'options-output.filter.magnitude': "Амплитуда",
 		'options-output.filter.phase': "Фаза",
-		'options-output.filter.logMagnitude': "логарифмическая шкала амплитуды",
-		'options-output.filter.logFrequency': "логарифмическая шкала частоты",
+		'options-output.filter.logMagnitude': "log-шкала амплитуды",
+		'options-output.filter.logFrequency': "log-шкала частоты",
 		'options-output.filter.contextError': "Ошибка создания аудио-контекста. Вероятно, браузер не поддерживает Web Audio API.",
 		'options-output.filter.nodeError': "Ошибка создания узла фильтра. Вероятно, браузер не поддерживает данный тип фильтров.",
 		'options-output.filter.biquad.clone': "Клонировать в виде БИХ-фильтра",

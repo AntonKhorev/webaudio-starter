@@ -273,7 +273,7 @@ class FilterNodeOptionOutput extends GroupNodeOptionOutput {
 		let isPlotUiVisible=false
 		let isPlotUiErrorFree=false
 		const addErrorSection=(errorMessage)=>{
-			$plotUi=$("<span class='node-option-section'>").append(errorMessage)
+			$plotUi=$("<span class='node-option-section node-option-section-error'>").append(errorMessage)
 			$option.append(
 				" ",$plotUi
 			)
