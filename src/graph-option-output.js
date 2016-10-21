@@ -415,27 +415,6 @@ class GraphOptionOutput {
 			}
 		})
 	}
-	// make clone button work
-	/*
-	writeDraggableSubOption(subOption,writeOption,i18n) {
-		const $subOutput=super.writeDraggableSubOption(subOption,writeOption,i18n)
-		const This=this
-		if (subOption instanceof Option.BiquadFilter) {
-			$subOutput.find('button.clone').click(function(){
-				const $button=$(this)
-				const coefs=$button.data('coefs')
-				if (coefs) {
-					const entry=This.option.makeEntry('iir',coefs)
-					This.$entries.append(
-						This.writeDraggableSubOption(entry,writeOption,i18n)
-					)
-					This.updateArrayEntries()
-				}
-			})
-		}
-		return $subOutput
-	}
-	*/
 }
 
 module.exports=GraphOptionOutput

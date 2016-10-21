@@ -265,6 +265,59 @@
 					margin: 0;
 				}
 			}
+			button.more, button.less {
+				width: @more-button-size;
+				height: @more-button-size;
+				right: @spacing-size;
+				padding: 0;
+				border: 0;
+				background-color: transparent;
+				background-repeat: no-repeat;
+				&:hover:active {
+					background-position: 0 1px;
+				}
+				& > span {
+					.visually-hidden();
+				}
+			}
+			button.more {
+				.plus-icon(@size,@color) {
+					@s: unit(@size);
+					@h: @s/2;
+					.svg(@s,@s,"<path d='M 0 @{h} H @{s} M @{h} 0 V @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
+				}
+				.plus-icon(@more-button-size,@inactive-color);
+				&:hover {
+					.plus-icon(@more-button-size,@open-color);
+				}
+			}
+			button.less {
+				.minus-icon(@size,@color) {
+					@s: unit(@size);
+					@h: @s/2;
+					.svg(@s,@s,"<path d='M 0 @{h} H @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
+				}
+				.minus-icon(@more-button-size,@inactive-color);
+				&:hover {
+					.minus-icon(@more-button-size,@close-color);
+				}
+			}
+			.tip-info {
+				position: absolute;
+				display: block;
+				line-height: 12px;
+				width: @more-button-size;
+				height: @more-button-size;
+				border-radius: 0;
+				border: none;
+				.tip-content {
+					font-size: 12px;
+					line-height: 15px;
+					border-radius: 0;
+					border: none;
+					box-shadow: 0 0 3px 3px rgba(0,0,0,0.3);
+				}
+			}
 			.node-option-section {
 				display: block;
 				position: relative;
@@ -272,43 +325,6 @@
 				line-height: @grid-size;
 				background: @node-color;
 				text-align: center;
-				button.more, button.less {
-					width: @more-button-size;
-					height: @more-button-size;
-					right: @spacing-size;
-					padding: 0;
-					border: 0;
-					background-color: transparent;
-					background-repeat: no-repeat;
-					&:hover:active {
-						background-position: 0 1px;
-					}
-					& > span {
-						.visually-hidden();
-					}
-				}
-				button.more {
-					.plus-icon(@size,@color) {
-						@s: unit(@size);
-						@h: @s/2;
-						.svg(@s,@s,"<path d='M 0 @{h} H @{s} M @{h} 0 V @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
-					}
-					.plus-icon(@more-button-size,@inactive-color);
-					&:hover {
-						.plus-icon(@more-button-size,@open-color);
-					}
-				}
-				button.less {
-					.minus-icon(@size,@color) {
-						@s: unit(@size);
-						@h: @s/2;
-						.svg(@s,@s,"<path d='M 0 @{h} H @{s}' fill='none' stroke='@{color}' stroke-width='2' />");
-					}
-					.minus-icon(@more-button-size,@inactive-color);
-					&:hover {
-						.minus-icon(@more-button-size,@close-color);
-					}
-				}
 			}
 			.node-option-section-text {
 				label {
@@ -373,22 +389,8 @@
 					padding-bottom: 0;
 				}
 				.tip-info {
-					position: absolute;
-					display: block;
 					top: 0;
 					right: 2*@spacing-size + @more-button-size;
-					line-height: 12px;
-					width: @more-button-size;
-					height: @more-button-size;
-					border-radius: 0;
-					border: none;
-					.tip-content {
-						font-size: 12px;
-						line-height: 15px;
-						border-radius: 0;
-						border: none;
-						box-shadow: 0 0 3px 3px rgba(0,0,0,0.3);
-					}
 				}
 			}
 			.node-option-section-extra {
@@ -508,6 +510,41 @@
 				padding: @spacing-size;
 				line-height: @grid-size / 2;
 				text-align: left;
+			}
+			.node-option-section-clone {
+				button {
+					height: @grid-size - 2*@spacing-size;
+					width: (@node-width/2)*@grid-size - 2*@spacing-size;
+					left: @spacing-size;
+					top: @spacing-size;
+					padding: 0;
+					line-height: @grid-size - 2*@spacing-size;
+					border: outset 1px @inactive-color;
+					&:hover:active {
+						border: inset 1px @inactive-color;
+					}
+				}
+				input[type="checkbox"] {
+					width: @grid-size/2 - @spacing-size;
+					height: @grid-size/2 - @spacing-size;
+					left: (@node-width/2)*@grid-size;
+					top: @spacing-size;
+					padding: 0;
+					margin: 0;
+				}
+				.tip-info {
+					left: (@node-width/2)*@grid-size;
+					bottom: @spacing-size;
+				}
+				label {
+					position: absolute;
+					display: block;
+					width: (@node-width/2 - 1/2)*@grid-size - @spacing-size;
+					right: @spacing-size;
+					top: @spacing-size;
+					line-height: 12px;
+					text-align: left;
+				}
 			}
 			// } filter frequency response
 		}

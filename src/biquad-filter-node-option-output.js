@@ -14,7 +14,7 @@ class BiquadFilterNodeOptionOutput extends FilterNodeOptionOutput {
 		biquadNode.gain.value=fixedOption.gain.value
 		return [biquadNode]
 	}
-	writeExtraSection(audioContext,i18n) {
+	writeExtraSection(audioContext,i18n,generateId) {
 		const computeCoefs=(sampleRate,type,frequency,detune,Q,gain,post20160415)=>{
 			// constants defined in the spec
 			const F_s=sampleRate
@@ -99,39 +99,35 @@ class BiquadFilterNodeOptionOutput extends FilterNodeOptionOutput {
 			}
 		}
 		const This=this
-		const writeCloneButton=(post20160415)=>{
-			return $("<button type='button' class='clone'>"+i18n(
-				'options-output.filter.biquad.clone.'+(post20160415?'post':'pre')
-			)+"</button>").click(function(){
-				const fixedOption=This.option.fix()
-				const coefs=computeCoefs(
-					audioContext.sampleRate,
-					fixedOption.type.value,
-					fixedOption.frequency.value,
-					fixedOption.detune.value,
-					Math.pow(10,fixedOption.Q.value),
-					fixedOption.gain.value,
-					post20160415
-				)
-				if (coefs) {
-					const [ff,fb]=coefs
-					$(this).data('coefs',{
-						feedforward: ff.join(),
-						feedback: fb.join(),
-					})
-				} else {
-					$(this).removeData('coefs')
-				}
-			})
-		}
+		const newCoefsCheckboxId=generateId()
+		const $newCoefsCheckbox=$(`<input type='checkbox' id='${newCoefsCheckboxId}'>`)
+		const $cloneButton=$("<button class='clone'>"+i18n('options-output.filter.biquad.clone')+"</button>").click(function(){
+			const fixedOption=This.option.fix()
+			const coefs=computeCoefs(
+				audioContext.sampleRate,
+				fixedOption.type.value,
+				fixedOption.frequency.value,
+				fixedOption.detune.value,
+				Math.pow(10,fixedOption.Q.value),
+				fixedOption.gain.value,
+				$newCoefsCheckbox.prop('checked')
+			)
+			if (coefs) {
+				const [ff,fb]=coefs
+				$(this).data('coefs',{
+					feedforward: ff.join(),
+					feedback: fb.join(),
+				})
+			} else {
+				$(this).removeData('coefs')
+			}
+		})
 		return $("<span class='node-option-section node-option-section-clone'>").append(
-			//i18n('options-output.filter.biquad.clone'),
-			//" ",
-			writeCloneButton(false)//,
-			//" ",
-			//writeCloneButton(true),
-			//" ",
-			//writeTip('info',i18n('options-output.filter.biquad.clone.info'))
+			$cloneButton,
+			" ",
+			$newCoefsCheckbox,
+			" <label for='"+newCoefsCheckboxId+"'>"+i18n('options-output.filter.biquad.clone.newCoefs')+"</label> ",
+			writeTip('info',i18n('options-output.filter.biquad.clone.info'))
 		)
 	}
 }
