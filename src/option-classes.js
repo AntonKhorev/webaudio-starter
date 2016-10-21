@@ -318,8 +318,7 @@ Option.IIRFilter = class extends Option.AudioGraphNode {
 	}
 }
 
-/*
-Option.EqualizerFilter = class extends Option.AudioGraphNodes {
+Option.EqualizerFilter = class extends Option.AudioGraphNode {
 	static get frequencies() {
 		return [60,170,350,1000,3500,10000]
 	}
@@ -331,7 +330,6 @@ Option.EqualizerFilter = class extends Option.AudioGraphNodes {
 		return super.collectArgs(scalarArg,arrayArg,settings)
 	}
 }
-*/
 
 Option.Graph = class extends Option.Collection {
 	getElementsPropertyName() {

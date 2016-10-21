@@ -1,9 +1,9 @@
 'use strict'
 
 const Option=require('./option-classes')
-const FilterOptionOutput=require('./filter-option-output')
+const FilterNodeOptionOutput=require('./filter-node-option-output')
 
-class EqualizerFilterOptionOutput extends FilterOptionOutput {
+class EqualizerFilterNodeOptionOutput extends FilterNodeOptionOutput {
 	getFilterNodes(audioContext) {
 		const fixedOption=this.option.fix()
 		return Option.EqualizerFilter.frequencies.map(freq=>{
@@ -16,4 +16,4 @@ class EqualizerFilterOptionOutput extends FilterOptionOutput {
 	}
 }
 
-module.exports=EqualizerFilterOptionOutput
+module.exports=EqualizerFilterNodeOptionOutput

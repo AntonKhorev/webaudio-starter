@@ -45,11 +45,9 @@ const langStrings={
 		'options.graph.convolver.add': "Add convolver",
 		'options.graph.convolver.url': "Impulse response URL",
 		'options.graph.convolver.wet': "Reverb (dry/wet)",
-		/*
 		'options.graph.equalizer': "Equalizer",
 		'options.graph.equalizer.add': "Add equalizer",
 		'options.graph.equalizer.gain{60,170,350,1000,3500,10000}': "{} Hz gain",
-		*/
 		'options.graph.compressor': "Dynamics compressor",
 		'options.graph.compressor.add': "Add dynamics compressor",
 		'options.graph.{waveform,frequencyBars,frequencyOutline}': "Draw {waveform,frequency bars,frequency outline}",
@@ -198,11 +196,9 @@ const langStrings={
 		'options.graph.convolver.add': "Добавить свёртку",
 		'options.graph.convolver.url': "URL импульсной <abbr title='характеристики'>хар-ки</abbr>",
 		'options.graph.convolver.wet': "Dry/wet",
-		/*
 		'options.graph.equalizer': "Эквалайзер",
 		'options.graph.equalizer.add': "Добавить эквалайзер",
-		'options.graph.equalizer.gain{60,170,350,1000,3500,10000}': "Усиление частоты {} Гц",
-		*/
+		'options.graph.equalizer.gain{60,170,350,1000,3500,10000}': "{} Гц",
 		'options.graph.compressor': "Компрессор",
 		'options.graph.compressor.add': "Добавить компрессор",
 		'options.graph.{waveform,frequencyBars,frequencyOutline}': "Вид {волны,полос частот,контура частот}",
