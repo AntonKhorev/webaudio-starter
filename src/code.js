@@ -23,6 +23,7 @@ class Code extends BaseWebCode {
 			new Canvas(options.canvas),
 		]
 		// possible feature context flags:
+		//	alignedInputs = all input labels have to be the same width; requested by equalizer
 		//	audioContext =
 		//		AudioContext has to assign the audio context to var ctx
 		//		AudioGraph has to output the js
@@ -62,7 +63,7 @@ class Code extends BaseWebCode {
 			a(
 				"label {",
 				"	display: inline-block;",
-				"	width: 15em;",
+				"	width: 10em;",
 				"	text-align: right;",
 				"	line-height: 0.8em;",
 				"}",

@@ -113,6 +113,41 @@ class Node extends Feature {
 		}
 		return a.e()
 	}
+	getPropertyJsLines(featureContext,i18n,property) {
+		if (property.skip) {
+			return JsLines.be()
+		}
+		const option=this.options[property.name]
+		const propertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")
+		const inputJsName=this.getPropertyInputJsName(property.name)
+		const inputHtmlName=this.getPropertyInputHtmlName(property.name)
+		if (property.type!='xhr' && option.input) {
+			let value=inputJsName+".value"
+			if (property.fn) {
+				value=property.fn(value)
+			}
+			const eventProp=(property.type=='range'?'oninput':'onchange')
+			return JsLines.bae(
+				"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
+				// was for IE11 compat (but IE11 has no Web Audio): (property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
+				";("+inputJsName+"."+eventProp+"=function(){",
+				"	"+propertyJsName+"="+value+";",
+				"})();"
+			)
+		} else if (property.type!='xhr' && option.value!=option.defaultValue) {
+			return JsLines.bae(
+				propertyJsName+"="+this.getPropertyJsConstant(property,option)+";"
+			)
+		} else if (property.type=='xhr') {
+			return this.getXhrJsLines(featureContext,i18n,JsLines.bae(
+				propertyJsName+"=buffer;",
+				"document.getElementById('"+inputHtmlName+"').textContent='';"
+			),JsLines.bae(
+				"document.getElementById('"+inputHtmlName+"').textContent='"+i18n('label.graph.'+this.type+'.'+property.name+'.error')+"';"
+			))
+		}
+		return JsLines.be()
+	}
 	getXhrJsLines(featureContext,i18n,onDecodeLines,onErrorLines) {
 		const leadLines=JsLines.bae(
 			"loadSample('"+this.options.url+"',function(buffer){" // TODO html escape
@@ -154,13 +189,10 @@ class ContainerNode extends Node {
 	}
 }
 
-class SingleNode extends Node { // corresponds to single web audio node
+class MediaElementNode extends Node {
 	getOutputs() {
 		return [this.nodeJsName]
 	}
-}
-
-class MediaElementNode extends SingleNode {
 	getHtmlLines(featureContext,i18n) {
 		return NoseWrapLines.b("<div>","</div>").ae(
 			this.getElementHtmlLines(featureContext,i18n)
@@ -174,8 +206,11 @@ class MediaElementNode extends SingleNode {
 	}
 }
 
-class FilterNode extends SingleNode {
+class FilterNode extends Node {
 	getInputs() {
+		return [this.nodeJsName]
+	}
+	getOutputs() {
 		return [this.nodeJsName]
 	}
 	requestFeatureContext(featureContext) {
@@ -199,41 +234,7 @@ class FilterNode extends SingleNode {
 				"ctx."+this.ctxCreateMethodName+"()",
 				this.getPrevNodeOutputs()
 			),
-			...this.properties.map(property=>{
-				if (property.skip) {
-					return JsLines.be()
-				}
-				const option=this.options[property.name]
-				const propertyJsName=this.nodeJsName+"."+property.name+(property.type=='range'?".value":"")
-				const inputJsName=this.getPropertyInputJsName(property.name)
-				const inputHtmlName=this.getPropertyInputHtmlName(property.name)
-				if (property.type!='xhr' && option.input) {
-					let value=inputJsName+".value"
-					if (property.fn) {
-						value=property.fn(value)
-					}
-					const eventProp=(property.type=='range'?'oninput':'onchange')
-					return JsLines.bae(
-						"var "+inputJsName+"=document.getElementById('"+inputHtmlName+"');",
-						// was for IE11 compat (but IE11 has no Web Audio): (property.type=='range'?inputJsName+".oninput=":"")+inputJsName+".onchange=function(){",
-						";("+inputJsName+"."+eventProp+"=function(){",
-						"	"+propertyJsName+"="+value+";",
-						"})();"
-					)
-				} else if (property.type!='xhr' && option.value!=option.defaultValue) {
-					return JsLines.bae(
-						propertyJsName+"="+this.getPropertyJsConstant(property,option)+";"
-					)
-				} else if (property.type=='xhr') {
-					return this.getXhrJsLines(featureContext,i18n,JsLines.bae(
-						propertyJsName+"=buffer;",
-						"document.getElementById('"+inputHtmlName+"').textContent='';"
-					),JsLines.bae(
-						"document.getElementById('"+inputHtmlName+"').textContent='"+i18n('label.graph.'+this.type+'.'+property.name+'.error')+"';"
-					))
-				}
-				return JsLines.be()
-			})
+			...this.properties.map(property=>this.getPropertyJsLines(featureContext,i18n,property))
 		)
 	}
 	// protected:
@@ -404,7 +405,7 @@ GenNode.drywet = class extends ContainerNode {
 	}
 }
 
-GenNode.analyser = class extends SingleNode {
+GenNode.analyser = class extends Node {
 	constructor(options,name,visNodes) {
 		super(options,name)
 		this.visNodes=visNodes
@@ -413,6 +414,9 @@ GenNode.analyser = class extends SingleNode {
 		return 'analyser'
 	}
 	getInputs() {
+		return [this.nodeJsName]
+	}
+	getOutputs() {
 		return [this.nodeJsName]
 	}
 	requestFeatureContext(featureContext) {
@@ -719,11 +723,14 @@ GenNode.biquad = class extends FilterNode {
 	}
 }
 
-GenNode.iir = class extends SingleNode {
+GenNode.iir = class extends Node { // not FilterNode b/c has different init
 	get type() {
 		return 'iir'
 	}
 	getInputs() {
+		return [this.nodeJsName]
+	}
+	getOutputs() {
 		return [this.nodeJsName]
 	}
 	requestFeatureContext(featureContext) {
@@ -758,6 +765,44 @@ GenNode.convolver = class extends FilterNode {
 	requestFeatureContext(featureContext) {
 		super.requestFeatureContext(featureContext)
 		featureContext.loader=true
+	}
+}
+
+GenNode.equalizer = class extends Node {
+	get type() {
+		return 'equalizer'
+	}
+	getInputs() { // TODO different in/out names if not a single node
+		return [this.nodeJsName]
+	}
+	getOutputs() { // TODO different in/out names if not a single node
+		return [this.nodeJsName]
+	}
+	requestFeatureContext(featureContext) {
+		let nInputs=0
+		for (const freq of Option.EqualizerFilter.frequencies) {
+			if (this.options['gain'+freq].input) {
+				if (++nInputs>1) {
+					featureContext.alignedInputs=true
+					return
+				}
+			}
+		}
+	}
+	getHtmlLines(featureContext,i18n) {
+		const properties=Option.EqualizerFilter.frequencies.map(freq=>({
+			name:'gain'+freq,
+			type:'range',
+		}))
+		return Lines.bae(
+			...properties.map(
+				property=>NoseWrapLines.b(
+					"<div>","</div>"
+				).ae(
+					this.getPropertyHtmlLines(featureContext,i18n,property)
+				)
+			)
+		)
 	}
 }
 

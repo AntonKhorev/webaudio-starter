@@ -1,5 +1,6 @@
 'use strict'
 
+const Option=require('./option-classes')
 const GenNode=require('./audio-graph-gen-node-classes')
 const VisNode=require('./audio-graph-vis-node-classes')
 
@@ -349,6 +350,18 @@ ConNode.iir = class extends FilterNode {
 ConNode.convolver = class extends FilterNode {
 	get type() {
 		return 'convolver'
+	}
+}
+
+ConNode.equalizer = class extends FilterNode {
+	get type() {
+		return 'equalizer'
+	}
+	get passive() {
+		Option.EqualizerFilter.frequencies.every(freq=>{
+			const option=this.options['gain'+freq]
+			return option.value==0 && !option.input
+		})
 	}
 }
 

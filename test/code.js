@@ -232,7 +232,6 @@ describe("Code",()=>{
 		assert.equal(graph.inputs.length,1)
 		assert.equal(graph.inputs[0].name,"DynamicsCompressorNode")
 	})
-	/*
 	it("adds equalizer with 1 input",()=>{
 		const ctx=getSandbox({
 			graph: [
@@ -356,7 +355,6 @@ describe("Code",()=>{
 			]
 		})
 	})
-	*/
 	it("removes passive panner",()=>{
 		const ctx=getSandbox({
 			graph: [
