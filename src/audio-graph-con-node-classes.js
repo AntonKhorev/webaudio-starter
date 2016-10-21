@@ -358,7 +358,7 @@ ConNode.equalizer = class extends FilterNode {
 		return 'equalizer'
 	}
 	get passive() {
-		Option.EqualizerFilter.frequencies.every(freq=>{
+		return Option.EqualizerFilter.frequencies.every(freq=>{
 			const option=this.options['gain'+freq]
 			return option.value==0 && !option.input
 		})

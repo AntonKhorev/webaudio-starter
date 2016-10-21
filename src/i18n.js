@@ -138,11 +138,8 @@ const langStrings={
 		'comment.graph.stereoVolume': "create [channel splitter node][splitter] connected to two [analyser nodes][analyser]",
 		'comment.graph.biquad': "create [biquad filter node][biquad]",
 		'comment.graph.iir': "create [IIR filter node][iir]",
-		/*
-		'comment.filters.equalizer': "create equalizer as a sequence of [peaking][peaking] [biquad filter nodes][biquad]",
-		'comment.filters.equalizer.single': "create equalizer as a [peaking][peaking] [biquad filter node][biquad]",
-		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "create [analyser node][analyser] for {waveform,frequencies,waveform and frequencies} visualization",
-		*/
+		'comment.graph.equalizer': "create equalizer as a sequence of [peaking][peaking] [biquad filter nodes][biquad]",
+		'comment.graph.equalizer.single': "create equalizer as a [peaking][peaking] [biquad filter node][biquad]",
 		'comment.graph.destination': "connect to [destination][destination]",
 
 		'units.pixel.a': "px",
@@ -292,11 +289,8 @@ const langStrings={
 		'comment.graph.stereoVolume': "создаём [узел разделения каналов][splitter], соединённый с двумя [узлами анализатора][analyser]",
 		'comment.graph.biquad': "создаём [узел биквадратичного фильтра][biquad]",
 		'comment.graph.iir': "создаём [узел БИХ-фильтра][iir]",
-		/*
-		'comment.filters.equalizer': "создаём эквалайзер в виде последовательности [peaking][peaking] [биквадратичных фильтров][biquad]",
-		'comment.filters.equalizer.single': "создаём эквалайзер в виде [peaking][peaking] [биквадратичного фильтра][biquad]",
-		'comment.destination.analyser.{waveform,frequencies,waveform+frequencies}': "создаём [узел анализатора][analyser] для визуализации {формы волны,частот,формы волны и частот}",
-		*/
+		'comment.graph.equalizer': "создаём эквалайзер в виде последовательности [peaking][peaking] [биквадратичных фильтров][biquad]",
+		'comment.graph.equalizer.single': "создаём эквалайзер в виде [peaking][peaking] [биквадратичного фильтра][biquad]",
 		'comment.graph.destination': "соединяем с [выходом][destination]",
 
 		'units.pixel.a': "px",

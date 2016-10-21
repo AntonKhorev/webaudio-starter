@@ -772,16 +772,32 @@ GenNode.equalizer = class extends Node {
 	get type() {
 		return 'equalizer'
 	}
-	getInputs() { // TODO different in/out names if not a single node
-		return [this.nodeJsName]
+	get jsCommentType() {
+		if (this.affectedFreqsAndOptions.length==1) {
+			return this.type+'.single'
+		} else {
+			return this.type
+		}
 	}
-	getOutputs() { // TODO different in/out names if not a single node
-		return [this.nodeJsName]
+	getInputs() {
+		if (this.affectedFreqsAndOptions.length==1) {
+			return [this.nodeJsName]
+		} else {
+			return [this.inputNodeJsName]
+		}
+	}
+	getOutputs() {
+		if (this.affectedFreqsAndOptions.length==1) {
+			return [this.nodeJsName]
+		} else {
+			return [this.outputNodeJsName]
+		}
 	}
 	requestFeatureContext(featureContext) {
+		featureContext.audioContext=true
 		let nInputs=0
-		for (const freq of Option.EqualizerFilter.frequencies) {
-			if (this.options['gain'+freq].input) {
+		for (const [freq,option] of this.affectedFreqsAndOptions) {
+			if (option.input) {
 				if (++nInputs>1) {
 					featureContext.alignedInputs=true
 					return
@@ -803,6 +819,138 @@ GenNode.equalizer = class extends Node {
 				)
 			)
 		)
+	}
+	getInitJsLines(featureContext,i18n) {
+		const prevNodeOutputs=this.getPrevNodeOutputs()
+		const singleFreq=this.affectedFreqsAndOptions.length==1
+		const allGainsConstant=this.affectedFreqsAndOptions.every(([freq,option])=>option.input==false)
+		const noGainsConstant=this.affectedFreqsAndOptions.every(([freq,option])=>option.input==true)
+		const getJsData=()=>{
+			return this.affectedFreqsAndOptions.map(([freq,option])=>{
+				if (noGainsConstant) {
+					return freq
+				} else {
+					return "["+freq+","+(option.input ? 'null' : option.value)+"]"
+				}
+			}).join()
+		}
+		const getJsDataItem=()=>{
+			if (noGainsConstant) {
+				return "freq"
+			} else {
+				return "freqData"
+			}
+		}
+		const getJsLoopLines=()=>{
+			const freq=(singleFreq ? this.affectedFreqsAndOptions[0][0] : 'freq')
+			const gain=(singleFreq ? this.affectedFreqsAndOptions[0][1].value : 'gain')
+			let nodeJsName
+			if (singleFreq) {
+				nodeJsName=this.nodeJsName
+			} else if (allGainsConstant) {
+				nodeJsName=this.outputNodeJsName
+			} else {
+				nodeJsName='node'
+			}
+			const inputJsName=(singleFreq
+				? this.getPropertyInputJsName('gain'+freq)
+				: 'input'
+			)
+			const inputHtmlNameExpr=(singleFreq
+				? "'"+this.getPropertyInputHtmlName('gain'+freq)+"'"
+				: "'"+this.getPropertyInputHtmlName('gain')+"'+freq"
+			)
+			const a=JsLines.b()
+			if (!(noGainsConstant || singleFreq)) {
+				a("var freq=freqData[0], gain=freqData[1];")
+			}
+			let connectors
+			if (singleFreq) {
+				connectors=prevNodeOutputs
+			} else {
+				if (prevNodeOutputs.length==1) {
+					connectors=["prevNode"]
+				} else {
+					connectors="prevNodes"
+				}
+			}
+			a(featureContext.getConnectAssignJsLines(
+				((allGainsConstant && !singleFreq) ? "" : "var"),nodeJsName,
+				"ctx.createBiquadFilter()",
+				connectors
+			))
+			if (!singleFreq) { // TODO do only if named input node is requested
+				a(
+					"if ("+this.inputNodeJsName+"===undefined) {",
+					"	"+this.inputNodeJsName+"="+nodeJsName+";",
+					"}"
+				)
+			}
+			a(
+				nodeJsName+".type='peaking';",
+				nodeJsName+".frequency.value="+freq+";"
+			)
+			const constLines=JsLines.bae(
+				nodeJsName+".gain.value="+gain+";"
+			)
+			const varLines=JsLines.bae(
+				"var "+inputJsName+"=document.getElementById("+inputHtmlNameExpr+");",
+				";("+inputJsName+".oninput=function(){",
+				"	"+nodeJsName+".gain.value="+inputJsName+".value;",
+				"})();"
+			)
+			if (!noGainsConstant && allGainsConstant) {
+				a(constLines)
+			} else if (noGainsConstant && !allGainsConstant) {
+				a(varLines)
+			} else if (!noGainsConstant && !allGainsConstant) {
+				a(WrapLines.b("if (gain!==null) {","} else {","}").ae(constLines,varLines))
+			}
+			if (!singleFreq) {
+				const outerNodeJsName=(allGainsConstant ? nodeJsName : this.outputNodeJsName+"="+nodeJsName)
+				if (prevNodeOutputs.length==1) {
+					a("prevNode="+outerNodeJsName+";")
+				} else {
+					a("prevNodes=["+outerNodeJsName+"];")
+				}
+			}
+			return a.e()
+		}
+		if (singleFreq) {
+			return JsLines.bae(
+				getJsLoopLines()
+			)
+		} else {
+			const a=JsLines.b()
+			if (prevNodeOutputs.length==1) {
+				a("var prevNode="+prevNodeOutputs[0]+";")
+			} else {
+				a("var prevNodes=["+prevNodeOutputs.join()+"];")
+			}
+			a(
+				"var "+this.inputNodeJsName+","+this.outputNodeJsName+";", // TODO declare this.inputNodeJsName only if named input node is requested
+				WrapLines.b(
+					JsLines.bae(";["+getJsData()+"].forEach(function("+getJsDataItem()+"){"),JsLines.bae("});")
+				).ae(
+					getJsLoopLines()
+				)
+			)
+			return a.e()
+		}
+	}
+	// helpers:
+	get affectedFreqsAndOptions() {
+		return Option.EqualizerFilter.frequencies.map(
+			(freq,i)=>[freq,this.options['gain'+freq]]
+		).filter(
+			([freq,option])=>(option.input!=false || option.value!=0)
+		)
+	}
+	get inputNodeJsName() {
+		return camelCase(this.name+'.input.node')
+	}
+	get outputNodeJsName() {
+		return camelCase(this.name+'.output.node')
 	}
 }
 
