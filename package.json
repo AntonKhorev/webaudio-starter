@@ -3,10 +3,10 @@
   "private": true,
   "license": "ISC",
   "dependencies": {
-    "crnx-base": "github:antonkhorev/crnx-base#v0.6.0"
+    "crnx-base": "github:antonkhorev/crnx-base#v0.7.0"
   },
   "devDependencies": {
-    "crnx-build": "github:antonkhorev/crnx-build#v0.1.6",
+    "crnx-build": "github:antonkhorev/crnx-build#v0.1.7",
     "gulp": "^3.9.1",
     "jsdom": "^8.1.0",
     "mocha": "^2.4.5",
