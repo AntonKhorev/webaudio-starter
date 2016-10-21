@@ -61,7 +61,7 @@ class Code extends BaseWebCode {
 		const a=Lines.b()
 		if (this.featureContext.alignedInputs) {
 			a(
-				"label {",
+				"label:first-child {",
 				"	display: inline-block;",
 				"	width: 10em;",
 				"	text-align: right;",
