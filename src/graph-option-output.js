@@ -225,6 +225,8 @@ class GraphOptionOutput {
 				'z-index': ++maxZIndex,
 			}).data({
 				option: nodeOption,
+				x: gx0, // TODO update on move
+				y: gy0,
 				ins: new Map(), // dom element -> line dom element
 				outs: new Map(), // dom element -> line dom element
 				// also has 'index' set by updateNodeSequence()
@@ -343,6 +345,32 @@ class GraphOptionOutput {
 			})
 			return $line
 		}
+		const writeInitialLine=($outNode,$inNode)=>{ // TODO remove copypaste
+			const getNodePortCoords=($node,dirIndex)=>{
+				const pos={
+					left: g2pCoord($node.data('x')),
+					top:  g2pCoord($node.data('y')),
+				}
+				const x=pos.left+gridSize/2+dirIndex*gridSize*(nodeWidth-1)
+				const y=pos.top+gridSize*1.5
+				return [x,y]
+			}
+			const xy1=getNodePortCoords($outNode,1)
+			const xy2=getNodePortCoords($inNode,0)
+			const $vLine=writeVisibleLine(...xy1,...xy2)
+			const $iLine=writeInvisibleLine(...xy1,...xy2)
+			const $line=$vLine.add($iLine)
+			$outNode.data('outs').set($inNode[0],$line)
+			$inNode.data('ins').set($outNode[0],$line)
+			$iLine.mouseover(function(){
+				$vLine.attr('stroke',closeColor)
+			}).mouseout(function(){
+				$vLine.attr('stroke',inactiveColor)
+			}).click(function(){
+				disconnectNodes($outNode,$inNode,1)
+			})
+			return $line
+		}
 		// } init functions
 		// { edit functions
 		const disconnectNodes=($thisNode,$thatNode,dirIndex)=>{
@@ -434,11 +462,11 @@ class GraphOptionOutput {
 		option.nodes.forEach((node,i)=>{
 			for (const j of node.next) {
 				$lines.append(
-					writeLine(initial$nodes[i],initial$nodes[j])
+					writeInitialLine(initial$nodes[i],initial$nodes[j])
 				)
 			}
 		})
-		updateNodeSequence()
+		updateNodeSequence() // TODO updates options - don't do it
 		// } write initial nodes
 	}
 }
