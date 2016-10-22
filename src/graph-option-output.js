@@ -112,58 +112,7 @@ class GraphOptionOutput {
 			// jquery has problems with appending several detached element at once like this:
 			// 	$nodes.find('.node-port-controls select').empty().append($options)
 		}
-		const disconnectNodes=($thisNode,$thatNode,dirIndex)=>{
-			const disconnectInToOut=($outNode,$inNode)=>{ // remove edge: $outNode -> $inNode
-				const $line=$outNode.data('outs').get($inNode[0])
-				$outNode.data('outs').delete($inNode[0])
-				$inNode.data('ins').delete($outNode[0])
-				$line.remove()
-			}
-			if (dirIndex) {
-				disconnectInToOut($thisNode,$thatNode)
-			} else {
-				disconnectInToOut($thatNode,$thisNode)
-			}
-			updateNodeSequence()
-		}
-		const connectNodes=($thisNode,$thatNode,dirIndex)=>{
-			const connectInToOut=($outNode,$inNode)=>{ // add edge: $outNode -> $inNode
-				const xy1=getNodePortCoords($outNode,1)
-				const xy2=getNodePortCoords($inNode,0)
-				const $vLine=writeVisibleLine(...xy1,...xy2)
-				const $iLine=writeInvisibleLine(...xy1,...xy2)
-				const $line=$vLine.add($iLine)
-				$lines.append($line)
-				$outNode.data('outs').set($inNode[0],$line)
-				$inNode.data('ins').set($outNode[0],$line)
-				$iLine.mouseover(function(){
-					$vLine.attr('stroke',closeColor)
-				}).mouseout(function(){
-					$vLine.attr('stroke',inactiveColor)
-				}).click(function(){
-					disconnectNodes($thisNode,$thatNode,dirIndex)
-				})
-			}
-			if (dirIndex) {
-				connectInToOut($thisNode,$thatNode)
-			} else {
-				connectInToOut($thatNode,$thisNode)
-			}
-			updateNodeSequence()
-		}
-		const deleteNode=($node)=>{
-			$node.data('ins').forEach(($line,thatNode)=>{
-				$(thatNode).data('outs').delete($node[0])
-				$line.remove()
-			})
-			$node.data('outs').forEach(($line,thatNode)=>{
-				$(thatNode).data('ins').delete($node[0])
-				$line.remove()
-			})
-			$node.remove()
-			updateNodeSequence()
-		}
-		const addNode=(nodeOption,gx0,gy0)=>{
+		const placeNode=(nodeOption,gx0,gy0)=>{
 			const nodeOptionsOutput=new NodeOptionsOutput({root: nodeOption},generateId,i18n)
 			const $node=nodeOptionsOutput.$output
 			const id=generateId()
@@ -375,8 +324,64 @@ class GraphOptionOutput {
 				ev.stopPropagation() // don't run the handler defined above when using inputs
 			})
 			$nodes.append($node)
+		}
+		// { edit functions
+		const disconnectNodes=($thisNode,$thatNode,dirIndex)=>{
+			const disconnectInToOut=($outNode,$inNode)=>{ // remove edge: $outNode -> $inNode
+				const $line=$outNode.data('outs').get($inNode[0])
+				$outNode.data('outs').delete($inNode[0])
+				$inNode.data('ins').delete($outNode[0])
+				$line.remove()
+			}
+			if (dirIndex) {
+				disconnectInToOut($thisNode,$thatNode)
+			} else {
+				disconnectInToOut($thatNode,$thisNode)
+			}
 			updateNodeSequence()
 		}
+		const connectNodes=($thisNode,$thatNode,dirIndex)=>{
+			const connectInToOut=($outNode,$inNode)=>{ // add edge: $outNode -> $inNode
+				const xy1=getNodePortCoords($outNode,1)
+				const xy2=getNodePortCoords($inNode,0)
+				const $vLine=writeVisibleLine(...xy1,...xy2)
+				const $iLine=writeInvisibleLine(...xy1,...xy2)
+				const $line=$vLine.add($iLine)
+				$lines.append($line)
+				$outNode.data('outs').set($inNode[0],$line)
+				$inNode.data('ins').set($outNode[0],$line)
+				$iLine.mouseover(function(){
+					$vLine.attr('stroke',closeColor)
+				}).mouseout(function(){
+					$vLine.attr('stroke',inactiveColor)
+				}).click(function(){
+					disconnectNodes($thisNode,$thatNode,dirIndex)
+				})
+			}
+			if (dirIndex) {
+				connectInToOut($thisNode,$thatNode)
+			} else {
+				connectInToOut($thatNode,$thisNode)
+			}
+			updateNodeSequence()
+		}
+		const deleteNode=($node)=>{
+			$node.data('ins').forEach(($line,thatNode)=>{
+				$(thatNode).data('outs').delete($node[0])
+				$line.remove()
+			})
+			$node.data('outs').forEach(($line,thatNode)=>{
+				$(thatNode).data('ins').delete($node[0])
+				$line.remove()
+			})
+			$node.remove()
+			updateNodeSequence()
+		}
+		const addNode=(nodeOption,gx0,gy0)=>{
+			placeNode(nodeOption,gx0,gy0)
+			updateNodeSequence()
+		}
+		// } edit functions
 		// { copypasted from array-option-output
 		const $buttons=$("<div class='buttons'>")
 		option.availableTypes.forEach((type,i)=>{
@@ -406,7 +411,7 @@ class GraphOptionOutput {
 			requestAnimationFrame(resizeAnimationHandler)
 		}
 		resizeAnimationHandler()
-		// make clone button work
+		// { make clone button work
 		$nodes.on('click','button.clone',function(){
 			const coefs=$(this).data('coefs')
 			if (coefs) {
@@ -414,6 +419,12 @@ class GraphOptionOutput {
 				addNode(nodeOption,0,0)
 			}
 		})
+		// } make clone button work
+		// { write initial nodes
+		for (const node of option.nodes) {
+			addNode(node.entry,node.x,node.y)
+		}
+		// } write initial nodes
 	}
 }
 
