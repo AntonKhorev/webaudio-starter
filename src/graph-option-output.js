@@ -61,6 +61,7 @@ class GraphOptionOutput {
 			const y=pos.top+gridSize*1.5
 			return [x,y]
 		}
+		// { init functions
 		const updateNodeSequence=()=>{
 			const $selectOptions=$nodes.children().map(function(i){
 				const $node=$(this)
@@ -112,7 +113,7 @@ class GraphOptionOutput {
 			// jquery has problems with appending several detached element at once like this:
 			// 	$nodes.find('.node-port-controls select').empty().append($options)
 		}
-		const placeNode=(nodeOption,gx0,gy0)=>{
+		const writeNode=(nodeOption,gx0,gy0)=>{
 			const nodeOptionsOutput=new NodeOptionsOutput({root: nodeOption},generateId,i18n)
 			const $node=nodeOptionsOutput.$output
 			const id=generateId()
@@ -323,8 +324,26 @@ class GraphOptionOutput {
 			}).on('mousedown','input, select, button',function(ev){
 				ev.stopPropagation() // don't run the handler defined above when using inputs
 			})
-			$nodes.append($node)
+			return $node
 		}
+		const writeLine=($outNode,$inNode)=>{
+			const xy1=getNodePortCoords($outNode,1)
+			const xy2=getNodePortCoords($inNode,0)
+			const $vLine=writeVisibleLine(...xy1,...xy2)
+			const $iLine=writeInvisibleLine(...xy1,...xy2)
+			const $line=$vLine.add($iLine)
+			$outNode.data('outs').set($inNode[0],$line)
+			$inNode.data('ins').set($outNode[0],$line)
+			$iLine.mouseover(function(){
+				$vLine.attr('stroke',closeColor)
+			}).mouseout(function(){
+				$vLine.attr('stroke',inactiveColor)
+			}).click(function(){
+				disconnectNodes($outNode,$inNode,1)
+			})
+			return $line
+		}
+		// } init functions
 		// { edit functions
 		const disconnectNodes=($thisNode,$thatNode,dirIndex)=>{
 			const disconnectInToOut=($outNode,$inNode)=>{ // remove edge: $outNode -> $inNode
@@ -341,27 +360,14 @@ class GraphOptionOutput {
 			updateNodeSequence()
 		}
 		const connectNodes=($thisNode,$thatNode,dirIndex)=>{
-			const connectInToOut=($outNode,$inNode)=>{ // add edge: $outNode -> $inNode
-				const xy1=getNodePortCoords($outNode,1)
-				const xy2=getNodePortCoords($inNode,0)
-				const $vLine=writeVisibleLine(...xy1,...xy2)
-				const $iLine=writeInvisibleLine(...xy1,...xy2)
-				const $line=$vLine.add($iLine)
-				$lines.append($line)
-				$outNode.data('outs').set($inNode[0],$line)
-				$inNode.data('ins').set($outNode[0],$line)
-				$iLine.mouseover(function(){
-					$vLine.attr('stroke',closeColor)
-				}).mouseout(function(){
-					$vLine.attr('stroke',inactiveColor)
-				}).click(function(){
-					disconnectNodes($thisNode,$thatNode,dirIndex)
-				})
-			}
 			if (dirIndex) {
-				connectInToOut($thisNode,$thatNode)
+				$lines.append(
+					writeLine($thisNode,$thatNode)
+				)
 			} else {
-				connectInToOut($thatNode,$thisNode)
+				$lines.append(
+					writeLine($thatNode,$thisNode)
+				)
 			}
 			updateNodeSequence()
 		}
@@ -378,7 +384,9 @@ class GraphOptionOutput {
 			updateNodeSequence()
 		}
 		const addNode=(nodeOption,gx0,gy0)=>{
-			placeNode(nodeOption,gx0,gy0)
+			$nodes.append(
+				writeNode(nodeOption,gx0,gy0)
+			)
 			updateNodeSequence()
 		}
 		// } edit functions
@@ -421,9 +429,16 @@ class GraphOptionOutput {
 		})
 		// } make clone button work
 		// { write initial nodes
-		for (const node of option.nodes) {
-			addNode(node.entry,node.x,node.y)
-		}
+		const initial$nodes=option.nodes.map(node=>writeNode(node.entry,node.x,node.y))
+		$nodes.append(initial$nodes)
+		option.nodes.forEach((node,i)=>{
+			for (const j of node.next) {
+				$lines.append(
+					writeLine(initial$nodes[i],initial$nodes[j])
+				)
+			}
+		})
+		updateNodeSequence()
 		// } write initial nodes
 	}
 }
