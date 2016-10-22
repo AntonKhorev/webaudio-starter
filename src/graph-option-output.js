@@ -55,11 +55,37 @@ class GraphOptionOutput {
 			const nodeIndex=$node.data('index')
 			return i18n('options.'+nodeOption.fullName)+" #"+nodeIndex
 		}
-		const getNodePortCoords=($node,dirIndex)=>{
+		const getNodePortCoords=($node,dirIndex)=>{ // dynamic version, doesn't work at init TODO rename
 			const pos=$node.position()
 			const x=pos.left+gridSize/2+dirIndex*gridSize*(nodeWidth-1)
 			const y=pos.top+gridSize*1.5
 			return [x,y]
+		}
+		const getInitialNodePortCoords=($node,dirIndex)=>{
+			const pos={
+				left: g2pCoord($node.data('x')),
+				top:  g2pCoord($node.data('y')),
+			}
+			const x=pos.left+gridSize/2+dirIndex*gridSize*(nodeWidth-1)
+			const y=pos.top+gridSize*1.5
+			return [x,y]
+		}
+		const writeLineWithPortCoordGetter=($outNode,$inNode,getNodePortCoords)=>{
+			const xy1=getNodePortCoords($outNode,1)
+			const xy2=getNodePortCoords($inNode,0)
+			const $vLine=writeVisibleLine(...xy1,...xy2)
+			const $iLine=writeInvisibleLine(...xy1,...xy2)
+			const $line=$vLine.add($iLine)
+			$outNode.data('outs').set($inNode[0],$line)
+			$inNode.data('ins').set($outNode[0],$line)
+			$iLine.mouseover(function(){
+				$vLine.attr('stroke',closeColor)
+			}).mouseout(function(){
+				$vLine.attr('stroke',inactiveColor)
+			}).click(function(){
+				disconnectNodes($outNode,$inNode,1)
+			})
+			return $line
 		}
 		// { init functions
 		const updateNodeSequence=()=>{
@@ -328,49 +354,7 @@ class GraphOptionOutput {
 			})
 			return $node
 		}
-		const writeLine=($outNode,$inNode)=>{
-			const xy1=getNodePortCoords($outNode,1)
-			const xy2=getNodePortCoords($inNode,0)
-			const $vLine=writeVisibleLine(...xy1,...xy2)
-			const $iLine=writeInvisibleLine(...xy1,...xy2)
-			const $line=$vLine.add($iLine)
-			$outNode.data('outs').set($inNode[0],$line)
-			$inNode.data('ins').set($outNode[0],$line)
-			$iLine.mouseover(function(){
-				$vLine.attr('stroke',closeColor)
-			}).mouseout(function(){
-				$vLine.attr('stroke',inactiveColor)
-			}).click(function(){
-				disconnectNodes($outNode,$inNode,1)
-			})
-			return $line
-		}
-		const writeInitialLine=($outNode,$inNode)=>{ // TODO remove copypaste
-			const getNodePortCoords=($node,dirIndex)=>{
-				const pos={
-					left: g2pCoord($node.data('x')),
-					top:  g2pCoord($node.data('y')),
-				}
-				const x=pos.left+gridSize/2+dirIndex*gridSize*(nodeWidth-1)
-				const y=pos.top+gridSize*1.5
-				return [x,y]
-			}
-			const xy1=getNodePortCoords($outNode,1)
-			const xy2=getNodePortCoords($inNode,0)
-			const $vLine=writeVisibleLine(...xy1,...xy2)
-			const $iLine=writeInvisibleLine(...xy1,...xy2)
-			const $line=$vLine.add($iLine)
-			$outNode.data('outs').set($inNode[0],$line)
-			$inNode.data('ins').set($outNode[0],$line)
-			$iLine.mouseover(function(){
-				$vLine.attr('stroke',closeColor)
-			}).mouseout(function(){
-				$vLine.attr('stroke',inactiveColor)
-			}).click(function(){
-				disconnectNodes($outNode,$inNode,1)
-			})
-			return $line
-		}
+		const writeLine=($outNode,$inNode)=>writeLineWithPortCoordGetter($outNode,$inNode,getInitialNodePortCoords)
 		// } init functions
 		// { edit functions
 		const disconnectNodes=($thisNode,$thatNode,dirIndex)=>{
@@ -390,11 +374,11 @@ class GraphOptionOutput {
 		const connectNodes=($thisNode,$thatNode,dirIndex)=>{
 			if (dirIndex) {
 				$lines.append(
-					writeLine($thisNode,$thatNode)
+					writeLineWithPortCoordGetter($thisNode,$thatNode,getNodePortCoords)
 				)
 			} else {
 				$lines.append(
-					writeLine($thatNode,$thisNode)
+					writeLineWithPortCoordGetter($thatNode,$thisNode,getNodePortCoords)
 				)
 			}
 			updateNodeSequence()
@@ -462,7 +446,7 @@ class GraphOptionOutput {
 		option.nodes.forEach((node,i)=>{
 			for (const j of node.next) {
 				$lines.append(
-					writeInitialLine(initial$nodes[i],initial$nodes[j])
+					writeLine(initial$nodes[i],initial$nodes[j])
 				)
 			}
 		})
