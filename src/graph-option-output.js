@@ -55,20 +55,20 @@ class GraphOptionOutput {
 			const nodeIndex=$node.data('index')
 			return i18n('options.'+nodeOption.fullName)+" #"+nodeIndex
 		}
-		const getNodePortCoords=($node,dirIndex)=>{ // dynamic version, doesn't work at init TODO rename
+		const getNodePortCoordsForPosition=(left,top,dirIndex)=>[
+			left+gridSize/2+dirIndex*gridSize*(nodeWidth-1),
+			top+gridSize*1.5
+		]
+		const getDynamicNodePortCoords=($node,dirIndex)=>{ // doesn't work at init
 			const pos=$node.position()
-			const x=pos.left+gridSize/2+dirIndex*gridSize*(nodeWidth-1)
-			const y=pos.top+gridSize*1.5
-			return [x,y]
+			return getNodePortCoordsForPosition(pos.left,pos.top,dirIndex)
 		}
-		const getInitialNodePortCoords=($node,dirIndex)=>{
-			const pos={
-				left: g2pCoord($node.data('x')),
-				top:  g2pCoord($node.data('y')),
-			}
-			const x=pos.left+gridSize/2+dirIndex*gridSize*(nodeWidth-1)
-			const y=pos.top+gridSize*1.5
-			return [x,y]
+		const getInitialNodePortCoords=($node,dirIndex)=>{ // works at init, but can return incorrect coords during node slide animations
+			return getNodePortCoordsForPosition(
+				g2pCoord($node.data('x')),
+				g2pCoord($node.data('y')),
+				dirIndex
+			)
 		}
 		const writeLineWithPortCoordGetter=($outNode,$inNode,getNodePortCoords)=>{
 			const xy1=getNodePortCoords($outNode,1)
@@ -161,7 +161,7 @@ class GraphOptionOutput {
 							: option.canConnectNodes(toNodeIndex,fromNodeIndex)
 						)
 					}
-					const [x1,y1]=getNodePortCoords($node,dirIndex)
+					const [x1,y1]=getDynamicNodePortCoords($node,dirIndex)
 					const $line=writeVisibleLine(x1,y1,x1,y1)
 					$lines.append($line)
 					const documentHandlers={
@@ -188,7 +188,7 @@ class GraphOptionOutput {
 						mousemove(ev) {
 							const $thatNode=$(this)
 							if (canConnectTo($thatNode)) {
-								const [x2,y2]=getNodePortCoords($thatNode,1-dirIndex)
+								const [x2,y2]=getDynamicNodePortCoords($thatNode,1-dirIndex)
 								moveLine($line,{x2,y2}) // TODO update in animation (?)
 								ev.stopPropagation()
 							}
@@ -286,11 +286,11 @@ class GraphOptionOutput {
 						left: x,
 						top: y,
 					})
-					const [x2,y2]=getNodePortCoords($node,0)
+					const [x2,y2]=getDynamicNodePortCoords($node,0)
 					$node.data('ins').forEach($line=>{
 						moveLine($line,{x2,y2})
 					})
-					const [x1,y1]=getNodePortCoords($node,1)
+					const [x1,y1]=getDynamicNodePortCoords($node,1)
 					$node.data('outs').forEach($line=>{
 						moveLine($line,{x1,y1})
 					})
@@ -374,11 +374,11 @@ class GraphOptionOutput {
 		const connectNodes=($thisNode,$thatNode,dirIndex)=>{
 			if (dirIndex) {
 				$lines.append(
-					writeLineWithPortCoordGetter($thisNode,$thatNode,getNodePortCoords)
+					writeLineWithPortCoordGetter($thisNode,$thatNode,getDynamicNodePortCoords)
 				)
 			} else {
 				$lines.append(
-					writeLineWithPortCoordGetter($thatNode,$thisNode,getNodePortCoords)
+					writeLineWithPortCoordGetter($thatNode,$thisNode,getDynamicNodePortCoords)
 				)
 			}
 			updateNodeSequence()
